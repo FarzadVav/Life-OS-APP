@@ -1,5 +1,7 @@
-function Page() {
-  return <div>Page</div>;
+import { redirect } from "next/navigation";
+
+function _() {
+  redirect("/login");
 }
 
-export default Page;
+export default _;
