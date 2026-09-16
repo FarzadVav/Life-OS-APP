@@ -1,0 +1,19 @@
+import { ComponentProps } from "react";
+
+import { cn } from "@/features/general/lib/utils";
+
+type TopBarCapsuleProps = ComponentProps<"div">;
+
+function TopBarCapsule({ className, ...p }: TopBarCapsuleProps) {
+  return (
+    <div
+      className={cn(
+        "h-13 p-3 bg-card border-2 flex items-center justify-between relative rounded-full",
+        className,
+      )}
+      {...p}
+    />
+  );
+}
+
+export default TopBarCapsule;

@@ -19,7 +19,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={cn("antialiased", "font-geist", vazirmatn.variable)}
+      className={cn("antialiased dark", "font-geist", vazirmatn.variable)}
     >
       <body>
         <SplashScreen>{children}</SplashScreen>

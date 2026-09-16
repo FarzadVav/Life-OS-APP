@@ -1,4 +1,6 @@
 import { cn } from "cn";
+import { MouseEvent } from "react";
+import { BaseUIEvent } from "@base-ui/react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { Button as ButtonPrimitive } from "@base-ui/react/button";
 
@@ -39,17 +41,24 @@ const buttonVariants = cva(
   },
 );
 
+export type ButtonProps = ButtonPrimitive.Props &
+  VariantProps<typeof buttonVariants>;
+
+export type ButtonClickEvent = BaseUIEvent<
+  MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
+>;
+
 function Button({
   className,
   variant = "default",
   size = "default",
-  ...props
-}: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) {
+  ...p
+}: ButtonProps) {
   return (
     <ButtonPrimitive
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
-      {...props}
+      {...p}
     />
   );
 }
