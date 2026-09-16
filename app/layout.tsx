@@ -3,6 +3,7 @@ import { Vazirmatn } from "next/font/google";
 
 import "./globals.css";
 import { cn } from "@/features/general/lib/utils";
+import SplashScreen from "@/features/general/components/static/SplashScreen/SplashScreen";
 
 const vazirmatn = Vazirmatn({
   subsets: ["latin"],
@@ -20,7 +21,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={cn("antialiased", "font-geist", vazirmatn.variable)}
     >
-      <body>{children}</body>
+      <body>
+        <SplashScreen>{children}</SplashScreen>
+      </body>
     </html>
   );
 }
