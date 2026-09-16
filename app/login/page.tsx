@@ -1,3 +1,5 @@
-import LoginPage from "@/features/general/components/pages/LoginPage/LoginPage";
+function LoginPage() {
+  return <div>LoginPage</div>;
+}
 
 export default LoginPage;

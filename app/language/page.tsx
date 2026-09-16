@@ -1,3 +1,5 @@
-import LanguagePage from "@/features/general/components/pages/LanguagePage/LanguagePage";
+function LanguagePage() {
+  return <div>LanguagePage</div>;
+}
 
 export default LanguagePage;

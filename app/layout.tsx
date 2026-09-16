@@ -1,12 +1,29 @@
 import type { Metadata } from "next";
+import { Vazirmatn } from "next/font/google";
 
 import "./globals.css";
-
-import RootLayout from "@/features/general/components/layouts/RootLayout";
+import { cn } from "@/features/general/lib/utils";
+import SplashScreen from "@/features/general/components/static/SplashScreen/SplashScreen";
 
 export const metadata: Metadata = {
   title: "Life OS",
   description: "Life OS",
 };
 
-export default RootLayout;
+const vazirmatn = Vazirmatn({
+  subsets: ["latin"],
+  variable: "--font-vazirmatn",
+});
+
+export default function RootLayout({ children }: LayoutProps<"/">) {
+  return (
+    <html
+      lang="en"
+      className={cn("antialiased", "font-geist", vazirmatn.variable)}
+    >
+      <body>
+        <SplashScreen>{children}</SplashScreen>
+      </body>
+    </html>
+  );
+}
