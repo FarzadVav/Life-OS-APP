@@ -23,7 +23,7 @@ type TopBarBackBtnProps = ButtonProps &
     position: "left" | "right";
   };
 
-function TopBarBackBtn({
+function TopBarBtn({
   href,
   goBack,
   onClick,
@@ -72,4 +72,4 @@ function TopBarBackBtn({
   );
 }
 
-export default TopBarBackBtn;
+export default TopBarBtn;

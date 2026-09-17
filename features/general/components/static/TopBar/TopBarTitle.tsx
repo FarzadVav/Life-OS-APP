@@ -1,4 +1,4 @@
-import { HTMLAttributes } from "react";
+import { HTMLAttributes, ViewTransition } from "react";
 
 import { cn } from "@/features/general/lib/utils";
 
@@ -10,14 +10,16 @@ function TopBarTitle({ className, asTitle, ...p }: TopBarTitleProps) {
   const Tag = asTitle ? "h1" : "div";
 
   return (
-    <Tag
-      className={cn(
-        "absolute left-1/2 -translate-x-1/2",
-        asTitle ? "text-lg font-bold text-center" : "",
-        className,
-      )}
-      {...p}
-    />
+    <ViewTransition name="top-bar-title">
+      <Tag
+        className={cn(
+          "absolute left-1/2 -translate-x-1/2",
+          asTitle ? "text-lg font-bold text-center" : "",
+          className,
+        )}
+        {...p}
+      />
+    </ViewTransition>
   );
 }
 

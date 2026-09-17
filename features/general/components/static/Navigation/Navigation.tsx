@@ -16,7 +16,12 @@ function Navigation() {
         const isPathnameMatch = checkIsPathnameMatch(item.matchPathname);
 
         return (
-          <Link key={item.href} href={item.href} className="size-full">
+          <Link
+            tabIndex={-1}
+            key={item.href}
+            href={item.href}
+            className="size-full"
+          >
             <Button
               variant={"ghost"}
               className={"size-full rounded-none flex-col relative"}
