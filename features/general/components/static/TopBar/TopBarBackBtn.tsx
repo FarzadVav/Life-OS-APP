@@ -6,29 +6,44 @@ import { ChevronLeftIcon } from "lucide-react";
 import { cn } from "@/features/general/lib/utils";
 import { Button, ButtonClickEvent, ButtonProps } from "../../ui/button";
 
-type TopBarBackBtnProps = ButtonProps & {
-  goBack?: boolean | string;
+type WithGoBack = {
+  goBack?: boolean;
+  href?: never;
 };
 
+type WithHref = {
+  goBack?: never;
+  href?: string;
+};
+
+type MergedType = WithGoBack | WithHref;
+
+type TopBarBackBtnProps = ButtonProps &
+  MergedType & {
+    position: "left" | "right";
+  };
+
 function TopBarBackBtn({
+  href,
   goBack,
   onClick,
   variant,
   children,
+  position,
   className,
   ...p
 }: TopBarBackBtnProps) {
   const router = useRouter();
 
   const handleClick = (ev: ButtonClickEvent) => {
-    if (typeof goBack === "boolean" && goBack) {
+    if (goBack) {
       router.back();
 
       return;
     }
 
-    if (typeof goBack === "string" && goBack.trim().length) {
-      router.push(goBack);
+    if (href?.trim()) {
+      router.push(href);
 
       return;
     }
@@ -41,12 +56,18 @@ function TopBarBackBtn({
       onClick={handleClick}
       variant={variant || "ghost"}
       className={cn(
-        "rounded-full size-11 absolute ltr:left-0.5 rtl:right-0.5 top-0.5",
+        "rounded-full size-11 absolute top-0.5",
+        position === "left" ? "left-0.5" : "right-0.5",
         className,
       )}
       {...p}
     >
-      {children || <ChevronLeftIcon className="rtl:-scale-x-100" />}
+      {children ||
+        (goBack ? (
+          <ChevronLeftIcon
+            className={position === "left" ? "" : "-scale-x-100"}
+          />
+        ) : null)}
     </Button>
   );
 }

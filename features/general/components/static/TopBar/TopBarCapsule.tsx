@@ -8,7 +8,7 @@ function TopBarCapsule({ className, ...p }: TopBarCapsuleProps) {
   return (
     <div
       className={cn(
-        "h-13 p-3 bg-card border-2 flex items-center justify-between relative rounded-full",
+        "h-13 p-3 bg-card border-2 flex items-center justify-between relative w-full rounded-full",
         className,
       )}
       {...p}
