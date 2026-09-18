@@ -6,19 +6,17 @@ import PageWrapper from "@/features/general/components/static/PageWrapper/PageWr
 
 function JournalsPage() {
   return (
-    <>
-      <PageWrapper>
-        <TopBar>
-          <TopBar.Title asTitle>Journals</TopBar.Title>
-        </TopBar>
+    <PageWrapper>
+      <TopBar>
+        <TopBar.Title asTitle>Journals</TopBar.Title>
+      </TopBar>
 
-        <PageItemsWrapper>
-          <JournalsLinksMap />
+      <PageItemsWrapper>
+        <JournalsLinksMap />
 
-          <CreateLink name="New Journal" href="/journals/new" />
-        </PageItemsWrapper>
-      </PageWrapper>
-    </>
+        <CreateLink name="New Journal" href="/journals/new" />
+      </PageItemsWrapper>
+    </PageWrapper>
   );
 }
 
