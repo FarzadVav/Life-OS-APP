@@ -1,9 +1,9 @@
 "use client";
 
+import { cn } from "cn";
 import { useRouter } from "next/navigation";
 import { ChevronLeftIcon } from "lucide-react";
 
-import { cn } from "@/features/general/lib/utils";
 import { Button, ButtonClickEvent, ButtonProps } from "../../ui/button";
 
 type WithGoBack = {

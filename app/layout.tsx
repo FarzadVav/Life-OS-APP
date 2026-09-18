@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Vazirmatn } from "next/font/google";
 
 import "./globals.css";
-import { cn } from "@/features/general/lib/utils";
+import { cn } from "cn";
 import SplashScreen from "@/features/general/components/static/SplashScreen/SplashScreen";
 
 export const metadata: Metadata = {

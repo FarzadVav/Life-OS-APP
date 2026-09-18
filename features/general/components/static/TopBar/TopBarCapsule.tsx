@@ -1,6 +1,6 @@
 import { ComponentProps } from "react";
 
-import { cn } from "@/features/general/lib/utils";
+import { cn } from "cn";
 
 type TopBarCapsuleProps = ComponentProps<"div">;
 

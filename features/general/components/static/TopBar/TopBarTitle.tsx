@@ -1,6 +1,6 @@
 import { HTMLAttributes, ViewTransition } from "react";
 
-import { cn } from "@/features/general/lib/utils";
+import { cn } from "cn";
 
 type TopBarTitleProps = HTMLAttributes<HTMLElement> & {
   asTitle?: boolean;

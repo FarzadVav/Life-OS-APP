@@ -1,6 +1,6 @@
 import { ComponentProps } from "react";
 
-import { cn } from "@/features/general/lib/utils";
+import { cn } from "cn";
 
 type TopBarRootProps = ComponentProps<"header">;
 
@@ -8,7 +8,7 @@ function TopBarRoot({ className, ...p }: TopBarRootProps) {
   return (
     <header
       className={cn(
-        "h-19 flex items-center justify-center px-3 py-6",
+        "h-22 flex items-center justify-center p-3 pb-6",
         className,
       )}
       {...p}
