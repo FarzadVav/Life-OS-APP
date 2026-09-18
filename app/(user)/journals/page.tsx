@@ -1,8 +1,9 @@
+import { JOURNALS_LINKS } from "@/features/journals/lib/constant";
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
-import CreateLink from "@/features/general/components/module/CreateLink/CreateLink";
-import PageItemsWrapper from "@/features/general/components/static/PageItemsWrapper/PageItemsWrapper";
-import JournalsLinksMap from "@/features/journals/components/static/JournalsLinksMap/JournalsLinksMap";
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
+import FeatureCardsMap from "@/features/general/components/module/FeatureCardsMap/FeatureCardsMap";
+import PageItemsWrapper from "@/features/general/components/static/PageItemsWrapper/PageItemsWrapper";
+import CreateFeatureLink from "@/features/general/components/module/CreateFeatureLink/CreateFeatureLink";
 
 function JournalsPage() {
   return (
@@ -12,9 +13,9 @@ function JournalsPage() {
       </TopBar>
 
       <PageItemsWrapper>
-        <JournalsLinksMap />
+        <FeatureCardsMap featureArea="journals" featureData={JOURNALS_LINKS} />
 
-        <CreateLink name="New Journal" href="/journals/new" />
+        <CreateFeatureLink featureArea="journals" />
       </PageItemsWrapper>
     </PageWrapper>
   );

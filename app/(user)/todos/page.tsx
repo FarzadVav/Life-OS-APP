@@ -1,8 +1,9 @@
+import { TODOS_LINKS } from "@/features/todos/lib/constant";
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
-import CreateLink from "@/features/general/components/module/CreateLink/CreateLink";
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
-import TodosLinksMap from "@/features/todos/components/static/TodosLinksMap/TodosLinksMap";
+import FeatureCardsMap from "@/features/general/components/module/FeatureCardsMap/FeatureCardsMap";
 import PageItemsWrapper from "@/features/general/components/static/PageItemsWrapper/PageItemsWrapper";
+import CreateFeatureLink from "@/features/general/components/module/CreateFeatureLink/CreateFeatureLink";
 
 function TodosPage() {
   return (
@@ -12,9 +13,9 @@ function TodosPage() {
       </TopBar>
 
       <PageItemsWrapper>
-        <TodosLinksMap />
+        <FeatureCardsMap featureArea="todos" featureData={TODOS_LINKS} />
 
-        <CreateLink name="New Todo" href="/todos/new" />
+        <CreateFeatureLink featureArea="todos" />
       </PageItemsWrapper>
     </PageWrapper>
   );

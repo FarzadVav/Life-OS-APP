@@ -1,6 +1,14 @@
 import { CheckSquareIcon, HomeIcon, ListIcon, PenLineIcon } from "lucide-react";
+import { FeaturesAreas, NavigationLink } from "./types";
 
-export const NAVIGATION_LINKS = [
+export const FEATURES_AREAS: FeaturesAreas[] = [
+  "notes",
+  "journals",
+  "habits",
+  "todos",
+];
+
+export const NAVIGATION_LINKS: NavigationLink[] = [
   {
     name: "Home",
     href: "/",
@@ -8,8 +16,8 @@ export const NAVIGATION_LINKS = [
     Icon: HomeIcon,
   },
   {
-    name: "Journals",
     href: "/journals",
+    name: "Journals",
     matchPathname: "/journals",
     Icon: PenLineIcon,
   },

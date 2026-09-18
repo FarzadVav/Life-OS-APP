@@ -7,13 +7,18 @@ import { useScrollDirection } from "@mantine/hooks";
 
 import { Button, ButtonProps } from "../../ui/Button";
 import useLink from "@/features/general/hooks/useLink";
+import { FeaturesAreas } from "@/features/general/lib/types";
 
-type CreateLinkProps = Omit<ButtonProps, "children"> & {
-  name: string;
-  href: string;
+type CreateFeatureLinkProps = Omit<ButtonProps, "children"> & {
+  featureArea: FeaturesAreas;
 };
 
-function CreateLink({ className, name, href, onClick, ...p }: CreateLinkProps) {
+function CreateFeatureLink({
+  onClick,
+  className,
+  featureArea,
+  ...p
+}: CreateFeatureLinkProps) {
   const direction = useScrollDirection();
 
   const { navigate } = useLink();
@@ -24,14 +29,14 @@ function CreateLink({ className, name, href, onClick, ...p }: CreateLinkProps) {
         <ViewTransition>
           <Button
             variant={"default"}
-            onClick={(ev) => navigate(href, onClick, ev)}
+            onClick={(ev) => navigate(`/${featureArea}/new`, onClick, ev)}
             className={cn(
               "w-max max-w-full rounded-full fixed z-10 bottom-22 left-1/2 -translate-x-1/2",
               className,
             )}
             {...p}
           >
-            <span>{name}</span>
+            <span className="capitalize">new {featureArea}</span>
             <PlusIcon />
           </Button>
         </ViewTransition>
@@ -40,4 +45,4 @@ function CreateLink({ className, name, href, onClick, ...p }: CreateLinkProps) {
   );
 }
 
-export default CreateLink;
+export default CreateFeatureLink;

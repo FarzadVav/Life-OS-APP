@@ -1,8 +1,9 @@
+import { HABITS_LINKS } from "@/features/habits/lib/constant";
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
-import CreateLink from "@/features/general/components/module/CreateLink/CreateLink";
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
-import HabitsLinksMap from "@/features/habits/components/static/HabitsLinksMap/HabitsLinksMap";
+import FeatureCardsMap from "@/features/general/components/module/FeatureCardsMap/FeatureCardsMap";
 import PageItemsWrapper from "@/features/general/components/static/PageItemsWrapper/PageItemsWrapper";
+import CreateFeatureLink from "@/features/general/components/module/CreateFeatureLink/CreateFeatureLink";
 
 function HabitsPage() {
   return (
@@ -12,9 +13,9 @@ function HabitsPage() {
       </TopBar>
 
       <PageItemsWrapper>
-        <HabitsLinksMap />
+        <FeatureCardsMap featureArea="habits" featureData={HABITS_LINKS} />
 
-        <CreateLink name="New Habit" href="/habits/new" />
+        <CreateFeatureLink featureArea="habits" />
       </PageItemsWrapper>
     </PageWrapper>
   );

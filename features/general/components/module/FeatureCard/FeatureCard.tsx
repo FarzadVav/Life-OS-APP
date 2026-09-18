@@ -3,13 +3,19 @@
 import { Button, ButtonProps } from "../../ui/Button";
 import useLink from "@/features/general/hooks/useLink";
 
-type CardProps = ButtonProps & {
+type FeatureCardProps = ButtonProps & {
   name: string;
   href: string;
   description?: string;
 };
 
-function Card({ name, href, onClick, description, ...p }: CardProps) {
+function FeatureCard({
+  name,
+  href,
+  onClick,
+  description,
+  ...p
+}: FeatureCardProps) {
   const { navigate } = useLink();
 
   return (
@@ -27,4 +33,4 @@ function Card({ name, href, onClick, description, ...p }: CardProps) {
   );
 }
 
-export default Card;
+export default FeatureCard;
