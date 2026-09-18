@@ -8,7 +8,7 @@ function HabitsPage() {
   return (
     <PageWrapper>
       <TopBar>
-        <TopBar.Title asTitle>Journals</TopBar.Title>
+        <TopBar.Title asTitle>Habits</TopBar.Title>
       </TopBar>
 
       <PageItemsWrapper>
