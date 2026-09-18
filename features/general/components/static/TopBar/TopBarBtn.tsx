@@ -4,7 +4,7 @@ import { cn } from "cn";
 import { useRouter } from "next/navigation";
 import { ChevronLeftIcon } from "lucide-react";
 
-import { Button, ButtonClickEvent, ButtonProps } from "../../ui/button";
+import { Button, ButtonClickEvent, ButtonProps } from "../../ui/Button";
 
 type WithGoBack = {
   goBack?: boolean;
@@ -56,7 +56,7 @@ function TopBarBtn({
       onClick={handleClick}
       variant={variant || "ghost"}
       className={cn(
-        "rounded-full size-11 absolute top-0.5",
+        "rounded-full size-10 absolute top-0.5",
         position === "left" ? "left-0.5" : "right-0.5",
         className,
       )}

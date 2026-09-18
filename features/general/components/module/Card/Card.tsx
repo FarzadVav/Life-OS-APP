@@ -1,27 +1,29 @@
-import { cn } from "cn";
-import Link from "next/link";
-import { ComponentProps } from "react";
+"use client";
 
-type CardProps = ComponentProps<typeof Link> & {
+import { Button, ButtonProps } from "../../ui/Button";
+import useLink from "@/features/general/hooks/useLink";
+
+type CardProps = ButtonProps & {
   name: string;
   href: string;
   description?: string;
 };
 
-function Card({ className, name, description, ...p }: CardProps) {
+function Card({ name, href, onClick, description, ...p }: CardProps) {
+  const { navigate } = useLink();
+
   return (
-    <Link
-      className={cn(
-        "flex flex-col justify-center items-center gap-1.5 p-3 bg-card rounded-xl",
-        className,
-      )}
+    <Button
+      size={"card"}
+      variant={"card"}
+      onClick={(ev) => navigate(href, onClick, ev)}
       {...p}
     >
       <p className="font-bold text-lg text-center">{name}</p>
       {description?.trim() ? (
         <p className="text-center text-muted-foreground">{description}</p>
       ) : null}
-    </Link>
+    </Button>
   );
 }
 

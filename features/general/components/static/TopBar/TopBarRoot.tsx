@@ -8,11 +8,11 @@ function TopBarRoot({ className, ...p }: TopBarRootProps) {
   return (
     <header
       className={cn(
-        "h-22 flex items-center justify-center p-3 pb-6",
+        "h-12 p-3 bg-card border-2 flex items-center justify-between relative w-full rounded-full",
         className,
       )}
       {...p}
-    ></header>
+    />
   );
 }
 

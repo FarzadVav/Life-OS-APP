@@ -1,29 +1,24 @@
-import Card from "@/features/general/components/module/Card/Card";
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
-import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
+import CreateLink from "@/features/general/components/module/CreateLink/CreateLink";
 import PageItemsWrapper from "@/features/general/components/static/PageItemsWrapper/PageItemsWrapper";
-import { JOURNALS_LINKS } from "@/features/journals/lib/constant";
+import JournalsLinksMap from "@/features/journals/components/static/JournalsLinksMap/JournalsLinksMap";
+import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
 
 function JournalsPage() {
   return (
-    <PageWrapper>
-      <TopBar>
-        <TopBar.Capsule>
+    <>
+      <PageWrapper>
+        <TopBar>
           <TopBar.Title asTitle>Journals</TopBar.Title>
-        </TopBar.Capsule>
-      </TopBar>
+        </TopBar>
 
-      <PageItemsWrapper>
-        {JOURNALS_LINKS.map((item) => (
-          <Card
-            key={item.id}
-            name={item.name}
-            href={`/journals/${item.id}`}
-            description={item.description}
-          />
-        ))}
-      </PageItemsWrapper>
-    </PageWrapper>
+        <PageItemsWrapper>
+          <JournalsLinksMap />
+
+          <CreateLink name="New Journal" href="/journals/new" />
+        </PageItemsWrapper>
+      </PageWrapper>
+    </>
   );
 }
 

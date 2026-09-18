@@ -3,23 +3,31 @@
 import Link from "next/link";
 import { ViewTransition } from "react";
 
-import { Button } from "../../ui/button";
+import useLink from "@/features/general/hooks/useLink";
 import { NAVIGATION_LINKS } from "@/features/general/lib/constant";
 import useCheckIsPathnameMatch from "@/features/general/hooks/useCheckIsPathnameMatch";
+import { Button } from "../../ui/Button";
 
 function Navigation() {
   const checkIsPathnameMatch = useCheckIsPathnameMatch();
 
+  const { navigate } = useLink();
+
   return (
-    <nav className="h-20 bg-card border-t-2 flex items-center justify-center gap-3 z-20">
+    <nav className="h-20 bg-card border-t-2 flex items-center justify-center gap-3 z-20 sticky bottom-0">
       {NAVIGATION_LINKS.map((item) => {
         const isPathnameMatch = checkIsPathnameMatch(item.matchPathname);
 
         return (
-          <Link key={item.href} href={item.href} className="size-full flex flex-col justify-center items-center">
+          <Button
+            key={item.href}
+            variant={"ghost"}
+            onClick={() => navigate(item.href)}
+            className="h-full flex-1 flex-col rounded-none"
+          >
             {
               <item.Icon
-                className={`size-5 transition-opacity -translate-y-2 ${isPathnameMatch ? "" : "opacity-50"}`}
+                className={`transition-opacity -translate-y-2 ${isPathnameMatch ? "" : "opacity-50"}`}
               />
             }
             {isPathnameMatch ? (
@@ -27,7 +35,7 @@ function Navigation() {
                 <span className="absolute bottom-2">{item.name}</span>
               </ViewTransition>
             ) : null}
-          </Link>
+          </Button>
         );
       })}
     </nav>
