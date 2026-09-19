@@ -4,7 +4,7 @@ import Link from "next/link";
 import { ViewTransition } from "react";
 
 import useLink from "@/features/general/hooks/useLink";
-import { NAVIGATION_LINKS } from "@/features/general/lib/constant";
+import { NAVIGATION_LINKS } from "@/features/general/lib/constants";
 import useCheckIsPathnameMatch from "@/features/general/hooks/useCheckIsPathnameMatch";
 import { Button } from "../../ui/Button";
 

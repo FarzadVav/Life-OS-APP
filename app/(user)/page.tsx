@@ -2,6 +2,7 @@ import { SearchIcon, UserIcon } from "lucide-react";
 
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
+import CreateFeatureLink from "@/features/general/components/module/CreateFeatureLink/CreateFeatureLink";
 
 function UserHomePage() {
   return (
@@ -15,6 +16,8 @@ function UserHomePage() {
           <UserIcon />
         </TopBar.Btn>
       </TopBar>
+
+      <CreateFeatureLink featureArea="notes" />
     </PageWrapper>
   );
 }

@@ -1,5 +1,11 @@
 import { CheckSquareIcon, HomeIcon, ListIcon, PenLineIcon } from "lucide-react";
-import { FeaturesAreas, NavigationLink } from "./types";
+import { FeaturesAreas, LifeArea, NavigationLink } from "./types";
+
+export const LIFE_AREAS_DATA: LifeArea[] = [
+  { id: 1, title: "Work" },
+  { id: 2, title: "Sport" },
+  { id: 3, title: "Connections" },
+];
 
 export const FEATURES_AREAS: FeaturesAreas[] = [
   "notes",

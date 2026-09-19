@@ -10,6 +10,11 @@ export type NavigationLink = {
   Icon: LucideIcon;
 };
 
+export type LifeArea = {
+  id: number;
+  title: string;
+}
+
 export type FeatureCardData = {
   id: number;
   name: string;
