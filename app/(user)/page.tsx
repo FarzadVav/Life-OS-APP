@@ -17,7 +17,7 @@ function UserHomePage() {
         </TopBar.Btn>
       </TopBar>
 
-      <CreateFeatureLink featureArea="notes" />
+      <CreateFeatureLink featureArea="notes" className={"-translate-y-3"} />
     </PageWrapper>
   );
 }

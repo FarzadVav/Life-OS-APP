@@ -1,12 +1,11 @@
 "use client";
 
-import Link from "next/link";
 import { ViewTransition } from "react";
 
+import { Button } from "../../ui/Button";
 import useLink from "@/features/general/hooks/useLink";
 import { NAVIGATION_LINKS } from "@/features/general/lib/constants";
 import useCheckIsPathnameMatch from "@/features/general/hooks/useCheckIsPathnameMatch";
-import { Button } from "../../ui/Button";
 
 function Navigation() {
   const checkIsPathnameMatch = useCheckIsPathnameMatch();

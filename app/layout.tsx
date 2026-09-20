@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Vazirmatn } from "next/font/google";
+import { Geist } from "next/font/google";
 
 import "./globals.css";
 import { cn } from "cn";
@@ -10,19 +10,17 @@ export const metadata: Metadata = {
   description: "Life OS",
 };
 
-const vazirmatn = Vazirmatn({
+const geist = Geist({
   subsets: ["latin"],
-  variable: "--font-vazirmatn",
+  variable: "--font-geist",
 });
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html
-      lang="en"
-      className={cn("antialiased dark", "font-geist", vazirmatn.variable)}
-    >
+    <html lang="en" className={cn("antialiased dark", geist.variable)}>
       <body>
-        <SplashScreen>{children}</SplashScreen>
+        {/* <SplashScreen>{children}</SplashScreen> */}
+        {children}
       </body>
     </html>
   );
