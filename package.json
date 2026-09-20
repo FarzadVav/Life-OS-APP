@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -H 192.168.43.110",
+    "dev": "next dev",
+    "dev:h": "next dev -H 192.168.43.110",
     "dev:r": "rm -rf ./next && next dev",
     "build": "next build",
     "start": "next start",

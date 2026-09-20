@@ -3,6 +3,7 @@ import { SearchIcon, UserIcon } from "lucide-react";
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
 import CreateFeatureLink from "@/features/general/components/module/CreateFeatureLink/CreateFeatureLink";
+import PageItemsWrapper from "@/features/general/components/static/PageItemsWrapper/PageItemsWrapper";
 
 function UserHomePage() {
   return (
@@ -17,7 +18,13 @@ function UserHomePage() {
         </TopBar.Btn>
       </TopBar>
 
-      <CreateFeatureLink featureArea="notes" className={"-translate-y-3"} />
+      <PageItemsWrapper>
+        {Array.from({length: 25}).map((_, i) => (
+          <div key={i} className="py-12 rounded-lg bg-card" />
+        ))}
+      </PageItemsWrapper>
+
+      <CreateFeatureLink featureArea="notes" />
     </PageWrapper>
   );
 }
