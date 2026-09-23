@@ -1,8 +1,6 @@
 "use client";
 
-import { ViewTransition } from "react";
-
-import { Button } from "../../ui/Button";
+import { Button } from "../../ui/Button/Button";
 import useLink from "@/features/general/hooks/useLink";
 import { NAVIGATION_LINKS } from "@/features/general/lib/constants";
 import useCheckIsPathnameMatch from "@/features/general/hooks/useCheckIsPathnameMatch";
@@ -13,31 +11,25 @@ function Navigation() {
   const { navigate } = useLink();
 
   return (
-    <nav className="h-20 bg-card border-t-2 flex items-center justify-center gap-3 z-20 sticky bottom-0">
-      {NAVIGATION_LINKS.map((item) => {
-        const isPathnameMatch = checkIsPathnameMatch(item.matchPathname);
+    <div className="h-22 px-6 bg-linear-to-t from-background to-transparent flex items-center justify-center z-important sticky bottom-0">
+      <nav className="w-full p-1 rounded-full h-16 bg-card-thick flex items-center justify-center gap-2">
+        {NAVIGATION_LINKS.map((item) => {
+          const isPathnameMatch = checkIsPathnameMatch(item.matchPathname);
 
-        return (
-          <Button
-            key={item.href}
-            variant={"ghost"}
-            onClick={() => navigate(item.href)}
-            className="h-full flex-1 flex-col rounded-none"
-          >
-            {
-              <item.Icon
-                className={`transition-opacity -translate-y-2 ${isPathnameMatch ? "" : "opacity-50"}`}
-              />
-            }
-            {isPathnameMatch ? (
-              <ViewTransition>
-                <span className="absolute bottom-2">{item.name}</span>
-              </ViewTransition>
-            ) : null}
-          </Button>
-        );
-      })}
-    </nav>
+          return (
+            <Button
+              key={item.href}
+              color={"foreground"}
+              className="h-full flex-1 flex-col"
+              onClick={() => navigate(item.href)}
+              variant={isPathnameMatch ? "soft" : "ghost"}
+            >
+              <item.Icon className={isPathnameMatch ? "" : ""} />
+            </Button>
+          );
+        })}
+      </nav>
+    </div>
   );
 }
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { PropsWithChildren, useEffect, useState, ViewTransition } from "react";
+import { PropsWithChildren, useEffect, useState } from "react";
 
 function SplashScreen({ children }: PropsWithChildren) {
   const [isPaused, setIsPaused] = useState(false);
@@ -14,11 +14,9 @@ function SplashScreen({ children }: PropsWithChildren) {
   return (
     <>
       {isPaused ? null : (
-        <ViewTransition default="none" enter="splash-enter" exit="splash-exit">
-          <div className="fixed inset-0 z-50 flex h-screen w-screen items-center justify-center bg-background">
-            <p className="splash-title">Life OS</p>
-          </div>
-        </ViewTransition>
+        <div className="fixed inset-0 z-50 flex h-screen w-screen items-center justify-center bg-background">
+          <p className="title">Life OS</p>
+        </div>
       )}
       {children}
     </>

@@ -8,7 +8,7 @@ function TopBarRoot({ className, ...p }: TopBarRootProps) {
   return (
     <header
       className={cn(
-        "h-12 p-3 bg-card border-2 flex items-center justify-between relative w-full rounded-full",
+        "flex py-3 items-center justify-between relative w-full",
         className,
       )}
       {...p}

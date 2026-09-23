@@ -3,7 +3,7 @@ import { Geist } from "next/font/google";
 
 import "./globals.css";
 import { cn } from "cn";
-import SplashScreen from "@/features/general/components/static/SplashScreen/SplashScreen";
+// import SplashScreen from "@/features/general/components/static/SplashScreen/SplashScreen";
 
 export const metadata: Metadata = {
   title: "Life OS",
@@ -20,7 +20,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html lang="en" className={cn("antialiased dark", geist.variable)}>
       <body>
         {/* <SplashScreen>{children}</SplashScreen> */}
-        {children}
+        <div className="root">{children}</div>
       </body>
     </html>
   );
