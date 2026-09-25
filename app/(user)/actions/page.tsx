@@ -1,8 +1,5 @@
-import Link from "next/link";
-import { PlusIcon } from "lucide-react";
-
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
-import { Button } from "@/features/general/components/ui/Button/Button";
+import CreateBtn from "@/features/general/components/module/CreateBtn/CreateBtn";
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
 import PageItemsWrapper from "@/features/general/components/static/PageItemsWrapper/PageItemsWrapper";
 
@@ -15,14 +12,13 @@ function TodosPage() {
       </TopBar>
 
       <PageItemsWrapper>
-        <Button
-          variant={"soft"}
-          color={"foreground"}
-          render={<Link href={"/actions/new"} />}
-        >
-          <PlusIcon />
-          <span>New Action</span>
-        </Button>
+        {Array.from({ length: 25 }).map((_, i) => (
+          <div key={i} className="w-full py-12 rounded-lg bg-card" />
+        ))}
+
+        <CreateBtn withPlusIcon href="/actions/new">
+          New Action
+        </CreateBtn>
       </PageItemsWrapper>
     </PageWrapper>
   );

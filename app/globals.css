@@ -82,3 +82,7 @@
 @utility title {
   @apply text-lg font-bold;
 }
+
+@utility glass {
+  @apply backdrop-blur-md;
+}

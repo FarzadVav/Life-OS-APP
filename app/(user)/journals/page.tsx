@@ -1,8 +1,5 @@
-import Link from "next/link";
-import { PlusIcon } from "lucide-react";
-
-import { Button } from "@/features/general/components/ui/Button/Button";
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
+import CreateBtn from "@/features/general/components/module/CreateBtn/CreateBtn";
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
 import PageItemsWrapper from "@/features/general/components/static/PageItemsWrapper/PageItemsWrapper";
 
@@ -15,14 +12,13 @@ function JournalsPage() {
       </TopBar>
 
       <PageItemsWrapper>
-        <Button
-          variant={"soft"}
-          color={"foreground"}
-          render={<Link href={"/journals/new"} />}
-        >
-          <PlusIcon />
-          <span>New Journal</span>
-        </Button>
+        {Array.from({ length: 25 }).map((_, i) => (
+          <div key={i} className="w-full py-12 rounded-lg bg-card" />
+        ))}
+
+        <CreateBtn withPlusIcon href="/journals/new">
+          New Journal
+        </CreateBtn>
       </PageItemsWrapper>
     </PageWrapper>
   );
