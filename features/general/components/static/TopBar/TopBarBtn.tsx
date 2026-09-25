@@ -21,6 +21,7 @@ type MergedType = WithGoBack | WithHref;
 type TopBarBackBtnProps = ButtonProps &
   MergedType & {
     position: "left" | "right";
+    backIcon?: boolean;
   };
 
 function TopBarBtn({
@@ -30,6 +31,7 @@ function TopBarBtn({
   onClick,
   variant,
   children,
+  backIcon,
   position,
   className,
   ...p
@@ -65,12 +67,13 @@ function TopBarBtn({
       )}
       {...p}
     >
-      {children ||
-        (goBack ? (
-          <ChevronLeftIcon
-            className={position === "left" ? "" : "-scale-x-100"}
-          />
-        ) : null)}
+      {backIcon ? (
+        <ChevronLeftIcon
+          className={position === "left" ? "" : "-scale-x-100"}
+        />
+      ) : (
+        children
+      )}
     </Button>
   );
 }

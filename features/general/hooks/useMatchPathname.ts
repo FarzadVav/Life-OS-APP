@@ -1,6 +1,6 @@
 import { usePathname } from "next/navigation";
 
-function useCheckIsPathnameMatch() {
+function useMatchPathname() {
   const pn = usePathname();
 
   const checkIsPathnameMatch = (target: string) => {
@@ -20,4 +20,4 @@ function useCheckIsPathnameMatch() {
   return checkIsPathnameMatch;
 }
 
-export default useCheckIsPathnameMatch;
+export default useMatchPathname;

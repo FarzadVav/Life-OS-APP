@@ -19,7 +19,7 @@ function UserHomePage() {
 
       <PageItemsWrapper>
         {Array.from({ length: 25 }).map((_, i) => (
-          <div key={i} className="py-12 rounded-lg bg-card" />
+          <div key={i} className="w-full py-12 rounded-lg bg-card" />
         ))}
       </PageItemsWrapper>
     </PageWrapper>

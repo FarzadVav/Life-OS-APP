@@ -45,7 +45,7 @@
 
 @layer base {
   * {
-    @apply select-none cursor-auto outline-foreground/10 border-foreground/10 ring-foreground/10 border-solid;
+    @apply select-none cursor-default outline-foreground/10 border-foreground/10 ring-foreground/10 border-solid;
 
     scrollbar-width: thin;
     scrollbar-color: var(--color-foreground) transparent;
