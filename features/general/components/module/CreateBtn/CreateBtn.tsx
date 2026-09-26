@@ -1,8 +1,5 @@
-"use client";
-
 import { cn } from "cn";
 import Link from "next/link";
-import { useEffect } from "react";
 import { PlusIcon } from "lucide-react";
 
 import { Button, ButtonProps } from "../../ui/Button/Button";
@@ -21,25 +18,14 @@ function CreateBtn({
   withPlusIcon,
   ...p
 }: CreateLinkBtn) {
-  useEffect(() => {
-    const navigationElem = document.getElementById(
-      "navigation",
-    ) as HTMLDivElement;
-
-    if (!navigationElem.classList.contains("mt-7")) {
-      navigationElem.classList.add("mt-7");
-    }
-
-    return () => navigationElem.classList.remove("mt-7");
-  }, []);
-
   return (
     <Button
+      id="create-btn"
       variant={variant || "soft"}
       color={color || "foreground"}
       render={href ? <Link href={href} /> : undefined}
       className={cn(
-        "glass fixed bottom-22 left-1/2 -translate-x-1/2",
+        "glass fixed bottom-25 left-1/2 -translate-x-1/2",
         className,
       )}
       {...p}

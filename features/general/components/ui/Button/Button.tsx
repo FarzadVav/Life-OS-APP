@@ -29,7 +29,7 @@ const buttonVariants = cva(
     "focus-visible:ring-offset-background",
     "transition-all",
     "active:blur-[1px]",
-    "[&_svg]:size-4",
+    "[&_svg]:size-5",
   ],
   {
     variants: {

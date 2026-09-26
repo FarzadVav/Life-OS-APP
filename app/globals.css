@@ -83,6 +83,10 @@
   @apply text-lg font-bold;
 }
 
+@utility sub-text {
+  @apply text-sm opacity-60;
+}
+
 @utility glass {
   @apply backdrop-blur-md;
 }

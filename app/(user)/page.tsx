@@ -1,9 +1,9 @@
 import { SearchIcon, UserIcon } from "lucide-react";
 
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
+import CreateBtn from "@/features/general/components/module/CreateBtn/CreateBtn";
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
 import PageItemsWrapper from "@/features/general/components/static/PageItemsWrapper/PageItemsWrapper";
-import CreateBtn from "@/features/general/components/module/CreateBtn/CreateBtn";
 
 function UserHomePage() {
   return (
