@@ -19,8 +19,18 @@ function UserHomePage() {
       </TopBar>
 
       <PageItemsWrapper>
-        {Array.from({ length: 25 }).map((_, i) => (
-          <div key={i} className="w-full py-12 rounded-lg bg-card" />
+        {Array.from({ length: 12 }).map((_, i) => (
+          <div
+            key={i}
+            className="w-full space-y-1 p-3 rounded-component bg-card"
+          >
+            <div>
+              <p className="font-bold">
+                Make the SaaS and sell to 100 customers
+              </p>
+              <span className="sub-text">To {new Date().toLocaleTimeString()}</span>
+            </div>
+          </div>
         ))}
 
         <CreateBtn withPlusIcon>New Todo</CreateBtn>
