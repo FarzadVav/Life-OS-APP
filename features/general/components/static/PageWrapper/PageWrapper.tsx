@@ -25,8 +25,8 @@ function PageWrapper(p: PropsWithChildren) {
 
     if (pageWrapperRef.current) {
       pageWrapperRef.current.style.minHeight = minH
-        ? `calc(100vh - ${minH}rem)`
-        : "100vh";
+        ? `calc(100dvh - ${minH}rem)`
+        : "100dvh";
       pageWrapperRef.current.style.paddingBottom = `${pb}rem`;
     }
   }, [pathname]);
