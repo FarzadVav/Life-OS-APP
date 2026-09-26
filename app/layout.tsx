@@ -1,9 +1,9 @@
+import { cn } from "cn";
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 
 import "./globals.css";
-import { cn } from "cn";
-// import SplashScreen from "@/features/general/components/static/SplashScreen/SplashScreen";
+import SplashScreen from "@/features/general/components/static/SplashScreen/SplashScreen";
 
 export const metadata: Metadata = {
   title: "Life OS",
@@ -18,9 +18,10 @@ const geist = Geist({
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={cn("antialiased dark", geist.variable)}>
-      <body>
-        {/* <SplashScreen>{children}</SplashScreen> */}
-        <div className="root">{children}</div>
+      <body className="overflow-hidden">
+        <SplashScreen>
+          <div className="root">{children}</div>
+        </SplashScreen>
       </body>
     </html>
   );
