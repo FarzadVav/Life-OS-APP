@@ -12,8 +12,16 @@ function HabitsPage() {
       </TopBar>
 
       <PageItemsWrapper>
-        {Array.from({ length: 25 }).map((_, i) => (
-          <div key={i} className="w-full py-12 rounded-lg bg-card" />
+        {Array.from({ length: 12 }).map((_, i) => (
+          <div
+            key={i}
+            className="w-full space-y-1 p-3 rounded-component bg-card"
+          >
+            <div>
+              <p className="font-bold">Go to the gym and do some exersices</p>
+              <span className="sub-text">Every single day</span>
+            </div>
+          </div>
         ))}
 
         <CreateBtn withPlusIcon href="/disciplines/new">
