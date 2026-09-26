@@ -12,6 +12,8 @@
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
+    "@daypicker/persian": "^10.0.1",
+    "@daypicker/react": "^10.0.1",
     "@mantine/hooks": "^9.6.1",
     "class-variance-authority": "^0.7.1",
     "cn": "^0.3.0",

@@ -1,10 +1,18 @@
-import { Field, Form, Switch } from "@base-ui/react";
+"use client";
+
+import { useState } from "react";
+import { DayPicker, enUS } from "@daypicker/persian";
+import { Dialog, Field, Form, Switch } from "@base-ui/react";
+import "@daypicker/react/style.css";
 
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
+import { Button } from "@/features/general/components/ui/Button/Button";
 import CreateBtn from "@/features/general/components/module/CreateBtn/CreateBtn";
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
 
 function NewTodoPage() {
+  const [selected, setSelected] = useState<Date>();
+
   return (
     <PageWrapper>
       <TopBar>
@@ -40,6 +48,49 @@ function NewTodoPage() {
           <Field.Error className={"sub-text text-red-400 mt-0.5"} />
         </Field.Root>
 
+        <Dialog.Root>
+          <Dialog.Trigger
+            render={
+              <Button
+                outline
+                color={"foreground"}
+                variant={"ghost"}
+                className={"rounded-md w-full justify-start"}
+              >
+                Deadline: Not set
+              </Button>
+            }
+          />
+          <Dialog.Portal>
+            <Dialog.Backdrop className="fixed inset-0 min-h-dvh bg-background opacity-50 transition-opacity duration-500 data-ending-style:opacity-0 data-starting-style:opacity-0 supports-[-webkit-touch-callout:none]:absolute" />
+            <Dialog.Popup className="fixed top-1/2 left-1/2 w-96 rounded-component space-y-6 max-w-[calc(100vw-1.5rem)] -translate-x-1/2 -translate-y-1/2 bg-card p-3 transition-[translate,opacity] duration-300 data-ending-style:translate-y-full data-ending-style:opacity-0 data-starting-style:translate-y-full data-starting-style:opacity-0">
+              <DayPicker
+                animate
+                dir="ltr"
+                mode="single"
+                locale={enUS}
+                numerals="latn"
+                className="w-full"
+                selected={selected}
+                onSelect={setSelected}
+                footer={
+                  selected
+                    ? `Selected: ${selected.toLocaleDateString()}`
+                    : "Pick a day"
+                }
+              />
+
+              <Dialog.Close
+                render={
+                  <Button outline color={"foreground"} variant={"ghost"}>
+                    Close
+                  </Button>
+                }
+              />
+            </Dialog.Popup>
+          </Dialog.Portal>
+        </Dialog.Root>
+
         <Field.Root name="restartOnFailure">
           <Field.Label className="flex items-center gap-3">
             Is locked?
@@ -49,9 +100,7 @@ function NewTodoPage() {
           </Field.Label>
         </Field.Root>
 
-        <CreateBtn href="/actions/new">
-          Submit
-        </CreateBtn>
+        <CreateBtn>Submit</CreateBtn>
       </Form>
     </PageWrapper>
   );
