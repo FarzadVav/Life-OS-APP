@@ -40,8 +40,9 @@ function UserHomePage() {
         <Button
           variant={"soft"}
           color={"foreground"}
-          className={"mx-auto min-w-1/2 mt-3"}
+          nativeButton={false}
           render={<Link href={"/history"} />}
+          className={"mx-auto min-w-1/2 mt-3"}
         >
           <RotateCcwClockIcon />
           <span>History</span>

@@ -21,6 +21,7 @@ function CreateBtn({
   return (
     <Button
       id="create-btn"
+      nativeButton={!href}
       variant={variant || "soft"}
       color={color || "foreground"}
       render={href ? <Link href={href} /> : undefined}

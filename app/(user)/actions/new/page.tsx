@@ -53,8 +53,8 @@ function NewTodoPage() {
             render={
               <Button
                 outline
-                color={"foreground"}
                 variant={"ghost"}
+                color={"foreground"}
                 className={"rounded-md w-full justify-start"}
               >
                 Deadline: Not set

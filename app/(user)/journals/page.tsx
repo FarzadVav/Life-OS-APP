@@ -66,7 +66,7 @@ function JournalsPage() {
           <ChevronRightIcon className="size-5" />
         </Link>
 
-        <CreateBtn withPlusIcon href="/journals/vault">
+        <CreateBtn withPlusIcon href="/journals/new">
           New Journal
         </CreateBtn>
       </PageItemsWrapper>
