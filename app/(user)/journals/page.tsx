@@ -2,7 +2,6 @@ import Link from "next/link";
 import { ChevronRightIcon } from "lucide-react";
 
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
-import { Button } from "@/features/general/components/ui/Button/Button";
 import CreateBtn from "@/features/general/components/module/CreateBtn/CreateBtn";
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
 import PageItemsWrapper from "@/features/general/components/static/PageItemsWrapper/PageItemsWrapper";
@@ -16,53 +15,58 @@ function JournalsPage() {
       </TopBar>
 
       <PageItemsWrapper>
-        <Button
-          variant={"soft"}
-          color={"foreground"}
-          className={"w-full justify-between"}
-          render={<Link href={"/journals/event-logs"} />}
+        <Link
+          href={"/journals/event-logs"}
+          className="w-full flex items-center justify-between gap-3 p-3 rounded-component bg-card"
         >
-          <p className="font-bold">Event Logs</p>
+          <div>
+            <p className="font-bold">Event Logs</p>
+            <span className="sub-text">12 Items</span>
+          </div>
           <ChevronRightIcon className="size-5" />
-        </Button>
-        <Button
-          variant={"soft"}
-          color={"foreground"}
-          className={"w-full justify-between"}
-          render={<Link href={"/journals/soft-skills"} />}
+        </Link>
+        <Link
+          href={"/journals/soft-skills"}
+          className="w-full flex items-center justify-between gap-3 p-3 rounded-component bg-card"
         >
-          <p className="font-bold">Soft Skills</p>
+          <div>
+            <p className="font-bold">Soft Skills</p>
+            <span className="sub-text">7 Items</span>
+          </div>
           <ChevronRightIcon className="size-5" />
-        </Button>
-        <Button
-          variant={"soft"}
-          color={"foreground"}
-          className={"w-full justify-between"}
-          render={<Link href={"/journals/sources"} />}
+        </Link>
+        <Link
+          href={"/journals/sources"}
+          className="w-full flex items-center justify-between gap-3 p-3 rounded-component bg-card"
         >
-          <p className="font-bold">Sources</p>
+          <div>
+            <p className="font-bold">Sources</p>
+            <span className="sub-text">20 Items</span>
+          </div>
           <ChevronRightIcon className="size-5" />
-        </Button>
-        <Button
-          variant={"soft"}
-          color={"foreground"}
-          className={"w-full justify-between"}
-          render={<Link href={"/journals/ideas"} />}
+        </Link>
+        <Link
+          href={"/journals/ideas"}
+          className="w-full flex items-center justify-between gap-3 p-3 rounded-component bg-card"
         >
-          <p className="font-bold">Ideas</p>
+          <div>
+            <p className="font-bold">Ideas</p>
+            <span className="sub-text">3 Items</span>
+          </div>
           <ChevronRightIcon className="size-5" />
-        </Button>
-        <Button
-          variant={"soft"}
-          color={"foreground"}
-          className={"w-full justify-between"}
-          render={<Link href={"/journals/future"} />}
+        </Link>
+        <Link
+          href={"/journals/future"}
+          className="w-full flex items-center justify-between gap-3 p-3 rounded-component bg-card"
         >
-          <p className="font-bold">Future</p>
+          <div>
+            <p className="font-bold">Future</p>
+            <span className="sub-text">18 Items</span>
+          </div>
           <ChevronRightIcon className="size-5" />
-        </Button>
+        </Link>
 
-        <CreateBtn withPlusIcon href="/journals/new">
+        <CreateBtn withPlusIcon href="/journals/vault">
           New Journal
         </CreateBtn>
       </PageItemsWrapper>

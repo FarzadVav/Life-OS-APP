@@ -16,7 +16,7 @@ function PageWrapper(p: PropsWithChildren) {
     let pb = 0.75;
 
     if (navigationElem) {
-      minH += 5.5;
+      minH += 4.5;
     }
 
     if (createBtnElem) {
