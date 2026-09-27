@@ -25,7 +25,7 @@ function CreateBtn({
       color={color || "foreground"}
       render={href ? <Link href={href} /> : undefined}
       className={cn(
-        "glass fixed bottom-25 left-1/2 -translate-x-1/2",
+        "glass fixed bottom-25 left-1/2 -translate-x-1/2 min-w-1/2",
         className,
       )}
       {...p}
