@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ChevronRightIcon } from "lucide-react";
 
+import { JOURNAL_TYPES } from "@/features/journals/constants";
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
 import CreateBtn from "@/features/general/components/module/CreateBtn/CreateBtn";
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
@@ -15,56 +16,19 @@ function JournalsPage() {
       </TopBar>
 
       <PageItemsWrapper>
-        <Link
-          href={"/journals/event-logs"}
-          className="w-full flex items-center justify-between gap-3 p-3 rounded-component bg-card"
-        >
-          <div>
-            <p className="font-bold">Event Logs</p>
-            <span className="sub-text">12 Items</span>
-          </div>
-          <ChevronRightIcon className="size-5" />
-        </Link>
-        <Link
-          href={"/journals/soft-skills"}
-          className="w-full flex items-center justify-between gap-3 p-3 rounded-component bg-card"
-        >
-          <div>
-            <p className="font-bold">Soft Skills</p>
-            <span className="sub-text">7 Items</span>
-          </div>
-          <ChevronRightIcon className="size-5" />
-        </Link>
-        <Link
-          href={"/journals/sources"}
-          className="w-full flex items-center justify-between gap-3 p-3 rounded-component bg-card"
-        >
-          <div>
-            <p className="font-bold">Sources</p>
-            <span className="sub-text">20 Items</span>
-          </div>
-          <ChevronRightIcon className="size-5" />
-        </Link>
-        <Link
-          href={"/journals/ideas"}
-          className="w-full flex items-center justify-between gap-3 p-3 rounded-component bg-card"
-        >
-          <div>
-            <p className="font-bold">Ideas</p>
-            <span className="sub-text">3 Items</span>
-          </div>
-          <ChevronRightIcon className="size-5" />
-        </Link>
-        <Link
-          href={"/journals/future"}
-          className="w-full flex items-center justify-between gap-3 p-3 rounded-component bg-card"
-        >
-          <div>
-            <p className="font-bold">Future</p>
-            <span className="sub-text">18 Items</span>
-          </div>
-          <ChevronRightIcon className="size-5" />
-        </Link>
+        {Object.keys(JOURNAL_TYPES).map((item) => (
+          <Link
+            key={item}
+            href={`/journals/items?type=${item}`}
+            className="w-full flex items-center justify-between gap-3 p-3 rounded-component bg-card"
+          >
+            <div>
+              <p className="font-bold">{item}</p>
+              <span className="sub-text">7 Items</span>
+            </div>
+            <ChevronRightIcon className="size-5" />
+          </Link>
+        ))}
 
         <CreateBtn withPlusIcon href="/journals/new">
           New Journal

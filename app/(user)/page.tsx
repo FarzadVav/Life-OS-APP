@@ -1,11 +1,11 @@
-import { RotateCcwClockIcon, SearchIcon, UserIcon } from "lucide-react";
+import Link from "next/link";
+import { SearchIcon, SquareTextIcon, UserIcon } from "lucide-react";
 
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
+import { Button } from "@/features/general/components/ui/Button/Button";
 import CreateBtn from "@/features/general/components/module/CreateBtn/CreateBtn";
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
 import PageItemsWrapper from "@/features/general/components/static/PageItemsWrapper/PageItemsWrapper";
-import { Button } from "@/features/general/components/ui/Button/Button";
-import Link from "next/link";
 
 function UserHomePage() {
   return (
@@ -41,11 +41,11 @@ function UserHomePage() {
           variant={"soft"}
           color={"foreground"}
           nativeButton={false}
-          render={<Link href={"/history"} />}
           className={"mx-auto min-w-1/2 mt-3"}
+          render={<Link href={"/journals/items?type=notes"} />}
         >
-          <RotateCcwClockIcon />
-          <span>History</span>
+          <SquareTextIcon />
+          <span>Notes</span>
         </Button>
 
         <CreateBtn withPlusIcon>New Todo</CreateBtn>

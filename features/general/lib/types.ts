@@ -1,5 +1,10 @@
 import { LucideIcon } from "lucide-react";
 
+export type NextPageProps = {
+  params: Promise<string | string[]>;
+  searchParams: Promise<{ [key: string]: string }>;
+};
+
 export type FeaturesAreas = "notes" | "journals" | "habits" | "todos";
 
 export type NavigationLink = {
@@ -13,7 +18,7 @@ export type NavigationLink = {
 export type LifeArea = {
   id: number;
   title: string;
-}
+};
 
 export type FeatureCardData = {
   id: number;
