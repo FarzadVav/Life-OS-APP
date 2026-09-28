@@ -52,9 +52,7 @@ function NewTodoPage() {
           <Dialog.Trigger
             render={
               <Button
-                outline
                 variant={"ghost"}
-                color={"foreground"}
                 className={"rounded-md w-full justify-start"}
               >
                 Deadline: Not set
@@ -80,13 +78,7 @@ function NewTodoPage() {
                 }
               />
 
-              <Dialog.Close
-                render={
-                  <Button outline color={"foreground"} variant={"ghost"}>
-                    Close
-                  </Button>
-                }
-              />
+              <Dialog.Close render={<Button variant={"ghost"}>Close</Button>} />
             </Dialog.Popup>
           </Dialog.Portal>
         </Dialog.Root>
