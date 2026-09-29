@@ -16,11 +16,19 @@ function NewTodoPage() {
   return (
     <PageWrapper>
       <TopBar>
-        <TopBar.Title asTitle>New Action</TopBar.Title>
-        <TopBar.Btn backIcon href="/actions" position="left" />
+        <TopBar.Title asTitle>New Goal</TopBar.Title>
+        <TopBar.Btn backIcon href="/goals" position="left" />
       </TopBar>
 
-      <Form aria-label="Create new action" className={"space-y-6"}>
+      <Form
+        className={"space-y-6"}
+        aria-label="Create new goal"
+        action={async () => {
+          return await new Promise((resolveInner) => {
+            setTimeout(resolveInner, 5_000);
+          });
+        }}
+      >
         <Field.Root name="title">
           <Field.Label className={"block font-bold"}>Title</Field.Label>
           <Field.Control
@@ -92,7 +100,7 @@ function NewTodoPage() {
           </Field.Label>
         </Field.Root>
 
-        <CreateBtn>Submit</CreateBtn>
+        <CreateBtn submit />
       </Form>
     </PageWrapper>
   );

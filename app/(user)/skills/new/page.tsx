@@ -6,17 +6,17 @@ import TopBar from "@/features/general/components/static/TopBar/TopBar";
 import CreateBtn from "@/features/general/components/module/CreateBtn/CreateBtn";
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
 
-function NewJournalPage() {
+function NewSkillPage() {
   return (
     <PageWrapper>
       <TopBar>
-        <TopBar.Title asTitle>New Journal</TopBar.Title>
-        <TopBar.Btn backIcon href="/journals" position="left" />
+        <TopBar.Title asTitle>New Skill</TopBar.Title>
+        <TopBar.Btn backIcon href="/skills" position="left" />
       </TopBar>
 
       <Form
-        aria-label="Create new journal"
         className={"space-y-6"}
+        aria-label="Create new skill"
         action={async () => {
           return await new Promise((resolveInner) => {
             setTimeout(resolveInner, 5_000);
@@ -125,4 +125,4 @@ function NewJournalPage() {
   );
 }
 
-export default NewJournalPage;
+export default NewSkillPage;

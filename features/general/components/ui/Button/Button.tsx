@@ -2,8 +2,6 @@
 
 import { cn } from "cn";
 import { ComponentProps } from "react";
-import { LoaderIcon } from "lucide-react";
-import { useFormStatus } from "react-dom";
 import { Button as BaseUIButton } from "@base-ui/react";
 import { cva, type VariantProps } from "class-variance-authority";
 
@@ -15,9 +13,9 @@ const buttonVariants = cva(
     "shrink-0",
     "items-center",
     "justify-center",
-    "gap-2",
+    "gap-1.5",
     "rounded-full",
-    "px-4",
+    "px-3",
     "text-sm",
     "whitespace-nowrap",
     "transition-all",
@@ -58,18 +56,12 @@ type ButtonProps = ComponentProps<typeof BaseUIButton> &
   VariantProps<typeof buttonVariants>;
 
 function Button({
-  className,
-  variant,
   square,
-  disabled,
-  children,
+  variant,
+  className,
   type = "button",
   ...props
 }: ButtonProps) {
-  const { pending } = useFormStatus();
-
-  const isDisabled = disabled || pending;
-
   return (
     <BaseUIButton
       type={type}
@@ -80,19 +72,8 @@ function Button({
         }),
         className,
       )}
-      disabled={isDisabled}
-      aria-busy={pending || undefined}
-      aria-disabled={isDisabled || undefined}
       {...props}
-    >
-      {children}
-
-      {pending && (
-        <span className="absolute inset-0 flex items-center justify-center rounded-full bg-foreground text-background">
-          <LoaderIcon className="animate-spin" />
-        </span>
-      )}
-    </BaseUIButton>
+    />
   );
 }
 

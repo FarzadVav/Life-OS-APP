@@ -1,8 +1,6 @@
-import Link from "next/link";
-import { SearchIcon, SquareTextIcon, UserIcon } from "lucide-react";
+import { SearchIcon, UserIcon } from "lucide-react";
 
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
-import { Button } from "@/features/general/components/ui/Button/Button";
 import CreateBtn from "@/features/general/components/module/CreateBtn/CreateBtn";
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
 import PageItemsWrapper from "@/features/general/components/static/PageItemsWrapper/PageItemsWrapper";
@@ -26,27 +24,16 @@ function UserHomePage() {
             key={i}
             className="w-full space-y-1 p-3 rounded-component bg-card"
           >
-            <div>
-              <p className="font-bold">
-                Make the SaaS and sell to 100 customers
-              </p>
-              <span className="sub-text">
-                To {new Date().toLocaleTimeString()}
-              </span>
-            </div>
+            <p className="font-bold">Make the SaaS and sell to 100 customers</p>
+            <span className="sub-text">
+              To {new Date().toLocaleTimeString()}
+            </span>
           </div>
         ))}
 
-        <Button
-          variant={"soft"}
-          color={"foreground"}
-          nativeButton={false}
-          className={"mx-auto min-w-1/2 mt-3"}
-          render={<Link href={"/journals/items?type=notes"} />}
-        >
-          <SquareTextIcon />
-          <span>Notes</span>
-        </Button>
+        <div className="p-3 border-2 w-full flex-1 border-dashed rounded-component flex justify-center items-center">
+          <p>You haven{"'"}t any todos</p>
+        </div>
 
         <CreateBtn withPlusIcon>New Todo</CreateBtn>
       </PageItemsWrapper>

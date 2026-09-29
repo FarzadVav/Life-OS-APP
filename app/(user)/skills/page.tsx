@@ -3,11 +3,11 @@ import CreateBtn from "@/features/general/components/module/CreateBtn/CreateBtn"
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
 import PageItemsWrapper from "@/features/general/components/static/PageItemsWrapper/PageItemsWrapper";
 
-function TodosPage() {
+function SkillsPage() {
   return (
     <PageWrapper>
       <TopBar>
-        <TopBar.Title asTitle>Actions</TopBar.Title>
+        <TopBar.Title asTitle>Skills</TopBar.Title>
         <TopBar.Btn backIcon href="/" position="left" />
       </TopBar>
 
@@ -17,23 +17,21 @@ function TodosPage() {
             key={i}
             className="w-full space-y-1 p-3 rounded-component bg-card"
           >
-            <div>
-              <p className="font-bold">
-                Make the SaaS and sell to 100 customers
-              </p>
-              <span className="sub-text">
-                To {new Date().toLocaleString()}
-              </span>
-            </div>
+            <p className="font-bold">Just Do It</p>
+            <span className="sub-text">{new Date().toLocaleTimeString()}</span>
           </div>
         ))}
 
-        <CreateBtn withPlusIcon href="/actions/new">
-          New Action
+        <div className="p-3 border-2 w-full flex-1 border-dashed rounded-component flex justify-center items-center">
+          <p>You haven{"'"}t any skills</p>
+        </div>
+
+        <CreateBtn withPlusIcon href="/skills/new">
+          New Skill
         </CreateBtn>
       </PageItemsWrapper>
     </PageWrapper>
   );
 }
 
-export default TodosPage;
+export default SkillsPage;

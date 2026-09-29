@@ -1,7 +1,3 @@
-import Link from "next/link";
-import { ChevronRightIcon } from "lucide-react";
-
-import { JOURNAL_TYPES } from "@/features/journals/constants";
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
 import CreateBtn from "@/features/general/components/module/CreateBtn/CreateBtn";
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
@@ -16,19 +12,19 @@ function JournalsPage() {
       </TopBar>
 
       <PageItemsWrapper>
-        {Object.keys(JOURNAL_TYPES).map((item) => (
-          <Link
-            key={item}
-            href={`/journals/items?type=${item}`}
-            className="w-full flex items-center justify-between gap-3 p-3 rounded-component bg-card"
+        {Array.from({ length: 12 }).map((_, i) => (
+          <div
+            key={i}
+            className="w-full space-y-1 p-3 rounded-component bg-card"
           >
-            <div>
-              <p className="font-bold">{item}</p>
-              <span className="sub-text">7 Items</span>
-            </div>
-            <ChevronRightIcon className="size-5" />
-          </Link>
+            <p className="font-bold">I feel like bitch, I am the crow</p>
+            <span className="sub-text">{new Date().toLocaleTimeString()}</span>
+          </div>
         ))}
+
+        <div className="p-3 border-2 w-full flex-1 border-dashed rounded-component flex justify-center items-center">
+          <p>You haven{"'"}t any journals</p>
+        </div>
 
         <CreateBtn withPlusIcon href="/journals/new">
           New Journal

@@ -2,7 +2,10 @@ import { PropsWithChildren } from "react";
 
 function PageItemsWrapper(p: PropsWithChildren) {
   return (
-    <div className="flex flex-col justify-start items-start gap-3" {...p} />
+    <div
+      className="w-full flex flex-col justify-start items-start flex-1 gap-3"
+      {...p}
+    />
   );
 }
 

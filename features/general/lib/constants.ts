@@ -1,4 +1,14 @@
-import { ArrowUpWideNarrow, ChartNoAxesColumnIncreasingIcon, CircleCheckBig, HomeIcon, ListFilterIcon, ListIcon, PenLineIcon } from "lucide-react";
+import {
+  ArrowUpWideNarrow,
+  ChartNoAxesColumnIncreasingIcon,
+  CircleCheckBig,
+  HomeIcon,
+  ListFilterIcon,
+  ListIcon,
+  PenLineIcon,
+  TrendingUpIcon,
+  ZapIcon,
+} from "lucide-react";
 import { FeaturesAreas, LifeArea, NavigationLink } from "./types";
 
 export const LIFE_AREAS_DATA: LifeArea[] = [
@@ -28,15 +38,21 @@ export const NAVIGATION_LINKS: NavigationLink[] = [
     Icon: PenLineIcon,
   },
   {
+    href: "/skills",
+    name: "Skills",
+    matchPathname: "/skills",
+    Icon: ZapIcon,
+  },
+  {
     name: "Disciplines",
     href: "/disciplines",
     matchPathname: "/disciplines",
-    Icon: ListFilterIcon,
+    Icon: TrendingUpIcon,
   },
   {
-    name: "Actions",
-    href: "/actions",
-    matchPathname: "/actions",
+    name: "Goals",
+    href: "/goals",
+    matchPathname: "/goals",
     Icon: CircleCheckBig,
   },
 ];

@@ -2,8 +2,8 @@
 
 import { cn } from "cn";
 import Link from "next/link";
-import { PlusIcon } from "lucide-react";
 import { useFormStatus } from "react-dom";
+import { LoaderIcon, PlusIcon } from "lucide-react";
 
 import { Button, ButtonProps } from "../../ui/Button/Button";
 
@@ -24,24 +24,29 @@ function CreateBtn({
 }: CreateLinkBtn) {
   const { pending } = useFormStatus();
 
-  const computedChildren = children || submit ? "Submit" : null;
+  const isDisabled = disabled || pending;
+
+  const computedChildren = children || (submit ? "Submit" : null);
 
   return (
     <Button
       id="create-btn"
-      variant={"card"}
+      variant={"primary"}
       nativeButton={!href}
-      disabled={disabled || pending}
+      disabled={isDisabled}
       type={submit ? "submit" : "button"}
       render={href ? <Link href={href} /> : undefined}
-      className={cn(
-        "glass fixed bottom-21 left-1/2 -translate-x-1/2 min-w-1/2",
-        className,
-      )}
+      className={cn("fixed bottom-21 left-1/2 -translate-x-1/2", className)}
       {...p}
     >
       {withPlusIcon ? <PlusIcon /> : null}
       {withPlusIcon ? <span>{computedChildren}</span> : computedChildren}
+
+      {pending && (
+        <span className="absolute inset-0 flex items-center justify-center rounded-full bg-foreground text-background">
+          <LoaderIcon className="animate-spin" />
+        </span>
+      )}
     </Button>
   );
 }
