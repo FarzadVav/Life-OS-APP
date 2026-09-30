@@ -25,7 +25,7 @@ function RulesPage() {
           <p>You haven{"'"}t any rules</p>
         </div>
 
-        <CreateBtn withPlusIcon href="/rules/new">
+        <CreateBtn href="/rules/new">
           New Rule
         </CreateBtn>
       </PageItemsWrapper>

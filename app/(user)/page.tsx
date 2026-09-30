@@ -1,12 +1,11 @@
+import { Suspense } from "react";
 import { UserIcon } from "lucide-react";
 
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
-import { Button } from "@/features/general/components/ui/Button/Button";
+import TodosTabs from "@/features/todos/components/TodosTabs/TodosTabs";
 import CreateBtn from "@/features/general/components/module/CreateBtn/CreateBtn";
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
 import PageItemsWrapper from "@/features/general/components/static/PageItemsWrapper/PageItemsWrapper";
-import TodosTabs from "@/features/todos/components/TodosTabs/TodosTabs";
-import { Suspense } from "react";
 
 function UserHomePage() {
   return (
@@ -22,9 +21,9 @@ function UserHomePage() {
         <Suspense>
           <TodosTabs />
         </Suspense>
-
-        <CreateBtn withPlusIcon>New Todo</CreateBtn>
       </PageItemsWrapper>
+
+      <CreateBtn>New Todo</CreateBtn>
     </PageWrapper>
   );
 }

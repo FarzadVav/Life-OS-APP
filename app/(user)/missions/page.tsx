@@ -34,7 +34,7 @@ function MissionsPage() {
           Its better to have not more than 3 or 4 missions!
         </p>
 
-        <CreateBtn withPlusIcon href="/missions/new">
+        <CreateBtn href="/missions/new">
           New Mission
         </CreateBtn>
       </PageItemsWrapper>

@@ -26,7 +26,7 @@ function SkillsPage() {
           <p>You haven{"'"}t any skills</p>
         </div>
 
-        <CreateBtn withPlusIcon href="/skills/new">
+        <CreateBtn href="/skills/new">
           New Skill
         </CreateBtn>
       </PageItemsWrapper>

@@ -26,7 +26,7 @@ function JournalsPage() {
           <p>You haven{"'"}t any journals</p>
         </div>
 
-        <CreateBtn withPlusIcon href="/journals/new">
+        <CreateBtn href="/journals/new">
           New Journal
         </CreateBtn>
       </PageItemsWrapper>
