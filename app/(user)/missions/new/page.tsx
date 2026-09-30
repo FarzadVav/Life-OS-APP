@@ -16,8 +16,8 @@ function NewTodoPage() {
   return (
     <PageWrapper>
       <TopBar>
-        <TopBar.Title asTitle>New Goal</TopBar.Title>
-        <TopBar.Btn backIcon href="/goals" position="left" />
+        <TopBar.Title asTitle>New Mission</TopBar.Title>
+        <TopBar.Btn backIcon href="/missions" position="left" />
       </TopBar>
 
       <Form

@@ -3,11 +3,11 @@ import CreateBtn from "@/features/general/components/module/CreateBtn/CreateBtn"
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
 import PageItemsWrapper from "@/features/general/components/static/PageItemsWrapper/PageItemsWrapper";
 
-function HabitsPage() {
+function RulesPage() {
   return (
     <PageWrapper>
       <TopBar>
-        <TopBar.Title asTitle>Disciplines</TopBar.Title>
+        <TopBar.Title asTitle>Rules</TopBar.Title>
         <TopBar.Btn backIcon href="/" position="left" />
       </TopBar>
 
@@ -17,21 +17,20 @@ function HabitsPage() {
             key={i}
             className="w-full space-y-1 p-3 rounded-component bg-card"
           >
-            <p className="font-bold">Go to the gym and do some exersices</p>
-            <span className="sub-text">Every single day</span>
+            <p className="font-bold">Dont smoke</p>
           </div>
         ))}
 
         <div className="p-3 border-2 w-full flex-1 border-dashed rounded-component flex justify-center items-center">
-          <p>You haven{"'"}t any disciplines</p>
+          <p>You haven{"'"}t any rules</p>
         </div>
 
-        <CreateBtn withPlusIcon href="/disciplines/new">
-          New Discipline
+        <CreateBtn withPlusIcon href="/rules/new">
+          New Rule
         </CreateBtn>
       </PageItemsWrapper>
     </PageWrapper>
   );
 }
 
-export default HabitsPage;
+export default RulesPage;

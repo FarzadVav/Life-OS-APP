@@ -3,11 +3,11 @@ import CreateBtn from "@/features/general/components/module/CreateBtn/CreateBtn"
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
 import PageItemsWrapper from "@/features/general/components/static/PageItemsWrapper/PageItemsWrapper";
 
-function GoalsPage() {
+function MissionsPage() {
   return (
     <PageWrapper>
       <TopBar>
-        <TopBar.Title asTitle>Goals</TopBar.Title>
+        <TopBar.Title asTitle>Missions</TopBar.Title>
         <TopBar.Btn backIcon href="/" position="left" />
       </TopBar>
 
@@ -26,12 +26,20 @@ function GoalsPage() {
           </div>
         ))}
 
-        <CreateBtn withPlusIcon href="/goals/new">
-          New Goal
+        <div className="p-3 border-2 w-full flex-1 border-dashed rounded-component flex justify-center items-center">
+          <p>You haven{"'"}t any missions</p>
+        </div>
+
+        <p className="w-full text-center sub-text">
+          Its better to have not more than 3 or 4 missions!
+        </p>
+
+        <CreateBtn withPlusIcon href="/missions/new">
+          New Mission
         </CreateBtn>
       </PageItemsWrapper>
     </PageWrapper>
   );
 }
 
-export default GoalsPage;
+export default MissionsPage;

@@ -1,14 +1,12 @@
 "use client";
 
 import { Button } from "../../ui/Button/Button";
-import useLink from "@/features/general/hooks/useLink";
 import { NAVIGATION_LINKS } from "@/features/general/lib/constants";
 import useMatchPathname from "@/features/general/hooks/useMatchPathname";
+import Link from "next/link";
 
 function Navigation() {
   const checkIsPathnameMatch = useMatchPathname();
-
-  const { navigate } = useLink();
 
   return (
     <div
@@ -22,7 +20,8 @@ function Navigation() {
           return (
             <Button
               key={item.href}
-              onClick={() => navigate(item.href)}
+              nativeButton={false}
+              render={<Link href={item.href} />}
               className="h-full flex-1 flex-col px-0"
               variant={isPathnameMatch ? "card" : "ghost"}
             >

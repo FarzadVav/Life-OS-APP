@@ -26,10 +26,8 @@ type TopBarBackBtnProps = ButtonProps &
 
 function TopBarBtn({
   href,
-  color,
   goBack,
   onClick,
-  variant,
   children,
   backIcon,
   position,
@@ -57,9 +55,8 @@ function TopBarBtn({
   return (
     <Button
       square
+      variant={"ghost"}
       onClick={handleClick}
-      variant={variant || "ghost"}
-      color={color || "foreground"}
       className={cn(
         "absolute",
         position === "left" ? "left-0" : "right-0",

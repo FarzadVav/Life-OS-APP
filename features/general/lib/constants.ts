@@ -1,13 +1,9 @@
 import {
-  ArrowUpWideNarrow,
-  ChartNoAxesColumnIncreasingIcon,
   CircleCheckBig,
   HomeIcon,
-  ListFilterIcon,
-  ListIcon,
+  LayersIcon,
   PenLineIcon,
-  TrendingUpIcon,
-  ZapIcon,
+  ShieldBanIcon,
 } from "lucide-react";
 import { FeaturesAreas, LifeArea, NavigationLink } from "./types";
 
@@ -41,18 +37,18 @@ export const NAVIGATION_LINKS: NavigationLink[] = [
     href: "/skills",
     name: "Skills",
     matchPathname: "/skills",
-    Icon: ZapIcon,
+    Icon: LayersIcon,
   },
   {
-    name: "Disciplines",
-    href: "/disciplines",
-    matchPathname: "/disciplines",
-    Icon: TrendingUpIcon,
+    name: "Rules",
+    href: "/rules",
+    matchPathname: "/rules",
+    Icon: ShieldBanIcon,
   },
   {
-    name: "Goals",
-    href: "/goals",
-    matchPathname: "/goals",
+    name: "Missions",
+    href: "/missions",
+    matchPathname: "/missions",
     Icon: CircleCheckBig,
   },
 ];

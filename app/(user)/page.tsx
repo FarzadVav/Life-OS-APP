@@ -1,4 +1,4 @@
-import { SearchIcon, UserIcon } from "lucide-react";
+import { UserIcon } from "lucide-react";
 
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
 import CreateBtn from "@/features/general/components/module/CreateBtn/CreateBtn";
@@ -9,10 +9,7 @@ function UserHomePage() {
   return (
     <PageWrapper>
       <TopBar>
-        <TopBar.Btn href="/search" position="right">
-          <SearchIcon />
-        </TopBar.Btn>
-        <TopBar.Title asTitle>Today</TopBar.Title>
+        <TopBar.Title asTitle>Todos</TopBar.Title>
         <TopBar.Btn href="/profile" position="left">
           <UserIcon />
         </TopBar.Btn>
