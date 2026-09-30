@@ -20,7 +20,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html lang="en" className={cn("antialiased dark", geist.variable)}>
       <body className="overflow-hidden">
         <SplashScreen>
-          <div className="root">{children}</div>
+          {children}
         </SplashScreen>
       </body>
     </html>
