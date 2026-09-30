@@ -42,7 +42,7 @@ function SplashScreen({ children }: PropsWithChildren) {
               initial={{ scale: 0, translateY: "50%", opacity: 0 }}
               animate={{ scale: 1, translateY: 0, opacity: 1 }}
             >
-              Arrow up
+              Arrow Up
             </motion.p>
           </motion.div>
         )}
