@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { DayPicker, enUS } from "@daypicker/persian";
+import { CheckIcon, ChevronDownIcon } from "lucide-react";
 import { Dialog, Field, Form, Select } from "@base-ui/react";
 import "@daypicker/react/style.css";
 
@@ -33,53 +34,43 @@ type DisciplineDraft = {
 };
 
 const dialogPopupClass = `
+  bg-card
   fixed
-  top-[calc(50%+1.25rem*var(--nested-dialogs))]
   left-1/2
-  -mt-8
-  flex
-  w-[calc(100vw-1.5rem)]
-  max-w-md
+  top-1/2
   -translate-x-1/2
   -translate-y-1/2
+  w-max
+  max-w-[calc(100vw-1.5rem)]
+  max-h-[calc(100dvh-2rem)]
+  flex
   flex-col
   gap-6
-  scale-[calc(1-0.1*var(--nested-dialogs))]
+  p-3
   rounded-component
-  border
-  border-foreground
-  bg-card-thick
-  p-4
-  text-foreground
-  shadow-[0.25rem_0.25rem_0]
-  shadow-black/12
-  transition-[top,scale,opacity]
-  duration-100
-  ease-out
-  after:absolute
-  after:inset-0
-  after:pointer-events-none
-  after:bg-black/5
-  after:opacity-0
-  after:transition-opacity
-  after:duration-100
-  after:ease-out
-  data-ending-style:top-[calc(50%+0.25rem+1.25rem*var(--nested-dialogs))]
-  data-ending-style:scale-[0.96]
+  scale-[calc(1-0.1*var(--nested-dialogs))]
+  transition-all
+  data-ending-style:translate-y-full
   data-ending-style:opacity-0
-  data-nested-dialog-open:after:opacity-100
-  data-starting-style:top-[calc(50%+0.25rem+1.25rem*var(--nested-dialogs))]
-  data-starting-style:scale-[0.96]
+  data-starting-style:translate-y-full
   data-starting-style:opacity-0
 `;
 
-const topLevelDialogPopupClass = `
-  ${dialogPopupClass}
-  max-h-[calc(100dvh-2rem)]
+const dialogBackdropClass = `
+  fixed
+  inset-0
+  min-h-dvh
+  bg-background
+  opacity-90
+  transition-opacity
+  duration-300
+  data-ending-style:opacity-0
+  data-starting-style:opacity-0
+  supports-[-webkit-touch-callout:none]:absolute
 `;
 
 function createId() {
-  return crypto.randomUUID();
+  return (Math.random() * 999999).toString();
 }
 
 function formatDate(date?: Date) {
@@ -87,11 +78,9 @@ function formatDate(date?: Date) {
     return "Not set";
   }
 
-  return new Intl.DateTimeFormat("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  }).format(date);
+  return date.toLocaleDateString("fa-IR", {
+    numberingSystem: "latn",
+  });
 }
 
 function serializeDate(date?: Date) {
@@ -113,32 +102,29 @@ function serializeDate(date?: Date) {
 type DatePickerDialogProps = {
   value?: Date;
   onChange: (date: Date | undefined) => void;
-  label?: string;
 };
 
-function DatePickerDialog({
-  value,
-  onChange,
-  label = "Deadline",
-}: DatePickerDialogProps) {
+function DatePickerDialog({ value, onChange }: DatePickerDialogProps) {
+  const closeRef = useRef<HTMLButtonElement>(null);
+
   return (
     <Dialog.Root>
       <Dialog.Trigger
         render={
           <Button
             type="button"
-            variant="card"
+            variant="outline"
             className="w-full justify-start rounded-md"
           >
-            {label}: {formatDate(value)}
+            Deadline: {formatDate(value)}
           </Button>
         }
       />
 
       <Dialog.Portal>
-        <Dialog.Backdrop className="fixed inset-0 min-h-dvh bg-background opacity-90 transition-opacity duration-300 data-ending-style:opacity-0 data-starting-style:opacity-0 supports-[-webkit-touch-callout:none]:absolute" />
+        <Dialog.Backdrop className={dialogBackdropClass} />
 
-        <Dialog.Popup className={topLevelDialogPopupClass}>
+        <Dialog.Popup className={dialogPopupClass}>
           <div className="relative z-10">
             <DayPicker
               animate
@@ -147,11 +133,17 @@ function DatePickerDialog({
               locale={enUS}
               numerals="latn"
               selected={value}
-              onSelect={onChange}
+              onSelect={(date) => {
+                onChange(date);
+                closeRef.current?.click();
+              }}
             />
 
             <div className="mt-6 flex justify-center">
-              <Dialog.Close render={<Button variant="card">Close</Button>} />
+              <Dialog.Close
+                ref={closeRef}
+                render={<Button variant="ghost">Close</Button>}
+              />
             </div>
           </div>
         </Dialog.Popup>
@@ -196,7 +188,7 @@ function DifficultySelect({
 }) {
   return (
     <Field.Root>
-      <Field.Label className="mb-1 block font-bold">Difficulty</Field.Label>
+      <Field.Label className="mb-1 font-bold">Difficulty</Field.Label>
 
       <Select.Root
         name="difficulty"
@@ -207,48 +199,43 @@ function DifficultySelect({
         }}
         required
       >
-        <Select.Trigger className="flex h-10 w-full items-center justify-between rounded-md border px-3 text-left">
-          <Select.Value placeholder="Select difficulty" />
-
-          <Select.Icon>
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 16 16"
-              fill="currentColor"
-              aria-hidden="true"
+        <Select.Trigger
+          render={
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full justify-between rounded-md"
             >
-              <path d="M4 6h8l-4 4.5z" />
-            </svg>
-          </Select.Icon>
-        </Select.Trigger>
+              <Select.Value placeholder="Select difficulty" />
+
+              <Select.Icon>
+                <ChevronDownIcon />
+              </Select.Icon>
+            </Button>
+          }
+        ></Select.Trigger>
 
         <Select.Portal>
           <Select.Positioner className="z-100">
-            <Select.Popup className="min-w-[var(--anchor-width)] overflow-hidden rounded-md border bg-card-thick p-1 shadow-lg">
-              <Select.List>
+            <Select.Popup className="min-w-(--anchor-width) overflow-hidden rounded-md bg-card-thick p-1">
+              <Select.List className={"p-px"}>
                 {difficultyItems.map((item) => (
                   <Select.Item
                     key={item.value}
                     value={item.value}
-                    className="flex cursor-pointer items-center justify-between rounded-sm px-3 py-2 outline-none data-highlighted:bg-card"
-                  >
-                    <Select.ItemText>{item.label}</Select.ItemText>
-
-                    <Select.ItemIndicator>
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 16 16"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        aria-hidden="true"
+                    render={
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        className="w-full justify-between rounded-md"
                       >
-                        <path d="m3 8.5 3.25 3.25L13 5" />
-                      </svg>
-                    </Select.ItemIndicator>
-                  </Select.Item>
+                        <Select.ItemText>{item.label}</Select.ItemText>
+                        <Select.ItemIndicator>
+                          <CheckIcon />
+                        </Select.ItemIndicator>
+                      </Button>
+                    }
+                  ></Select.Item>
                 ))}
               </Select.List>
             </Select.Popup>
@@ -267,46 +254,25 @@ function DifficultySelect({
 
 function NewMissionPage() {
   const [missionDeadline, setMissionDeadline] = useState<Date>();
-
   const [difficulty, setDifficulty] = useState<number | null>(null);
 
-  /* ---------------------------------------------------------------------- */
-  /* Actions                                                                 */
-  /* ---------------------------------------------------------------------- */
-
   const [actions, setActions] = useState<Action[]>([]);
-
   const [actionDialogOpen, setActionDialogOpen] = useState(false);
-
   const [actionDeleteDialogOpen, setActionDeleteDialogOpen] = useState(false);
-
   const [actionToDelete, setActionToDelete] = useState<Action | null>(null);
-
   const [actionDraft, setActionDraft] = useState<ActionDraft>({
     title: "",
   });
 
-  /* ---------------------------------------------------------------------- */
-  /* Disciplines                                                             */
-  /* ---------------------------------------------------------------------- */
-
   const [disciplines, setDisciplines] = useState<Discipline[]>([]);
-
   const [disciplineDialogOpen, setDisciplineDialogOpen] = useState(false);
-
   const [disciplineDeleteDialogOpen, setDisciplineDeleteDialogOpen] =
     useState(false);
-
   const [disciplineToDelete, setDisciplineToDelete] =
     useState<Discipline | null>(null);
-
   const [disciplineDraft, setDisciplineDraft] = useState<DisciplineDraft>({
     title: "",
   });
-
-  /* ---------------------------------------------------------------------- */
-  /* Action handlers                                                         */
-  /* ---------------------------------------------------------------------- */
 
   function openNewAction() {
     setActionDraft({
@@ -386,10 +352,6 @@ function NewMissionPage() {
 
     closeActionDialog();
   }
-
-  /* ---------------------------------------------------------------------- */
-  /* Discipline handlers                                                     */
-  /* ---------------------------------------------------------------------- */
 
   function openNewDiscipline() {
     setDisciplineDraft({
@@ -483,10 +445,6 @@ function NewMissionPage() {
           });
         }}
       >
-        {/* ---------------------------------------------------------------- */}
-        {/* Mission title                                                    */}
-        {/* ---------------------------------------------------------------- */}
-
         <Field.Root name="title">
           <Field.Label className="block font-bold">Title</Field.Label>
 
@@ -502,18 +460,10 @@ function NewMissionPage() {
           <Field.Error className="sub-text mt-0.5 text-red-400" />
         </Field.Root>
 
-        {/* ---------------------------------------------------------------- */}
-        {/* Difficulty                                                       */}
-        {/* ---------------------------------------------------------------- */}
-
         <DifficultySelect value={difficulty} onChange={setDifficulty} />
 
-        {/* ---------------------------------------------------------------- */}
-        {/* Mission deadline                                                 */}
-        {/* ---------------------------------------------------------------- */}
-
         <Field.Root name="deadline">
-          <Field.Label className="mb-1 block font-bold">Deadline</Field.Label>
+          <Field.Label className="mb-1 font-bold">Deadline</Field.Label>
 
           <DatePickerDialog
             value={missionDeadline}
@@ -527,10 +477,6 @@ function NewMissionPage() {
           />
         </Field.Root>
 
-        {/* ================================================================= */}
-        {/* ACTIONS                                                           */}
-        {/* ================================================================= */}
-
         <Dialog.Root
           open={actionDialogOpen}
           onOpenChange={(open) => {
@@ -543,17 +489,13 @@ function NewMissionPage() {
           }}
         >
           <Field.Root name="actions">
-            <Field.Label className="mb-1 block font-bold">Actions</Field.Label>
-
-            {/* ------------------------------------------------------------ */}
-            {/* Add Action button                                             */}
-            {/* ------------------------------------------------------------ */}
+            <Field.Label className="mb-1 font-bold">Actions</Field.Label>
 
             <Dialog.Trigger
               render={
                 <Button
                   type="button"
-                  variant="card"
+                  variant="outline"
                   className="w-full justify-start rounded-md"
                   onClick={openNewAction}
                 >
@@ -562,26 +504,20 @@ function NewMissionPage() {
               }
             />
 
-            {/* ------------------------------------------------------------ */}
-            {/* Action list on page                                           */}
-            {/* ------------------------------------------------------------ */}
-
             {actions.length > 0 && (
-              <div className="mt-2 space-y-2">
+              <div className="mt-1 space-y-2">
                 {actions.map((action) => (
                   <div
                     key={action.id}
-                    className="flex items-center justify-between gap-3 rounded-md bg-card p-3"
+                    className="flex items-center gap-3 rounded-md bg-card p-3"
                   >
-                    <div className="min-w-0">
-                      <p className="truncate font-medium">{action.title}</p>
+                    <p className="truncate font-medium">{action.title}</p>
 
-                      <p className="sub-text text-sm">
-                        Deadline: {formatDate(action.deadline)}
-                      </p>
-                    </div>
+                    <p className="sub-text text-sm">
+                      {formatDate(action.deadline)}
+                    </p>
 
-                    <div className="flex shrink-0 items-center gap-1">
+                    <div className="flex shrink-0 items-center gap-1 ms-auto">
                       <Button
                         type="button"
                         variant="ghost"
@@ -616,84 +552,75 @@ function NewMissionPage() {
             />
           </Field.Root>
 
-          {/* -------------------------------------------------------------- */}
-          {/* Action dialog                                                   */}
-          {/* -------------------------------------------------------------- */}
-
           <Dialog.Portal>
-            <Dialog.Backdrop className="fixed inset-0 min-h-dvh bg-background opacity-90 transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0 supports-[-webkit-touch-callout:none]:absolute" />
+            <Dialog.Backdrop className={dialogBackdropClass} />
 
-            <Dialog.Popup className={topLevelDialogPopupClass}>
-              <div className="relative z-10 flex min-h-0 flex-col gap-6">
-                <div className="flex flex-col gap-1">
-                  <Dialog.Title className="text-base font-bold">
-                    {actionDraft.id ? "Edit action" : "New action"}
-                  </Dialog.Title>
+            <Dialog.Popup className={dialogPopupClass}>
+              <div className="flex flex-col gap-1">
+                <Dialog.Title className="text-base font-bold">
+                  {actionDraft.id ? "Edit action" : "New action"}
+                </Dialog.Title>
 
-                  <Dialog.Description className="sub-text">
-                    {actionDraft.id
-                      ? "Edit the action details."
-                      : "Create an action for this mission."}
-                  </Dialog.Description>
-                </div>
+                <Dialog.Description className="sub-text">
+                  {actionDraft.id
+                    ? "Edit the action details"
+                    : "Create an action for this mission"}
+                </Dialog.Description>
+              </div>
 
-                <Field.Root name="actionTitle">
-                  <Field.Label className="block font-bold">Title</Field.Label>
+              <Field.Root name="actionTitle">
+                <Field.Label className="mb-1 font-bold">Title</Field.Label>
 
-                  <Field.Control
-                    required
-                    minLength={3}
-                    value={actionDraft.title}
-                    onChange={(event) =>
-                      setActionDraft((current) => ({
-                        ...current,
-                        title: event.target.value,
-                      }))
-                    }
-                    placeholder="Action title..."
-                    className="mt-1 h-10 w-full rounded-md border px-3"
-                  />
+                <Field.Control
+                  required
+                  minLength={3}
+                  value={actionDraft.title}
+                  onChange={(event) =>
+                    setActionDraft((current) => ({
+                      ...current,
+                      title: event.target.value,
+                    }))
+                  }
+                  placeholder="Action title..."
+                  className="h-10 w-full rounded-md border px-3"
+                />
 
-                  <Field.Error className="sub-text mt-0.5 text-red-400" />
-                </Field.Root>
+                <Field.Error className="sub-text mt-0.5 text-red-400" />
+              </Field.Root>
 
-                <Field.Root name="actionDeadline">
-                  <Field.Label className="mb-1 block font-bold">
-                    Deadline
-                  </Field.Label>
+              <Field.Root name="actionDeadline">
+                <Field.Label className="mb-1 font-bold">Deadline</Field.Label>
 
-                  <DatePickerDialog
-                    value={actionDraft.deadline}
-                    onChange={(date) =>
-                      setActionDraft((current) => ({
-                        ...current,
-                        deadline: date,
-                      }))
-                    }
-                  />
-                </Field.Root>
+                <DatePickerDialog
+                  value={actionDraft.deadline}
+                  onChange={(date) =>
+                    setActionDraft((current) => ({
+                      ...current,
+                      deadline: date,
+                    }))
+                  }
+                />
+              </Field.Root>
 
-                <div className="flex items-center justify-end gap-3">
-                  <Dialog.Close
-                    render={
-                      <Button type="button" variant="ghost">
-                        Cancel
-                      </Button>
-                    }
-                  />
+              <div className="flex items-center justify-end gap-3">
+                <Dialog.Close
+                  render={
+                    <Button type="button" variant="ghost">
+                      Cancel
+                    </Button>
+                  }
+                />
 
-                  <Button
-                    type="button"
-                    variant="primary"
-                    disabled={
-                      actionDraft.title.trim().length < 3 ||
-                      !actionDraft.deadline
-                    }
-                    onClick={saveAction}
-                  >
-                    {actionDraft.id ? "Save changes" : "Add action"}
-                  </Button>
-                </div>
+                <Button
+                  type="button"
+                  variant="primary"
+                  disabled={
+                    actionDraft.title.trim().length < 3 || !actionDraft.deadline
+                  }
+                  onClick={saveAction}
+                >
+                  {actionDraft.id ? "Save" : "Add"}
+                </Button>
               </div>
             </Dialog.Popup>
           </Dialog.Portal>
@@ -710,14 +637,14 @@ function NewMissionPage() {
           }}
         >
           <Dialog.Portal>
-            <Dialog.Backdrop className="fixed inset-0 min-h-dvh bg-background opacity-90 transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0" />
+            <Dialog.Backdrop className={dialogBackdropClass} />
 
-            <Dialog.Popup className="fixed top-1/2 left-1/2 z-50 w-[calc(100vw-1.5rem)] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-component bg-card-thick p-4">
+            <Dialog.Popup className={dialogPopupClass}>
               <Dialog.Title className="font-bold">Delete action?</Dialog.Title>
 
               <Dialog.Description className="sub-text mt-1">
                 {actionToDelete
-                  ? `"${actionToDelete.title}" will be removed from this mission.`
+                  ? `"${actionToDelete.title}" will be removed from this mission`
                   : ""}
               </Dialog.Description>
 
@@ -738,10 +665,6 @@ function NewMissionPage() {
           </Dialog.Portal>
         </Dialog.Root>
 
-        {/* ================================================================= */}
-        {/* DISCIPLINES                                                       */}
-        {/* ================================================================= */}
-
         <Dialog.Root
           open={disciplineDialogOpen}
           onOpenChange={(open) => {
@@ -754,43 +677,33 @@ function NewMissionPage() {
           }}
         >
           <Field.Root name="disciplines">
-            <Field.Label className="mb-1 block font-bold">
-              Disciplines
-            </Field.Label>
-
-            {/* ------------------------------------------------------------ */}
-            {/* Add Discipline button                                         */}
-            {/* ------------------------------------------------------------ */}
+            <Field.Label className="mb-1 font-bold">Disciplines</Field.Label>
 
             <Dialog.Trigger
               render={
                 <Button
                   type="button"
-                  variant="card"
-                  className="w-full justify-start rounded-md"
+                  variant="outline"
                   onClick={openNewDiscipline}
+                  className="w-full justify-start rounded-md"
                 >
                   Add discipline
                 </Button>
               }
             />
 
-            {/* ------------------------------------------------------------ */}
-            {/* Discipline list on page                                      */}
-            {/* ------------------------------------------------------------ */}
-
             {disciplines.length > 0 && (
-              <div className="mt-2 space-y-2">
+              <div className="mt-1 space-y-2">
                 {disciplines.map((discipline) => (
                   <div
                     key={discipline.id}
-                    className="flex items-center justify-between gap-3 rounded-md bg-card p-3"
+                    className="flex items-center gap-3 rounded-md bg-card p-3"
                   >
                     <p className="min-w-0 truncate font-medium">
                       {discipline.title}
                     </p>
 
-                    <div className="flex shrink-0 items-center gap-1">
+                    <div className="flex shrink-0 items-center gap-1 ms-auto">
                       <Button
                         type="button"
                         variant="ghost"
@@ -819,14 +732,10 @@ function NewMissionPage() {
             />
           </Field.Root>
 
-          {/* -------------------------------------------------------------- */}
-          {/* Discipline dialog                                               */}
-          {/* -------------------------------------------------------------- */}
-
           <Dialog.Portal>
-            <Dialog.Backdrop className="fixed inset-0 min-h-dvh bg-background opacity-90 transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0 supports-[-webkit-touch-callout:none]:absolute" />
+            <Dialog.Backdrop className={dialogBackdropClass} />
 
-            <Dialog.Popup className={topLevelDialogPopupClass}>
+            <Dialog.Popup className={dialogPopupClass}>
               <div className="relative z-10 flex min-h-0 flex-col gap-6">
                 <div className="flex flex-col gap-1">
                   <Dialog.Title className="text-base font-bold">
@@ -835,13 +744,13 @@ function NewMissionPage() {
 
                   <Dialog.Description className="sub-text">
                     {disciplineDraft.id
-                      ? "Edit the discipline title."
-                      : "Create a discipline for this mission."}
+                      ? "Edit the discipline title"
+                      : "Create a discipline for this mission"}
                   </Dialog.Description>
                 </div>
 
                 <Field.Root name="disciplineTitle">
-                  <Field.Label className="block font-bold">Title</Field.Label>
+                  <Field.Label className="mb-1 font-bold">Title</Field.Label>
 
                   <Field.Control
                     required
@@ -854,7 +763,7 @@ function NewMissionPage() {
                       }))
                     }
                     placeholder="Discipline title..."
-                    className="mt-1 h-10 w-full rounded-md border px-3"
+                    className="h-10 w-full rounded-md border px-3"
                   />
 
                   <Field.Error className="sub-text mt-0.5 text-red-400" />
@@ -875,7 +784,7 @@ function NewMissionPage() {
                     disabled={disciplineDraft.title.trim().length < 3}
                     onClick={saveDiscipline}
                   >
-                    {disciplineDraft.id ? "Save changes" : "Add discipline"}
+                    {disciplineDraft.id ? "Save" : "Add"}
                   </Button>
                 </div>
               </div>
@@ -894,22 +803,18 @@ function NewMissionPage() {
           }}
         >
           <Dialog.Portal>
-            {/* Intentionally no Backdrop here. */}
-
             <Dialog.Popup className={dialogPopupClass}>
-              <div className="relative z-10 flex flex-col gap-1">
-                <Dialog.Title className="text-base font-bold">
-                  Delete discipline?
-                </Dialog.Title>
+              <Dialog.Title className="text-base font-bold">
+                Delete discipline?
+              </Dialog.Title>
 
-                <Dialog.Description className="sub-text">
-                  {disciplineToDelete
-                    ? `"${disciplineToDelete.title}" will be removed from this mission.`
-                    : "This discipline will be removed from this mission."}
-                </Dialog.Description>
-              </div>
+              <Dialog.Description className="sub-text">
+                {disciplineToDelete
+                  ? `"${disciplineToDelete.title}" will be removed from this mission`
+                  : "This discipline will be removed from this mission"}
+              </Dialog.Description>
 
-              <div className="relative z-10 flex items-center justify-end gap-3">
+              <div className="flex items-center justify-end gap-3">
                 <Dialog.Close
                   render={
                     <Button type="button" variant="ghost">
@@ -929,26 +834,6 @@ function NewMissionPage() {
             </Dialog.Popup>
           </Dialog.Portal>
         </Dialog.Root>
-
-        {/* ---------------------------------------------------------------- */}
-        {/* Locked                                                            */}
-        {/* --------   {/* --------
-        <Field.Root name="isLocked">
-          <Field.Label className="flex items-center gap-3">
-            Is locked?
-            <Switch.Root
-              checked={isLocked}
-              onCheckedChange={setIsLocked}
-              className="flex h-5 w-9 shrink-0 rounded-full border border-foreground bg-card p-0.5 transition-colors duration-150 ease-[ease] data-checked:bg-foreground focus-visible:outline-1 focus-visible:outline-offset-2 focus-visible:outline-foreground"
-            >
-              <Switch.Thumb className="size-3.5 rounded-full bg-foreground transition-[translate,background-color] duration-150 ease-[ease] data-checked:translate-x-4 data-checked:bg-background" />
-            </Switch.Root>
-          </Field.Label>
-        </Field.Root>
-
-        {/* ---------------------------------------------------------------- */}
-        {/* Submit                                                            */}
-        {/* ---------------------------------------------------------------- */}
 
         <CreateBtn submit />
       </Form>

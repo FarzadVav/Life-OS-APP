@@ -11,13 +11,17 @@ const buttonVariants = cva(
     "inline-flex items-center justify-center gap-1.5",
     "whitespace-nowrap outline-none select-none",
     "disabled:pointer-events-none disabled:opacity-50",
-    "focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
   ],
   {
     variants: {
       variant: {
-        primary: ["bg-foreground", "text-background", "hover:bg-foreground/90"],
-        ghost: ["hover:bg-foreground/5"],
+        primary: [
+          "bg-foreground",
+          "text-background",
+          "hover:bg-foreground/90",
+          "focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+        ],
+        ghost: ["hover:bg-foreground/5", "focus-visible:ring-1 focus-visible:bg-foreground/5"],
         outline: ["border hover:bg-foreground/5"],
         card: ["bg-card", "hover:bg-card/90"],
       },
