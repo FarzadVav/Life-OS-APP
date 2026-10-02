@@ -1,6 +1,7 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { DayPicker, enUS } from "@daypicker/persian";
 import { CheckIcon, ChevronDownIcon } from "lucide-react";
 import { Dialog, Field, Form, Select } from "@base-ui/react";
@@ -11,6 +12,32 @@ import { Button } from "@/features/general/components/ui/Button/Button";
 import CreateBtn from "@/features/general/components/module/CreateBtn/CreateBtn";
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
 
+/* -------------------------------------------------------------------------- */
+/* Types                                                                      */
+/* -------------------------------------------------------------------------- */
+
+type MissionAction = {
+  id: number;
+  title: string;
+  deadline: string;
+  isDone: boolean;
+};
+
+type MissionDiscipline = {
+  id: number;
+  title: string;
+  repeatInterval: string;
+};
+
+type Mission = {
+  id: number;
+  title: string;
+  deadline: string;
+  difficulty: number;
+  actions: MissionAction[];
+  disciplines: MissionDiscipline[];
+};
+
 type Action = {
   id: string;
   title: string;
@@ -20,6 +47,7 @@ type Action = {
 type Discipline = {
   id: string;
   title: string;
+  repeatInterval?: string;
 };
 
 type ActionDraft = {
@@ -32,6 +60,267 @@ type DisciplineDraft = {
   id?: string;
   title: string;
 };
+
+/* -------------------------------------------------------------------------- */
+/* Mock data                                                                  */
+/* -------------------------------------------------------------------------- */
+
+const missions: Mission[] = [
+  {
+    id: 1,
+    title: "Build and launch my SaaS",
+    deadline: "2026-12-20",
+    difficulty: 5,
+    actions: [
+      {
+        id: 1,
+        title: "Finalize MVP feature set",
+        deadline: "2026-10-15",
+        isDone: true,
+      },
+      {
+        id: 2,
+        title: "Build landing page",
+        deadline: "2026-10-25",
+        isDone: true,
+      },
+      {
+        id: 3,
+        title: "Implement payment system",
+        deadline: "2026-11-05",
+        isDone: false,
+      },
+      {
+        id: 4,
+        title: "Deploy production version",
+        deadline: "2026-11-20",
+        isDone: false,
+      },
+      {
+        id: 5,
+        title: "Acquire first 10 customers",
+        deadline: "2026-12-20",
+        isDone: false,
+      },
+    ],
+    disciplines: [
+      {
+        id: 1,
+        title: "Work on the product every day",
+        repeatInterval: "Daily",
+      },
+      {
+        id: 2,
+        title: "Talk to potential customers",
+        repeatInterval: "3 times / week",
+      },
+      {
+        id: 3,
+        title: "Publish business-related content",
+        repeatInterval: "2 times / week",
+      },
+    ],
+  },
+  {
+    id: 2,
+    title: "Reach B2 English level",
+    deadline: "2027-01-15",
+    difficulty: 4,
+    actions: [
+      {
+        id: 1,
+        title: "Finish Vocabulary in Use B2",
+        deadline: "2026-11-15",
+        isDone: true,
+      },
+      {
+        id: 2,
+        title: "Read the first English book",
+        deadline: "2026-11-30",
+        isDone: false,
+      },
+      {
+        id: 3,
+        title: "Read the second English book",
+        deadline: "2026-12-20",
+        isDone: false,
+      },
+      {
+        id: 4,
+        title: "Finish B2 grammar review",
+        deadline: "2027-01-05",
+        isDone: false,
+      },
+    ],
+    disciplines: [
+      {
+        id: 1,
+        title: "English study",
+        repeatInterval: "Daily",
+      },
+      {
+        id: 2,
+        title: "Watch English content",
+        repeatInterval: "Daily",
+      },
+    ],
+  },
+  {
+    id: 3,
+    title: "Reach 20 pull-ups",
+    deadline: "2026-11-30",
+    difficulty: 4,
+    actions: [
+      {
+        id: 1,
+        title: "Reach 12 strict pull-ups",
+        deadline: "2026-10-20",
+        isDone: true,
+      },
+      {
+        id: 2,
+        title: "Reach 15 strict pull-ups",
+        deadline: "2026-11-05",
+        isDone: false,
+      },
+      {
+        id: 3,
+        title: "Reach 18 strict pull-ups",
+        deadline: "2026-11-20",
+        isDone: false,
+      },
+      {
+        id: 4,
+        title: "Reach 20 strict pull-ups",
+        deadline: "2026-11-30",
+        isDone: false,
+      },
+    ],
+    disciplines: [
+      {
+        id: 1,
+        title: "Pull-up training",
+        repeatInterval: "3 times / week",
+      },
+      {
+        id: 2,
+        title: "Track bodyweight",
+        repeatInterval: "Weekly",
+      },
+    ],
+  },
+  {
+    id: 4,
+    title: "Build my personal brand",
+    deadline: "2027-02-01",
+    difficulty: 5,
+    actions: [
+      {
+        id: 1,
+        title: "Define personal positioning",
+        deadline: "2026-10-20",
+        isDone: false,
+      },
+      {
+        id: 2,
+        title: "Build portfolio website",
+        deadline: "2026-11-10",
+        isDone: false,
+      },
+      {
+        id: 3,
+        title: "Prepare first 10 content ideas",
+        deadline: "2026-11-20",
+        isDone: false,
+      },
+      {
+        id: 4,
+        title: "Publish first case study",
+        deadline: "2026-12-01",
+        isDone: false,
+      },
+      {
+        id: 5,
+        title: "Build professional network",
+        deadline: "2027-01-15",
+        isDone: false,
+      },
+    ],
+    disciplines: [
+      {
+        id: 1,
+        title: "Create or document something",
+        repeatInterval: "3 times / week",
+      },
+      {
+        id: 2,
+        title: "Reach out to people",
+        repeatInterval: "2 times / week",
+      },
+    ],
+  },
+  {
+    id: 5,
+    title: "Read 6 English books",
+    deadline: "2027-01-01",
+    difficulty: 3,
+    actions: [
+      {
+        id: 1,
+        title: "Choose six books",
+        deadline: "2026-10-10",
+        isDone: true,
+      },
+      {
+        id: 2,
+        title: "Finish book #1",
+        deadline: "2026-10-31",
+        isDone: false,
+      },
+      {
+        id: 3,
+        title: "Finish book #2",
+        deadline: "2026-11-15",
+        isDone: false,
+      },
+      {
+        id: 4,
+        title: "Finish book #3",
+        deadline: "2026-11-30",
+        isDone: false,
+      },
+      {
+        id: 5,
+        title: "Finish book #4",
+        deadline: "2026-12-15",
+        isDone: false,
+      },
+      {
+        id: 6,
+        title: "Finish book #5",
+        deadline: "2026-12-25",
+        isDone: false,
+      },
+      {
+        id: 7,
+        title: "Finish book #6",
+        deadline: "2027-01-01",
+        isDone: false,
+      },
+    ],
+    disciplines: [
+      {
+        id: 1,
+        title: "Read English",
+        repeatInterval: "Daily",
+      },
+    ],
+  },
+];
+
+/* -------------------------------------------------------------------------- */
+/* Helpers                                                                    */
+/* -------------------------------------------------------------------------- */
 
 const dialogPopupClass = `
   bg-card
@@ -71,6 +360,14 @@ const dialogBackdropClass = `
 
 function createId() {
   return (Math.random() * 999999).toString();
+}
+
+function parseDate(date?: string) {
+  if (!date) {
+    return undefined;
+  }
+
+  return new Date(`${date}T00:00:00`);
 }
 
 function formatDate(date?: Date) {
@@ -213,12 +510,12 @@ function DifficultySelect({
               </Select.Icon>
             </Button>
           }
-        ></Select.Trigger>
+        />
 
         <Select.Portal>
           <Select.Positioner className="z-100">
             <Select.Popup className="min-w-(--anchor-width) overflow-hidden rounded-md bg-card-thick p-1">
-              <Select.List className={"p-px"}>
+              <Select.List className="p-px">
                 {difficultyItems.map((item) => (
                   <Select.Item
                     key={item.value}
@@ -230,12 +527,13 @@ function DifficultySelect({
                         className="w-full justify-between rounded-md"
                       >
                         <Select.ItemText>{item.label}</Select.ItemText>
+
                         <Select.ItemIndicator>
                           <CheckIcon />
                         </Select.ItemIndicator>
                       </Button>
                     }
-                  ></Select.Item>
+                  />
                 ))}
               </Select.List>
             </Select.Popup>
@@ -253,6 +551,12 @@ function DifficultySelect({
 /* -------------------------------------------------------------------------- */
 
 function NewMissionPage() {
+  const searchParams = useSearchParams();
+
+  const editId = searchParams.get("editId");
+  const isEditMode = Boolean(editId);
+
+  const [title, setTitle] = useState("");
   const [missionDeadline, setMissionDeadline] = useState<Date>();
   const [difficulty, setDifficulty] = useState<number | null>(null);
 
@@ -273,6 +577,56 @@ function NewMissionPage() {
   const [disciplineDraft, setDisciplineDraft] = useState<DisciplineDraft>({
     title: "",
   });
+
+  /* ------------------------------------------------------------------------ */
+  /* Load mission when editing                                                */
+  /* ------------------------------------------------------------------------ */
+
+  useEffect(() => {
+    if (!editId) {
+      queueMicrotask(() => {
+        setTitle("");
+        setMissionDeadline(undefined);
+        setDifficulty(null);
+        setActions([]);
+        setDisciplines([]);
+      });
+
+      return;
+    }
+
+    const mission = missions.find((item) => String(item.id) === editId);
+
+    if (!mission) {
+      return;
+    }
+
+    queueMicrotask(() => {
+      setTitle(mission.title);
+      setMissionDeadline(parseDate(mission.deadline));
+      setDifficulty(mission.difficulty);
+
+      setActions(
+        mission.actions.map((action) => ({
+          id: String(action.id),
+          title: action.title,
+          deadline: parseDate(action.deadline)!,
+        })),
+      );
+
+      setDisciplines(
+        mission.disciplines.map((discipline) => ({
+          id: String(discipline.id),
+          title: discipline.title,
+          repeatInterval: discipline.repeatInterval,
+        })),
+      );
+    });
+  }, [editId]);
+
+  /* ------------------------------------------------------------------------ */
+  /* Actions                                                                  */
+  /* ------------------------------------------------------------------------ */
 
   function openNewAction() {
     setActionDraft({
@@ -309,9 +663,9 @@ function NewMissionPage() {
   }
 
   function saveAction() {
-    const title = actionDraft.title.trim();
+    const nextTitle = actionDraft.title.trim();
 
-    if (!title || !actionDraft.deadline) {
+    if (!nextTitle || !actionDraft.deadline) {
       return;
     }
 
@@ -321,7 +675,7 @@ function NewMissionPage() {
           action.id === actionDraft.id
             ? {
                 id: action.id,
-                title,
+                title: nextTitle,
                 deadline: actionDraft.deadline!,
               }
             : action,
@@ -332,7 +686,7 @@ function NewMissionPage() {
         ...current,
         {
           id: createId(),
-          title,
+          title: nextTitle,
           deadline: actionDraft.deadline!,
         },
       ]);
@@ -352,6 +706,10 @@ function NewMissionPage() {
 
     closeActionDialog();
   }
+
+  /* ------------------------------------------------------------------------ */
+  /* Disciplines                                                              */
+  /* ------------------------------------------------------------------------ */
 
   function openNewDiscipline() {
     setDisciplineDraft({
@@ -386,9 +744,9 @@ function NewMissionPage() {
   }
 
   function saveDiscipline() {
-    const title = disciplineDraft.title.trim();
+    const nextTitle = disciplineDraft.title.trim();
 
-    if (!title) {
+    if (!nextTitle) {
       return;
     }
 
@@ -397,8 +755,8 @@ function NewMissionPage() {
         current.map((discipline) =>
           discipline.id === disciplineDraft.id
             ? {
-                id: discipline.id,
-                title,
+                ...discipline,
+                title: nextTitle,
               }
             : discipline,
         ),
@@ -408,7 +766,7 @@ function NewMissionPage() {
         ...current,
         {
           id: createId(),
-          title,
+          title: nextTitle,
         },
       ]);
     }
@@ -428,31 +786,58 @@ function NewMissionPage() {
     closeDisciplineDialog();
   }
 
+  /* ------------------------------------------------------------------------ */
+  /* Render                                                                   */
+  /* ------------------------------------------------------------------------ */
+
   return (
     <PageWrapper>
       <TopBar>
-        <TopBar.Title asTitle>New Mission</TopBar.Title>
+        <TopBar.Title asTitle>
+          {isEditMode ? "Edit Mission" : "New Mission"}
+        </TopBar.Title>
 
         <TopBar.Btn backIcon href="/missions" position="left" />
       </TopBar>
 
       <Form
         className="w-full space-y-6"
-        aria-label="Create new mission"
+        aria-label={isEditMode ? "Edit mission" : "Create new mission"}
         action={async () => {
-          return await new Promise((resolveInner) => {
-            setTimeout(resolveInner, 5000);
-          });
+          const payload = {
+            id: editId ?? undefined,
+            title,
+            difficulty,
+            deadline: serializeDate(missionDeadline),
+            actions: actions.map((action) => ({
+              id: action.id,
+              title: action.title,
+              deadline: serializeDate(action.deadline),
+            })),
+            disciplines,
+          };
+
+          console.log(
+            isEditMode ? "Update mission:" : "Create mission:",
+            payload,
+          );
+
+          await new Promise((resolve) => setTimeout(resolve, 500));
         }}
       >
+        {/* ---------------------------------------------------------------- */}
+        {/* Title                                                            */}
+        {/* ---------------------------------------------------------------- */}
+
         <Field.Root name="title">
           <Field.Label className="block font-bold">Title</Field.Label>
 
           <Field.Control
             required
             minLength={3}
-            defaultValue=""
             pattern=".*[A-Za-z].*"
+            value={title}
+            onChange={(event) => setTitle(event.target.value)}
             placeholder="Title..."
             className="h-10 w-full rounded-md border px-3"
           />
@@ -460,7 +845,15 @@ function NewMissionPage() {
           <Field.Error className="sub-text mt-0.5 text-red-400" />
         </Field.Root>
 
+        {/* ---------------------------------------------------------------- */}
+        {/* Difficulty                                                       */}
+        {/* ---------------------------------------------------------------- */}
+
         <DifficultySelect value={difficulty} onChange={setDifficulty} />
+
+        {/* ---------------------------------------------------------------- */}
+        {/* Deadline                                                         */}
+        {/* ---------------------------------------------------------------- */}
 
         <Field.Root name="deadline">
           <Field.Label className="mb-1 font-bold">Deadline</Field.Label>
@@ -476,6 +869,10 @@ function NewMissionPage() {
             value={serializeDate(missionDeadline)}
           />
         </Field.Root>
+
+        {/* ---------------------------------------------------------------- */}
+        {/* Actions                                                          */}
+        {/* ---------------------------------------------------------------- */}
 
         <Dialog.Root
           open={actionDialogOpen}
@@ -517,7 +914,7 @@ function NewMissionPage() {
                       {formatDate(action.deadline)}
                     </p>
 
-                    <div className="flex shrink-0 items-center gap-1 ms-auto">
+                    <div className="ms-auto flex shrink-0 items-center gap-1">
                       <Button
                         type="button"
                         variant="ghost"
@@ -626,6 +1023,10 @@ function NewMissionPage() {
           </Dialog.Portal>
         </Dialog.Root>
 
+        {/* ---------------------------------------------------------------- */}
+        {/* Delete Action                                                    */}
+        {/* ---------------------------------------------------------------- */}
+
         <Dialog.Root
           open={actionDeleteDialogOpen}
           onOpenChange={(open) => {
@@ -665,6 +1066,10 @@ function NewMissionPage() {
           </Dialog.Portal>
         </Dialog.Root>
 
+        {/* ---------------------------------------------------------------- */}
+        {/* Disciplines                                                      */}
+        {/* ---------------------------------------------------------------- */}
+
         <Dialog.Root
           open={disciplineDialogOpen}
           onOpenChange={(open) => {
@@ -703,7 +1108,7 @@ function NewMissionPage() {
                       {discipline.title}
                     </p>
 
-                    <div className="flex shrink-0 items-center gap-1 ms-auto">
+                    <div className="ms-auto flex shrink-0 items-center gap-1">
                       <Button
                         type="button"
                         variant="ghost"
@@ -792,6 +1197,10 @@ function NewMissionPage() {
           </Dialog.Portal>
         </Dialog.Root>
 
+        {/* ---------------------------------------------------------------- */}
+        {/* Delete Discipline                                                */}
+        {/* ---------------------------------------------------------------- */}
+
         <Dialog.Root
           open={disciplineDeleteDialogOpen}
           onOpenChange={(open) => {
@@ -803,6 +1212,8 @@ function NewMissionPage() {
           }}
         >
           <Dialog.Portal>
+            <Dialog.Backdrop className={dialogBackdropClass} />
+
             <Dialog.Popup className={dialogPopupClass}>
               <Dialog.Title className="text-base font-bold">
                 Delete discipline?
@@ -834,6 +1245,10 @@ function NewMissionPage() {
             </Dialog.Popup>
           </Dialog.Portal>
         </Dialog.Root>
+
+        {/* ---------------------------------------------------------------- */}
+        {/* Submit                                                           */}
+        {/* ---------------------------------------------------------------- */}
 
         <CreateBtn submit />
       </Form>
