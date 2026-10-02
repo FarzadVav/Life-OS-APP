@@ -18,7 +18,7 @@ const geist = Geist({
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={cn("antialiased dark", geist.variable)}>
-      <body className="overflow-hidden">
+      <body className="overflow-hidden max-w-3xl mx-auto">
         <SplashScreen>
           {children}
         </SplashScreen>

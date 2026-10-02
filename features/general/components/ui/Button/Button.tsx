@@ -18,6 +18,7 @@ const buttonVariants = cva(
       variant: {
         primary: ["bg-foreground", "text-background", "hover:bg-foreground/90"],
         ghost: ["hover:bg-foreground/5"],
+        outline: ["border hover:bg-foreground/5"],
         card: ["bg-card", "hover:bg-card/90"],
       },
       square: {
