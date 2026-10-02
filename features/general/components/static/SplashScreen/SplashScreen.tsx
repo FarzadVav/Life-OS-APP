@@ -50,7 +50,7 @@ function SplashScreen({ children }: PropsWithChildren) {
 
       <motion.div
         className="root"
-        transition={{ delay: 2.1 }}
+        transition={{ delay: 2.1, duration: 0.5 }}
         initial={{ opacity: 0, filter: "blur(5px)" }}
         animate={{ opacity: 1, filter: "none" }}
       >
