@@ -18,8 +18,19 @@ function SplashScreen({ children }: PropsWithChildren) {
   return (
     <>
       <AnimatePresence>
-        {isPaused ? null : (
+        {isPaused ? (
           <motion.div
+            key={"root"}
+            className="root"
+            transition={{ duration: 0.5 }}
+            initial={{ opacity: 0, filter: "blur(5px)" }}
+            animate={{ opacity: 1, filter: "none" }}
+          >
+            {children}
+          </motion.div>
+        ) : (
+          <motion.div
+            key={"splash"}
             transition={{ duration: 0.15 }}
             exit={{ scale: 1.1, opacity: 0 }}
             className="fixed inset-0 z-50 flex h-dvh w-screen items-center justify-center flex-col gap-3 bg-background"
@@ -47,15 +58,6 @@ function SplashScreen({ children }: PropsWithChildren) {
           </motion.div>
         )}
       </AnimatePresence>
-
-      <motion.div
-        className="root"
-        transition={{ delay: 2.1, duration: 0.5 }}
-        initial={{ opacity: 0, filter: "blur(5px)" }}
-        animate={{ opacity: 1, filter: "none" }}
-      >
-        {children}
-      </motion.div>
     </>
   );
 }

@@ -37,7 +37,7 @@ function TodosTabs() {
       </div>
 
       <div className="w-full overflow-hidden rounded-component">
-        <AnimatePresence mode="wait">
+        <AnimatePresence mode="wait" initial={false}>
           {activeTab === "today" ? (
             <motion.div
               key={"today"}

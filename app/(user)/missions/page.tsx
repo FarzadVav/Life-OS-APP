@@ -664,7 +664,7 @@ function MissionsPage() {
                   initial={{ width: 0 }}
                   className="h-full rounded-full bg-foreground"
                   animate={{ width: `${progress}%` }}
-                  transition={{ duration: 1, ease: "easeOut", delay: 2.6 }}
+                  transition={{ duration: 1, ease: "easeOut" }}
                 />
               </div>
             </button>
