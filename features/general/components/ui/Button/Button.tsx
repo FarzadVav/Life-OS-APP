@@ -23,7 +23,7 @@ const buttonVariants = cva(
         ],
         ghost: ["hover:bg-foreground/5", "focus-visible:ring-1 focus-visible:bg-foreground/5"],
         outline: ["border hover:bg-foreground/5"],
-        card: ["bg-card", "hover:bg-card/90"],
+        card: ["bg-card [.bg-card_&]:bg-card-thick", "hover:bg-card/90 [.bg-card_&]:hover:bg-card-thick/90"],
       },
       square: {
         true: "w-10 px-0",

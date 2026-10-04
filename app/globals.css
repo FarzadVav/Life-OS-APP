@@ -39,8 +39,8 @@
 .dark {
   --background: #101010;
   --foreground: #fafafa;
-  --card: #202020;
-  --card-thick: #303030;
+  --card: #191919;
+  --card-thick: #252525;
 }
 
 @layer base {
@@ -83,8 +83,12 @@
   @apply text-lg font-bold;
 }
 
+@utility muted-text {
+  @apply opacity-60;
+}
+
 @utility sub-text {
-  @apply text-sm opacity-60;
+  @apply text-sm muted-text;
 }
 
 @utility glass {

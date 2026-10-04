@@ -5,12 +5,13 @@ import { Drawer as BaseUIDrawer } from "@base-ui/react";
 
 type DrawerProps = PropsWithChildren & {
   trigger: ReactElement;
+  nativeButton?: boolean;
 };
 
-function LocalDrawer({ children, trigger }: DrawerProps) {
+function LocalDrawer({ children, trigger, nativeButton }: DrawerProps) {
   return (
     <BaseUIDrawer.Root>
-      <BaseUIDrawer.Trigger render={trigger} />
+      <BaseUIDrawer.Trigger render={trigger} nativeButton={nativeButton} />
       <BaseUIDrawer.Portal>
         <BaseUIDrawer.Backdrop className="[--backdrop-opacity:0.9] [--bleed:3rem] fixed inset-0 min-h-dvh bg-background opacity-[calc(var(--backdrop-opacity)*(1-var(--drawer-swipe-progress)))] transition-opacity duration-300 data-swiping:duration-0 data-ending-style:opacity-0 data-starting-style:opacity-0 supports-[-webkit-touch-callout:none]:absolute" />
 
