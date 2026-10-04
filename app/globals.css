@@ -79,6 +79,10 @@
   isolation: isolate;
 }
 
+@utility input {
+  @apply h-10 w-full rounded-md border px-3;
+}
+
 @utility title {
   @apply text-lg font-bold;
 }

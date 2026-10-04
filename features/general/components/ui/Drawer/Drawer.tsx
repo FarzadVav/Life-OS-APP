@@ -3,12 +3,12 @@
 import { PropsWithChildren, ReactElement } from "react";
 import { Drawer as BaseUIDrawer } from "@base-ui/react";
 
-type DrawerProps = PropsWithChildren & {
+type LocalDrawerProps = PropsWithChildren & {
   trigger: ReactElement;
   nativeButton?: boolean;
 };
 
-function LocalDrawer({ children, trigger, nativeButton }: DrawerProps) {
+function LocalDrawer({ children, trigger, nativeButton }: LocalDrawerProps) {
   return (
     <BaseUIDrawer.Root>
       <BaseUIDrawer.Trigger render={trigger} nativeButton={nativeButton} />

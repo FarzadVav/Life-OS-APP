@@ -28,8 +28,8 @@ function Difficulty({ value }: { value: number }) {
       {Array.from({ length: 5 }).map((_, index) => (
         <div
           key={index}
-          className={`h-1.5 w-4 rounded-full ${
-            index < value ? "bg-foreground" : "bg-muted"
+          className={`h-1.5 w-1/5 rounded-full ${
+            index < value ? "bg-foreground" : "bg-card-thick"
           }`}
         />
       ))}

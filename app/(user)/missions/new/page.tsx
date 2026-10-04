@@ -1,376 +1,36 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import { DayPicker, enUS } from "@daypicker/persian";
-import { CheckIcon, ChevronDownIcon } from "lucide-react";
-import { Dialog, Field, Form, Select } from "@base-ui/react";
+import { Field, Form, Select } from "@base-ui/react";
+import { CheckIcon, ChevronDownIcon, Trash2Icon, EditIcon } from "lucide-react";
 import "@daypicker/react/style.css";
 
+import { missions } from "@/features/missions/constants";
+import Dialog from "@/features/general/components/ui/Dialog/Dialog";
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
 import { Button } from "@/features/general/components/ui/Button/Button";
 import CreateBtn from "@/features/general/components/module/CreateBtn/CreateBtn";
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
+import type {
+  MissionAction,
+  MissionDiscipline,
+} from "@/features/missions/types";
 
-/* -------------------------------------------------------------------------- */
-/* Types                                                                      */
-/* -------------------------------------------------------------------------- */
-
-type MissionAction = {
-  id: number;
-  title: string;
-  deadline: string;
-  isDone: boolean;
-};
-
-type MissionDiscipline = {
-  id: number;
-  title: string;
-  repeatInterval: string;
-};
-
-type Mission = {
-  id: number;
-  title: string;
-  deadline: string;
-  difficulty: number;
-  actions: MissionAction[];
-  disciplines: MissionDiscipline[];
-};
-
-type Action = {
-  id: string;
-  title: string;
-  deadline: Date;
-};
-
-type Discipline = {
-  id: string;
-  title: string;
-  repeatInterval?: string;
-};
-
-type ActionDraft = {
-  id?: string;
-  title: string;
-  deadline?: Date;
-};
-
-type DisciplineDraft = {
-  id?: string;
-  title: string;
-};
-
-/* -------------------------------------------------------------------------- */
-/* Mock data                                                                  */
-/* -------------------------------------------------------------------------- */
-
-const missions: Mission[] = [
-  {
-    id: 1,
-    title: "Build and launch my SaaS",
-    deadline: "2026-12-20",
-    difficulty: 5,
-    actions: [
-      {
-        id: 1,
-        title: "Finalize MVP feature set",
-        deadline: "2026-10-15",
-        isDone: true,
-      },
-      {
-        id: 2,
-        title: "Build landing page",
-        deadline: "2026-10-25",
-        isDone: true,
-      },
-      {
-        id: 3,
-        title: "Implement payment system",
-        deadline: "2026-11-05",
-        isDone: false,
-      },
-      {
-        id: 4,
-        title: "Deploy production version",
-        deadline: "2026-11-20",
-        isDone: false,
-      },
-      {
-        id: 5,
-        title: "Acquire first 10 customers",
-        deadline: "2026-12-20",
-        isDone: false,
-      },
-    ],
-    disciplines: [
-      {
-        id: 1,
-        title: "Work on the product every day",
-        repeatInterval: "Daily",
-      },
-      {
-        id: 2,
-        title: "Talk to potential customers",
-        repeatInterval: "3 times / week",
-      },
-      {
-        id: 3,
-        title: "Publish business-related content",
-        repeatInterval: "2 times / week",
-      },
-    ],
-  },
-  {
-    id: 2,
-    title: "Reach B2 English level",
-    deadline: "2027-01-15",
-    difficulty: 4,
-    actions: [
-      {
-        id: 1,
-        title: "Finish Vocabulary in Use B2",
-        deadline: "2026-11-15",
-        isDone: true,
-      },
-      {
-        id: 2,
-        title: "Read the first English book",
-        deadline: "2026-11-30",
-        isDone: false,
-      },
-      {
-        id: 3,
-        title: "Read the second English book",
-        deadline: "2026-12-20",
-        isDone: false,
-      },
-      {
-        id: 4,
-        title: "Finish B2 grammar review",
-        deadline: "2027-01-05",
-        isDone: false,
-      },
-    ],
-    disciplines: [
-      {
-        id: 1,
-        title: "English study",
-        repeatInterval: "Daily",
-      },
-      {
-        id: 2,
-        title: "Watch English content",
-        repeatInterval: "Daily",
-      },
-    ],
-  },
-  {
-    id: 3,
-    title: "Reach 20 pull-ups",
-    deadline: "2026-11-30",
-    difficulty: 4,
-    actions: [
-      {
-        id: 1,
-        title: "Reach 12 strict pull-ups",
-        deadline: "2026-10-20",
-        isDone: true,
-      },
-      {
-        id: 2,
-        title: "Reach 15 strict pull-ups",
-        deadline: "2026-11-05",
-        isDone: false,
-      },
-      {
-        id: 3,
-        title: "Reach 18 strict pull-ups",
-        deadline: "2026-11-20",
-        isDone: false,
-      },
-      {
-        id: 4,
-        title: "Reach 20 strict pull-ups",
-        deadline: "2026-11-30",
-        isDone: false,
-      },
-    ],
-    disciplines: [
-      {
-        id: 1,
-        title: "Pull-up training",
-        repeatInterval: "3 times / week",
-      },
-      {
-        id: 2,
-        title: "Track bodyweight",
-        repeatInterval: "Weekly",
-      },
-    ],
-  },
-  {
-    id: 4,
-    title: "Build my personal brand",
-    deadline: "2027-02-01",
-    difficulty: 5,
-    actions: [
-      {
-        id: 1,
-        title: "Define personal positioning",
-        deadline: "2026-10-20",
-        isDone: false,
-      },
-      {
-        id: 2,
-        title: "Build portfolio website",
-        deadline: "2026-11-10",
-        isDone: false,
-      },
-      {
-        id: 3,
-        title: "Prepare first 10 content ideas",
-        deadline: "2026-11-20",
-        isDone: false,
-      },
-      {
-        id: 4,
-        title: "Publish first case study",
-        deadline: "2026-12-01",
-        isDone: false,
-      },
-      {
-        id: 5,
-        title: "Build professional network",
-        deadline: "2027-01-15",
-        isDone: false,
-      },
-    ],
-    disciplines: [
-      {
-        id: 1,
-        title: "Create or document something",
-        repeatInterval: "3 times / week",
-      },
-      {
-        id: 2,
-        title: "Reach out to people",
-        repeatInterval: "2 times / week",
-      },
-    ],
-  },
-  {
-    id: 5,
-    title: "Read 6 English books",
-    deadline: "2027-01-01",
-    difficulty: 3,
-    actions: [
-      {
-        id: 1,
-        title: "Choose six books",
-        deadline: "2026-10-10",
-        isDone: true,
-      },
-      {
-        id: 2,
-        title: "Finish book #1",
-        deadline: "2026-10-31",
-        isDone: false,
-      },
-      {
-        id: 3,
-        title: "Finish book #2",
-        deadline: "2026-11-15",
-        isDone: false,
-      },
-      {
-        id: 4,
-        title: "Finish book #3",
-        deadline: "2026-11-30",
-        isDone: false,
-      },
-      {
-        id: 5,
-        title: "Finish book #4",
-        deadline: "2026-12-15",
-        isDone: false,
-      },
-      {
-        id: 6,
-        title: "Finish book #5",
-        deadline: "2026-12-25",
-        isDone: false,
-      },
-      {
-        id: 7,
-        title: "Finish book #6",
-        deadline: "2027-01-01",
-        isDone: false,
-      },
-    ],
-    disciplines: [
-      {
-        id: 1,
-        title: "Read English",
-        repeatInterval: "Daily",
-      },
-    ],
-  },
-];
-
-/* -------------------------------------------------------------------------- */
-/* Helpers                                                                    */
-/* -------------------------------------------------------------------------- */
-
-const dialogPopupClass = `
-  bg-card
-  fixed
-  left-1/2
-  top-1/2
-  -translate-x-1/2
-  -translate-y-1/2
-  w-max
-  max-w-[calc(100vw-1.5rem)]
-  max-h-[calc(100dvh-2rem)]
-  flex
-  flex-col
-  gap-6
-  p-3
-  rounded-component
-  scale-[calc(1-0.1*var(--nested-dialogs))]
-  transition-all
-  data-ending-style:translate-y-full
-  data-ending-style:opacity-0
-  data-starting-style:translate-y-full
-  data-starting-style:opacity-0
-`;
-
-const dialogBackdropClass = `
-  fixed
-  inset-0
-  min-h-dvh
-  bg-background
-  opacity-90
-  transition-opacity
-  duration-300
-  data-ending-style:opacity-0
-  data-starting-style:opacity-0
-  supports-[-webkit-touch-callout:none]:absolute
-`;
-
-function createId() {
-  return (Math.random() * 999999).toString();
+function createId(): number {
+  return Date.now() + Math.floor(Math.random() * 1000);
 }
 
-function parseDate(date?: string) {
+function parseDate(date: string | null): Date | null {
   if (!date) {
-    return undefined;
+    return null;
   }
 
   return new Date(`${date}T00:00:00`);
 }
 
-function formatDate(date?: Date) {
+function formatDate(date: Date | null): string {
   if (!date) {
     return "Not set";
   }
@@ -380,7 +40,7 @@ function formatDate(date?: Date) {
   });
 }
 
-function serializeDate(date?: Date) {
+function serializeDate(date: Date | null): string {
   if (!date) {
     return "";
   }
@@ -392,68 +52,69 @@ function serializeDate(date?: Date) {
   return `${year}-${month}-${day}`;
 }
 
-/* -------------------------------------------------------------------------- */
-/* Date Picker Dialog                                                         */
-/* -------------------------------------------------------------------------- */
+type ActionState = {
+  id: number;
+  title: string;
+  deadline: Date | null;
+  isDone: boolean;
+};
+
+type ActionDraft = {
+  id: number | null;
+  title: string;
+  deadline: Date | null;
+};
+
+type DisciplineDraft = {
+  id: number | null;
+  title: string;
+  repeatInterval: string;
+};
 
 type DatePickerDialogProps = {
-  value?: Date;
-  onChange: (date: Date | undefined) => void;
+  value: Date | null;
+  onChange: (date: Date | null) => void;
 };
 
 function DatePickerDialog({ value, onChange }: DatePickerDialogProps) {
   const closeRef = useRef<HTMLButtonElement>(null);
 
   return (
-    <Dialog.Root>
-      <Dialog.Trigger
-        render={
-          <Button
-            type="button"
-            variant="outline"
-            className="w-full justify-start rounded-md"
-          >
-            Deadline: {formatDate(value)}
-          </Button>
-        }
+    <Dialog
+      trigger={
+        <Button
+          type="button"
+          variant="outline"
+          className="w-full justify-start rounded-md"
+        >
+          Deadline: {formatDate(value)}
+        </Button>
+      }
+    >
+      <DayPicker
+        animate
+        dir="ltr"
+        mode="single"
+        locale={enUS}
+        numerals="latn"
+        selected={value ?? undefined}
+        onSelect={(date) => {
+          onChange(date ?? null);
+          closeRef.current?.click();
+        }}
       />
 
-      <Dialog.Portal>
-        <Dialog.Backdrop className={dialogBackdropClass} />
-
-        <Dialog.Popup className={dialogPopupClass}>
-          <div className="relative z-10">
-            <DayPicker
-              animate
-              dir="ltr"
-              mode="single"
-              locale={enUS}
-              numerals="latn"
-              selected={value}
-              onSelect={(date) => {
-                onChange(date);
-                closeRef.current?.click();
-              }}
-            />
-
-            <div className="mt-6 flex justify-center">
-              <Dialog.Close
-                ref={closeRef}
-                render={<Button variant="ghost">Close</Button>}
-              />
-            </div>
-          </div>
-        </Dialog.Popup>
-      </Dialog.Portal>
-    </Dialog.Root>
+      <div className="mt-6 flex justify-center">
+        <Dialog.Close
+          ref={closeRef}
+          render={<Button variant="ghost">Close</Button>}
+        />
+      </div>
+    </Dialog>
   );
 }
 
-/* -------------------------------------------------------------------------- */
-/* Difficulty Select                                                          */
-/* -------------------------------------------------------------------------- */
-
-const difficultyItems = [
+const missionsDifficulty = [
   {
     value: "1",
     label: "1 · Very easy",
@@ -489,7 +150,7 @@ function DifficultySelect({
 
       <Select.Root
         name="difficulty"
-        items={difficultyItems}
+        items={missionsDifficulty}
         value={value === null ? null : String(value)}
         onValueChange={(nextValue) => {
           onChange(nextValue === null ? null : Number(nextValue));
@@ -516,7 +177,7 @@ function DifficultySelect({
           <Select.Positioner className="z-100">
             <Select.Popup className="min-w-(--anchor-width) overflow-hidden rounded-md bg-card-thick p-1">
               <Select.List className="p-px">
-                {difficultyItems.map((item) => (
+                {missionsDifficulty.map((item) => (
                   <Select.Item
                     key={item.value}
                     value={item.value}
@@ -546,10 +207,6 @@ function DifficultySelect({
   );
 }
 
-/* -------------------------------------------------------------------------- */
-/* Page                                                                       */
-/* -------------------------------------------------------------------------- */
-
 function NewMissionPage() {
   const searchParams = useSearchParams();
 
@@ -557,36 +214,40 @@ function NewMissionPage() {
   const isEditMode = Boolean(editId);
 
   const [title, setTitle] = useState("");
-  const [missionDeadline, setMissionDeadline] = useState<Date>();
+  const [missionDeadline, setMissionDeadline] = useState<Date | null>(null);
   const [difficulty, setDifficulty] = useState<number | null>(null);
 
-  const [actions, setActions] = useState<Action[]>([]);
+  const [actions, setActions] = useState<ActionState[]>([]);
   const [actionDialogOpen, setActionDialogOpen] = useState(false);
   const [actionDeleteDialogOpen, setActionDeleteDialogOpen] = useState(false);
-  const [actionToDelete, setActionToDelete] = useState<Action | null>(null);
+  const [actionToDelete, setActionToDelete] = useState<ActionState | null>(
+    null,
+  );
+
   const [actionDraft, setActionDraft] = useState<ActionDraft>({
+    id: null,
     title: "",
+    deadline: null,
   });
 
-  const [disciplines, setDisciplines] = useState<Discipline[]>([]);
+  const [disciplines, setDisciplines] = useState<MissionDiscipline[]>([]);
   const [disciplineDialogOpen, setDisciplineDialogOpen] = useState(false);
   const [disciplineDeleteDialogOpen, setDisciplineDeleteDialogOpen] =
     useState(false);
   const [disciplineToDelete, setDisciplineToDelete] =
-    useState<Discipline | null>(null);
-  const [disciplineDraft, setDisciplineDraft] = useState<DisciplineDraft>({
-    title: "",
-  });
+    useState<MissionDiscipline | null>(null);
 
-  /* ------------------------------------------------------------------------ */
-  /* Load mission when editing                                                */
-  /* ------------------------------------------------------------------------ */
+  const [disciplineDraft, setDisciplineDraft] = useState<DisciplineDraft>({
+    id: null,
+    title: "",
+    repeatInterval: "",
+  });
 
   useEffect(() => {
     if (!editId) {
       queueMicrotask(() => {
         setTitle("");
-        setMissionDeadline(undefined);
+        setMissionDeadline(null);
         setDifficulty(null);
         setActions([]);
         setDisciplines([]);
@@ -608,15 +269,16 @@ function NewMissionPage() {
 
       setActions(
         mission.actions.map((action) => ({
-          id: String(action.id),
+          id: action.id,
           title: action.title,
-          deadline: parseDate(action.deadline)!,
+          deadline: parseDate(action.deadline),
+          isDone: action.isDone,
         })),
       );
 
       setDisciplines(
         mission.disciplines.map((discipline) => ({
-          id: String(discipline.id),
+          id: discipline.id,
           title: discipline.title,
           repeatInterval: discipline.repeatInterval,
         })),
@@ -624,14 +286,11 @@ function NewMissionPage() {
     });
   }, [editId]);
 
-  /* ------------------------------------------------------------------------ */
-  /* Actions                                                                  */
-  /* ------------------------------------------------------------------------ */
-
   function openNewAction() {
     setActionDraft({
+      id: null,
       title: "",
-      deadline: undefined,
+      deadline: null,
     });
 
     setActionDeleteDialogOpen(false);
@@ -639,7 +298,7 @@ function NewMissionPage() {
     setActionDialogOpen(true);
   }
 
-  function openEditAction(action: Action) {
+  function openEditAction(action: ActionState) {
     setActionDraft({
       id: action.id,
       title: action.title,
@@ -651,7 +310,7 @@ function NewMissionPage() {
     setActionDialogOpen(true);
   }
 
-  function openDeleteAction(action: Action) {
+  function openDeleteAction(action: ActionState) {
     setActionToDelete(action);
     setActionDeleteDialogOpen(true);
   }
@@ -664,19 +323,21 @@ function NewMissionPage() {
 
   function saveAction() {
     const nextTitle = actionDraft.title.trim();
+    const nextDeadline = actionDraft.deadline;
+    const actionId = actionDraft.id;
 
-    if (!nextTitle || !actionDraft.deadline) {
+    if (!nextTitle || !nextDeadline) {
       return;
     }
 
-    if (actionDraft.id) {
+    if (actionId !== null) {
       setActions((current) =>
         current.map((action) =>
-          action.id === actionDraft.id
+          action.id === actionId
             ? {
-                id: action.id,
+                ...action,
                 title: nextTitle,
-                deadline: actionDraft.deadline!,
+                deadline: nextDeadline,
               }
             : action,
         ),
@@ -687,7 +348,8 @@ function NewMissionPage() {
         {
           id: createId(),
           title: nextTitle,
-          deadline: actionDraft.deadline!,
+          deadline: nextDeadline,
+          isDone: false,
         },
       ]);
     }
@@ -707,13 +369,11 @@ function NewMissionPage() {
     closeActionDialog();
   }
 
-  /* ------------------------------------------------------------------------ */
-  /* Disciplines                                                              */
-  /* ------------------------------------------------------------------------ */
-
   function openNewDiscipline() {
     setDisciplineDraft({
+      id: null,
       title: "",
+      repeatInterval: "",
     });
 
     setDisciplineDeleteDialogOpen(false);
@@ -721,10 +381,11 @@ function NewMissionPage() {
     setDisciplineDialogOpen(true);
   }
 
-  function openEditDiscipline(discipline: Discipline) {
+  function openEditDiscipline(discipline: MissionDiscipline) {
     setDisciplineDraft({
       id: discipline.id,
       title: discipline.title,
+      repeatInterval: discipline.repeatInterval,
     });
 
     setDisciplineDeleteDialogOpen(false);
@@ -732,7 +393,7 @@ function NewMissionPage() {
     setDisciplineDialogOpen(true);
   }
 
-  function openDeleteDiscipline(discipline: Discipline) {
+  function openDeleteDiscipline(discipline: MissionDiscipline) {
     setDisciplineToDelete(discipline);
     setDisciplineDeleteDialogOpen(true);
   }
@@ -745,18 +406,21 @@ function NewMissionPage() {
 
   function saveDiscipline() {
     const nextTitle = disciplineDraft.title.trim();
+    const nextRepeatInterval = disciplineDraft.repeatInterval.trim();
+    const disciplineId = disciplineDraft.id;
 
     if (!nextTitle) {
       return;
     }
 
-    if (disciplineDraft.id) {
+    if (disciplineId !== null) {
       setDisciplines((current) =>
         current.map((discipline) =>
-          discipline.id === disciplineDraft.id
+          discipline.id === disciplineId
             ? {
                 ...discipline,
                 title: nextTitle,
+                repeatInterval: nextRepeatInterval,
               }
             : discipline,
         ),
@@ -767,6 +431,7 @@ function NewMissionPage() {
         {
           id: createId(),
           title: nextTitle,
+          repeatInterval: nextRepeatInterval,
         },
       ]);
     }
@@ -786,10 +451,6 @@ function NewMissionPage() {
     closeDisciplineDialog();
   }
 
-  /* ------------------------------------------------------------------------ */
-  /* Render                                                                   */
-  /* ------------------------------------------------------------------------ */
-
   return (
     <PageWrapper>
       <TopBar>
@@ -805,16 +466,27 @@ function NewMissionPage() {
         aria-label={isEditMode ? "Edit mission" : "Create new mission"}
         action={async () => {
           const payload = {
-            id: editId ?? undefined,
+            id: editId ? Number(editId) : undefined,
             title,
             difficulty,
             deadline: serializeDate(missionDeadline),
-            actions: actions.map((action) => ({
-              id: action.id,
-              title: action.title,
-              deadline: serializeDate(action.deadline),
-            })),
-            disciplines,
+
+            actions: actions.map(
+              (action): MissionAction => ({
+                id: action.id,
+                title: action.title,
+                deadline: serializeDate(action.deadline),
+                isDone: action.isDone,
+              }),
+            ),
+
+            disciplines: disciplines.map(
+              (discipline): MissionDiscipline => ({
+                id: discipline.id,
+                title: discipline.title,
+                repeatInterval: discipline.repeatInterval,
+              }),
+            ),
           };
 
           console.log(
@@ -825,35 +497,23 @@ function NewMissionPage() {
           await new Promise((resolve) => setTimeout(resolve, 500));
         }}
       >
-        {/* ---------------------------------------------------------------- */}
-        {/* Title                                                            */}
-        {/* ---------------------------------------------------------------- */}
-
         <Field.Root name="title">
           <Field.Label className="block font-bold">Title</Field.Label>
 
           <Field.Control
             required
             minLength={3}
-            pattern=".*[A-Za-z].*"
             value={title}
-            onChange={(event) => setTitle(event.target.value)}
+            className="input"
             placeholder="Title..."
-            className="h-10 w-full rounded-md border px-3"
+            pattern=".*[A-Za-z].*"
+            onChange={(event) => setTitle(event.target.value)}
           />
 
           <Field.Error className="sub-text mt-0.5 text-red-400" />
         </Field.Root>
 
-        {/* ---------------------------------------------------------------- */}
-        {/* Difficulty                                                       */}
-        {/* ---------------------------------------------------------------- */}
-
         <DifficultySelect value={difficulty} onChange={setDifficulty} />
-
-        {/* ---------------------------------------------------------------- */}
-        {/* Deadline                                                         */}
-        {/* ---------------------------------------------------------------- */}
 
         <Field.Root name="deadline">
           <Field.Label className="mb-1 font-bold">Deadline</Field.Label>
@@ -870,164 +530,149 @@ function NewMissionPage() {
           />
         </Field.Root>
 
-        {/* ---------------------------------------------------------------- */}
-        {/* Actions                                                          */}
-        {/* ---------------------------------------------------------------- */}
+        <Field.Root name="actions">
+          <Field.Label className="mb-1 font-bold">Actions</Field.Label>
 
-        <Dialog.Root
-          open={actionDialogOpen}
-          onOpenChange={(open) => {
-            if (!open) {
-              closeActionDialog();
-              return;
-            }
-
-            setActionDialogOpen(true);
-          }}
-        >
-          <Field.Root name="actions">
-            <Field.Label className="mb-1 font-bold">Actions</Field.Label>
-
-            <Dialog.Trigger
-              render={
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="w-full justify-start rounded-md"
-                  onClick={openNewAction}
-                >
-                  Add action
-                </Button>
+          <Dialog
+            open={actionDialogOpen}
+            onOpenChange={(open) => {
+              if (!open) {
+                closeActionDialog();
+                return;
               }
-            />
 
-            {actions.length > 0 && (
-              <div className="mt-1 space-y-2">
-                {actions.map((action) => (
-                  <div
-                    key={action.id}
-                    className="flex items-center gap-3 rounded-md bg-card p-3"
-                  >
-                    <p className="truncate font-medium">{action.title}</p>
+              setActionDialogOpen(true);
+            }}
+            trigger={
+              <Button
+                type="button"
+                variant="outline"
+                onClick={openNewAction}
+                className="w-full justify-start rounded-md"
+              >
+                Add action
+              </Button>
+            }
+          >
+            <div>
+              <Dialog.Title className="font-bold">
+                {actionDraft.id !== null ? "Edit action" : "New action"}
+              </Dialog.Title>
 
-                    <p className="sub-text text-sm">
-                      {formatDate(action.deadline)}
-                    </p>
+              <Dialog.Description className="sub-text mt-1">
+                {actionDraft.id !== null
+                  ? "Edit the action details"
+                  : "Create an action for this mission"}
+              </Dialog.Description>
+            </div>
 
-                    <div className="ms-auto flex shrink-0 items-center gap-1">
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        onClick={() => openEditAction(action)}
-                      >
-                        Edit
-                      </Button>
+            <Field.Root name="actionTitle">
+              <Field.Label className="mb-1 font-bold">Title</Field.Label>
 
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        onClick={() => openDeleteAction(action)}
-                      >
-                        Delete
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
+              <Field.Control
+                required
+                minLength={3}
+                className="input"
+                value={actionDraft.title}
+                placeholder="Action title..."
+                onChange={(event) =>
+                  setActionDraft((current) => ({
+                    ...current,
+                    title: event.target.value,
+                  }))
+                }
+              />
 
-            <input
-              type="hidden"
-              name="actions"
-              value={JSON.stringify(
-                actions.map((action) => ({
-                  id: action.id,
-                  title: action.title,
-                  deadline: serializeDate(action.deadline),
-                })),
-              )}
-            />
-          </Field.Root>
+              <Field.Error className="sub-text mt-0.5 text-red-400" />
+            </Field.Root>
 
-          <Dialog.Portal>
-            <Dialog.Backdrop className={dialogBackdropClass} />
+            <Field.Root name="actionDeadline">
+              <Field.Label className="mb-1 font-bold">Deadline</Field.Label>
 
-            <Dialog.Popup className={dialogPopupClass}>
-              <div className="flex flex-col gap-1">
-                <Dialog.Title className="text-base font-bold">
-                  {actionDraft.id ? "Edit action" : "New action"}
-                </Dialog.Title>
+              <DatePickerDialog
+                value={actionDraft.deadline}
+                onChange={(date) =>
+                  setActionDraft((current) => ({
+                    ...current,
+                    deadline: date,
+                  }))
+                }
+              />
+            </Field.Root>
 
-                <Dialog.Description className="sub-text">
-                  {actionDraft.id
-                    ? "Edit the action details"
-                    : "Create an action for this mission"}
-                </Dialog.Description>
-              </div>
+            <div className="flex items-center justify-end gap-3">
+              <Dialog.Close
+                render={
+                  <Button type="button" variant="ghost">
+                    Cancel
+                  </Button>
+                }
+              />
 
-              <Field.Root name="actionTitle">
-                <Field.Label className="mb-1 font-bold">Title</Field.Label>
+              <Button
+                type="button"
+                variant="primary"
+                onClick={saveAction}
+                disabled={
+                  actionDraft.title.trim().length < 3 ||
+                  actionDraft.deadline === null
+                }
+              >
+                {actionDraft.id !== null ? "Save" : "Add"}
+              </Button>
+            </div>
+          </Dialog>
 
-                <Field.Control
-                  required
-                  minLength={3}
-                  value={actionDraft.title}
-                  onChange={(event) =>
-                    setActionDraft((current) => ({
-                      ...current,
-                      title: event.target.value,
-                    }))
-                  }
-                  placeholder="Action title..."
-                  className="h-10 w-full rounded-md border px-3"
-                />
-
-                <Field.Error className="sub-text mt-0.5 text-red-400" />
-              </Field.Root>
-
-              <Field.Root name="actionDeadline">
-                <Field.Label className="mb-1 font-bold">Deadline</Field.Label>
-
-                <DatePickerDialog
-                  value={actionDraft.deadline}
-                  onChange={(date) =>
-                    setActionDraft((current) => ({
-                      ...current,
-                      deadline: date,
-                    }))
-                  }
-                />
-              </Field.Root>
-
-              <div className="flex items-center justify-end gap-3">
-                <Dialog.Close
-                  render={
-                    <Button type="button" variant="ghost">
-                      Cancel
-                    </Button>
-                  }
-                />
-
-                <Button
-                  type="button"
-                  variant="primary"
-                  disabled={
-                    actionDraft.title.trim().length < 3 || !actionDraft.deadline
-                  }
-                  onClick={saveAction}
+          {actions.length > 0 && (
+            <div className="mt-1 space-y-2">
+              {actions.map((action) => (
+                <div
+                  key={action.id}
+                  className="flex items-center gap-3 rounded-md bg-card p-3"
                 >
-                  {actionDraft.id ? "Save" : "Add"}
-                </Button>
-              </div>
-            </Dialog.Popup>
-          </Dialog.Portal>
-        </Dialog.Root>
+                  <p className="truncate font-medium">{action.title}</p>
 
-        {/* ---------------------------------------------------------------- */}
-        {/* Delete Action                                                    */}
-        {/* ---------------------------------------------------------------- */}
+                  <p className="sub-text text-sm">
+                    {formatDate(action.deadline)}
+                  </p>
 
-        <Dialog.Root
+                  <div className="ms-auto flex shrink-0 items-center gap-1">
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      onClick={() => openEditAction(action)}
+                    >
+                      <EditIcon />
+                    </Button>
+
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      onClick={() => openDeleteAction(action)}
+                    >
+                      <Trash2Icon />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <input
+            type="hidden"
+            name="actions"
+            value={JSON.stringify(
+              actions.map((action) => ({
+                id: action.id,
+                title: action.title,
+                deadline: serializeDate(action.deadline),
+                isDone: action.isDone,
+              })),
+            )}
+          />
+        </Field.Root>
+
+        <Dialog
           open={actionDeleteDialogOpen}
           onOpenChange={(open) => {
             setActionDeleteDialogOpen(open);
@@ -1037,193 +682,87 @@ function NewMissionPage() {
             }
           }}
         >
-          <Dialog.Portal>
-            <Dialog.Backdrop className={dialogBackdropClass} />
+          <Dialog.Title className="font-bold">Delete action?</Dialog.Title>
 
-            <Dialog.Popup className={dialogPopupClass}>
-              <Dialog.Title className="font-bold">Delete action?</Dialog.Title>
+          <Dialog.Description className="sub-text mt-1">
+            {actionToDelete
+              ? `"${actionToDelete.title}" will be removed from this mission`
+              : ""}
+          </Dialog.Description>
 
-              <Dialog.Description className="sub-text mt-1">
-                {actionToDelete
-                  ? `"${actionToDelete.title}" will be removed from this mission`
-                  : ""}
-              </Dialog.Description>
-
-              <div className="mt-6 flex justify-end gap-3">
-                <Dialog.Close
-                  render={
-                    <Button type="button" variant="ghost">
-                      Cancel
-                    </Button>
-                  }
-                />
-
-                <Button type="button" variant="primary" onClick={deleteAction}>
-                  Delete
-                </Button>
-              </div>
-            </Dialog.Popup>
-          </Dialog.Portal>
-        </Dialog.Root>
-
-        {/* ---------------------------------------------------------------- */}
-        {/* Disciplines                                                      */}
-        {/* ---------------------------------------------------------------- */}
-
-        <Dialog.Root
-          open={disciplineDialogOpen}
-          onOpenChange={(open) => {
-            if (!open) {
-              closeDisciplineDialog();
-              return;
-            }
-
-            setDisciplineDialogOpen(true);
-          }}
-        >
-          <Field.Root name="disciplines">
-            <Field.Label className="mb-1 font-bold">Disciplines</Field.Label>
-
-            <Dialog.Trigger
+          <div className="mt-6 flex justify-end gap-3">
+            <Dialog.Close
               render={
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={openNewDiscipline}
-                  className="w-full justify-start rounded-md"
-                >
-                  Add discipline
+                <Button type="button" variant="ghost">
+                  Cancel
                 </Button>
               }
             />
 
-            {disciplines.length > 0 && (
-              <div className="mt-1 space-y-2">
-                {disciplines.map((discipline) => (
-                  <div
-                    key={discipline.id}
-                    className="flex items-center gap-3 rounded-md bg-card p-3"
-                  >
-                    <p className="min-w-0 truncate font-medium">
-                      {discipline.title}
-                    </p>
+            <Button type="button" variant="primary" onClick={deleteAction}>
+              Delete
+            </Button>
+          </div>
+        </Dialog>
 
-                    <div className="ms-auto flex shrink-0 items-center gap-1">
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        onClick={() => openEditDiscipline(discipline)}
-                      >
-                        Edit
-                      </Button>
+        <Field.Root name="disciplines">
+          <Field.Label className="mb-1 font-bold">Disciplines</Field.Label>
 
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        onClick={() => openDeleteDiscipline(discipline)}
-                      >
-                        Delete
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
+          <Dialog
+            open={disciplineDialogOpen}
+            onOpenChange={(open) => {
+              if (!open) {
+                closeDisciplineDialog();
+                return;
+              }
 
-            <input
-              type="hidden"
-              name="disciplines"
-              value={JSON.stringify(disciplines)}
-            />
-          </Field.Root>
-
-          <Dialog.Portal>
-            <Dialog.Backdrop className={dialogBackdropClass} />
-
-            <Dialog.Popup className={dialogPopupClass}>
-              <div className="relative z-10 flex min-h-0 flex-col gap-6">
-                <div className="flex flex-col gap-1">
-                  <Dialog.Title className="text-base font-bold">
-                    {disciplineDraft.id ? "Edit discipline" : "New discipline"}
-                  </Dialog.Title>
-
-                  <Dialog.Description className="sub-text">
-                    {disciplineDraft.id
-                      ? "Edit the discipline title"
-                      : "Create a discipline for this mission"}
-                  </Dialog.Description>
-                </div>
-
-                <Field.Root name="disciplineTitle">
-                  <Field.Label className="mb-1 font-bold">Title</Field.Label>
-
-                  <Field.Control
-                    required
-                    minLength={3}
-                    value={disciplineDraft.title}
-                    onChange={(event) =>
-                      setDisciplineDraft((current) => ({
-                        ...current,
-                        title: event.target.value,
-                      }))
-                    }
-                    placeholder="Discipline title..."
-                    className="h-10 w-full rounded-md border px-3"
-                  />
-
-                  <Field.Error className="sub-text mt-0.5 text-red-400" />
-                </Field.Root>
-
-                <div className="flex items-center justify-end gap-3">
-                  <Dialog.Close
-                    render={
-                      <Button type="button" variant="ghost">
-                        Cancel
-                      </Button>
-                    }
-                  />
-
-                  <Button
-                    type="button"
-                    variant="primary"
-                    disabled={disciplineDraft.title.trim().length < 3}
-                    onClick={saveDiscipline}
-                  >
-                    {disciplineDraft.id ? "Save" : "Add"}
-                  </Button>
-                </div>
-              </div>
-            </Dialog.Popup>
-          </Dialog.Portal>
-        </Dialog.Root>
-
-        {/* ---------------------------------------------------------------- */}
-        {/* Delete Discipline                                                */}
-        {/* ---------------------------------------------------------------- */}
-
-        <Dialog.Root
-          open={disciplineDeleteDialogOpen}
-          onOpenChange={(open) => {
-            setDisciplineDeleteDialogOpen(open);
-
-            if (!open) {
-              setDisciplineToDelete(null);
+              setDisciplineDialogOpen(true);
+            }}
+            trigger={
+              <Button
+                type="button"
+                variant="outline"
+                onClick={openNewDiscipline}
+                className="w-full justify-start rounded-md"
+              >
+                Add discipline
+              </Button>
             }
-          }}
-        >
-          <Dialog.Portal>
-            <Dialog.Backdrop className={dialogBackdropClass} />
+          >
+            <div className="relative z-10 flex min-h-0 flex-col gap-6">
+              <div>
+                <Dialog.Title className="font-bold">
+                  {disciplineDraft.id !== null
+                    ? "Edit discipline"
+                    : "New discipline"}
+                </Dialog.Title>
 
-            <Dialog.Popup className={dialogPopupClass}>
-              <Dialog.Title className="text-base font-bold">
-                Delete discipline?
-              </Dialog.Title>
+                <Dialog.Description className="sub-text mt-1">
+                  {disciplineDraft.id !== null
+                    ? "Edit the discipline title"
+                    : "Create a discipline for this mission"}
+                </Dialog.Description>
+              </div>
 
-              <Dialog.Description className="sub-text">
-                {disciplineToDelete
-                  ? `"${disciplineToDelete.title}" will be removed from this mission`
-                  : "This discipline will be removed from this mission"}
-              </Dialog.Description>
+              <Field.Root name="disciplineTitle">
+                <Field.Label className="mb-1 font-bold">Title</Field.Label>
+
+                <Field.Control
+                  required
+                  minLength={3}
+                  className="input"
+                  value={disciplineDraft.title}
+                  placeholder="Discipline title..."
+                  onChange={(event) =>
+                    setDisciplineDraft((current) => ({
+                      ...current,
+                      title: event.target.value,
+                    }))
+                  }
+                />
+
+                <Field.Error className="sub-text mt-0.5 text-red-400" />
+              </Field.Root>
 
               <div className="flex items-center justify-end gap-3">
                 <Dialog.Close
@@ -1237,18 +776,87 @@ function NewMissionPage() {
                 <Button
                   type="button"
                   variant="primary"
-                  onClick={deleteDiscipline}
+                  onClick={saveDiscipline}
+                  disabled={disciplineDraft.title.trim().length < 3}
                 >
-                  Delete
+                  {disciplineDraft.id !== null ? "Save" : "Add"}
                 </Button>
               </div>
-            </Dialog.Popup>
-          </Dialog.Portal>
-        </Dialog.Root>
+            </div>
+          </Dialog>
 
-        {/* ---------------------------------------------------------------- */}
-        {/* Submit                                                           */}
-        {/* ---------------------------------------------------------------- */}
+          {disciplines.length > 0 && (
+            <div className="mt-1 space-y-2">
+              {disciplines.map((discipline) => (
+                <div
+                  key={discipline.id}
+                  className="flex items-center gap-3 rounded-md bg-card p-3"
+                >
+                  <p className="min-w-0 truncate font-medium">
+                    {discipline.title}
+                  </p>
+
+                  <div className="ms-auto flex shrink-0 items-center gap-1">
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      onClick={() => openEditDiscipline(discipline)}
+                    >
+                      <EditIcon />
+                    </Button>
+
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      onClick={() => openDeleteDiscipline(discipline)}
+                    >
+                      <Trash2Icon />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <input
+            type="hidden"
+            name="disciplines"
+            value={JSON.stringify(disciplines)}
+          />
+        </Field.Root>
+
+        <Dialog
+          open={disciplineDeleteDialogOpen}
+          onOpenChange={(open) => {
+            setDisciplineDeleteDialogOpen(open);
+
+            if (!open) {
+              setDisciplineToDelete(null);
+            }
+          }}
+        >
+          <Dialog.Title className="font-bold">Delete discipline?</Dialog.Title>
+
+          <Dialog.Description className="sub-text">
+            {disciplineToDelete
+              ? `"${disciplineToDelete.title}" will be removed from this mission`
+              : "This discipline will be removed from this mission"}
+          </Dialog.Description>
+
+          <div className="flex items-center justify-end gap-3">
+            <Dialog.Close
+              render={
+                <Button type="button" variant="ghost">
+                  Cancel
+                </Button>
+              }
+            />
+
+            <Button type="button" variant="primary" onClick={deleteDiscipline}>
+              Delete
+            </Button>
+          </div>
+        </Dialog>
 
         <CreateBtn submit />
       </Form>
