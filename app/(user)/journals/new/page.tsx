@@ -1,12 +1,14 @@
 "use client";
 
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Field, Form, Select } from "@base-ui/react";
-import { CheckIcon, ChevronDownIcon } from "lucide-react";
+import { CheckIcon, ChevronDownIcon, PlusIcon } from "lucide-react";
 
-import { journals, JOURNAL_TYPES } from "@/features/journals/constants";
-import { JournalType } from "@/features/journals/types";
+import { journals } from "@/features/journals/constants";
+import { JournalType, JournalCategory } from "@/features/journals/types";
+import { useJournalCategories } from "@/features/journals/categories";
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
 import { Button } from "@/features/general/components/ui/Button/Button";
 import CreateBtn from "@/features/general/components/module/CreateBtn/CreateBtn";
@@ -15,24 +17,48 @@ import PageWrapper from "@/features/general/components/static/PageWrapper/PageWr
 function TypeSelect({
   value,
   onChange,
+  categories,
 }: {
   value: JournalType | null;
   onChange: (value: JournalType) => void;
+  categories: JournalCategory[];
 }) {
+  if (categories.length === 0) {
+    return (
+      <Field.Root name="type">
+        <Field.Label className="mb-1 font-bold">Category</Field.Label>
+
+        <Button
+          nativeButton={false}
+          variant="outline"
+          className="w-full justify-between rounded-md"
+          render={<Link href="/journals/categories" />}
+        >
+          <span className="sub-text">No categories yet. Create one</span>
+          <PlusIcon className="size-4" />
+        </Button>
+      </Field.Root>
+    );
+  }
+
+  const items = categories.map((cat) => ({
+    value: cat.name,
+    label: cat.name,
+  }));
+
   return (
     <Field.Root name="type">
-      <Field.Label className="mb-1 font-bold">Type</Field.Label>
+      <Field.Label className="mb-1 font-bold">Category</Field.Label>
 
       <Select.Root
         name="type"
-        items={JOURNAL_TYPES}
+        items={items}
         value={value ?? undefined}
         onValueChange={(nextValue) => {
           if (nextValue) {
-            onChange(nextValue as JournalType);
+            onChange(nextValue);
           }
         }}
-        required
       >
         <Select.Trigger
           render={
@@ -41,7 +67,7 @@ function TypeSelect({
               variant="outline"
               className="w-full justify-between rounded-md"
             >
-              <Select.Value placeholder="Select type" />
+              <Select.Value placeholder="Select category" />
 
               <Select.Icon>
                 <ChevronDownIcon />
@@ -54,7 +80,7 @@ function TypeSelect({
           <Select.Positioner className="z-100">
             <Select.Popup className="min-w-(--anchor-width) overflow-hidden rounded-md bg-card-thick p-1">
               <Select.List className="p-px">
-                {JOURNAL_TYPES.map((item) => (
+                {items.map((item) => (
                   <Select.Item
                     key={item.value}
                     value={item.value}
@@ -89,16 +115,17 @@ function NewJournalPage() {
   const searchParams = useSearchParams();
   const editId = searchParams.get("editId");
   const isEditMode = Boolean(editId);
+  const { categories } = useJournalCategories();
 
   const [title, setTitle] = useState("");
-  const [type, setType] = useState<JournalType | null>("Thoughts");
+  const [type, setType] = useState<JournalType | null>(null);
   const [content, setContent] = useState("");
 
   useEffect(() => {
     if (!editId) {
       queueMicrotask(() => {
         setTitle("");
-        setType("Thoughts");
+        setType(null);
         setContent("");
       });
       return;
@@ -111,7 +138,7 @@ function NewJournalPage() {
 
     queueMicrotask(() => {
       setTitle(journal.title);
-      setType(journal.type);
+      setType(journal.type ?? null);
       setContent(journal.content);
     });
   }, [editId]);
@@ -160,7 +187,11 @@ function NewJournalPage() {
           <Field.Error className="sub-text mt-0.5 text-red-400" />
         </Field.Root>
 
-        <TypeSelect value={type} onChange={setType} />
+        <TypeSelect
+          value={type}
+          onChange={setType}
+          categories={categories}
+        />
 
         <Field.Root name="content">
           <Field.Label className="block font-bold">Content</Field.Label>

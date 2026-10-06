@@ -1,9 +1,11 @@
-import { journals } from "@/features/journals/constants";
+import { Suspense } from "react";
+
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
-import JournalCard from "@/features/journals/components/JournalCard/JournalCard";
 import CreateBtn from "@/features/general/components/module/CreateBtn/CreateBtn";
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
 import PageItemsWrapper from "@/features/general/components/static/PageItemsWrapper/PageItemsWrapper";
+import ConnectivityFallback from "@/features/general/components/module/ConnectivityFallback/ConnectivityFallback";
+import JournalsTabs from "@/features/journals/components/JournalsTabs/JournalsTabs";
 
 function JournalsPage() {
   return (
@@ -14,23 +16,13 @@ function JournalsPage() {
       </TopBar>
 
       <PageItemsWrapper>
-        {journals.map((journal) => (
-          <JournalCard key={journal.id} journal={journal} />
-        ))}
-
-        {journals.length === 0 && (
-          <div
-            className="
-              flex w-full flex-1
-              items-center justify-center
-              rounded-component
-              border-2 border-dashed
-              p-3
-            "
-          >
-            <p>You haven{"'"}t any journals</p>
-          </div>
-        )}
+        <Suspense
+          fallback={
+            <ConnectivityFallback message="Waiting for connection to load journals..." />
+          }
+        >
+          <JournalsTabs />
+        </Suspense>
 
         <p className="sub-text w-full text-center">
           Writing daily uncovers patterns and brings peace of mind.

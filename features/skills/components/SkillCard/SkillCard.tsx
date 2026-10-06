@@ -52,9 +52,11 @@ function SkillCard({ skill }: SkillCardProps) {
         >
           <div className="flex items-start justify-between gap-3">
             <p className="font-bold line-clamp-1 flex-1">{skill.title}</p>
-            <span className="shrink-0 rounded-full bg-card-thick px-2.5 py-0.5 text-xs font-medium">
-              {skill.type}
-            </span>
+            {skill.type ? (
+              <span className="shrink-0 rounded-full bg-card-thick px-2.5 py-0.5 text-xs font-medium">
+                {skill.type}
+              </span>
+            ) : null}
           </div>
 
           <p className="mt-1.5 line-clamp-2 sub-text text-sm">
@@ -81,7 +83,7 @@ function SkillCard({ skill }: SkillCardProps) {
             <TagIcon className="size-4" />
             <span>Type</span>
           </div>
-          <p className="mt-2 font-medium">{skill.type}</p>
+          <p className="mt-2 font-medium">{skill.type || "General"}</p>
         </div>
 
         <div className="rounded-component bg-background p-3">

@@ -1,14 +1,15 @@
-export type SkillType =
-  | "Lessons"
-  | "Playbooks"
-  | "Knowledge"
-  | "Informations";
+export type SkillCategory = {
+  id: number;
+  name: string;
+};
+
+export type SkillType = string;
 
 export type Skill = {
   id: number;
   title: string;
   content: string;
-  type: SkillType;
+  type?: SkillType;
   level: number;
   createdAt: string;
 };

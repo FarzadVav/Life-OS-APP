@@ -3,7 +3,7 @@
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Field, Form, Select } from "@base-ui/react";
-import { CheckIcon, ChevronDownIcon, CircleIcon } from "lucide-react";
+import { CheckIcon, ChevronDownIcon } from "lucide-react";
 
 import { todos, TODO_TYPES } from "@/features/todos/constants";
 import { TodoType } from "@/features/todos/types";
@@ -223,24 +223,6 @@ function NewTodoPage() {
             name="deadline"
             value={type === "Daily" ? dailyTime : serializeDate(upcomingDate)}
           />
-        </Field.Root>
-
-        <Field.Root name="status">
-          <Field.Label className="mb-1 font-bold">Status</Field.Label>
-
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => setIsDone(!isDone)}
-            className="w-full justify-between rounded-md"
-          >
-            <span>{isDone ? "Completed" : "In Progress"}</span>
-            {isDone ? (
-              <CheckIcon className="size-4 text-emerald-500" />
-            ) : (
-              <CircleIcon className="size-4 muted-text" />
-            )}
-          </Button>
         </Field.Root>
 
         <CreateBtn submit />

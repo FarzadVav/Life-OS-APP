@@ -1,15 +1,14 @@
-export type JournalType =
-  | "Logs"
-  | "Feelings"
-  | "Thoughts"
-  | "Ideas"
-  | "Wishes"
-  | "Future";
+export type JournalCategory = {
+  id: number;
+  name: string;
+};
+
+export type JournalType = string;
 
 export type Journal = {
   id: number;
   title: string;
   content: string;
-  type: JournalType;
+  type?: JournalType;
   createdAt: string;
 };

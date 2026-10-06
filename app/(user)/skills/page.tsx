@@ -1,9 +1,11 @@
-import { skills } from "@/features/skills/constants";
+import { Suspense } from "react";
+
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
-import SkillCard from "@/features/skills/components/SkillCard/SkillCard";
 import CreateBtn from "@/features/general/components/module/CreateBtn/CreateBtn";
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
 import PageItemsWrapper from "@/features/general/components/static/PageItemsWrapper/PageItemsWrapper";
+import ConnectivityFallback from "@/features/general/components/module/ConnectivityFallback/ConnectivityFallback";
+import SkillsTabs from "@/features/skills/components/SkillsTabs/SkillsTabs";
 
 function SkillsPage() {
   return (
@@ -14,23 +16,13 @@ function SkillsPage() {
       </TopBar>
 
       <PageItemsWrapper>
-        {skills.map((skill) => (
-          <SkillCard key={skill.id} skill={skill} />
-        ))}
-
-        {skills.length === 0 && (
-          <div
-            className="
-              flex w-full flex-1
-              items-center justify-center
-              rounded-component
-              border-2 border-dashed
-              p-3
-            "
-          >
-            <p>You haven{"'"}t any skills</p>
-          </div>
-        )}
+        <Suspense
+          fallback={
+            <ConnectivityFallback message="Waiting for connection to load skills..." />
+          }
+        >
+          <SkillsTabs />
+        </Suspense>
 
         <p className="sub-text w-full text-center">
           Consistent practice transforms knowledge into mastery.
