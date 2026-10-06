@@ -28,6 +28,7 @@ export default function OfflinePage() {
     const handleOnline = () => {
       setOnlineNow(true);
       setTimeout(() => {
+        router.replace("/");
         router.refresh();
       }, 1000);
     };
@@ -42,6 +43,7 @@ export default function OfflinePage() {
       await fetch("/favicon.ico", { cache: "no-store", method: "HEAD" });
       setOnlineNow(true);
       setTimeout(() => {
+        router.replace("/");
         router.refresh();
       }, 800);
     } catch {

@@ -1,12 +1,13 @@
 import { cn } from "cn";
 import type { Metadata, Viewport } from "next";
-import { Geist } from "next/font/google";
+import { Geist, Vazirmatn } from "next/font/google";
 
 import "./globals.css";
 import SplashScreen from "@/features/general/components/static/SplashScreen/SplashScreen";
 import OfflineBanner from "@/features/general/components/module/OfflineBanner/OfflineBanner";
 import PwaManager from "@/features/general/components/module/PwaManager/PwaManager";
 import LocaleProvider from "@/features/general/components/module/LocaleProvider/LocaleProvider";
+import ThemeProvider from "@/features/general/components/module/ThemeProvider/ThemeProvider";
 import { getLocale } from "@/features/general/lib/i18n/server";
 import { getDictionary } from "@/features/general/lib/i18n/dictionary";
 
@@ -42,6 +43,11 @@ export const metadata: Metadata = {
   },
 };
 
+const vazirmatn = Vazirmatn({
+  subsets: ["arabic"],
+  variable: "--font-vazirmatn",
+});
+
 const geist = Geist({
   subsets: ["latin"],
   variable: "--font-geist",
@@ -52,13 +58,15 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   const dictionary = getDictionary(locale);
 
   return (
-    <html lang={locale} dir={locale === "fa" ? "rtl" : "ltr"} className={cn("antialiased dark", geist.variable)}>
+    <html suppressHydrationWarning lang={locale} dir={locale === "fa" ? "rtl" : "ltr"} className={cn("antialiased", geist.variable, vazirmatn.variable)}>
       <body className="overflow-hidden max-w-3xl mx-auto">
-        <LocaleProvider locale={locale} dictionary={dictionary}>
-          <OfflineBanner />
-          <PwaManager />
-          <SplashScreen>{children}</SplashScreen>
-        </LocaleProvider>
+        <ThemeProvider>
+          <LocaleProvider locale={locale} dictionary={dictionary}>
+            <OfflineBanner />
+            <PwaManager />
+            <SplashScreen>{children}</SplashScreen>
+          </LocaleProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

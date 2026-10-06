@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import { Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
@@ -10,10 +11,17 @@ export default function PwaManager() {
   const { t } = useLocale();
   const [updateAvailable, setUpdateAvailable] = useState(false);
   const [waitingWorker, setWaitingWorker] = useState<ServiceWorker | null>(null);
+  const pathname = usePathname();
 
-  // Register service worker and handle lifecycle updates
+  // Register service worker and handle lifecycle updates.
+  // Retries whenever the route changes so a registration that failed
+  // (e.g. on /login before sign-in) is retried after navigation.
+  const registrationsFailed = useRef(false);
   useEffect(() => {
     if (typeof window === "undefined" || !("serviceWorker" in navigator)) {
+      return;
+    }
+    if (!("serviceWorker" in navigator)) {
       return;
     }
 
@@ -23,37 +31,45 @@ export default function PwaManager() {
         updateViaCache: "none",
       })
       .then((registration) => {
+        registrationsFailed.current = false;
         // Detect waiting worker on initial load
         if (registration.waiting) {
           setWaitingWorker(registration.waiting);
           setUpdateAvailable(true);
         }
 
-        // Check for incoming updates
-        registration.addEventListener("updatefound", () => {
+        // Check for incoming updates (property assignment stays idempotent
+        // even though this effect re-runs on navigation)
+        registration.onupdatefound = () => {
           const newWorker = registration.installing;
           if (newWorker) {
-            newWorker.addEventListener("statechange", () => {
+            newWorker.onstatechange = () => {
               if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
                 setWaitingWorker(newWorker);
                 setUpdateAvailable(true);
               }
-            });
+            };
           }
-        });
+        };
       })
       .catch((err) => {
+        registrationsFailed.current = true;
         console.error("ServiceWorker registration failed: ", err);
       });
 
     let refreshing = false;
-    navigator.serviceWorker.addEventListener("controllerchange", () => {
+    const onControllerChange = () => {
       if (!refreshing) {
         refreshing = true;
         window.location.reload();
       }
-    });
-  }, []);
+    };
+    navigator.serviceWorker.addEventListener("controllerchange", onControllerChange);
+
+    return () => {
+      navigator.serviceWorker.removeEventListener("controllerchange", onControllerChange);
+    };
+  }, [pathname]);
 
   const handleUpdate = () => {
     if (waitingWorker) {

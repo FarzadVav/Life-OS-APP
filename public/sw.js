@@ -1,5 +1,5 @@
 // Service Worker for Arrow Up PWA
-const CACHE_NAME = 'arrow-up-v1';
+const CACHE_NAME = 'arrow-up-v2';
 const OFFLINE_URL = '/offline';
 
 const PRECACHE_ASSETS = [
@@ -14,14 +14,24 @@ const PRECACHE_ASSETS = [
   '/images/arrow-up_logo.jpg',
 ];
 
-// Install Event: pre-cache the offline page and essential shell assets
+// Install Event: pre-cache the offline page and essential shell assets.
+// Each asset is cached individually so one failure can't abort install.
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(PRECACHE_ASSETS);
-    })
+    (async () => {
+      const cache = await caches.open(CACHE_NAME);
+      await Promise.all(
+        PRECACHE_ASSETS.map(async (url) => {
+          try {
+            await cache.add(url);
+          } catch (err) {
+            console.warn('[SW] Pre-cache failed for', url, err);
+          }
+        })
+      );
+      await self.skipWaiting();
+    })()
   );
-  self.skipWaiting();
 });
 
 // Activate Event: clean up older caches and claim clients
@@ -41,6 +51,14 @@ self.addEventListener('activate', (event) => {
   );
 });
 
+function offlineResponse() {
+  return new Response('Network offline and no cached fallback found.', {
+    status: 503,
+    statusText: 'Service Unavailable',
+    headers: { 'Content-Type': 'text/plain' },
+  });
+}
+
 // Fetch Event: intelligent caching strategy with offline fallback
 self.addEventListener('fetch', (event) => {
   const { request } = event;
@@ -54,6 +72,11 @@ self.addEventListener('fetch', (event) => {
 
   // Skip browser-extension and unsupported schemes
   if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+    return;
+  }
+
+  // Never intercept the service worker script itself
+  if (url.pathname === '/sw.js') {
     return;
   }
 
@@ -72,20 +95,16 @@ self.addEventListener('fetch', (event) => {
         })
         .catch(async () => {
           // If offline, check if page is already cached
-          const cachedResponse = await caches.match(request);
+          const cachedResponse = await caches.match(request, { ignoreSearch: true });
           if (cachedResponse) {
             return cachedResponse;
           }
           // Otherwise, fall back to the dedicated offline page
-          const offlineFallback = await caches.match(OFFLINE_URL);
+          const offlineFallback = await caches.match(OFFLINE_URL, { ignoreSearch: true });
           if (offlineFallback) {
             return offlineFallback;
           }
-          return new Response('Network offline and no cached fallback found.', {
-            status: 503,
-            statusText: 'Service Unavailable',
-            headers: { 'Content-Type': 'text/plain' },
-          });
+          return offlineResponse();
         })
     );
     return;
@@ -105,7 +124,7 @@ self.addEventListener('fetch', (event) => {
 
   if (isStaticAsset) {
     event.respondWith(
-      caches.match(request).then((cachedResponse) => {
+      caches.match(request, { ignoreSearch: true }).then((cachedResponse) => {
         if (cachedResponse) {
           // Stale-while-revalidate for fresh assets in background
           fetch(request)
@@ -120,15 +139,17 @@ self.addEventListener('fetch', (event) => {
           return cachedResponse;
         }
 
-        return fetch(request).then((networkResponse) => {
-          if (networkResponse && networkResponse.status === 200) {
-            const responseToCache = networkResponse.clone();
-            caches.open(CACHE_NAME).then((cache) => {
-              cache.put(request, responseToCache);
-            });
-          }
-          return networkResponse;
-        });
+        return fetch(request)
+          .then((networkResponse) => {
+            if (networkResponse && networkResponse.status === 200) {
+              const responseToCache = networkResponse.clone();
+              caches.open(CACHE_NAME).then((cache) => {
+                cache.put(request, responseToCache);
+              });
+            }
+            return networkResponse;
+          })
+          .catch(() => offlineResponse());
       })
     );
     return;
@@ -136,13 +157,24 @@ self.addEventListener('fetch', (event) => {
 
   // Default: Network with cache fallback
   event.respondWith(
-    fetch(request).catch(() => {
-      return caches.match(request);
-    })
+    fetch(request)
+      .then((networkResponse) => {
+        if (networkResponse && networkResponse.status === 200 && url.origin === self.location.origin) {
+          const responseToCache = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(request, responseToCache);
+          });
+        }
+        return networkResponse;
+      })
+      .catch(async () => {
+        const cachedResponse = await caches.match(request, { ignoreSearch: true });
+        return cachedResponse || offlineResponse();
+      })
   );
 });
 
-// Push Notification Support (Next.js PWA Guide Step 5)
+// Push Notification Support
 self.addEventListener('push', (event) => {
   if (event.data) {
     let payload = {};

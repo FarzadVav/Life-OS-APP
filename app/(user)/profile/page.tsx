@@ -21,6 +21,7 @@ import PageItemsWrapper from "@/features/general/components/static/PageItemsWrap
 import { logout } from "@/features/auth/actions/auth";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 import LocaleSwitcher from "@/features/general/components/module/LocaleSwitcher/LocaleSwitcher";
+import ThemeSwitcher from "@/features/general/components/module/ThemeSwitcher/ThemeSwitcher";
 
 function UserProfilePage() {
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
@@ -72,20 +73,21 @@ function UserProfilePage() {
           ))}
         </div>
 
-        <p className="sub-text w-full text-center">
-          {t("profile.quote")}
-        </p>
+        <p className="sub-text w-full text-center">{t("profile.quote")}</p>
 
         <div className="flex w-full items-center justify-between gap-3 rounded-component bg-card p-3">
           <span className="font-bold">{t("profile.language")}</span>
-          <div className="w-40">
-            <LocaleSwitcher />
-          </div>
+          <LocaleSwitcher />
+        </div>
+
+        <div className="flex w-full items-center justify-between gap-3 rounded-component bg-card p-3">
+          <span className="font-bold">{t("profile.colorScheme")}</span>
+          <ThemeSwitcher />
         </div>
 
         <Button
           variant="outline"
-          className="w-full"
+          className="mx-auto mt-3"
           onClick={() => setLogoutDialogOpen(true)}
         >
           <LogOutIcon />

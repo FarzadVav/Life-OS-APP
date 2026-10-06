@@ -6,6 +6,7 @@ import { EyeIcon, EyeOffIcon } from "lucide-react";
 
 import { Button } from "@/features/general/components/ui/Button/Button";
 import LocaleSwitcher from "@/features/general/components/module/LocaleSwitcher/LocaleSwitcher";
+import ThemeSwitcher from "@/features/general/components/module/ThemeSwitcher/ThemeSwitcher";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 import { login } from "@/features/auth/actions/auth";
 
@@ -87,7 +88,10 @@ function LoginPage() {
         </Form>
       </div>
 
-      <LocaleSwitcher />
+      <div className="flex w-full max-w-sm flex-row gap-3">
+        <LocaleSwitcher className="flex-1" />
+        <ThemeSwitcher className="flex-1" />
+      </div>
     </div>
   );
 }

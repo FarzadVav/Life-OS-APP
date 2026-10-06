@@ -31,7 +31,7 @@
     "to": "To"
   },
   "login": {
-    "title": "Welcome back",
+    "title": "Welcome to Arrow Up",
     "subtitle": "Log in to continue your journey.",
     "quote": "In memory of those who left us, so that Iran endures, tomorrow endures, and we remain to build the future",
     "formLabel": "Login form",
@@ -51,6 +51,7 @@
     "logoutTitle": "Logout",
     "logoutDescription": "Are you sure you want to logout?",
     "language": "Language",
+    "colorScheme": "Color Scheme",
     "todos": "Todos",
     "journals": "Journals",
     "skills": "Skills",
@@ -60,6 +61,11 @@
     "title": "Language",
     "english": "English",
     "persian": "Persian"
+  },
+  "colorScheme": {
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
   },
   "todos": {
     "title": "Todos",

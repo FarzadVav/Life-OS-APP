@@ -10,6 +10,7 @@
 
   --font-*: initial;
   --font-geist: var(--font-geist);
+  --font-vazirmatn: var(--font-vazirmatn);
 
   --radius-*: initial;
   --radius-xs: calc(var(--spacing) * 0.5); /* 2px */
@@ -59,6 +60,10 @@
     @apply scroll-smooth font-geist;
   }
 
+  html[dir="rtl"] {
+    @apply font-vazirmatn;
+  }
+
   a,
   span,
   label {
@@ -97,4 +102,11 @@
 
 @utility glass {
   @apply backdrop-blur-md;
+}
+
+/* Base UI renders a 1px hidden input for form-enabled fields. Its inline
+   margin: -1px pulls it outside the viewport, leaking a horizontal scrollbar. */
+input[id^="base-ui"][id$="-hidden-input"] {
+  margin: 0 !important;
+  pointer-events: none;
 }
