@@ -3,14 +3,18 @@
 import { useOffline } from "next/offline";
 import { WifiOff, Loader2 } from "lucide-react";
 
+import { useLocale } from "../LocaleProvider/LocaleProvider";
+
 interface ConnectivityFallbackProps {
   message?: string;
 }
 
 export default function ConnectivityFallback({
-  message = "Waiting for connection to load this section...",
+  message,
 }: ConnectivityFallbackProps) {
   const isOffline = useOffline();
+  const { t } = useLocale();
+  const resolvedMessage = message ?? t("common.waitingConnection");
 
   if (isOffline) {
     return (
@@ -21,9 +25,9 @@ export default function ConnectivityFallback({
         <div className="size-9 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-500">
           <WifiOff className="size-4" />
         </div>
-        <p className="text-xs font-semibold text-foreground">{message}</p>
+        <p className="text-xs font-semibold text-foreground">{resolvedMessage}</p>
         <p className="text-[11px] text-foreground/50">
-          Content will stream in automatically once back online.
+          {t("offlineBanner.streamIn")}
         </p>
       </div>
     );
@@ -35,7 +39,7 @@ export default function ConnectivityFallback({
       className="w-full py-8 flex items-center justify-center gap-2 text-xs text-foreground/60"
     >
       <Loader2 className="size-4 animate-spin" />
-      <span>Loading...</span>
+      <span>{t("common.loading")}</span>
     </div>
   );
 }

@@ -25,10 +25,11 @@ function TypeSelect({
   onChange: (value: JournalType) => void;
   categories: JournalCategory[];
 }) {
+  const { t } = useLocale();
   if (categories.length === 0) {
     return (
       <Field.Root name="type">
-        <Field.Label className="mb-1 font-bold">Category</Field.Label>
+        <Field.Label className="mb-1 font-bold">{t("common.category")}</Field.Label>
 
         <Button
           nativeButton={false}
@@ -36,7 +37,7 @@ function TypeSelect({
           className="w-full justify-between rounded-md"
           render={<Link href="/journals/categories" />}
         >
-          <span className="sub-text">No categories yet. Create one</span>
+          <span className="sub-text">{t("journals.noCategories")}</span>
           <PlusIcon className="size-4" />
         </Button>
       </Field.Root>
@@ -50,7 +51,7 @@ function TypeSelect({
 
   return (
     <Field.Root name="type">
-      <Field.Label className="mb-1 font-bold">Category</Field.Label>
+      <Field.Label className="mb-1 font-bold">{t("common.category")}</Field.Label>
 
       <Select.Root
         name="type"
@@ -69,7 +70,7 @@ function TypeSelect({
               variant="outline"
               className="w-full justify-between rounded-md"
             >
-              <Select.Value placeholder="Select category" />
+              <Select.Value placeholder={t("journals.selectCategory")} />
 
               <Select.Icon>
                 <ChevronDownIcon />
@@ -157,7 +158,7 @@ function NewJournalPage() {
 
       <Form
         className="w-full space-y-6"
-        aria-label={isEditMode ? "Edit journal" : "Create new journal"}
+        aria-label={isEditMode ? t("journals.editAria") : t("journals.createAria")}
         action={async () => {
           const payload = {
             id: editId ? Number(editId) : undefined,
@@ -176,14 +177,14 @@ function NewJournalPage() {
         }}
       >
         <Field.Root name="title">
-          <Field.Label className="block font-bold">Title</Field.Label>
+          <Field.Label className="block font-bold">{t("common.title")}</Field.Label>
 
           <Field.Control
             required
             minLength={3}
             value={title}
             className="input"
-            placeholder="Journal title..."
+            placeholder={t("journals.titlePlaceholder")}
             onChange={(event) => setTitle(event.target.value)}
           />
 
@@ -197,7 +198,7 @@ function NewJournalPage() {
         />
 
         <Field.Root name="content">
-          <Field.Label className="block font-bold">Content</Field.Label>
+          <Field.Label className="block font-bold">{t("common.content")}</Field.Label>
 
           <Field.Control
             required
@@ -209,7 +210,7 @@ function NewJournalPage() {
                 className="w-full rounded-md border p-3 text-sm focus:outline-none"
               />
             }
-            placeholder="Write your thoughts, observations or plans here..."
+            placeholder={t("journals.contentPlaceholder")}
             onChange={(event) => setContent(event.target.value)}
           />
 

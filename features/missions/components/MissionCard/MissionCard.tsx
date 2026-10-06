@@ -83,7 +83,7 @@ function MissionCard({
 
       <div className="rounded-component bg-background p-3">
         <div className="flex items-center justify-between">
-          <span className="font-bold">Progress</span>
+          <span className="font-bold">{t("common.progress")}</span>
 
           <span className="sub-text text-sm">
             {completedActions} / {mission.actions.length}
@@ -106,7 +106,7 @@ function MissionCard({
         <div className="rounded-component bg-background p-3">
           <div className="flex items-center gap-2 sub-text">
             <CalendarDaysIcon className="size-4" />
-            <span>Deadline</span>
+            <span>{t("common.deadline")}</span>
           </div>
 
           <p className="mt-2">{formatDate(mission.deadline)}</p>
@@ -115,7 +115,7 @@ function MissionCard({
         <div className="rounded-component bg-background p-3">
           <div className="flex items-center gap-2 sub-text">
             <GaugeIcon className="size-4" />
-            <span>Difficulty</span>
+            <span>{t("missions.difficulty")}</span>
           </div>
 
           <div className="mt-3">
@@ -126,7 +126,7 @@ function MissionCard({
         <div className="rounded-component bg-background p-3">
           <div className="flex items-center gap-2 sub-text">
             <CheckIcon className="size-4" />
-            <span>Actions</span>
+            <span>{t("missions.actionsLabel")}</span>
           </div>
 
           <p className="mt-2">{mission.actions.length}</p>
@@ -136,7 +136,7 @@ function MissionCard({
       <section className="space-y-3">
         <div>
           <div className="flex items-center justify-between">
-            <h3 className="font-bold">Actions</h3>
+            <h3 className="font-bold">{t("missions.actionsLabel")}</h3>
 
             <span className="sub-text">
               {completedActions}/{mission.actions.length}
@@ -180,7 +180,7 @@ function MissionCard({
       <section className="space-y-3">
         <div>
           <div className="flex items-center justify-between">
-            <h3 className="font-bold">Disciplines</h3>
+            <h3 className="font-bold">{t("missions.disciplines")}</h3>
 
             <span className="sub-text">{mission.disciplines.length}</span>
           </div>
@@ -234,7 +234,7 @@ function MissionCard({
                   className="flex flex-1"
                   href={`/missions/new?editId=${mission.id}`}
                 >
-                  <span>Edit</span>
+                  <span>{t("common.edit")}</span>
                   <ChevronRightIcon />
                 </Link>
               }

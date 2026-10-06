@@ -34,7 +34,7 @@ type SkillCardProps = {
 };
 
 function SkillCard({ skill }: SkillCardProps) {
-  const { formatDate } = useLocale();
+  const { formatDate, t } = useLocale();
 
   return (
     <Drawer
@@ -75,15 +75,15 @@ function SkillCard({ skill }: SkillCardProps) {
         <div className="rounded-component bg-background p-3">
           <div className="flex items-center gap-2 sub-text">
             <TagIcon className="size-4" />
-            <span>Type</span>
+            <span>{t("common.type")}</span>
           </div>
-          <p className="mt-2 font-medium">{skill.type || "General"}</p>
+          <p className="mt-2 font-medium">{skill.type || t("common.general")}</p>
         </div>
 
         <div className="rounded-component bg-background p-3">
           <div className="flex items-center gap-2 sub-text">
             <GaugeIcon className="size-4" />
-            <span>Mastery</span>
+            <span>{t("skills.mastery")}</span>
           </div>
           <div className="mt-3">
             <Mastery value={skill.level} />
@@ -93,7 +93,7 @@ function SkillCard({ skill }: SkillCardProps) {
         <div className="rounded-component bg-background p-3">
           <div className="flex items-center gap-2 sub-text">
             <CalendarDaysIcon className="size-4" />
-            <span>Created</span>
+            <span>{t("common.created")}</span>
           </div>
           <p className="mt-2 font-medium">{formatDate(skill.createdAt)}</p>
         </div>
@@ -102,7 +102,7 @@ function SkillCard({ skill }: SkillCardProps) {
       <section className="space-y-2">
         <div className="flex items-center gap-2 sub-text">
           <FileTextIcon className="size-4" />
-          <span className="font-bold">Playbook & Content</span>
+          <span className="font-bold">{t("skills.playbook")}</span>
         </div>
 
         <div className="rounded-component bg-background p-4 text-sm leading-relaxed whitespace-pre-wrap">
@@ -136,7 +136,7 @@ function SkillCard({ skill }: SkillCardProps) {
                   className="flex flex-1"
                   href={`/skills/new?editId=${skill.id}`}
                 >
-                  <span>Edit</span>
+                  <span>{t("common.edit")}</span>
                   <ChevronRightIcon />
                 </Link>
               }

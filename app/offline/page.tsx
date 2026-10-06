@@ -16,8 +16,10 @@ import {
 } from "lucide-react";
 import { motion } from "motion/react";
 import { Button } from "@/features/general/components/ui/Button/Button";
+import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 
 export default function OfflinePage() {
+  const { t } = useLocale();
   const router = useRouter();
   const [isChecking, setIsChecking] = useState(false);
   const [onlineNow, setOnlineNow] = useState(false);
@@ -50,9 +52,9 @@ export default function OfflinePage() {
   };
 
   const offlineShortcuts = [
-    { title: "Todos", href: "/", icon: CheckSquare, desc: "Review daily actions" },
-    { title: "Journals", href: "/journals", icon: BookOpen, desc: "Reflect and review logs" },
-    { title: "Missions", href: "/missions", icon: Target, desc: "Track active milestones" },
+    { title: t("todos.title"), href: "/", icon: CheckSquare, desc: t("offline.todosDesc") },
+    { title: t("journals.title"), href: "/journals", icon: BookOpen, desc: t("offline.journalsDesc") },
+    { title: t("missions.title"), href: "/missions", icon: Target, desc: t("offline.missionsDesc") },
   ];
 
   return (
@@ -65,11 +67,11 @@ export default function OfflinePage() {
           className="flex items-center gap-1.5 text-xs text-foreground/70 hover:text-foreground transition-colors cursor-pointer"
         >
           <ArrowLeft className="size-4" />
-          <span>Back</span>
+          <span>{t("offline.back")}</span>
         </button>
         <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-medium">
           <span className="size-1.5 rounded-full bg-amber-400 animate-pulse" />
-          <span>Offline Mode</span>
+          <span>{t("offline.mode")}</span>
         </div>
       </header>
 
@@ -94,7 +96,7 @@ export default function OfflinePage() {
           transition={{ delay: 0.1, duration: 0.4 }}
           className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground"
         >
-          {onlineNow ? "Connection Restored!" : "No Internet Connection"}
+          {onlineNow ? t("offline.restored") : t("offline.noConnection")}
         </motion.h1>
 
         <motion.p
@@ -104,8 +106,8 @@ export default function OfflinePage() {
           className="mt-3 text-sm text-foreground/60 leading-relaxed max-w-sm"
         >
           {onlineNow
-            ? "Your device is back online. Syncing pending requests and reloading..."
-            : "Arrow Up is running in offline mode. Your cached data and app shell remain fully accessible."}
+            ? t("offline.restoredDesc")
+            : t("offline.offlineDesc")}
         </motion.p>
 
         {/* Action Controls */}
@@ -122,7 +124,7 @@ export default function OfflinePage() {
             className="h-11 px-6 rounded-full text-sm font-semibold flex items-center gap-2 shadow-lg"
           >
             <RefreshCw className={`size-4 ${isChecking ? "animate-spin" : ""}`} />
-            <span>{isChecking ? "Checking Connection..." : onlineNow ? "Reconnected" : "Retry Connection"}</span>
+            <span>{isChecking ? t("offline.checking") : onlineNow ? t("offline.reconnected") : t("offline.retry")}</span>
           </Button>
 
           <Button
@@ -132,7 +134,7 @@ export default function OfflinePage() {
             className="h-11 px-5 rounded-full text-sm font-medium flex items-center gap-2 border border-foreground/10"
           >
             <Home className="size-4" />
-            <span>Home</span>
+            <span>{t("offline.home")}</span>
           </Button>
         </motion.div>
 
@@ -179,16 +181,16 @@ export default function OfflinePage() {
         >
           <div className="flex items-center gap-2 mb-2 text-xs font-semibold text-foreground/80">
             <Sparkles className="size-3.5 text-amber-400" />
-            <span>What happens while offline?</span>
+            <span>{t("offline.whatHappens")}</span>
           </div>
           <ul className="space-y-1.5 text-xs text-foreground/60">
             <li className="flex items-center gap-2">
               <CheckCircle2 className="size-3.5 text-emerald-400 shrink-0" />
-              <span>Cached pages load without interruption</span>
+              <span>{t("offline.cachedPages")}</span>
             </li>
             <li className="flex items-center gap-2">
               <CheckCircle2 className="size-3.5 text-emerald-400 shrink-0" />
-              <span>Pending server requests queue and retry automatically</span>
+              <span>{t("offline.requestsQueue")}</span>
             </li>
           </ul>
         </motion.div>

@@ -19,7 +19,7 @@ type JournalCardProps = {
 };
 
 function JournalCard({ journal }: JournalCardProps) {
-  const { formatDate, formatTime } = useLocale();
+  const { formatDate, formatTime, t } = useLocale();
 
   return (
     <Drawer
@@ -61,15 +61,15 @@ function JournalCard({ journal }: JournalCardProps) {
         <div className="rounded-component bg-background p-3">
           <div className="flex items-center gap-2 sub-text">
             <TagIcon className="size-4" />
-            <span>Type</span>
+            <span>{t("common.type")}</span>
           </div>
-          <p className="mt-2 font-medium">{journal.type || "General"}</p>
+          <p className="mt-2 font-medium">{journal.type || t("common.general")}</p>
         </div>
 
         <div className="rounded-component bg-background p-3">
           <div className="flex items-center gap-2 sub-text">
             <CalendarDaysIcon className="size-4" />
-            <span>Date</span>
+            <span>{t("common.date")}</span>
           </div>
           <p className="mt-2 font-medium">{formatDate(journal.createdAt)}</p>
         </div>
@@ -77,7 +77,7 @@ function JournalCard({ journal }: JournalCardProps) {
         <div className="rounded-component bg-background p-3">
           <div className="flex items-center gap-2 sub-text">
             <ClockIcon className="size-4" />
-            <span>Time</span>
+            <span>{t("common.time")}</span>
           </div>
           <p className="mt-2 font-medium">{formatTime(journal.createdAt)}</p>
         </div>
@@ -86,7 +86,7 @@ function JournalCard({ journal }: JournalCardProps) {
       <section className="space-y-2">
         <div className="flex items-center gap-2 sub-text">
           <FileTextIcon className="size-4" />
-          <span className="font-bold">Content</span>
+          <span className="font-bold">{t("common.content")}</span>
         </div>
 
         <div className="rounded-component bg-background p-4 text-sm leading-relaxed whitespace-pre-wrap">
@@ -120,7 +120,7 @@ function JournalCard({ journal }: JournalCardProps) {
                   className="flex flex-1"
                   href={`/journals/new?editId=${journal.id}`}
                 >
-                  <span>Edit</span>
+                  <span>{t("common.edit")}</span>
                   <ChevronRightIcon />
                 </Link>
               }

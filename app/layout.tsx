@@ -52,7 +52,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   const dictionary = getDictionary(locale);
 
   return (
-    <html lang={locale} className={cn("antialiased dark", geist.variable)}>
+    <html lang={locale} dir={locale === "fa" ? "rtl" : "ltr"} className={cn("antialiased dark", geist.variable)}>
       <body className="overflow-hidden max-w-3xl mx-auto">
         <LocaleProvider locale={locale} dictionary={dictionary}>
           <OfflineBanner />

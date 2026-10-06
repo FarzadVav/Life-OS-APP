@@ -43,29 +43,6 @@ type DisciplineDraft = {
 };
 
 
-const missionsDifficulty = [
-  {
-    value: "1",
-    label: "1 · Very easy",
-  },
-  {
-    value: "2",
-    label: "2 · Easy",
-  },
-  {
-    value: "3",
-    label: "3 · Moderate",
-  },
-  {
-    value: "4",
-    label: "4 · Hard",
-  },
-  {
-    value: "5",
-    label: "5 · Very hard",
-  },
-];
-
 function DifficultySelect({
   value,
   onChange,
@@ -73,13 +50,19 @@ function DifficultySelect({
   value: number | null;
   onChange: (value: number | null) => void;
 }) {
+  const { t } = useLocale();
+  const items = ["1", "2", "3", "4", "5"].map((value) => ({
+    value,
+    label: `${value} · ${t(`missions.level${value}`)}`,
+  }));
+
   return (
     <Field.Root>
-      <Field.Label className="mb-1 font-bold">Difficulty</Field.Label>
+      <Field.Label className="mb-1 font-bold">{t("missions.difficulty")}</Field.Label>
 
       <Select.Root
         name="difficulty"
-        items={missionsDifficulty}
+        items={items}
         value={value === null ? null : String(value)}
         onValueChange={(nextValue) => {
           onChange(nextValue === null ? null : Number(nextValue));
@@ -93,7 +76,7 @@ function DifficultySelect({
               variant="outline"
               className="w-full justify-between rounded-md"
             >
-              <Select.Value placeholder="Select difficulty" />
+              <Select.Value placeholder={t("missions.selectDifficulty")} />
 
               <Select.Icon>
                 <ChevronDownIcon />
@@ -106,7 +89,7 @@ function DifficultySelect({
           <Select.Positioner className="z-100">
             <Select.Popup className="min-w-(--anchor-width) overflow-hidden rounded-md bg-card-thick p-1">
               <Select.List className="p-px">
-                {missionsDifficulty.map((item) => (
+                {items.map((item) => (
                   <Select.Item
                     key={item.value}
                     value={item.value}
@@ -394,7 +377,7 @@ function NewMissionPage() {
 
       <Form
         className="w-full space-y-6"
-        aria-label={isEditMode ? "Edit mission" : "Create new mission"}
+        aria-label={isEditMode ? t("missions.editAria") : t("missions.createAria")}
         action={async () => {
           const payload = {
             id: editId ? Number(editId) : undefined,
@@ -429,14 +412,14 @@ function NewMissionPage() {
         }}
       >
         <Field.Root name="title">
-          <Field.Label className="block font-bold">Title</Field.Label>
+          <Field.Label className="block font-bold">{t("common.title")}</Field.Label>
 
           <Field.Control
             required
             minLength={3}
             value={title}
             className="input"
-            placeholder="Title..."
+            placeholder={t("missions.titlePlaceholder")}
             pattern=".*[A-Za-z].*"
             onChange={(event) => setTitle(event.target.value)}
           />
@@ -447,7 +430,7 @@ function NewMissionPage() {
         <DifficultySelect value={difficulty} onChange={setDifficulty} />
 
         <Field.Root name="deadline">
-          <Field.Label className="mb-1 font-bold">Deadline</Field.Label>
+          <Field.Label className="mb-1 font-bold">{t("common.deadline")}</Field.Label>
 
           <DayPickerDialog
             value={missionDeadline}
@@ -462,7 +445,7 @@ function NewMissionPage() {
         </Field.Root>
 
         <Field.Root name="actions">
-          <Field.Label className="mb-1 font-bold">Actions</Field.Label>
+          <Field.Label className="mb-1 font-bold">{t("missions.actionsLabel")}</Field.Label>
 
           <Dialog
             open={actionDialogOpen}
@@ -487,25 +470,25 @@ function NewMissionPage() {
           >
             <div>
               <Dialog.Title className="font-bold">
-                {actionDraft.id !== null ? "Edit action" : "New action"}
+                {actionDraft.id !== null ? t("missions.editAction") : t("missions.newAction")}
               </Dialog.Title>
 
               <Dialog.Description className="sub-text mt-1">
                 {actionDraft.id !== null
-                  ? "Edit the action details"
-                  : "Create an action for this mission"}
+                  ? t("missions.editActionDesc")
+                  : t("missions.createActionDesc")}
               </Dialog.Description>
             </div>
 
             <Field.Root name="actionTitle">
-              <Field.Label className="mb-1 font-bold">Title</Field.Label>
+              <Field.Label className="mb-1 font-bold">{t("common.title")}</Field.Label>
 
               <Field.Control
                 required
                 minLength={3}
                 className="input"
                 value={actionDraft.title}
-                placeholder="Action title..."
+                placeholder={t("missions.actionTitlePlaceholder")}
                 onChange={(event) =>
                   setActionDraft((current) => ({
                     ...current,
@@ -518,7 +501,7 @@ function NewMissionPage() {
             </Field.Root>
 
             <Field.Root name="actionDeadline">
-              <Field.Label className="mb-1 font-bold">Deadline</Field.Label>
+              <Field.Label className="mb-1 font-bold">{t("common.deadline")}</Field.Label>
 
               <DayPickerDialog
                 value={actionDraft.deadline}
@@ -535,7 +518,7 @@ function NewMissionPage() {
               <Dialog.Close
                 render={
                   <Button type="button" variant="ghost">
-                    Cancel
+                    {t("common.cancel")}
                   </Button>
                 }
               />
@@ -549,7 +532,7 @@ function NewMissionPage() {
                   actionDraft.deadline === null
                 }
               >
-                {actionDraft.id !== null ? "Save" : "Add"}
+                {actionDraft.id !== null ? t("common.save") : t("common.add")}
               </Button>
             </div>
           </Dialog>
@@ -613,11 +596,11 @@ function NewMissionPage() {
             }
           }}
         >
-          <Dialog.Title className="font-bold">Delete action?</Dialog.Title>
+          <Dialog.Title className="font-bold">{t("missions.deleteAction")}</Dialog.Title>
 
           <Dialog.Description className="sub-text mt-1">
             {actionToDelete
-              ? `"${actionToDelete.title}" will be removed from this mission`
+              ? t("missions.deleteActionDesc", { title: actionToDelete.title })
               : ""}
           </Dialog.Description>
 
@@ -625,19 +608,19 @@ function NewMissionPage() {
             <Dialog.Close
               render={
                 <Button type="button" variant="ghost">
-                  Cancel
+                  {t("common.cancel")}
                 </Button>
               }
             />
 
             <Button type="button" variant="primary" onClick={deleteAction}>
-              Delete
+              {t("common.delete")}
             </Button>
           </div>
         </Dialog>
 
         <Field.Root name="disciplines">
-          <Field.Label className="mb-1 font-bold">Disciplines</Field.Label>
+          <Field.Label className="mb-1 font-bold">{t("missions.disciplines")}</Field.Label>
 
           <Dialog
             open={disciplineDialogOpen}
@@ -664,26 +647,26 @@ function NewMissionPage() {
               <div>
                 <Dialog.Title className="font-bold">
                   {disciplineDraft.id !== null
-                    ? "Edit discipline"
-                    : "New discipline"}
+                    ? t("missions.editDiscipline")
+                    : t("missions.newDiscipline")}
                 </Dialog.Title>
 
                 <Dialog.Description className="sub-text mt-1">
                   {disciplineDraft.id !== null
-                    ? "Edit the discipline title"
-                    : "Create a discipline for this mission"}
+                    ? t("missions.editDisciplineDesc")
+                    : t("missions.createDisciplineDesc")}
                 </Dialog.Description>
               </div>
 
               <Field.Root name="disciplineTitle">
-                <Field.Label className="mb-1 font-bold">Title</Field.Label>
+                <Field.Label className="mb-1 font-bold">{t("common.title")}</Field.Label>
 
                 <Field.Control
                   required
                   minLength={3}
                   className="input"
                   value={disciplineDraft.title}
-                  placeholder="Discipline title..."
+                  placeholder={t("missions.disciplineTitlePlaceholder")}
                   onChange={(event) =>
                     setDisciplineDraft((current) => ({
                       ...current,
@@ -699,7 +682,7 @@ function NewMissionPage() {
                 <Dialog.Close
                   render={
                     <Button type="button" variant="ghost">
-                      Cancel
+                      {t("common.cancel")}
                     </Button>
                   }
                 />
@@ -710,7 +693,7 @@ function NewMissionPage() {
                   onClick={saveDiscipline}
                   disabled={disciplineDraft.title.trim().length < 3}
                 >
-                  {disciplineDraft.id !== null ? "Save" : "Add"}
+                  {disciplineDraft.id !== null ? t("common.save") : t("common.add")}
                 </Button>
               </div>
             </div>
@@ -766,25 +749,25 @@ function NewMissionPage() {
             }
           }}
         >
-          <Dialog.Title className="font-bold">Delete discipline?</Dialog.Title>
+          <Dialog.Title className="font-bold">{t("missions.deleteDiscipline")}</Dialog.Title>
 
           <Dialog.Description className="sub-text">
             {disciplineToDelete
-              ? `"${disciplineToDelete.title}" will be removed from this mission`
-              : "This discipline will be removed from this mission"}
+              ? t("missions.deleteDisciplineDesc", { title: disciplineToDelete.title })
+              : t("missions.deleteDisciplineFallback")}
           </Dialog.Description>
 
           <div className="flex items-center justify-end gap-3">
             <Dialog.Close
               render={
                 <Button type="button" variant="ghost">
-                  Cancel
+                  {t("common.cancel")}
                 </Button>
               }
             />
 
             <Button type="button" variant="primary" onClick={deleteDiscipline}>
-              Delete
+              {t("common.delete")}
             </Button>
           </div>
         </Dialog>

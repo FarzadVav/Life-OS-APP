@@ -28,9 +28,10 @@ function TypeSelect({
   value: TodoType;
   onChange: (value: TodoType) => void;
 }) {
+  const { t } = useLocale();
   return (
     <Field.Root name="type">
-      <Field.Label className="mb-1 font-bold">Type</Field.Label>
+      <Field.Label className="mb-1 font-bold">{t("common.type")}</Field.Label>
 
       <Select.Root
         name="type"
@@ -50,7 +51,7 @@ function TypeSelect({
               variant="outline"
               className="w-full justify-between rounded-md"
             >
-              <Select.Value placeholder="Select type" />
+              <Select.Value placeholder={t("todos.selectType")} />
 
               <Select.Icon>
                 <ChevronDownIcon />
@@ -147,7 +148,7 @@ function NewTodoPage() {
 
       <Form
         className="w-full space-y-6"
-        aria-label={isEditMode ? "Edit todo" : "Create new todo"}
+        aria-label={isEditMode ? t("todos.editAria") : t("todos.createAria")}
         action={async () => {
           const deadline =
             type === "Daily" ? dailyTime : serializeDate(upcomingDate);
@@ -166,14 +167,14 @@ function NewTodoPage() {
         }}
       >
         <Field.Root name="title">
-          <Field.Label className="block font-bold">Title</Field.Label>
+          <Field.Label className="block font-bold">{t("common.title")}</Field.Label>
 
           <Field.Control
             required
             minLength={3}
             value={title}
             className="input"
-            placeholder="Todo title..."
+            placeholder={t("todos.titlePlaceholder")}
             onChange={(event) => setTitle(event.target.value)}
           />
 
@@ -188,7 +189,7 @@ function NewTodoPage() {
         />
 
         <Field.Root name="deadline">
-          <Field.Label className="mb-1 font-bold">Deadline</Field.Label>
+          <Field.Label className="mb-1 font-bold">{t("common.deadline")}</Field.Label>
 
           {type === "Daily" ? (
             <TimePickerDialog value={dailyTime} onChange={setDailyTime} />

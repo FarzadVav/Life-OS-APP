@@ -19,7 +19,7 @@ type RuleCardProps = {
 };
 
 function RuleCard({ rule }: RuleCardProps) {
-  const { formatDate } = useLocale();
+  const { formatDate, t } = useLocale();
 
   return (
     <Drawer
@@ -58,7 +58,7 @@ function RuleCard({ rule }: RuleCardProps) {
         <div className="rounded-component bg-background p-3">
           <div className="flex items-center gap-2 sub-text">
             <TagIcon className="size-4" />
-            <span>Category</span>
+            <span>{t("common.category")}</span>
           </div>
           <p className="mt-2 font-medium">{rule.category}</p>
         </div>
@@ -66,7 +66,7 @@ function RuleCard({ rule }: RuleCardProps) {
         <div className="rounded-component bg-background p-3">
           <div className="flex items-center gap-2 sub-text">
             <CalendarDaysIcon className="size-4" />
-            <span>Established</span>
+            <span>{t("rules.established")}</span>
           </div>
           <p className="mt-2 font-medium">{formatDate(rule.createdAt)}</p>
         </div>
@@ -76,7 +76,7 @@ function RuleCard({ rule }: RuleCardProps) {
         <section className="space-y-2">
           <div className="flex items-center gap-2 sub-text">
             <InfoIcon className="size-4" />
-            <span className="font-bold">Rationale & Boundary</span>
+            <span className="font-bold">{t("rules.rationale")}</span>
           </div>
 
           <div className="rounded-component bg-background p-4 text-sm leading-relaxed whitespace-pre-wrap">
@@ -111,7 +111,7 @@ function RuleCard({ rule }: RuleCardProps) {
                   className="flex flex-1"
                   href={`/rules/new?editId=${rule.id}`}
                 >
-                  <span>Edit</span>
+                  <span>{t("common.edit")}</span>
                   <ChevronRightIcon />
                 </Link>
               }

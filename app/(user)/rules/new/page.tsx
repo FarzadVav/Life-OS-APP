@@ -21,9 +21,10 @@ function CategorySelect({
   value: RuleCategory | null;
   onChange: (value: RuleCategory) => void;
 }) {
+  const { t } = useLocale();
   return (
     <Field.Root name="category">
-      <Field.Label className="mb-1 font-bold">Category</Field.Label>
+      <Field.Label className="mb-1 font-bold">{t("common.category")}</Field.Label>
 
       <Select.Root
         name="category"
@@ -43,7 +44,7 @@ function CategorySelect({
               variant="outline"
               className="w-full justify-between rounded-md"
             >
-              <Select.Value placeholder="Select category" />
+              <Select.Value placeholder={t("rules.selectCategory")} />
 
               <Select.Icon>
                 <ChevronDownIcon />
@@ -130,7 +131,7 @@ function NewRulePage() {
 
       <Form
         className="w-full space-y-6"
-        aria-label={isEditMode ? "Edit rule" : "Create new rule"}
+        aria-label={isEditMode ? t("rules.editAria") : t("rules.createAria")}
         action={async () => {
           const payload = {
             id: editId ? Number(editId) : undefined,
@@ -146,14 +147,14 @@ function NewRulePage() {
         }}
       >
         <Field.Root name="title">
-          <Field.Label className="block font-bold">Rule / Principle</Field.Label>
+          <Field.Label className="block font-bold">{t("rules.ruleLabel")}</Field.Label>
 
           <Field.Control
             required
             minLength={3}
             value={title}
             className="input"
-            placeholder="e.g. No phone in the first hour of waking up..."
+            placeholder={t("rules.rulePlaceholder")}
             onChange={(event) => setTitle(event.target.value)}
           />
 
@@ -175,7 +176,7 @@ function NewRulePage() {
                 className="w-full rounded-md border p-3 text-sm focus:outline-none"
               />
             }
-            placeholder="Why does this rule exist? What triggers it?"
+            placeholder={t("rules.whyLabel")}
             onChange={(event) => setDescription(event.target.value)}
           />
 

@@ -88,7 +88,7 @@ function SkillCategoriesPage() {
             value={name}
             minLength={1}
             className="input"
-            placeholder="New category name..."
+            placeholder={t("categoriesPage.newCategoryPlaceholder")}
             onChange={(e) => setName(e.target.value)}
           />
 
@@ -98,7 +98,7 @@ function SkillCategoriesPage() {
             className="mt-3 w-full"
             disabled={!name.trim()}
           >
-            <span>Add</span>
+            <span>{t("common.add")}</span>
             <PlusIcon className="size-4" />
           </Button>
         </form>
@@ -176,7 +176,7 @@ function SkillCategoriesPage() {
           className="w-full max-w-sm p-4"
         >
           <div>
-            <Dialog.Title className="font-bold">Edit category</Dialog.Title>
+            <Dialog.Title className="font-bold">{t("categoriesPage.editCategory")}</Dialog.Title>
             <Dialog.Description className="sub-text mt-1">
               Change the category name
             </Dialog.Description>
@@ -184,14 +184,14 @@ function SkillCategoriesPage() {
 
           <form onSubmit={handleSaveEdit} className="space-y-4">
             <Field.Root name="categoryName">
-              <Field.Label className="mb-1 font-bold">Name</Field.Label>
+              <Field.Label className="mb-1 font-bold">{t("common.name")}</Field.Label>
               <input
                 autoFocus
                 required
                 minLength={1}
                 value={editName}
                 onChange={(e) => setEditName(e.target.value)}
-                placeholder="Category name..."
+                placeholder={t("categoriesPage.categoryNamePlaceholder")}
                 className="input"
               />
             </Field.Root>
@@ -200,7 +200,7 @@ function SkillCategoriesPage() {
               <Dialog.Close
                 render={
                   <Button type="button" variant="ghost">
-                    Cancel
+                    {t("common.cancel")}
                   </Button>
                 }
               />
@@ -210,7 +210,7 @@ function SkillCategoriesPage() {
                 variant="primary"
                 disabled={!editName.trim()}
               >
-                Save
+                {t("common.save")}
               </Button>
             </div>
           </form>
@@ -228,11 +228,11 @@ function SkillCategoriesPage() {
           className="w-full max-w-sm p-4"
         >
           <div>
-            <Dialog.Title className="font-bold">Delete category?</Dialog.Title>
+            <Dialog.Title className="font-bold">{t("categoriesPage.deleteCategory")}</Dialog.Title>
             <Dialog.Description className="sub-text mt-1">
               {categoryToDelete
-                ? `"${categoryToDelete.name}" will be permanently removed.`
-                : "This category will be permanently removed."}
+                ? `"${categoryToDelete.name}" ${t("categoriesPage.deleteCategoryDesc")}`
+                : t("categoriesPage.deleteCategoryDesc")}
             </Dialog.Description>
           </div>
 
@@ -240,7 +240,7 @@ function SkillCategoriesPage() {
             <Dialog.Close
               render={
                 <Button type="button" variant="ghost">
-                  Cancel
+                  {t("common.cancel")}
                 </Button>
               }
             />
@@ -250,7 +250,7 @@ function SkillCategoriesPage() {
               variant="primary"
               onClick={handleConfirmDelete}
             >
-              Delete
+              {t("common.delete")}
             </Button>
           </div>
         </Dialog>

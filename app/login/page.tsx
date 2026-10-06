@@ -15,11 +15,9 @@ function LoginPage() {
   const { t } = useLocale();
 
   return (
-    <div className="relative flex min-h-dvh w-full items-center justify-center p-3">
-      <div className="absolute right-3 top-3">
-        <LocaleSwitcher />
-      </div>
+    <div className="relative flex min-h-dvh w-full items-center justify-center flex-col p-3 gap-6">
       <div className="flex w-full max-w-sm flex-col gap-6 rounded-component bg-card p-6">
+        <p className="w-full text-sm leading-6 sub-text">{t("login.quote")}</p>
         <div className="flex flex-col gap-1">
           <h1 className="title">{t("login.title")}</h1>
           <p className="sub-text">{t("login.subtitle")}</p>
@@ -32,7 +30,9 @@ function LoginPage() {
           errors={state?.errors}
         >
           <Field.Root name="username">
-            <Field.Label className="block font-bold">{t("login.username")}</Field.Label>
+            <Field.Label className="block font-bold">
+              {t("login.username")}
+            </Field.Label>
 
             <Field.Control
               required
@@ -46,7 +46,9 @@ function LoginPage() {
           </Field.Root>
 
           <Field.Root name="password">
-            <Field.Label className="block font-bold">{t("login.password")}</Field.Label>
+            <Field.Label className="block font-bold">
+              {t("login.password")}
+            </Field.Label>
 
             <div className="relative">
               <Field.Control
@@ -60,7 +62,11 @@ function LoginPage() {
 
               <button
                 type="button"
-                aria-label={showPassword ? t("login.hidePassword") : t("login.showPassword")}
+                aria-label={
+                  showPassword
+                    ? t("login.hidePassword")
+                    : t("login.showPassword")
+                }
                 onClick={() => setShowPassword((prev) => !prev)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 muted-text [&_svg]:size-5"
               >
@@ -80,6 +86,8 @@ function LoginPage() {
           </Button>
         </Form>
       </div>
+
+      <LocaleSwitcher />
     </div>
   );
 }

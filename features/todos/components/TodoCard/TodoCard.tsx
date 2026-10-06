@@ -23,7 +23,7 @@ type TodoCardProps = {
 
 function TodoCard({ todo, onToggle }: TodoCardProps) {
   const isDaily = todo.type === "Daily";
-  const { formatDeadline } = useLocale();
+  const { formatDeadline, t } = useLocale();
 
   return (
     <Drawer
@@ -36,7 +36,7 @@ function TodoCard({ todo, onToggle }: TodoCardProps) {
           <div className="flex items-center gap-3">
             <button
               type="button"
-              aria-label={todo.isDone ? "Mark incomplete" : "Mark complete"}
+              aria-label={todo.isDone ? t("todos.markIncomplete") : t("todos.markComplete")}
               onClick={(e) => {
                 e.stopPropagation();
                 onToggle?.(todo.id);
@@ -88,7 +88,7 @@ function TodoCard({ todo, onToggle }: TodoCardProps) {
         <div className="rounded-component bg-background p-3">
           <div className="flex items-center gap-2 sub-text">
             <TagIcon className="size-4" />
-            <span>Type</span>
+            <span>{t("common.type")}</span>
           </div>
           <p className="mt-2 font-medium">{todo.type}</p>
         </div>
@@ -100,7 +100,7 @@ function TodoCard({ todo, onToggle }: TodoCardProps) {
             ) : (
               <CalendarDaysIcon className="size-4" />
             )}
-            <span>Deadline</span>
+            <span>{t("common.deadline")}</span>
           </div>
           <p className="mt-2 font-medium">
             {formatDeadline(todo.deadline, isDaily)}
@@ -110,14 +110,14 @@ function TodoCard({ todo, onToggle }: TodoCardProps) {
         <div className="rounded-component bg-background p-3">
           <div className="flex items-center gap-2 sub-text">
             <CheckIcon className="size-4" />
-            <span>Status</span>
+            <span>{t("common.status")}</span>
           </div>
           <p
             className={`mt-2 font-medium ${
               todo.isDone ? "text-foreground" : "sub-text"
             }`}
           >
-            {todo.isDone ? "Completed" : "In Progress"}
+            {todo.isDone ? t("todos.completed") : t("todos.inProgress")}
           </p>
         </div>
       </div>
@@ -125,16 +125,16 @@ function TodoCard({ todo, onToggle }: TodoCardProps) {
       <label className="rounded-component bg-background p-3 flex items-center justify-between cursor-pointer select-none">
         <div className="flex flex-col">
           <span className="text-sm font-medium text-foreground">
-            {todo.isDone ? "Mark as Incomplete" : "Mark as Completed"}
+            {todo.isDone ? t("todos.markAsIncomplete") : t("todos.markAsCompleted")}
           </span>
           <span className="sub-text text-xs">
-            {todo.isDone ? "Completed" : "In Progress"}
+            {todo.isDone ? t("todos.completed") : t("todos.inProgress")}
           </span>
         </div>
         <Switch
           checked={todo.isDone}
           onCheckedChange={() => onToggle?.(todo.id)}
-          aria-label={todo.isDone ? "Mark as Incomplete" : "Mark as Completed"}
+          aria-label={todo.isDone ? t("todos.markAsIncomplete") : t("todos.markAsCompleted")}
         />
       </label>
 
@@ -164,7 +164,7 @@ function TodoCard({ todo, onToggle }: TodoCardProps) {
                   className="flex flex-1"
                   href={`/todos/new?editId=${todo.id}`}
                 >
-                  <span>Edit</span>
+                  <span>{t("common.edit")}</span>
                   <ChevronRightIcon />
                 </Link>
               }

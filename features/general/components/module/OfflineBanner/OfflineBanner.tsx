@@ -5,6 +5,8 @@ import { useOffline } from "next/offline";
 import { WifiOff, RefreshCw } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
+import { useLocale } from "../LocaleProvider/LocaleProvider";
+
 function subscribeOnlineStatus(callback: () => void) {
   window.addEventListener("online", callback);
   window.addEventListener("offline", callback);
@@ -30,6 +32,7 @@ export default function OfflineBanner() {
     getOnlineServerSnapshot,
   );
   const [isRetrying, setIsRetrying] = useState(false);
+  const { t } = useLocale();
 
   const isOffline = nextIsOffline || !isOnline;
 
@@ -65,10 +68,10 @@ export default function OfflineBanner() {
             </div>
             <div className="flex flex-col min-w-0">
               <span className="font-semibold text-foreground text-xs leading-tight">
-                Offline Mode
+                {t("offline.mode")}
               </span>
               <span className="text-[11px] text-foreground/60 truncate leading-tight">
-                Pending requests will retry once back online.
+                {t("offlineBanner.pendingRetry")}
               </span>
             </div>
           </div>
@@ -79,7 +82,7 @@ export default function OfflineBanner() {
             className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-foreground/10 hover:bg-foreground/15 text-foreground font-medium text-[11px] transition-colors cursor-pointer disabled:opacity-60"
           >
             <RefreshCw className={`size-3 ${isRetrying ? "animate-spin" : ""}`} />
-            <span>{isRetrying ? "Checking..." : "Retry"}</span>
+            <span>{isRetrying ? t("offlineBanner.checking") : t("offlineBanner.retry")}</span>
           </button>
         </motion.aside>
       )}

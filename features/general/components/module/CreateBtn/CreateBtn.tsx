@@ -7,6 +7,7 @@ import { createPortal, useFormStatus } from "react-dom";
 import { CheckIcon, LoaderIcon, PlusIcon } from "lucide-react";
 
 import { Button, ButtonProps } from "../../ui/Button/Button";
+import { useLocale } from "../LocaleProvider/LocaleProvider";
 
 type CreateLinkBtn = ButtonProps & {
   href?: string;
@@ -23,10 +24,11 @@ function CreateBtn({
 }: CreateLinkBtn) {
   const isMounted = useMounted();
   const { pending } = useFormStatus();
+  const { t } = useLocale();
 
   const isDisabled = disabled || pending;
 
-  const computedChildren = children || (submit ? "Submit" : null);
+  const computedChildren = children || (submit ? t("common.submit") : null);
 
   if (!isMounted) {
     return <Button id="create-btn" />;

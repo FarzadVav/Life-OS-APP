@@ -2,6 +2,8 @@
 
 import { ComponentProps } from "react";
 import { DayPicker as PersianDayPicker, enUS } from "@daypicker/persian";
+import { DayPicker as GregorianDayPicker } from "@daypicker/react";
+import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 import "@daypicker/react/style.css";
 import "./datepicker.css";
 
@@ -18,24 +20,40 @@ export default function DayPicker({
   onChange,
   animate = true,
   dir = "ltr",
-  locale = enUS,
-  numerals = "latn",
   className,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  locale: _locale,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  numerals: _numerals,
   ...rest
 }: DayPickerProps) {
+  const { locale } = useLocale();
+
+  const sharedProps = {
+    mode: "single" as const,
+    dir,
+    animate,
+    selected: value ?? undefined,
+    onSelect: (date: Date | undefined) => {
+      onChange?.(date ?? null);
+    },
+    className,
+    ...rest,
+  };
+
+  if (locale === "fa") {
+    return (
+      <PersianDayPicker
+        locale={enUS}
+        numerals="latn"
+        {...(sharedProps as ComponentProps<typeof PersianDayPicker>)}
+      />
+    );
+  }
+
   return (
-    <PersianDayPicker
-      animate={animate}
-      dir={dir}
-      mode="single"
-      locale={locale}
-      numerals={numerals}
-      selected={value ?? undefined}
-      onSelect={(date) => {
-        onChange?.((date as Date) ?? null);
-      }}
-      className={className}
-      {...rest}
+    <GregorianDayPicker
+      {...(sharedProps as ComponentProps<typeof GregorianDayPicker>)}
     />
   );
 }

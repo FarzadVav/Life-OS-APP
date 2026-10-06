@@ -25,10 +25,11 @@ function TypeSelect({
   onChange: (value: SkillType) => void;
   categories: SkillCategory[];
 }) {
+  const { t } = useLocale();
   if (categories.length === 0) {
     return (
       <Field.Root name="type">
-        <Field.Label className="mb-1 font-bold">Category</Field.Label>
+        <Field.Label className="mb-1 font-bold">{t("common.category")}</Field.Label>
 
         <Button
           nativeButton={false}
@@ -36,7 +37,7 @@ function TypeSelect({
           className="w-full justify-between rounded-md"
           render={<Link href="/skills/categories" />}
         >
-          <span className="sub-text">No categories yet. Create one</span>
+          <span className="sub-text">{t("skills.noCategories")}</span>
           <PlusIcon className="size-4" />
         </Button>
       </Field.Root>
@@ -50,7 +51,7 @@ function TypeSelect({
 
   return (
     <Field.Root name="type">
-      <Field.Label className="mb-1 font-bold">Category</Field.Label>
+      <Field.Label className="mb-1 font-bold">{t("common.category")}</Field.Label>
 
       <Select.Root
         name="type"
@@ -69,7 +70,7 @@ function TypeSelect({
               variant="outline"
               className="w-full justify-between rounded-md"
             >
-              <Select.Value placeholder="Select category" />
+              <Select.Value placeholder={t("skills.selectCategory")} />
 
               <Select.Icon>
                 <ChevronDownIcon />
@@ -120,9 +121,10 @@ function MasterySelect({
   value: number | null;
   onChange: (value: number) => void;
 }) {
+  const { t } = useLocale();
   return (
     <Field.Root name="level">
-      <Field.Label className="mb-1 font-bold">Current Mastery</Field.Label>
+      <Field.Label className="mb-1 font-bold">{t("skills.currentMastery")}</Field.Label>
 
       <Select.Root
         name="level"
@@ -142,7 +144,7 @@ function MasterySelect({
               variant="outline"
               className="w-full justify-between rounded-md"
             >
-              <Select.Value placeholder="Select mastery level" />
+              <Select.Value placeholder={t("skills.selectMasteryLevel")} />
 
               <Select.Icon>
                 <ChevronDownIcon />
@@ -233,7 +235,7 @@ function NewSkillPage() {
 
       <Form
         className="w-full space-y-6"
-        aria-label={isEditMode ? "Edit skill" : "Create new skill"}
+        aria-label={isEditMode ? t("skills.editAria") : t("skills.createAria")}
         action={async () => {
           const payload = {
             id: editId ? Number(editId) : undefined,
@@ -250,14 +252,14 @@ function NewSkillPage() {
         }}
       >
         <Field.Root name="title">
-          <Field.Label className="block font-bold">Skill Title</Field.Label>
+          <Field.Label className="block font-bold">{t("skills.skillTitle")}</Field.Label>
 
           <Field.Control
             required
             minLength={3}
             value={title}
             className="input"
-            placeholder="e.g. High-Leverage Negotiation, React Compiler..."
+            placeholder={t("skills.skillTitlePlaceholder")}
             onChange={(event) => setTitle(event.target.value)}
           />
 
@@ -287,7 +289,7 @@ function NewSkillPage() {
                 className="w-full rounded-md border p-3 text-sm focus:outline-none"
               />
             }
-            placeholder="Write key steps, mental models, notes, or heuristics..."
+            placeholder={t("skills.playbookPlaceholder")}
             onChange={(event) => setContent(event.target.value)}
           />
 

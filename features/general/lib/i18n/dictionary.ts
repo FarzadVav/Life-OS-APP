@@ -10,7 +10,11 @@ export function getDictionary(locale: Locale): Dictionary {
   return dictionaries[locale] ?? dictionaries[DEFAULT_LOCALE];
 }
 
-export function translate(dictionary: Dictionary, key: string): string {
+export function translate(
+  dictionary: Dictionary,
+  key: string,
+  vars?: Record<string, string | number>,
+): string {
   const value = key.split(".").reduce<unknown>((acc, part) => {
     if (acc && typeof acc === "object" && part in acc) {
       return (acc as Record<string, unknown>)[part];
@@ -18,5 +22,16 @@ export function translate(dictionary: Dictionary, key: string): string {
     return undefined;
   }, dictionary);
 
-  return typeof value === "string" ? value : key;
+  if (typeof value !== "string") {
+    return key;
+  }
+
+  if (!vars) {
+    return value;
+  }
+
+  return Object.entries(vars).reduce(
+    (text, [name, replacement]) => text.replaceAll(`{${name}}`, String(replacement)),
+    value,
+  );
 }

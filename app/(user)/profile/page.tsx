@@ -76,9 +76,11 @@ function UserProfilePage() {
           {t("profile.quote")}
         </p>
 
-        <div className="flex w-full items-center justify-between rounded-component bg-card p-3">
+        <div className="flex w-full items-center justify-between gap-3 rounded-component bg-card p-3">
           <span className="font-bold">{t("profile.language")}</span>
-          <LocaleSwitcher />
+          <div className="w-40">
+            <LocaleSwitcher />
+          </div>
         </div>
 
         <Button

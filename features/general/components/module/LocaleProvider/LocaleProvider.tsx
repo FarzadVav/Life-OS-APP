@@ -14,7 +14,7 @@ import {
 type LocaleContextValue = {
   locale: Locale;
   dictionary: Dictionary;
-  t: (key: string) => string;
+  t: (key: string, vars?: Record<string, string | number>) => string;
   formatDate: (
     value: Date | string | number | null | undefined,
     fallback?: string,
@@ -39,7 +39,8 @@ function LocaleProvider({
   children,
 }: PropsWithChildren<{ locale: Locale; dictionary: Dictionary }>) {
   const value = useMemo<LocaleContextValue>(() => {
-    const t = (key: string) => translate(dictionary, key);
+    const t = (key: string, vars?: Record<string, string | number>) =>
+      translate(dictionary, key, vars);
 
     return {
       locale,

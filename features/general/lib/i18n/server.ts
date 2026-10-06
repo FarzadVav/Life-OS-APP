@@ -17,6 +17,7 @@ export async function getTranslations() {
   return {
     locale,
     dictionary,
-    t: (key: string) => translate(dictionary, key),
+    t: (key: string, vars?: Record<string, string | number>) =>
+      translate(dictionary, key, vars),
   };
 }

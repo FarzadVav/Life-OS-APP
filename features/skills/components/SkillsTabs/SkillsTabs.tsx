@@ -11,10 +11,12 @@ import { skills as initialSkills } from "../../constants";
 import { useSkillCategories } from "../../categories";
 import SkillCard from "../SkillCard/SkillCard";
 import { Button } from "@/features/general/components/ui/Button/Button";
+import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 
 function SkillsTabs() {
   const [skillsList] = useState<Skill[]>(initialSkills);
   const { categories } = useSkillCategories();
+  const { t } = useLocale();
   const sp = useSearchParams();
 
   const tab = sp.get("tab");
@@ -39,7 +41,7 @@ function SkillsTabs() {
           render={<Link href="/skills/categories" />}
         >
           <PlusIcon className="size-4" />
-          <span>Create First Category</span>
+          <span>{t("skills.createFirstCategory")}</span>
         </Button>
       ) : (
         <div className="w-full flex items-center gap-1.5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden py-0.5">
@@ -76,7 +78,7 @@ function SkillsTabs() {
             className="shrink-0 gap-1.5"
           >
             <PlusIcon className="size-4" />
-            <span>Categories</span>
+            <span>{t("common.categories")}</span>
           </Button>
         </div>
       )}
@@ -115,8 +117,8 @@ function SkillsTabs() {
               >
                 <p className="sub-text">
                   {hasCategories && activeTab !== "all"
-                    ? "You haven't any skills in this category"
-                    : "You haven't any skills"}
+                    ? t("skills.noSkillsInCategory")
+                    : t("skills.noSkills")}
                 </p>
               </div>
             )}

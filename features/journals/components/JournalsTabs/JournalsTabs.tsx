@@ -11,10 +11,12 @@ import { journals as initialJournals } from "../../constants";
 import { useJournalCategories } from "../../categories";
 import JournalCard from "../JournalCard/JournalCard";
 import { Button } from "@/features/general/components/ui/Button/Button";
+import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 
 function JournalsTabs() {
   const [journalsList] = useState<Journal[]>(initialJournals);
   const { categories } = useJournalCategories();
+  const { t } = useLocale();
   const sp = useSearchParams();
 
   const tab = sp.get("tab");
@@ -39,7 +41,7 @@ function JournalsTabs() {
           render={<Link href="/journals/categories" />}
         >
           <PlusIcon className="size-4" />
-          <span>Create First Category</span>
+          <span>{t("journals.createFirstCategory")}</span>
         </Button>
       ) : (
         <div className="w-full flex items-center gap-1.5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden py-0.5">
@@ -76,7 +78,7 @@ function JournalsTabs() {
             className="shrink-0 gap-1.5"
           >
             <PlusIcon className="size-4" />
-            <span>Categories</span>
+            <span>{t("common.categories")}</span>
           </Button>
         </div>
       )}
@@ -115,8 +117,8 @@ function JournalsTabs() {
               >
                 <p className="sub-text">
                   {hasCategories && activeTab !== "all"
-                    ? "You haven't any journals in this category"
-                    : "You haven't any journals"}
+                    ? t("journals.noJournalsInCategory")
+                    : t("journals.noJournals")}
                 </p>
               </div>
             )}

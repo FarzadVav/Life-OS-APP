@@ -5,6 +5,7 @@ import { ClockIcon } from "lucide-react";
 import Dialog from "@/features/general/components/ui/Dialog/Dialog";
 import { Button } from "@/features/general/components/ui/Button/Button";
 import TimePicker, { TimePickerProps } from "./TimePicker";
+import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 
 export type TimePickerDialogProps = {
   value: string | null;
@@ -27,12 +28,16 @@ function LocalTimePickerDialog({
   nativeButton,
   open,
   onOpenChange,
-  label = "Deadline",
-  title = "Deadline Time",
-  description = "Set target time for this task",
+  label,
+  title,
+  description,
   showIcon = true,
   className = "w-full justify-start rounded-md",
 }: TimePickerDialogProps) {
+  const { t } = useLocale();
+  const resolvedLabel = label ?? t("timePicker.label");
+  const resolvedTitle = title ?? t("timePicker.title");
+  const resolvedDescription = description ?? t("timePicker.description");
   const [internalOpen, setInternalOpen] = useState(false);
   const isControlled = open !== undefined;
   const isOpen = isControlled ? open : internalOpen;
@@ -54,7 +59,7 @@ function LocalTimePickerDialog({
     handleOpenChange(false);
   };
 
-  const displayTime = value ? value : "Not set";
+  const displayTime = value ? value : t("timePicker.notSet");
 
   const computedTrigger = trigger || (
     <Button
@@ -64,7 +69,7 @@ function LocalTimePickerDialog({
     >
       {showIcon && <ClockIcon className="size-4 opacity-70" />}
       <span>
-        {label}: {displayTime}
+        {resolvedLabel}: {displayTime}
       </span>
     </Button>
   );
@@ -78,10 +83,10 @@ function LocalTimePickerDialog({
     >
       <div className="w-80 max-w-full space-y-4">
         <div>
-          <Dialog.Title className="font-bold">{title}</Dialog.Title>
-          {description ? (
+          <Dialog.Title className="font-bold">{resolvedTitle}</Dialog.Title>
+          {resolvedDescription ? (
             <Dialog.Description className="sub-text mt-1 text-sm">
-              {description}
+              {resolvedDescription}
             </Dialog.Description>
           ) : null}
         </div>

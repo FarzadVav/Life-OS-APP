@@ -4,7 +4,10 @@ import { useEffect, useState } from "react";
 import { Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
+import { useLocale } from "../LocaleProvider/LocaleProvider";
+
 export default function PwaManager() {
+  const { t } = useLocale();
   const [updateAvailable, setUpdateAvailable] = useState(false);
   const [waitingWorker, setWaitingWorker] = useState<ServiceWorker | null>(null);
 
@@ -71,8 +74,8 @@ export default function PwaManager() {
           <div className="flex items-center gap-3">
             <Sparkles className="size-5 text-amber-400 shrink-0" />
             <div className="text-xs">
-              <p className="font-semibold text-foreground">Update Available</p>
-              <p className="text-foreground/70">A fresh version of Arrow Up is ready.</p>
+              <p className="font-semibold text-foreground">{t("pwa.updateAvailable")}</p>
+              <p className="text-foreground/70">{t("pwa.freshVersion")}</p>
             </div>
           </div>
           <button
@@ -80,7 +83,7 @@ export default function PwaManager() {
             type="button"
             className="px-3 py-1.5 rounded-full bg-foreground text-background text-xs font-semibold hover:bg-foreground/90 transition-colors shrink-0"
           >
-            Refresh
+            {t("pwa.refresh")}
           </button>
         </motion.div>
       )}

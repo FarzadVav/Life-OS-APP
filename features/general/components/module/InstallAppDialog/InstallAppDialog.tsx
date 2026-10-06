@@ -15,6 +15,7 @@ import TopBar from "@/features/general/components/static/TopBar/TopBar";
 import Dialog from "@/features/general/components/ui/Dialog/Dialog";
 import { Button } from "@/features/general/components/ui/Button/Button";
 import { usePwaInstall } from "@/features/general/hooks/usePwaInstall";
+import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 
 interface InstallAppDialogProps {
   position?: "left" | "right";
@@ -26,6 +27,7 @@ export default function InstallAppDialog({
   className,
 }: InstallAppDialogProps) {
   const { isStandalone, isInstallable, isIOS, installApp } = usePwaInstall();
+  const { t } = useLocale();
   const [isOpen, setIsOpen] = useState(false);
   const [isInstalling, setIsInstalling] = useState(false);
   const [installedSuccess, setInstalledSuccess] = useState(false);
@@ -56,8 +58,8 @@ export default function InstallAppDialog({
         position={position}
         onClick={() => setIsOpen(true)}
         className={className}
-        aria-label="Install Arrow Up App"
-        title="Install Arrow Up"
+        aria-label={t("install.aria")}
+        title={t("install.label")}
       >
         <span className="relative flex items-center justify-center">
           <Download className="size-5" />
@@ -72,16 +74,16 @@ export default function InstallAppDialog({
             <Image
               width={52}
               height={52}
-              alt="Arrow Up"
+              alt={t("install.title")}
               src="/icons/icon-192x192.png"
               className="size-14 rounded-full object-cover"
             />
             <div className="flex flex-col">
               <Dialog.Title className="title text-foreground">
-                Install Arrow Up
+                {t("install.label")}
               </Dialog.Title>
               <Dialog.Description className="sub-text">
-                Run as a dedicated, standalone app
+                {t("install.subtitle")}
               </Dialog.Description>
             </div>
           </div>
@@ -91,9 +93,9 @@ export default function InstallAppDialog({
             <div className="flex items-start gap-2.5">
               <Zap className="size-4 text-amber-400 shrink-0 mt-0.5" />
               <div>
-                <span>Standalone Experience:</span>
+                <span>{t("install.standaloneTitle")}</span>
                 <span className="muted-text ml-1">
-                  Distraction-free window with faster launch and no browser tab clutter.
+                  {t("install.standaloneDesc")}
                 </span>
               </div>
             </div>
@@ -101,9 +103,9 @@ export default function InstallAppDialog({
             <div className="flex items-start gap-2.5">
               <Wifi className="size-4 text-emerald-400 shrink-0 mt-0.5" />
               <div>
-                <span>Offline Resilience:</span>
+                <span>{t("install.offlineTitle")}</span>
                 <span className="muted-text ml-1">
-                  Access your tasks, habits, and journals even with zero internet.
+                  {t("install.offlineDesc")}
                 </span>
               </div>
             </div>
@@ -111,9 +113,9 @@ export default function InstallAppDialog({
             <div className="flex items-start gap-2.5">
               <Sparkles className="size-4 text-indigo-400 shrink-0 mt-0.5" />
               <div>
-                <span>Quick Launch:</span>
+                <span>{t("install.quickTitle")}</span>
                 <span className="muted-text ml-1">
-                  Pins straight to your home screen or system taskbar.
+                  {t("install.quickDesc")}
                 </span>
               </div>
             </div>
@@ -123,29 +125,29 @@ export default function InstallAppDialog({
           {installedSuccess ? (
             <div className="flex items-center justify-center gap-2 py-3 text-emerald-400 font-semibold text-sm">
               <CheckCircle2 className="size-5" />
-              <span>Installed successfully!</span>
+              <span>{t("install.installedSuccess")}</span>
             </div>
           ) : isIOS ? (
             <div className="rounded-2xl border border-foreground/10 bg-background/50 p-3.5 space-y-2.5 text-xs text-foreground/80">
-              <p className="font-semibold text-foreground text-xs">To install on iOS Safari:</p>
+              <p className="font-semibold text-foreground text-xs">{t("install.iosTitle")}</p>
               <div className="flex items-center gap-2.5 text-foreground/70">
                 <span className="size-6 rounded-lg bg-foreground/10 flex items-center justify-center shrink-0">
                   <Share className="size-3.5" />
                 </span>
-                <span>1. Tap the Share icon in the Safari toolbar</span>
+                <span>{t("install.iosStep1")}</span>
               </div>
               <div className="flex items-center gap-2.5 text-foreground/70">
                 <span className="size-6 rounded-lg bg-foreground/10 flex items-center justify-center shrink-0">
                   <PlusSquare className="size-3.5" />
                 </span>
-                <span>2. Scroll down and tap &quot;Add to Home Screen&quot;</span>
+                <span>{t("install.iosStep2")}</span>
               </div>
             </div>
           ) : !isInstallable ? (
             <div className="rounded-2xl border border-foreground/10 bg-background/50 p-3 text-xs text-foreground/70">
-              <p className="font-medium text-foreground mb-1">Desktop / Browser install:</p>
+              <p className="font-medium text-foreground mb-1">{t("install.desktopTitle")}</p>
               <p>
-                Click the install icon (⊕) in your browser&apos;s address bar, or open the browser menu (⋮) and select &quot;Install Arrow Up&quot;.
+                {t("install.desktopDesc")}
               </p>
             </div>
           ) : null}
@@ -160,7 +162,7 @@ export default function InstallAppDialog({
                   className={"flex-1"}
                   onClick={() => setIsOpen(false)}
                 >
-                  {installedSuccess ? "Close" : "Later"}
+                  {installedSuccess ? t("common.close") : t("install.later")}
                 </Button>
               }
             />
@@ -173,7 +175,7 @@ export default function InstallAppDialog({
                 onClick={handleInstall}
                 disabled={isInstalling}
               >
-                <span>{isInstalling ? "Installing..." : "Install Now"}</span>
+                <span>{isInstalling ? t("install.installing") : t("install.installNow")}</span>
                 <Download />
               </Button>
             )}

@@ -42,7 +42,7 @@ function SplashScreen({ children }: PropsWithChildren) {
               <Image
                 width={200}
                 height={200}
-                alt="Arrow up"
+                alt="Arrow Up"
                 className="rounded-full"
                 src={"/images/arrow-up_logo.jpg"}
               />

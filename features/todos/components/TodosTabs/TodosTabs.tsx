@@ -9,10 +9,12 @@ import { Todo } from "../../types";
 import { todos as initialTodos } from "../../constants";
 import TodoCard from "../TodoCard/TodoCard";
 import { Button } from "@/features/general/components/ui/Button/Button";
+import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 
 function TodosTabs() {
   const [todosList, setTodosList] = useState<Todo[]>(initialTodos);
   const sp = useSearchParams();
+  const { t } = useLocale();
 
   const tab = sp.get("tab");
   const activeTab = tab === "upcoming" ? "upcoming" : "today";
@@ -43,7 +45,7 @@ function TodosTabs() {
           render={<Link href="?tab=today" />}
           variant={activeTab === "today" ? "primary" : "card"}
         >
-          Today
+          {t("todos.today")}
         </Button>
         <Button
           nativeButton={false}
@@ -51,7 +53,7 @@ function TodosTabs() {
           render={<Link href="?tab=upcoming" />}
           variant={activeTab === "upcoming" ? "primary" : "card"}
         >
-          Upcoming
+          {t("todos.upcoming")}
         </Button>
       </div>
 
@@ -59,10 +61,10 @@ function TodosTabs() {
         <div className="w-full rounded-component bg-card p-3 space-y-2">
           <div className="flex items-center justify-between text-xs">
             <span className="font-bold">
-              {activeTab === "today" ? "Daily Momentum" : "Upcoming Targets"}
+              {activeTab === "today" ? t("todos.dailyMomentum") : t("todos.upcomingTargets")}
             </span>
             <span className="sub-text">
-              {completedCount} / {totalCount} completed
+              {t("todos.completedOf", { done: completedCount, total: totalCount })}
             </span>
           </div>
 
