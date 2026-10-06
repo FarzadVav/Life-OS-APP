@@ -12,16 +12,15 @@ import {
 import { Journal } from "../../types";
 import Drawer from "@/features/general/components/ui/Drawer/Drawer";
 import { Button } from "@/features/general/components/ui/Button/Button";
-import {
-  formatPersianDate as formatDate,
-  formatTime,
-} from "@/features/general/lib/utils";
+import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 
 type JournalCardProps = {
   journal: Journal;
 };
 
 function JournalCard({ journal }: JournalCardProps) {
+  const { formatDate, formatTime } = useLocale();
+
   return (
     <Drawer
       nativeButton={false}

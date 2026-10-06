@@ -19,28 +19,31 @@ import { Button } from "@/features/general/components/ui/Button/Button";
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
 import PageItemsWrapper from "@/features/general/components/static/PageItemsWrapper/PageItemsWrapper";
 import { logout } from "@/features/auth/actions/auth";
+import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
+import LocaleSwitcher from "@/features/general/components/module/LocaleSwitcher/LocaleSwitcher";
 
 function UserProfilePage() {
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
+  const { t } = useLocale();
 
   const stats = [
     {
-      label: "Todos",
+      label: t("profile.todos"),
       value: todos.length,
       icon: <CheckSquareIcon className="size-4" />,
     },
     {
-      label: "Journals",
+      label: t("profile.journals"),
       value: journals.length,
       icon: <BookOpenIcon className="size-4" />,
     },
     {
-      label: "Skills",
+      label: t("profile.skills"),
       value: skills.length,
       icon: <TrophyIcon className="size-4" />,
     },
     {
-      label: "Missions",
+      label: t("profile.missions"),
       value: missions.length,
       icon: <RocketIcon className="size-4" />,
     },
@@ -49,7 +52,7 @@ function UserProfilePage() {
   return (
     <PageWrapper>
       <TopBar>
-        <TopBar.Title asTitle>Profile</TopBar.Title>
+        <TopBar.Title asTitle>{t("profile.title")}</TopBar.Title>
         <TopBar.Btn backIcon href="/" position="left" />
       </TopBar>
 
@@ -70,8 +73,13 @@ function UserProfilePage() {
         </div>
 
         <p className="sub-text w-full text-center">
-          Small steps every day lead to big results.
+          {t("profile.quote")}
         </p>
+
+        <div className="flex w-full items-center justify-between rounded-component bg-card p-3">
+          <span className="font-bold">{t("profile.language")}</span>
+          <LocaleSwitcher />
+        </div>
 
         <Button
           variant="outline"
@@ -79,7 +87,7 @@ function UserProfilePage() {
           onClick={() => setLogoutDialogOpen(true)}
         >
           <LogOutIcon />
-          Logout
+          {t("profile.logout")}
         </Button>
       </PageItemsWrapper>
 
@@ -87,10 +95,10 @@ function UserProfilePage() {
         <div className="flex w-full max-w-xs flex-col gap-5 p-1">
           <div className="flex flex-col gap-1">
             <Dialog.Title className="title text-foreground">
-              Logout
+              {t("profile.logoutTitle")}
             </Dialog.Title>
             <Dialog.Description className="sub-text">
-              Are you sure you want to logout?
+              {t("profile.logoutDescription")}
             </Dialog.Description>
           </div>
 
@@ -98,14 +106,14 @@ function UserProfilePage() {
             <Dialog.Close
               render={
                 <Button type="button" variant="card" className="flex-1">
-                  Cancel
+                  {t("common.cancel")}
                 </Button>
               }
             />
 
             <form action={logout} className="flex-1">
               <Button type="submit" variant="primary" className="w-full">
-                Logout
+                {t("profile.logout")}
               </Button>
             </form>
           </div>

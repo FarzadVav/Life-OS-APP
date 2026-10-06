@@ -8,6 +8,7 @@ import Dialog from "@/features/general/components/ui/Dialog/Dialog";
 import { Button } from "@/features/general/components/ui/Button/Button";
 import DayPicker, { DayPickerProps } from "./DayPicker";
 import { formatPersianDate as formatPersianDateUtil } from "@/features/general/lib/utils";
+import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 
 export function formatPersianDate(date: Date | null): string {
   return formatPersianDateUtil(date, "Not set");
@@ -37,15 +38,20 @@ function LocalDayPickerDialog({
   nativeButton,
   open,
   onOpenChange,
-  label = "Deadline",
+  label,
   title,
   description,
   showIcon = false,
   className = "w-full justify-start rounded-md",
   dir = "ltr",
   locale = enUS,
-  formatDate = formatPersianDate,
+  formatDate,
 }: DayPickerDialogProps) {
+  const { formatDate: localeFormatDate, t } = useLocale();
+  const resolvedLabel = label ?? t("common.deadline");
+  const formatDateValue =
+    formatDate ??
+    ((date: Date | null) => localeFormatDate(date, t("dates.notSet")));
   const [internalOpen, setInternalOpen] = useState(false);
   const isControlled = open !== undefined;
   const isOpen = isControlled ? open : internalOpen;
@@ -70,7 +76,7 @@ function LocalDayPickerDialog({
     >
       {showIcon && <CalendarDaysIcon className="size-4 opacity-70" />}
       <span>
-        {label}: {formatDate(value)}
+        {resolvedLabel}: {formatDateValue(value)}
       </span>
     </Button>
   );
@@ -93,7 +99,7 @@ function LocalDayPickerDialog({
             ) : null}
           </div>
         ) : (
-          <Dialog.Title className="sr-only">Select Date</Dialog.Title>
+          <Dialog.Title className="sr-only">{t("common.selectDate")}</Dialog.Title>
         )}
 
         <DayPicker
@@ -111,7 +117,7 @@ function LocalDayPickerDialog({
                 variant="ghost"
                 onClick={() => handleOpenChange(false)}
               >
-                Close
+                {t("common.close")}
               </Button>
             }
           />

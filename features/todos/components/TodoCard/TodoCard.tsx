@@ -14,7 +14,7 @@ import { Todo } from "../../types";
 import Drawer from "@/features/general/components/ui/Drawer/Drawer";
 import { Button } from "@/features/general/components/ui/Button/Button";
 import Switch from "@/features/general/components/ui/Switch/Switch";
-import { formatDeadline } from "@/features/general/lib/utils";
+import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 
 type TodoCardProps = {
   todo: Todo;
@@ -23,6 +23,7 @@ type TodoCardProps = {
 
 function TodoCard({ todo, onToggle }: TodoCardProps) {
   const isDaily = todo.type === "Daily";
+  const { formatDeadline } = useLocale();
 
   return (
     <Drawer

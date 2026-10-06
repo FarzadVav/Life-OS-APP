@@ -15,7 +15,7 @@ import {
 import { Mission } from "../../types";
 import Drawer from "@/features/general/components/ui/Drawer/Drawer";
 import { Button } from "@/features/general/components/ui/Button/Button";
-import { formatPersianDate as formatDate } from "@/features/general/lib/utils";
+import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 
 function Difficulty({ value }: { value: number }) {
   return (
@@ -43,6 +43,8 @@ function MissionCard({
   progress,
   completedActions,
 }: MissionCardProps) {
+  const { formatDate, t } = useLocale();
+
   return (
     <Drawer
       nativeButton={false}
@@ -57,7 +59,7 @@ function MissionCard({
 
               <div className="mt-1 flex items-center gap-2">
                 <span className="sub-text text-sm">
-                  To {formatDate(mission.deadline)}
+                  {t("dates.to")} {formatDate(mission.deadline)}
                 </span>
 
                 <span className="sub-text">•</span>

@@ -2,6 +2,8 @@
 
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
+
 import { Field, Form, Select } from "@base-ui/react";
 import { CheckIcon, ChevronDownIcon } from "lucide-react";
 
@@ -93,6 +95,7 @@ function TypeSelect({
 }
 
 function NewTodoPage() {
+  const { t } = useLocale();
   const searchParams = useSearchParams();
   const editId = searchParams.get("editId");
   const isEditMode = Boolean(editId);
@@ -137,7 +140,7 @@ function NewTodoPage() {
     <PageWrapper>
       <TopBar>
         <TopBar.Title asTitle>
-          {isEditMode ? "Edit Todo" : "New Todo"}
+          {isEditMode ? t("todos.edit") : t("todos.new")}
         </TopBar.Title>
         <TopBar.Btn backIcon href="/" position="left" />
       </TopBar>

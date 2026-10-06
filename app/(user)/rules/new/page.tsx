@@ -2,6 +2,8 @@
 
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
+
 import { Field, Form, Select } from "@base-ui/react";
 import { CheckIcon, ChevronDownIcon } from "lucide-react";
 
@@ -86,6 +88,7 @@ function CategorySelect({
 }
 
 function NewRulePage() {
+  const { t } = useLocale();
   const searchParams = useSearchParams();
   const editId = searchParams.get("editId");
   const isEditMode = Boolean(editId);
@@ -120,7 +123,7 @@ function NewRulePage() {
     <PageWrapper>
       <TopBar>
         <TopBar.Title asTitle>
-          {isEditMode ? "Edit Rule" : "New Rule"}
+          {isEditMode ? t("rules.edit") : t("rules.new")}
         </TopBar.Title>
         <TopBar.Btn backIcon href="/rules" position="left" />
       </TopBar>

@@ -6,29 +6,32 @@ import PageWrapper from "@/features/general/components/static/PageWrapper/PageWr
 import PageItemsWrapper from "@/features/general/components/static/PageItemsWrapper/PageItemsWrapper";
 import ConnectivityFallback from "@/features/general/components/module/ConnectivityFallback/ConnectivityFallback";
 import JournalsTabs from "@/features/journals/components/JournalsTabs/JournalsTabs";
+import { getTranslations } from "@/features/general/lib/i18n/server";
 
-function JournalsPage() {
+async function JournalsPage() {
+  const { t } = await getTranslations();
+
   return (
     <PageWrapper>
       <TopBar>
-        <TopBar.Title asTitle>Journals</TopBar.Title>
+        <TopBar.Title asTitle>{t("journals.title")}</TopBar.Title>
         <TopBar.Btn backIcon href="/" position="left" />
       </TopBar>
 
       <PageItemsWrapper>
         <Suspense
           fallback={
-            <ConnectivityFallback message="Waiting for connection to load journals..." />
+            <ConnectivityFallback message={t("journals.loading")} />
           }
         >
           <JournalsTabs />
         </Suspense>
 
         <p className="sub-text w-full text-center">
-          Writing daily uncovers patterns and brings peace of mind.
+          {t("journals.subtitle")}
         </p>
 
-        <CreateBtn href="/journals/new">New Journal</CreateBtn>
+        <CreateBtn href="/journals/new">{t("journals.new")}</CreateBtn>
       </PageItemsWrapper>
     </PageWrapper>
   );

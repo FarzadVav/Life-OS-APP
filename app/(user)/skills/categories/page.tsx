@@ -13,8 +13,10 @@ import {
   useSkillCategories,
   SkillCategory,
 } from "@/features/skills/categories";
+import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 
 function SkillCategoriesPage() {
+  const { t } = useLocale();
   const { categories, addCategory, updateCategory, deleteCategory } =
     useSkillCategories();
   const [name, setName] = useState("");
@@ -75,7 +77,7 @@ function SkillCategoriesPage() {
   return (
     <PageWrapper>
       <TopBar>
-        <TopBar.Title asTitle>Categories</TopBar.Title>
+        <TopBar.Title asTitle>{t("common.categories")}</TopBar.Title>
         <TopBar.Btn backIcon href="/skills" position="left" />
       </TopBar>
 

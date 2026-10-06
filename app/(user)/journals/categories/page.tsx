@@ -13,8 +13,10 @@ import {
   useJournalCategories,
   JournalCategory,
 } from "@/features/journals/categories";
+import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 
 function JournalCategoriesPage() {
+  const { t } = useLocale();
   const { categories, addCategory, updateCategory, deleteCategory } =
     useJournalCategories();
   const [name, setName] = useState("");
@@ -75,7 +77,7 @@ function JournalCategoriesPage() {
   return (
     <PageWrapper>
       <TopBar>
-        <TopBar.Title asTitle>Categories</TopBar.Title>
+        <TopBar.Title asTitle>{t("common.categories")}</TopBar.Title>
         <TopBar.Btn backIcon href="/journals" position="left" />
       </TopBar>
 

@@ -4,12 +4,15 @@ import RuleCard from "@/features/rules/components/RuleCard/RuleCard";
 import CreateBtn from "@/features/general/components/module/CreateBtn/CreateBtn";
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
 import PageItemsWrapper from "@/features/general/components/static/PageItemsWrapper/PageItemsWrapper";
+import { getTranslations } from "@/features/general/lib/i18n/server";
 
-function RulesPage() {
+async function RulesPage() {
+  const { t } = await getTranslations();
+
   return (
     <PageWrapper>
       <TopBar>
-        <TopBar.Title asTitle>Rules</TopBar.Title>
+        <TopBar.Title asTitle>{t("rules.title")}</TopBar.Title>
         <TopBar.Btn backIcon href="/" position="left" />
       </TopBar>
 
@@ -28,15 +31,15 @@ function RulesPage() {
               p-3
             "
           >
-            <p>You haven{"'"}t any rules</p>
+            <p>{t("rules.empty")}</p>
           </div>
         )}
 
         <p className="sub-text w-full text-center">
-          Clear rules eliminate decision fatigue and protect your future.
+          {t("rules.subtitle")}
         </p>
 
-        <CreateBtn href="/rules/new">New Rule</CreateBtn>
+        <CreateBtn href="/rules/new">{t("rules.new")}</CreateBtn>
       </PageItemsWrapper>
     </PageWrapper>
   );

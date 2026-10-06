@@ -1,0 +1,74 @@
+"use client";
+
+import { createContext, PropsWithChildren, useContext, useMemo } from "react";
+
+import { Locale } from "@/features/general/lib/i18n/config";
+import { Dictionary, translate } from "@/features/general/lib/i18n/dictionary";
+import {
+  formatDateForLocale,
+  formatDateTimeForLocale,
+  formatDeadlineForLocale,
+  formatTime,
+} from "@/features/general/lib/i18n/dates";
+
+type LocaleContextValue = {
+  locale: Locale;
+  dictionary: Dictionary;
+  t: (key: string) => string;
+  formatDate: (
+    value: Date | string | number | null | undefined,
+    fallback?: string,
+  ) => string;
+  formatTime: typeof formatTime;
+  formatDateTime: (
+    value: Date | string | number | null | undefined,
+    separator?: string,
+    fallback?: string,
+  ) => string;
+  formatDeadline: (
+    deadline: string | null | undefined,
+    isDaily?: boolean,
+  ) => string;
+};
+
+const LocaleContext = createContext<LocaleContextValue | null>(null);
+
+function LocaleProvider({
+  locale,
+  dictionary,
+  children,
+}: PropsWithChildren<{ locale: Locale; dictionary: Dictionary }>) {
+  const value = useMemo<LocaleContextValue>(() => {
+    const t = (key: string) => translate(dictionary, key);
+
+    return {
+      locale,
+      dictionary,
+      t,
+      formatDate: (dateValue, fallback = "") =>
+        formatDateForLocale(locale, dateValue, fallback),
+      formatTime,
+      formatDateTime: (dateValue, separator = " ", fallback = "") =>
+        formatDateTimeForLocale(locale, dateValue, separator, fallback),
+      formatDeadline: (deadline, isDaily = false) =>
+        formatDeadlineForLocale(locale, deadline, isDaily, t("dates.to")),
+    };
+  }, [locale, dictionary]);
+
+  return (
+    <LocaleContext.Provider value={value}>{children}</LocaleContext.Provider>
+  );
+}
+
+function useLocale() {
+  const context = useContext(LocaleContext);
+
+  if (!context) {
+    throw new Error("useLocale must be used within LocaleProvider");
+  }
+
+  return context;
+}
+
+export default LocaleProvider;
+export { useLocale };

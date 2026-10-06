@@ -12,13 +12,15 @@ import {
 import { Rule } from "../../types";
 import Drawer from "@/features/general/components/ui/Drawer/Drawer";
 import { Button } from "@/features/general/components/ui/Button/Button";
-import { formatPersianDate as formatDate } from "@/features/general/lib/utils";
+import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 
 type RuleCardProps = {
   rule: Rule;
 };
 
 function RuleCard({ rule }: RuleCardProps) {
+  const { formatDate } = useLocale();
+
   return (
     <Drawer
       nativeButton={false}

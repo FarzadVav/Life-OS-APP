@@ -5,8 +5,10 @@ import MissionCard from "@/features/missions/components/MissionCard/MissionCard"
 import CreateBtn from "@/features/general/components/module/CreateBtn/CreateBtn";
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
 import PageItemsWrapper from "@/features/general/components/static/PageItemsWrapper/PageItemsWrapper";
+import { getTranslations } from "@/features/general/lib/i18n/server";
 
-function MissionsPage() {
+async function MissionsPage() {
+  const { t } = await getTranslations();
   const getProgress = (mission: Mission) => {
     const total = mission.actions.length;
 
@@ -22,7 +24,7 @@ function MissionsPage() {
   return (
     <PageWrapper>
       <TopBar>
-        <TopBar.Title asTitle>Missions</TopBar.Title>
+        <TopBar.Title asTitle>{t("missions.title")}</TopBar.Title>
         <TopBar.Btn backIcon href="/" position="left" />
       </TopBar>
 
@@ -53,15 +55,15 @@ function MissionsPage() {
               p-3
             "
           >
-            <p>You haven{"'"}t any missions</p>
+            <p>{t("missions.empty")}</p>
           </div>
         )}
 
         <p className="sub-text w-full text-center">
-          It{"'"}s better to have not more than 3 or 4 missions!
+          {t("missions.subtitle")}
         </p>
 
-        <CreateBtn href="/missions/new">New Mission</CreateBtn>
+        <CreateBtn href="/missions/new">{t("missions.new")}</CreateBtn>
       </PageItemsWrapper>
     </PageWrapper>
   );

@@ -6,29 +6,32 @@ import PageWrapper from "@/features/general/components/static/PageWrapper/PageWr
 import PageItemsWrapper from "@/features/general/components/static/PageItemsWrapper/PageItemsWrapper";
 import ConnectivityFallback from "@/features/general/components/module/ConnectivityFallback/ConnectivityFallback";
 import SkillsTabs from "@/features/skills/components/SkillsTabs/SkillsTabs";
+import { getTranslations } from "@/features/general/lib/i18n/server";
 
-function SkillsPage() {
+async function SkillsPage() {
+  const { t } = await getTranslations();
+
   return (
     <PageWrapper>
       <TopBar>
-        <TopBar.Title asTitle>Skills</TopBar.Title>
+        <TopBar.Title asTitle>{t("skills.title")}</TopBar.Title>
         <TopBar.Btn backIcon href="/" position="left" />
       </TopBar>
 
       <PageItemsWrapper>
         <Suspense
           fallback={
-            <ConnectivityFallback message="Waiting for connection to load skills..." />
+            <ConnectivityFallback message={t("skills.loading")} />
           }
         >
           <SkillsTabs />
         </Suspense>
 
         <p className="sub-text w-full text-center">
-          Consistent practice transforms knowledge into mastery.
+          {t("skills.subtitle")}
         </p>
 
-        <CreateBtn href="/skills/new">New Skill</CreateBtn>
+        <CreateBtn href="/skills/new">{t("skills.new")}</CreateBtn>
       </PageItemsWrapper>
     </PageWrapper>
   );

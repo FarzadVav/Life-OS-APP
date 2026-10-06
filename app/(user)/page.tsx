@@ -8,12 +8,15 @@ import PageWrapper from "@/features/general/components/static/PageWrapper/PageWr
 import PageItemsWrapper from "@/features/general/components/static/PageItemsWrapper/PageItemsWrapper";
 
 import ConnectivityFallback from "@/features/general/components/module/ConnectivityFallback/ConnectivityFallback";
+import { getTranslations } from "@/features/general/lib/i18n/server";
 
-function UserHomePage() {
+async function UserHomePage() {
+  const { t } = await getTranslations();
+
   return (
     <PageWrapper>
       <TopBar>
-        <TopBar.Title asTitle>Todos</TopBar.Title>
+        <TopBar.Title asTitle>{t("todos.title")}</TopBar.Title>
         <TopBar.Btn href="/profile" position="left">
           <UserIcon />
         </TopBar.Btn>
@@ -21,15 +24,15 @@ function UserHomePage() {
       </TopBar>
 
       <PageItemsWrapper>
-        <Suspense fallback={<ConnectivityFallback message="Waiting for connection to load todos..." />}>
+        <Suspense fallback={<ConnectivityFallback message={t("todos.loading")} />}>
           <TodosTabs />
         </Suspense>
 
         <p className="sub-text w-full text-center">
-          Focus on high-impact daily actions to build relentless momentum.
+          {t("todos.subtitle")}
         </p>
 
-        <CreateBtn href="/todos/new">New Todo</CreateBtn>
+        <CreateBtn href="/todos/new">{t("todos.new")}</CreateBtn>
       </PageItemsWrapper>
     </PageWrapper>
   );

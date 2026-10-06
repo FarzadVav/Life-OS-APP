@@ -5,18 +5,24 @@ import { Field, Form } from "@base-ui/react";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 
 import { Button } from "@/features/general/components/ui/Button/Button";
+import LocaleSwitcher from "@/features/general/components/module/LocaleSwitcher/LocaleSwitcher";
+import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 import { login } from "@/features/auth/actions/auth";
 
 function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [state, action, pending] = useActionState(login, undefined);
+  const { t } = useLocale();
 
   return (
-    <div className="flex min-h-dvh w-full items-center justify-center p-3">
+    <div className="relative flex min-h-dvh w-full items-center justify-center p-3">
+      <div className="absolute right-3 top-3">
+        <LocaleSwitcher />
+      </div>
       <div className="flex w-full max-w-sm flex-col gap-6 rounded-component bg-card p-6">
         <div className="flex flex-col gap-1">
-          <h1 className="title">Welcome back</h1>
-          <p className="sub-text">Log in to continue your journey.</p>
+          <h1 className="title">{t("login.title")}</h1>
+          <p className="sub-text">{t("login.subtitle")}</p>
         </div>
 
         <Form
@@ -26,21 +32,21 @@ function LoginPage() {
           errors={state?.errors}
         >
           <Field.Root name="username">
-            <Field.Label className="block font-bold">Username</Field.Label>
+            <Field.Label className="block font-bold">{t("login.username")}</Field.Label>
 
             <Field.Control
               required
               minLength={3}
               name="username"
               className="input"
-              placeholder="Your username..."
+              placeholder={t("login.usernamePlaceholder")}
             />
 
             <Field.Error className="sub-text mt-0.5 text-red-400" />
           </Field.Root>
 
           <Field.Root name="password">
-            <Field.Label className="block font-bold">Password</Field.Label>
+            <Field.Label className="block font-bold">{t("login.password")}</Field.Label>
 
             <div className="relative">
               <Field.Control
@@ -49,12 +55,12 @@ function LoginPage() {
                 name="password"
                 type={showPassword ? "text" : "password"}
                 className="input pr-10"
-                placeholder="Your password..."
+                placeholder={t("login.passwordPlaceholder")}
               />
 
               <button
                 type="button"
-                aria-label={showPassword ? "Hide password" : "Show password"}
+                aria-label={showPassword ? t("login.hidePassword") : t("login.showPassword")}
                 onClick={() => setShowPassword((prev) => !prev)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 muted-text [&_svg]:size-5"
               >
@@ -70,7 +76,7 @@ function LoginPage() {
           )}
 
           <Button type="submit" className="w-full" disabled={pending}>
-            {pending ? "Logging in..." : "Login"}
+            {pending ? t("login.pending") : t("login.submit")}
           </Button>
         </Form>
       </div>

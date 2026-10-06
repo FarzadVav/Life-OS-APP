@@ -6,6 +6,9 @@ import "./globals.css";
 import SplashScreen from "@/features/general/components/static/SplashScreen/SplashScreen";
 import OfflineBanner from "@/features/general/components/module/OfflineBanner/OfflineBanner";
 import PwaManager from "@/features/general/components/module/PwaManager/PwaManager";
+import LocaleProvider from "@/features/general/components/module/LocaleProvider/LocaleProvider";
+import { getLocale } from "@/features/general/lib/i18n/server";
+import { getDictionary } from "@/features/general/lib/i18n/dictionary";
 
 export const viewport: Viewport = {
   themeColor: "#101010",
@@ -44,13 +47,18 @@ const geist = Geist({
   variable: "--font-geist",
 });
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const locale = await getLocale();
+  const dictionary = getDictionary(locale);
+
   return (
-    <html lang="en" className={cn("antialiased dark", geist.variable)}>
+    <html lang={locale} className={cn("antialiased dark", geist.variable)}>
       <body className="overflow-hidden max-w-3xl mx-auto">
-        <OfflineBanner />
-        <PwaManager />
-        <SplashScreen>{children}</SplashScreen>
+        <LocaleProvider locale={locale} dictionary={dictionary}>
+          <OfflineBanner />
+          <PwaManager />
+          <SplashScreen>{children}</SplashScreen>
+        </LocaleProvider>
       </body>
     </html>
   );

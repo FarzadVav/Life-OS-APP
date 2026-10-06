@@ -2,7 +2,8 @@
 
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import DayPickerDialog, { formatPersianDate as formatDate } from "@/features/general/components/ui/DayPickerDialog";
+import DayPickerDialog from "@/features/general/components/ui/DayPickerDialog";
+import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 import { Field, Form, Select } from "@base-ui/react";
 import { CheckIcon, ChevronDownIcon, Trash2Icon, EditIcon } from "lucide-react";
 
@@ -137,6 +138,7 @@ function DifficultySelect({
 }
 
 function NewMissionPage() {
+  const { formatDate, t } = useLocale();
   const searchParams = useSearchParams();
 
   const editId = searchParams.get("editId");
@@ -384,7 +386,7 @@ function NewMissionPage() {
     <PageWrapper>
       <TopBar>
         <TopBar.Title asTitle>
-          {isEditMode ? "Edit Mission" : "New Mission"}
+          {isEditMode ? t("missions.edit") : t("missions.new")}
         </TopBar.Title>
 
         <TopBar.Btn backIcon href="/missions" position="left" />

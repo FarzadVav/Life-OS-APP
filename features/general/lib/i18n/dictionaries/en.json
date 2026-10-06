@@ -1,0 +1,83 @@
+{
+  "common": {
+    "cancel": "Cancel",
+    "logout": "Logout",
+    "close": "Close",
+    "categories": "Categories",
+    "selectDate": "Select Date",
+    "deadline": "Deadline",
+    "loading": "Waiting for connection to load"
+  },
+  "dates": {
+    "notSet": "Not set",
+    "to": "To"
+  },
+  "login": {
+    "title": "Welcome back",
+    "subtitle": "Log in to continue your journey.",
+    "username": "Username",
+    "usernamePlaceholder": "Your username...",
+    "password": "Password",
+    "passwordPlaceholder": "Your password...",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "submit": "Login",
+    "pending": "Logging in..."
+  },
+  "profile": {
+    "title": "Profile",
+    "quote": "Small steps every day lead to big results.",
+    "logout": "Logout",
+    "logoutTitle": "Logout",
+    "logoutDescription": "Are you sure you want to logout?",
+    "language": "Language",
+    "todos": "Todos",
+    "journals": "Journals",
+    "skills": "Skills",
+    "missions": "Missions"
+  },
+  "language": {
+    "title": "Language",
+    "english": "English",
+    "persian": "Persian"
+  },
+  "todos": {
+    "title": "Todos",
+    "new": "New Todo",
+    "edit": "Edit Todo",
+    "subtitle": "Focus on high-impact daily actions to build relentless momentum.",
+    "loading": "Waiting for connection to load todos...",
+    "empty": "You haven't any todos"
+  },
+  "journals": {
+    "title": "Journals",
+    "new": "New Journal",
+    "edit": "Edit Journal",
+    "subtitle": "Writing daily uncovers patterns and brings peace of mind.",
+    "loading": "Waiting for connection to load journals..."
+  },
+  "skills": {
+    "title": "Skills",
+    "new": "New Skill",
+    "edit": "Edit Skill",
+    "subtitle": "Consistent practice transforms knowledge into mastery.",
+    "loading": "Waiting for connection to load skills..."
+  },
+  "rules": {
+    "title": "Rules",
+    "new": "New Rule",
+    "edit": "Edit Rule",
+    "subtitle": "Clear rules eliminate decision fatigue and protect your future.",
+    "empty": "You haven't any rules"
+  },
+  "missions": {
+    "title": "Missions",
+    "new": "New Mission",
+    "edit": "Edit Mission",
+    "subtitle": "It's better to have not more than 3 or 4 missions!",
+    "empty": "You haven't any missions"
+  },
+  "search": {
+    "title": "Search"
+  }
+}
