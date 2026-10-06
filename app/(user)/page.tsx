@@ -7,6 +7,8 @@ import CreateBtn from "@/features/general/components/module/CreateBtn/CreateBtn"
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
 import PageItemsWrapper from "@/features/general/components/static/PageItemsWrapper/PageItemsWrapper";
 
+import ConnectivityFallback from "@/features/general/components/module/ConnectivityFallback/ConnectivityFallback";
+
 function UserHomePage() {
   return (
     <PageWrapper>
@@ -15,10 +17,11 @@ function UserHomePage() {
         <TopBar.Btn href="/profile" position="left">
           <UserIcon />
         </TopBar.Btn>
+        <TopBar.InstallBtn position="right" />
       </TopBar>
 
       <PageItemsWrapper>
-        <Suspense>
+        <Suspense fallback={<ConnectivityFallback message="Waiting for connection to load todos..." />}>
           <TodosTabs />
         </Suspense>
 

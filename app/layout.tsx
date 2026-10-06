@@ -1,13 +1,42 @@
 import { cn } from "cn";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist } from "next/font/google";
 
 import "./globals.css";
 import SplashScreen from "@/features/general/components/static/SplashScreen/SplashScreen";
+import OfflineBanner from "@/features/general/components/module/OfflineBanner/OfflineBanner";
+import PwaManager from "@/features/general/components/module/PwaManager/PwaManager";
+
+export const viewport: Viewport = {
+  themeColor: "#101010",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+};
 
 export const metadata: Metadata = {
-  title: "Life OS",
-  description: "Life OS",
+  title: {
+    default: "Arrow Up",
+    template: "%s | Arrow Up",
+  },
+  description: "Personal Operating System for Daily Momentum, Habits & Missions",
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Arrow Up",
+  },
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icons/icon-192x192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icons/icon-512x512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [
+      { url: "/icons/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+  },
 };
 
 const geist = Geist({
@@ -19,9 +48,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={cn("antialiased dark", geist.variable)}>
       <body className="overflow-hidden max-w-3xl mx-auto">
-        <SplashScreen>
-          {children}
-        </SplashScreen>
+        <OfflineBanner />
+        <PwaManager />
+        <SplashScreen>{children}</SplashScreen>
       </body>
     </html>
   );

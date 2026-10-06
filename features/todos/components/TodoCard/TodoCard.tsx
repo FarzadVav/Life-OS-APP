@@ -8,13 +8,12 @@ import {
   CircleIcon,
   ClockIcon,
   TagIcon,
-  ToggleLeftIcon,
-  ToggleRightIcon,
 } from "lucide-react";
 
 import { Todo } from "../../types";
 import Drawer from "@/features/general/components/ui/Drawer/Drawer";
 import { Button } from "@/features/general/components/ui/Button/Button";
+import Switch from "@/features/general/components/ui/Switch/Switch";
 
 function formatDeadline(deadline: string, isDaily: boolean) {
   if (isDaily || (deadline.includes(":") && !deadline.includes("-"))) {
@@ -125,7 +124,7 @@ function TodoCard({ todo, onToggle }: TodoCardProps) {
           </div>
           <p
             className={`mt-2 font-medium ${
-              todo.isDone ? "text-emerald-500" : "sub-text"
+              todo.isDone ? "text-foreground" : "sub-text"
             }`}
           >
             {todo.isDone ? "Completed" : "In Progress"}
@@ -133,26 +132,21 @@ function TodoCard({ todo, onToggle }: TodoCardProps) {
         </div>
       </div>
 
-      <div className="rounded-component bg-background p-3">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() => onToggle?.(todo.id)}
-          className="w-full justify-center gap-2"
-        >
-          {todo.isDone ? (
-            <>
-              <ToggleRightIcon className="size-5 text-emerald-500" />
-              <span>Mark as Incomplete</span>
-            </>
-          ) : (
-            <>
-              <ToggleLeftIcon className="size-5" />
-              <span>Mark as Completed</span>
-            </>
-          )}
-        </Button>
-      </div>
+      <label className="rounded-component bg-background p-3 flex items-center justify-between cursor-pointer select-none">
+        <div className="flex flex-col">
+          <span className="text-sm font-medium text-foreground">
+            {todo.isDone ? "Mark as Incomplete" : "Mark as Completed"}
+          </span>
+          <span className="sub-text text-xs">
+            {todo.isDone ? "Completed" : "In Progress"}
+          </span>
+        </div>
+        <Switch
+          checked={todo.isDone}
+          onCheckedChange={() => onToggle?.(todo.id)}
+          aria-label={todo.isDone ? "Mark as Incomplete" : "Mark as Completed"}
+        />
+      </label>
 
       <div className="flex gap-3">
         <Drawer.Close
