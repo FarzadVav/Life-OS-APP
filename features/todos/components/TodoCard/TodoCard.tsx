@@ -1,0 +1,195 @@
+"use client";
+
+import Link from "next/link";
+import {
+  CalendarDaysIcon,
+  CheckIcon,
+  ChevronRightIcon,
+  CircleIcon,
+  ClockIcon,
+  TagIcon,
+  ToggleLeftIcon,
+  ToggleRightIcon,
+} from "lucide-react";
+
+import { Todo } from "../../types";
+import Drawer from "@/features/general/components/ui/Drawer/Drawer";
+import { Button } from "@/features/general/components/ui/Button/Button";
+
+function formatDeadline(deadline: string, isDaily: boolean) {
+  if (isDaily || (deadline.includes(":") && !deadline.includes("-"))) {
+    return `To ${deadline}`;
+  }
+  const date = new Date(`${deadline}T00:00:00`);
+  return isNaN(date.getTime())
+    ? deadline
+    : date.toLocaleDateString("fa-IR", {
+        numberingSystem: "latn",
+      });
+}
+
+type TodoCardProps = {
+  todo: Todo;
+  onToggle?: (id: number) => void;
+};
+
+function TodoCard({ todo, onToggle }: TodoCardProps) {
+  const isDaily = todo.type === "Daily";
+
+  return (
+    <Drawer
+      nativeButton={false}
+      trigger={
+        <div
+          key={todo.id}
+          className="group w-full rounded-component bg-card p-3 transition-opacity hover:opacity-90 cursor-pointer"
+        >
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              aria-label={todo.isDone ? "Mark incomplete" : "Mark complete"}
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggle?.(todo.id);
+              }}
+              className="shrink-0 transition-transform active:scale-90"
+            >
+              {todo.isDone ? (
+                <div className="flex size-5 items-center justify-center rounded-full bg-foreground">
+                  <CheckIcon className="size-3.5 text-background" />
+                </div>
+              ) : (
+                <CircleIcon className="size-5 muted-text group-hover:text-foreground" />
+              )}
+            </button>
+
+            <div className="min-w-0 flex-1">
+              <p
+                className={`font-medium transition-all ${
+                  todo.isDone ? "line-through muted-text" : ""
+                }`}
+              >
+                {todo.title}
+              </p>
+
+              <div className="mt-1 flex items-center gap-2 text-xs sub-text">
+                <span className="flex items-center gap-1">
+                  {isDaily ? (
+                    <ClockIcon className="size-3" />
+                  ) : (
+                    <CalendarDaysIcon className="size-3" />
+                  )}
+                  {formatDeadline(todo.deadline, isDaily)}
+                </span>
+                <span>•</span>
+                <span>{todo.type}</span>
+              </div>
+            </div>
+
+            <span className="shrink-0 rounded-full bg-card-thick px-2.5 py-0.5 text-xs font-medium">
+              {todo.type}
+            </span>
+          </div>
+        </div>
+      }
+    >
+      <Drawer.Title className="title">{todo.title}</Drawer.Title>
+
+      <div className="grid grid-cols-3 gap-2">
+        <div className="rounded-component bg-background p-3">
+          <div className="flex items-center gap-2 sub-text">
+            <TagIcon className="size-4" />
+            <span>Type</span>
+          </div>
+          <p className="mt-2 font-medium">{todo.type}</p>
+        </div>
+
+        <div className="rounded-component bg-background p-3">
+          <div className="flex items-center gap-2 sub-text">
+            {isDaily ? (
+              <ClockIcon className="size-4" />
+            ) : (
+              <CalendarDaysIcon className="size-4" />
+            )}
+            <span>Deadline</span>
+          </div>
+          <p className="mt-2 font-medium">
+            {formatDeadline(todo.deadline, isDaily)}
+          </p>
+        </div>
+
+        <div className="rounded-component bg-background p-3">
+          <div className="flex items-center gap-2 sub-text">
+            <CheckIcon className="size-4" />
+            <span>Status</span>
+          </div>
+          <p
+            className={`mt-2 font-medium ${
+              todo.isDone ? "text-emerald-500" : "sub-text"
+            }`}
+          >
+            {todo.isDone ? "Completed" : "In Progress"}
+          </p>
+        </div>
+      </div>
+
+      <div className="rounded-component bg-background p-3">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => onToggle?.(todo.id)}
+          className="w-full justify-center gap-2"
+        >
+          {todo.isDone ? (
+            <>
+              <ToggleRightIcon className="size-5 text-emerald-500" />
+              <span>Mark as Incomplete</span>
+            </>
+          ) : (
+            <>
+              <ToggleLeftIcon className="size-5" />
+              <span>Mark as Completed</span>
+            </>
+          )}
+        </Button>
+      </div>
+
+      <div className="flex gap-3">
+        <Drawer.Close
+          render={
+            <Button
+              type="button"
+              variant="card"
+              className="flex-1 justify-center"
+            >
+              Close
+            </Button>
+          }
+        />
+
+        <Drawer.Close
+          nativeButton={false}
+          render={
+            <Button
+              type="button"
+              variant="primary"
+              nativeButton={false}
+              className="w-full justify-center"
+              render={
+                <Link
+                  className="flex flex-1"
+                  href={`/todos/new?editId=${todo.id}`}
+                >
+                  <span>Edit</span>
+                  <ChevronRightIcon />
+                </Link>
+              }
+            />
+          }
+        />
+      </div>
+    </Drawer>
+  );
+}
+
+export default TodoCard;

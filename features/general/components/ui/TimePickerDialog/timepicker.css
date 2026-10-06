@@ -1,0 +1,88 @@
+@import "keen-slider/keen-slider.min.css";
+
+.wheel.keen-slider {
+  display: block;
+  color: var(--color-foreground);
+  height: 100%;
+  overflow: visible;
+  width: 100%;
+  position: relative;
+}
+
+.wheel--perspective-right .wheel__inner {
+  perspective-origin: calc(50% + 50px) 50%;
+  transform: translateX(4px);
+  -webkit-transform: translateX(4px);
+}
+
+.wheel--perspective-left .wheel__inner {
+  perspective-origin: calc(50% - 50px) 50%;
+  transform: translateX(-4px);
+  -webkit-transform: translateX(-4px);
+}
+
+.wheel__inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 1000px;
+  transform-style: preserve-3d;
+  height: 16%;
+  width: 100%;
+}
+
+.wheel__slides {
+  height: 100%;
+  position: relative;
+  width: 100%;
+}
+
+.wheel__shadow-top,
+.wheel__shadow-bottom {
+  background: linear-gradient(
+    to bottom,
+    var(--color-card) 10%,
+    transparent 100%
+  );
+  left: 0;
+  height: calc(42% + 2px);
+  width: 100%;
+  position: relative;
+  margin-top: -2px;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.wheel__shadow-bottom {
+  background: linear-gradient(
+    to top,
+    var(--color-card) 10%,
+    transparent 100%
+  );
+  margin-top: 2px;
+  border-bottom: none;
+}
+
+.wheel__label {
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 1;
+  margin-top: 1px;
+  margin-left: 6px;
+  color: var(--color-foreground);
+  opacity: 0.6;
+}
+
+.wheel__slide {
+  align-items: center;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  display: flex;
+  font-size: 18px;
+  font-weight: 500;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  justify-content: center;
+  user-select: none;
+}

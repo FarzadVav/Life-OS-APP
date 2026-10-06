@@ -1,4 +1,6 @@
+import { skills } from "@/features/skills/constants";
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
+import SkillCard from "@/features/skills/components/SkillCard/SkillCard";
 import CreateBtn from "@/features/general/components/module/CreateBtn/CreateBtn";
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
 import PageItemsWrapper from "@/features/general/components/static/PageItemsWrapper/PageItemsWrapper";
@@ -12,23 +14,29 @@ function SkillsPage() {
       </TopBar>
 
       <PageItemsWrapper>
-        {Array.from({ length: 12 }).map((_, i) => (
-          <div
-            key={i}
-            className="w-full space-y-1 p-3 rounded-component bg-card"
-          >
-            <p className="font-bold">Just Do It</p>
-            <span className="sub-text">{new Date().toLocaleTimeString()}</span>
-          </div>
+        {skills.map((skill) => (
+          <SkillCard key={skill.id} skill={skill} />
         ))}
 
-        <div className="p-3 border-2 w-full flex-1 border-dashed rounded-component flex justify-center items-center">
-          <p>You haven{"'"}t any skills</p>
-        </div>
+        {skills.length === 0 && (
+          <div
+            className="
+              flex w-full flex-1
+              items-center justify-center
+              rounded-component
+              border-2 border-dashed
+              p-3
+            "
+          >
+            <p>You haven{"'"}t any skills</p>
+          </div>
+        )}
 
-        <CreateBtn href="/skills/new">
-          New Skill
-        </CreateBtn>
+        <p className="sub-text w-full text-center">
+          Consistent practice transforms knowledge into mastery.
+        </p>
+
+        <CreateBtn href="/skills/new">New Skill</CreateBtn>
       </PageItemsWrapper>
     </PageWrapper>
   );

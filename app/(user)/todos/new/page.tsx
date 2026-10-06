@@ -1,0 +1,252 @@
+"use client";
+
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { Field, Form, Select } from "@base-ui/react";
+import { CheckIcon, ChevronDownIcon, CircleIcon } from "lucide-react";
+
+import { todos, TODO_TYPES } from "@/features/todos/constants";
+import { TodoType } from "@/features/todos/types";
+import TopBar from "@/features/general/components/static/TopBar/TopBar";
+import { Button } from "@/features/general/components/ui/Button/Button";
+import CreateBtn from "@/features/general/components/module/CreateBtn/CreateBtn";
+import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
+import TimePickerDialog from "@/features/general/components/ui/TimePickerDialog";
+import DayPickerDialog from "@/features/general/components/ui/DayPickerDialog";
+
+function parseDate(date: string | null): Date | null {
+  if (!date || date.includes(":")) {
+    return null;
+  }
+
+  return new Date(`${date}T00:00:00`);
+}
+
+function serializeDate(date: Date | null): string {
+  if (!date) {
+    return "";
+  }
+
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
+
+function getDefaultTime(): string {
+  const now = new Date();
+  const h = String(now.getHours()).padStart(2, "0");
+  const m = String(now.getMinutes()).padStart(2, "0");
+  return `${h}:${m}`;
+}
+
+function TypeSelect({
+  value,
+  onChange,
+}: {
+  value: TodoType;
+  onChange: (value: TodoType) => void;
+}) {
+  return (
+    <Field.Root name="type">
+      <Field.Label className="mb-1 font-bold">Type</Field.Label>
+
+      <Select.Root
+        name="type"
+        items={TODO_TYPES}
+        value={value}
+        onValueChange={(nextValue) => {
+          if (nextValue) {
+            onChange(nextValue as TodoType);
+          }
+        }}
+        required
+      >
+        <Select.Trigger
+          render={
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full justify-between rounded-md"
+            >
+              <Select.Value placeholder="Select type" />
+
+              <Select.Icon>
+                <ChevronDownIcon />
+              </Select.Icon>
+            </Button>
+          }
+        />
+
+        <Select.Portal>
+          <Select.Positioner className="z-100">
+            <Select.Popup className="min-w-(--anchor-width) overflow-hidden rounded-md bg-card-thick p-1">
+              <Select.List className="p-px">
+                {TODO_TYPES.map((item) => (
+                  <Select.Item
+                    key={item.value}
+                    value={item.value}
+                    nativeButton
+                    render={
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        className="w-full justify-between rounded-md"
+                      >
+                        <Select.ItemText>{item.label}</Select.ItemText>
+
+                        <Select.ItemIndicator>
+                          <CheckIcon />
+                        </Select.ItemIndicator>
+                      </Button>
+                    }
+                  />
+                ))}
+              </Select.List>
+            </Select.Popup>
+          </Select.Positioner>
+        </Select.Portal>
+      </Select.Root>
+
+      <Field.Error className="sub-text mt-0.5 text-red-400" />
+    </Field.Root>
+  );
+}
+
+function NewTodoPage() {
+  const searchParams = useSearchParams();
+  const editId = searchParams.get("editId");
+  const isEditMode = Boolean(editId);
+
+  const [title, setTitle] = useState("");
+  const [type, setType] = useState<TodoType>("Daily");
+  const [dailyTime, setDailyTime] = useState<string>(getDefaultTime());
+  const [upcomingDate, setUpcomingDate] = useState<Date | null>(new Date());
+  const [isDone, setIsDone] = useState(false);
+
+  useEffect(() => {
+    if (!editId) {
+      queueMicrotask(() => {
+        setTitle("");
+        setType("Daily");
+        setDailyTime(getDefaultTime());
+        setUpcomingDate(new Date());
+        setIsDone(false);
+      });
+      return;
+    }
+
+    const todo = todos.find((item) => String(item.id) === editId);
+    if (!todo) {
+      return;
+    }
+
+    queueMicrotask(() => {
+      setTitle(todo.title);
+      setType(todo.type);
+      setIsDone(todo.isDone);
+
+      if (todo.type === "Daily") {
+        setDailyTime(todo.deadline.includes(":") ? todo.deadline : "12:00");
+      } else {
+        setUpcomingDate(parseDate(todo.deadline) ?? new Date());
+      }
+    });
+  }, [editId]);
+
+  return (
+    <PageWrapper>
+      <TopBar>
+        <TopBar.Title asTitle>
+          {isEditMode ? "Edit Todo" : "New Todo"}
+        </TopBar.Title>
+        <TopBar.Btn backIcon href="/" position="left" />
+      </TopBar>
+
+      <Form
+        className="w-full space-y-6"
+        aria-label={isEditMode ? "Edit todo" : "Create new todo"}
+        action={async () => {
+          const deadline =
+            type === "Daily" ? dailyTime : serializeDate(upcomingDate);
+
+          const payload = {
+            id: editId ? Number(editId) : undefined,
+            title,
+            type,
+            deadline,
+            isDone,
+          };
+
+          console.log(isEditMode ? "Update todo:" : "Create todo:", payload);
+
+          await new Promise((resolve) => setTimeout(resolve, 500));
+        }}
+      >
+        <Field.Root name="title">
+          <Field.Label className="block font-bold">Title</Field.Label>
+
+          <Field.Control
+            required
+            minLength={3}
+            value={title}
+            className="input"
+            placeholder="Todo title..."
+            onChange={(event) => setTitle(event.target.value)}
+          />
+
+          <Field.Error className="sub-text mt-0.5 text-red-400" />
+        </Field.Root>
+
+        <TypeSelect
+          value={type}
+          onChange={(newType) => {
+            setType(newType);
+          }}
+        />
+
+        <Field.Root name="deadline">
+          <Field.Label className="mb-1 font-bold">Deadline</Field.Label>
+
+          {type === "Daily" ? (
+            <TimePickerDialog value={dailyTime} onChange={setDailyTime} />
+          ) : (
+            <DayPickerDialog
+              value={upcomingDate}
+              onChange={setUpcomingDate}
+            />
+          )}
+
+          <input
+            type="hidden"
+            name="deadline"
+            value={type === "Daily" ? dailyTime : serializeDate(upcomingDate)}
+          />
+        </Field.Root>
+
+        <Field.Root name="status">
+          <Field.Label className="mb-1 font-bold">Status</Field.Label>
+
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => setIsDone(!isDone)}
+            className="w-full justify-between rounded-md"
+          >
+            <span>{isDone ? "Completed" : "In Progress"}</span>
+            {isDone ? (
+              <CheckIcon className="size-4 text-emerald-500" />
+            ) : (
+              <CircleIcon className="size-4 muted-text" />
+            )}
+          </Button>
+        </Field.Root>
+
+        <CreateBtn submit />
+      </Form>
+    </PageWrapper>
+  );
+}
+
+export default NewTodoPage;

@@ -21,9 +21,13 @@ function UserHomePage() {
         <Suspense>
           <TodosTabs />
         </Suspense>
-      </PageItemsWrapper>
 
-      <CreateBtn>New Todo</CreateBtn>
+        <p className="sub-text w-full text-center">
+          Focus on high-impact daily actions to build relentless momentum.
+        </p>
+
+        <CreateBtn href="/todos/new">New Todo</CreateBtn>
+      </PageItemsWrapper>
     </PageWrapper>
   );
 }

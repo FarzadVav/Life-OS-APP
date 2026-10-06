@@ -1,0 +1,60 @@
+.rdp-root {
+  --rdp-accent-color: var(--color-foreground);
+  --rdp-accent-background-color: var(--color-card-thick);
+  --rdp-day-height: 40px;
+  --rdp-day-width: 40px;
+  --rdp-day_button-height: 38px;
+  --rdp-day_button-width: 38px;
+  --rdp-day_button-border-radius: 9999px;
+  --rdp-today-color: var(--color-foreground);
+  --rdp-selected-border: none;
+  --rdp-disabled-opacity: 0.25;
+  --rdp-outside-opacity: 0.35;
+  font-family: inherit;
+  color: var(--color-foreground);
+}
+
+/* Selected Day: solid neutral background with contrasting text */
+.rdp-selected .rdp-day_button {
+  background-color: var(--color-foreground) !important;
+  color: var(--color-background) !important;
+  font-weight: 600 !important;
+  border-radius: 9999px !important;
+}
+
+/* Hover effect on day buttons */
+.rdp-day_button:hover:not([disabled]) {
+  background-color: var(--color-card-thick);
+  border-radius: 9999px;
+}
+
+/* Today indicator: subtle neutral ring when not selected */
+.rdp-today:not(.rdp-selected) .rdp-day_button {
+  font-weight: 700;
+  border: 1.5px solid var(--color-foreground);
+}
+
+/* Navigation Buttons: Previous / Next month */
+.rdp-nav_button {
+  border-radius: 9999px;
+  color: var(--color-foreground);
+  transition: background-color 0.15s ease;
+}
+
+.rdp-nav_button:hover:not([disabled]) {
+  background-color: var(--color-card-thick);
+}
+
+/* Caption / Month Label */
+.rdp-caption_label {
+  font-weight: 700;
+  color: var(--color-foreground);
+}
+
+/* Weekday header labels */
+.rdp-weekday {
+  color: var(--color-foreground);
+  opacity: 0.5;
+  font-weight: 500;
+  font-size: 0.8rem;
+}

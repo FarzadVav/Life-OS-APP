@@ -1,11 +1,10 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
-import { DayPicker, enUS } from "@daypicker/persian";
+import { useEffect, useState } from "react";
+import DayPickerDialog, { formatPersianDate as formatDate } from "@/features/general/components/ui/DayPickerDialog";
 import { Field, Form, Select } from "@base-ui/react";
 import { CheckIcon, ChevronDownIcon, Trash2Icon, EditIcon } from "lucide-react";
-import "@daypicker/react/style.css";
 
 import { missions } from "@/features/missions/constants";
 import Dialog from "@/features/general/components/ui/Dialog/Dialog";
@@ -28,16 +27,6 @@ function parseDate(date: string | null): Date | null {
   }
 
   return new Date(`${date}T00:00:00`);
-}
-
-function formatDate(date: Date | null): string {
-  if (!date) {
-    return "Not set";
-  }
-
-  return date.toLocaleDateString("fa-IR", {
-    numberingSystem: "latn",
-  });
 }
 
 function serializeDate(date: Date | null): string {
@@ -71,48 +60,6 @@ type DisciplineDraft = {
   repeatInterval: string;
 };
 
-type DatePickerDialogProps = {
-  value: Date | null;
-  onChange: (date: Date | null) => void;
-};
-
-function DatePickerDialog({ value, onChange }: DatePickerDialogProps) {
-  const closeRef = useRef<HTMLButtonElement>(null);
-
-  return (
-    <Dialog
-      trigger={
-        <Button
-          type="button"
-          variant="outline"
-          className="w-full justify-start rounded-md"
-        >
-          Deadline: {formatDate(value)}
-        </Button>
-      }
-    >
-      <DayPicker
-        animate
-        dir="ltr"
-        mode="single"
-        locale={enUS}
-        numerals="latn"
-        selected={value ?? undefined}
-        onSelect={(date) => {
-          onChange(date ?? null);
-          closeRef.current?.click();
-        }}
-      />
-
-      <div className="mt-6 flex justify-center">
-        <Dialog.Close
-          ref={closeRef}
-          render={<Button variant="ghost">Close</Button>}
-        />
-      </div>
-    </Dialog>
-  );
-}
 
 const missionsDifficulty = [
   {
@@ -181,6 +128,7 @@ function DifficultySelect({
                   <Select.Item
                     key={item.value}
                     value={item.value}
+                    nativeButton
                     render={
                       <Button
                         type="button"
@@ -518,7 +466,7 @@ function NewMissionPage() {
         <Field.Root name="deadline">
           <Field.Label className="mb-1 font-bold">Deadline</Field.Label>
 
-          <DatePickerDialog
+          <DayPickerDialog
             value={missionDeadline}
             onChange={setMissionDeadline}
           />
@@ -589,7 +537,7 @@ function NewMissionPage() {
             <Field.Root name="actionDeadline">
               <Field.Label className="mb-1 font-bold">Deadline</Field.Label>
 
-              <DatePickerDialog
+              <DayPickerDialog
                 value={actionDraft.deadline}
                 onChange={(date) =>
                   setActionDraft((current) => ({

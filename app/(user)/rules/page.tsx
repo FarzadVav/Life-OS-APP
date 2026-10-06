@@ -1,4 +1,6 @@
+import { rules } from "@/features/rules/constants";
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
+import RuleCard from "@/features/rules/components/RuleCard/RuleCard";
 import CreateBtn from "@/features/general/components/module/CreateBtn/CreateBtn";
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
 import PageItemsWrapper from "@/features/general/components/static/PageItemsWrapper/PageItemsWrapper";
@@ -12,22 +14,29 @@ function RulesPage() {
       </TopBar>
 
       <PageItemsWrapper>
-        {Array.from({ length: 12 }).map((_, i) => (
-          <div
-            key={i}
-            className="w-full space-y-1 p-3 rounded-component bg-card"
-          >
-            <p className="font-bold">Dont smoke</p>
-          </div>
+        {rules.map((rule) => (
+          <RuleCard key={rule.id} rule={rule} />
         ))}
 
-        <div className="p-3 border-2 w-full flex-1 border-dashed rounded-component flex justify-center items-center">
-          <p>You haven{"'"}t any rules</p>
-        </div>
+        {rules.length === 0 && (
+          <div
+            className="
+              flex w-full flex-1
+              items-center justify-center
+              rounded-component
+              border-2 border-dashed
+              p-3
+            "
+          >
+            <p>You haven{"'"}t any rules</p>
+          </div>
+        )}
 
-        <CreateBtn href="/rules/new">
-          New Rule
-        </CreateBtn>
+        <p className="sub-text w-full text-center">
+          Clear rules eliminate decision fatigue and protect your future.
+        </p>
+
+        <CreateBtn href="/rules/new">New Rule</CreateBtn>
       </PageItemsWrapper>
     </PageWrapper>
   );

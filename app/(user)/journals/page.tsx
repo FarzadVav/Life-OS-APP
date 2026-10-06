@@ -1,4 +1,6 @@
+import { journals } from "@/features/journals/constants";
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
+import JournalCard from "@/features/journals/components/JournalCard/JournalCard";
 import CreateBtn from "@/features/general/components/module/CreateBtn/CreateBtn";
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
 import PageItemsWrapper from "@/features/general/components/static/PageItemsWrapper/PageItemsWrapper";
@@ -12,23 +14,29 @@ function JournalsPage() {
       </TopBar>
 
       <PageItemsWrapper>
-        {Array.from({ length: 12 }).map((_, i) => (
-          <div
-            key={i}
-            className="w-full space-y-1 p-3 rounded-component bg-card"
-          >
-            <p className="font-bold">I feel like bitch, I am the crow</p>
-            <span className="sub-text">{new Date().toLocaleTimeString()}</span>
-          </div>
+        {journals.map((journal) => (
+          <JournalCard key={journal.id} journal={journal} />
         ))}
 
-        <div className="p-3 border-2 w-full flex-1 border-dashed rounded-component flex justify-center items-center">
-          <p>You haven{"'"}t any journals</p>
-        </div>
+        {journals.length === 0 && (
+          <div
+            className="
+              flex w-full flex-1
+              items-center justify-center
+              rounded-component
+              border-2 border-dashed
+              p-3
+            "
+          >
+            <p>You haven{"'"}t any journals</p>
+          </div>
+        )}
 
-        <CreateBtn href="/journals/new">
-          New Journal
-        </CreateBtn>
+        <p className="sub-text w-full text-center">
+          Writing daily uncovers patterns and brings peace of mind.
+        </p>
+
+        <CreateBtn href="/journals/new">New Journal</CreateBtn>
       </PageItemsWrapper>
     </PageWrapper>
   );
