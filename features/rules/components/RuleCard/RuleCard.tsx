@@ -12,15 +12,7 @@ import {
 import { Rule } from "../../types";
 import Drawer from "@/features/general/components/ui/Drawer/Drawer";
 import { Button } from "@/features/general/components/ui/Button/Button";
-
-function formatDate(dateStr: string) {
-  const date = new Date(dateStr);
-  return isNaN(date.getTime())
-    ? dateStr
-    : date.toLocaleDateString("fa-IR", {
-        numberingSystem: "latn",
-      });
-}
+import { formatPersianDate as formatDate } from "@/features/general/lib/utils";
 
 type RuleCardProps = {
   rule: Rule;

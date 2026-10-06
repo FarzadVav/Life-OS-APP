@@ -14,18 +14,7 @@ import { Todo } from "../../types";
 import Drawer from "@/features/general/components/ui/Drawer/Drawer";
 import { Button } from "@/features/general/components/ui/Button/Button";
 import Switch from "@/features/general/components/ui/Switch/Switch";
-
-function formatDeadline(deadline: string, isDaily: boolean) {
-  if (isDaily || (deadline.includes(":") && !deadline.includes("-"))) {
-    return `To ${deadline}`;
-  }
-  const date = new Date(`${deadline}T00:00:00`);
-  return isNaN(date.getTime())
-    ? deadline
-    : date.toLocaleDateString("fa-IR", {
-        numberingSystem: "latn",
-      });
-}
+import { formatDeadline } from "@/features/general/lib/utils";
 
 type TodoCardProps = {
   todo: Todo;

@@ -15,12 +15,7 @@ import {
 import { Mission } from "../../types";
 import Drawer from "@/features/general/components/ui/Drawer/Drawer";
 import { Button } from "@/features/general/components/ui/Button/Button";
-
-function formatDate(date: string) {
-  return new Date(`${date}T00:00:00`).toLocaleDateString("fa-IR", {
-    numberingSystem: "latn",
-  });
-}
+import { formatPersianDate as formatDate } from "@/features/general/lib/utils";
 
 function Difficulty({ value }: { value: number }) {
   return (

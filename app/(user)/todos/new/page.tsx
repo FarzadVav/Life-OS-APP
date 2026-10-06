@@ -13,33 +13,11 @@ import CreateBtn from "@/features/general/components/module/CreateBtn/CreateBtn"
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
 import TimePickerDialog from "@/features/general/components/ui/TimePickerDialog";
 import DayPickerDialog from "@/features/general/components/ui/DayPickerDialog";
-
-function parseDate(date: string | null): Date | null {
-  if (!date || date.includes(":")) {
-    return null;
-  }
-
-  return new Date(`${date}T00:00:00`);
-}
-
-function serializeDate(date: Date | null): string {
-  if (!date) {
-    return "";
-  }
-
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-
-  return `${year}-${month}-${day}`;
-}
-
-function getDefaultTime(): string {
-  const now = new Date();
-  const h = String(now.getHours()).padStart(2, "0");
-  const m = String(now.getMinutes()).padStart(2, "0");
-  return `${h}:${m}`;
-}
+import {
+  getDefaultTime,
+  parseDate,
+  serializeDate,
+} from "@/features/general/lib/utils";
 
 function TypeSelect({
   value,

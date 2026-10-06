@@ -12,25 +12,10 @@ import {
 import { Journal } from "../../types";
 import Drawer from "@/features/general/components/ui/Drawer/Drawer";
 import { Button } from "@/features/general/components/ui/Button/Button";
-
-function formatDate(dateStr: string) {
-  const date = new Date(dateStr);
-  return isNaN(date.getTime())
-    ? dateStr
-    : date.toLocaleDateString("fa-IR", {
-        numberingSystem: "latn",
-      });
-}
-
-function formatTime(dateStr: string) {
-  const date = new Date(dateStr);
-  return isNaN(date.getTime())
-    ? ""
-    : date.toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      });
-}
+import {
+  formatPersianDate as formatDate,
+  formatTime,
+} from "@/features/general/lib/utils";
 
 type JournalCardProps = {
   journal: Journal;

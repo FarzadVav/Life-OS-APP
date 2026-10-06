@@ -7,15 +7,10 @@ import { enUS } from "@daypicker/persian";
 import Dialog from "@/features/general/components/ui/Dialog/Dialog";
 import { Button } from "@/features/general/components/ui/Button/Button";
 import DayPicker, { DayPickerProps } from "./DayPicker";
+import { formatPersianDate as formatPersianDateUtil } from "@/features/general/lib/utils";
 
 export function formatPersianDate(date: Date | null): string {
-  if (!date) {
-    return "Not set";
-  }
-
-  return date.toLocaleDateString("fa-IR", {
-    numberingSystem: "latn",
-  });
+  return formatPersianDateUtil(date, "Not set");
 }
 
 export type DayPickerDialogProps = {
