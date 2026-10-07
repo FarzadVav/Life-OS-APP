@@ -1,5 +1,6 @@
 import { cn } from "cn";
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import { Geist, Vazirmatn } from "next/font/google";
 
 import "./globals.css";
@@ -59,7 +60,29 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
 
   return (
     <html suppressHydrationWarning lang={locale} dir={locale === "fa" ? "rtl" : "ltr"} className={cn("antialiased", geist.variable, vazirmatn.variable)}>
-      <body className="overflow-hidden max-w-3xl mx-auto">
+      <head>
+        <Script
+          id="pwa-prompt-init"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                window.__pwaPrompt = null;
+                window.addEventListener('beforeinstallprompt', function(e) {
+                  e.preventDefault();
+                  window.__pwaPrompt = e;
+                  window.dispatchEvent(new CustomEvent('pwa-prompt-captured'));
+                });
+                window.addEventListener('appinstalled', function() {
+                  window.__pwaPrompt = null;
+                  window.dispatchEvent(new CustomEvent('pwa-installed'));
+                });
+              })();
+            `,
+          }}
+        />
+      </head>
+      <body className="max-w-3xl mx-auto">
         <ThemeProvider>
           <LocaleProvider locale={locale} dictionary={dictionary}>
             <OfflineBanner />

@@ -1,7 +1,7 @@
 import { rules } from "@/features/rules/constants";
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
 import RuleCard from "@/features/rules/components/RuleCard/RuleCard";
-import CreateBtn from "@/features/general/components/module/CreateBtn/CreateBtn";
+import PageActionBtn from "@/features/general/components/module/PageActionBtn/PageActionBtn";
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
 import PageItemsWrapper from "@/features/general/components/static/PageItemsWrapper/PageItemsWrapper";
 import { getTranslations } from "@/features/general/lib/i18n/server";
@@ -14,6 +14,7 @@ async function RulesPage() {
       <TopBar>
         <TopBar.Title asTitle>{t("rules.title")}</TopBar.Title>
         <TopBar.Btn backIcon href="/" position="left" />
+        <TopBar.HelpBtn position="right" />
       </TopBar>
 
       <PageItemsWrapper>
@@ -39,7 +40,7 @@ async function RulesPage() {
           {t("rules.subtitle")}
         </p>
 
-        <CreateBtn href="/rules/new">{t("rules.new")}</CreateBtn>
+        <PageActionBtn href="/rules/new">{t("rules.new")}</PageActionBtn>
       </PageItemsWrapper>
     </PageWrapper>
   );

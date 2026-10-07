@@ -11,7 +11,7 @@ import { todos, TODO_TYPES } from "@/features/todos/constants";
 import { TodoType } from "@/features/todos/types";
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
 import { Button } from "@/features/general/components/ui/Button/Button";
-import CreateBtn from "@/features/general/components/module/CreateBtn/CreateBtn";
+import PageActionBtn from "@/features/general/components/module/PageActionBtn/PageActionBtn";
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
 import TimePickerDialog from "@/features/general/components/ui/TimePickerDialog";
 import DayPickerDialog from "@/features/general/components/ui/DayPickerDialog";
@@ -144,6 +144,7 @@ function NewTodoPage() {
           {isEditMode ? t("todos.edit") : t("todos.new")}
         </TopBar.Title>
         <TopBar.Btn backIcon href="/" position="left" />
+        <TopBar.HelpBtn position="right" />
       </TopBar>
 
       <Form
@@ -207,7 +208,7 @@ function NewTodoPage() {
           />
         </Field.Root>
 
-        <CreateBtn submit />
+        <PageActionBtn submit />
       </Form>
     </PageWrapper>
   );

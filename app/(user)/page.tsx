@@ -3,7 +3,7 @@ import { UserIcon } from "lucide-react";
 
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
 import TodosTabs from "@/features/todos/components/TodosTabs/TodosTabs";
-import CreateBtn from "@/features/general/components/module/CreateBtn/CreateBtn";
+import PageActionBtn from "@/features/general/components/module/PageActionBtn/PageActionBtn";
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
 import PageItemsWrapper from "@/features/general/components/static/PageItemsWrapper/PageItemsWrapper";
 
@@ -20,7 +20,8 @@ async function UserHomePage() {
         <TopBar.Btn href="/profile" position="left">
           <UserIcon />
         </TopBar.Btn>
-        <TopBar.InstallBtn position="right" />
+        <TopBar.InstallBtn position="right" className="right-11" />
+        <TopBar.HelpBtn position="right" />
       </TopBar>
 
       <PageItemsWrapper>
@@ -32,7 +33,7 @@ async function UserHomePage() {
           {t("todos.subtitle")}
         </p>
 
-        <CreateBtn href="/todos/new">{t("todos.new")}</CreateBtn>
+        <PageActionBtn href="/todos/new">{t("todos.new")}</PageActionBtn>
       </PageItemsWrapper>
     </PageWrapper>
   );

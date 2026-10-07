@@ -68,7 +68,7 @@ export default function OfflinePage() {
           type="button"
           className="flex items-center gap-1.5 text-xs text-foreground/70 hover:text-foreground transition-colors cursor-pointer"
         >
-          <ArrowLeft className="size-4" />
+          <ArrowLeft className="size-4 rtl:rotate-180" />
           <span>{t("offline.back")}</span>
         </button>
         <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-medium">
@@ -147,15 +147,15 @@ export default function OfflinePage() {
           transition={{ delay: 0.4, duration: 0.4 }}
           className="mt-10 w-full"
         >
-          <h2 className="text-xs font-semibold text-foreground/50 uppercase tracking-wider mb-3 text-left">
-            Quick Navigation (Cached)
+          <h2 className="text-xs font-semibold text-foreground/50 uppercase tracking-wider mb-3 text-start">
+            {t("offline.quickNav")}
           </h2>
           <div className="grid grid-cols-1 gap-2.5">
             {offlineShortcuts.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
-                className="group flex items-center justify-between p-3.5 rounded-2xl bg-card hover:bg-card-thick border border-foreground/10 transition-colors text-left"
+                className="group flex items-center justify-between p-3.5 rounded-component bg-card hover:bg-card-thick border border-foreground/10 transition-colors text-start"
               >
                 <div className="flex items-center gap-3 min-w-0">
                   <div className="size-9 rounded-xl bg-foreground/5 group-hover:bg-foreground/10 flex items-center justify-center shrink-0 transition-colors">
@@ -166,8 +166,9 @@ export default function OfflinePage() {
                     <p className="text-xs text-foreground/60 leading-tight mt-0.5 truncate">{item.desc}</p>
                   </div>
                 </div>
-                <span className="text-xs text-foreground/40 group-hover:text-foreground/70 transition-colors">
-                  Open →
+                <span className="text-xs text-foreground/40 group-hover:text-foreground/70 transition-colors flex items-center gap-1 shrink-0 ml-2">
+                  <span>{t("offline.open")}</span>
+                  <span className="inline-block rtl:rotate-180">→</span>
                 </span>
               </Link>
             ))}
@@ -179,7 +180,7 @@ export default function OfflinePage() {
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.5, duration: 0.4 }}
-          className="mt-6 w-full p-4 rounded-2xl bg-card-thick/60 border border-foreground/10 text-left"
+          className="mt-6 w-full p-4 rounded-component bg-card-thick/60 border border-foreground/10 text-start"
         >
           <div className="flex items-center gap-2 mb-2 text-xs font-semibold text-foreground/80">
             <Sparkles className="size-3.5 text-amber-400" />
@@ -199,7 +200,7 @@ export default function OfflinePage() {
       </div>
 
       <footer className="text-center text-[11px] text-foreground/40">
-        Arrow Up · Progressive Web App
+        {t("offline.footer")}
       </footer>
     </main>
   );

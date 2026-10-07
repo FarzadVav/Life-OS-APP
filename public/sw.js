@@ -1,5 +1,5 @@
 // Service Worker for Arrow Up PWA
-const CACHE_NAME = 'arrow-up-v2';
+const CACHE_NAME = 'arrow-up-v3';
 const OFFLINE_URL = '/offline';
 
 const PRECACHE_ASSETS = [
@@ -14,12 +14,13 @@ const PRECACHE_ASSETS = [
   '/images/arrow-up_logo.jpg',
 ];
 
-// Install Event: pre-cache the offline page and essential shell assets.
-// Each asset is cached individually so one failure can't abort install.
+// Install Event: pre-cache the offline page, shell assets, and dynamic offline script/style dependencies
 self.addEventListener('install', (event) => {
   event.waitUntil(
     (async () => {
       const cache = await caches.open(CACHE_NAME);
+
+      // 1. Pre-cache basic static assets individually so one failure does not abort install
       await Promise.all(
         PRECACHE_ASSETS.map(async (url) => {
           try {
@@ -29,12 +30,40 @@ self.addEventListener('install', (event) => {
           }
         })
       );
+
+      // 2. Fetch the offline page to discover and precache all its JS chunks and CSS files
+      try {
+        const offlineRes = await fetch(OFFLINE_URL);
+        if (offlineRes && offlineRes.ok) {
+          await cache.put(OFFLINE_URL, offlineRes.clone());
+          const html = await offlineRes.text();
+          const assetMatches = html.match(/(?:src|href)=["'](\/_next\/static\/[^"']+)["']/g) || [];
+          const dependencyUrls = new Set();
+          for (const matchStr of assetMatches) {
+            const cleaned = matchStr.replace(/^(?:src|href)=["']/, '').replace(/["']$/, '');
+            dependencyUrls.add(cleaned);
+          }
+
+          await Promise.all(
+            Array.from(dependencyUrls).map(async (depUrl) => {
+              try {
+                await cache.add(depUrl);
+              } catch (e) {
+                console.warn('[SW] Failed to cache offline dependency:', depUrl, e);
+              }
+            })
+          );
+        }
+      } catch (err) {
+        console.warn('[SW] Offline dependencies extraction error:', err);
+      }
+
       await self.skipWaiting();
     })()
   );
 });
 
-// Activate Event: clean up older caches and claim clients
+// Activate Event: clean up older caches and claim clients immediately
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((cacheNames) => {
@@ -80,7 +109,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // 1. HTML Navigation Requests (Pages)
+  // 1. HTML Navigation Requests (Full Page Loads)
   if (request.mode === 'navigate') {
     event.respondWith(
       fetch(request)
@@ -110,9 +139,10 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // 2. Static Next.js chunks, fonts, icons, and images
+  // 2. Static Next.js chunks, fonts, icons, logo and images
   const isStaticAsset =
     url.pathname.startsWith('/_next/static/') ||
+    url.pathname.startsWith('/_next/image') ||
     url.pathname.startsWith('/icons/') ||
     url.pathname.startsWith('/images/') ||
     url.pathname.endsWith('.png') ||
@@ -149,7 +179,14 @@ self.addEventListener('fetch', (event) => {
             }
             return networkResponse;
           })
-          .catch(() => offlineResponse());
+          .catch(async () => {
+            // If offline and requesting the logo or icon, fallback to pre-cached logo
+            if (url.pathname.includes('logo') || url.pathname.includes('icon')) {
+              const fallbackLogo = await caches.match('/images/arrow-up_logo.jpg');
+              if (fallbackLogo) return fallbackLogo;
+            }
+            return offlineResponse();
+          });
       })
     );
     return;

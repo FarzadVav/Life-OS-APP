@@ -10,7 +10,9 @@ function PageWrapper(p: PropsWithChildren) {
 
   useEffect(() => {
     const navigationElem = document.getElementById("navigation");
-    const createBtnElem = document.getElementById("create-btn");
+    const pageActionBtnElem =
+      document.getElementById("page-action-btn") ||
+      document.getElementById("create-btn");
 
     let minH = 0;
     let pb = 0.75;
@@ -19,7 +21,7 @@ function PageWrapper(p: PropsWithChildren) {
       minH += 4.5;
     }
 
-    if (createBtnElem) {
+    if (pageActionBtnElem) {
       pb += 4;
     }
 

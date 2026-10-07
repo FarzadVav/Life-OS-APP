@@ -13,7 +13,7 @@ import { SkillType, SkillCategory } from "@/features/skills/types";
 import { useSkillCategories } from "@/features/skills/categories";
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
 import { Button } from "@/features/general/components/ui/Button/Button";
-import CreateBtn from "@/features/general/components/module/CreateBtn/CreateBtn";
+import PageActionBtn from "@/features/general/components/module/PageActionBtn/PageActionBtn";
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
 
 function TypeSelect({
@@ -231,6 +231,7 @@ function NewSkillPage() {
           {isEditMode ? t("skills.edit") : t("skills.new")}
         </TopBar.Title>
         <TopBar.Btn backIcon href="/skills" position="left" />
+        <TopBar.HelpBtn position="right" />
       </TopBar>
 
       <Form
@@ -296,7 +297,7 @@ function NewSkillPage() {
           <Field.Error className="sub-text mt-0.5 text-red-400" />
         </Field.Root>
 
-        <CreateBtn submit />
+        <PageActionBtn submit />
       </Form>
     </PageWrapper>
   );

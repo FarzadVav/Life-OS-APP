@@ -10,6 +10,8 @@ import {
   Wifi,
   Zap,
   CheckCircle2,
+  MoreVertical,
+  Layers,
 } from "lucide-react";
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
 import Dialog from "@/features/general/components/ui/Dialog/Dialog";
@@ -26,13 +28,20 @@ export default function InstallAppDialog({
   position = "right",
   className,
 }: InstallAppDialogProps) {
-  const { isStandalone, isInstallable, isIOS, installApp } = usePwaInstall();
+  const {
+    isStandalone,
+    isInstallable,
+    isIOS,
+    isAndroid,
+    isMobile,
+    installApp,
+  } = usePwaInstall();
   const { t } = useLocale();
   const [isOpen, setIsOpen] = useState(false);
   const [isInstalling, setIsInstalling] = useState(false);
   const [installedSuccess, setInstalledSuccess] = useState(false);
 
-  // Per requirement: must NOT show in installed standalone PWA
+  // Must NOT show in installed standalone PWA
   if (isStandalone) {
     return null;
   }
@@ -68,33 +77,34 @@ export default function InstallAppDialog({
       </TopBar.Btn>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <div className="flex flex-col gap-5 max-w-sm w-full p-1">
+        <div className="flex flex-col gap-4 max-w-sm w-full p-1 sm:p-2">
           {/* Header */}
           <div className="flex items-center gap-3.5">
             <Image
               width={52}
               height={52}
+              unoptimized
               alt={t("install.title")}
               src="/icons/icon-192x192.png"
-              className="size-14 rounded-full object-cover"
+              className="size-13 rounded-component object-cover shadow-md border border-foreground/10 shrink-0"
             />
-            <div className="flex flex-col">
-              <Dialog.Title className="title text-foreground">
+            <div className="flex flex-col min-w-0">
+              <Dialog.Title className="title text-foreground text-base sm:text-lg font-bold">
                 {t("install.label")}
               </Dialog.Title>
-              <Dialog.Description className="sub-text">
+              <Dialog.Description className="sub-text text-xs line-clamp-2">
                 {t("install.subtitle")}
               </Dialog.Description>
             </div>
           </div>
 
           {/* Value Highlights */}
-          <div className="space-y-6 py-3 text-sm">
+          <div className="space-y-3 py-2 text-xs sm:text-sm">
             <div className="flex items-start gap-2.5">
               <Zap className="size-4 text-amber-400 shrink-0 mt-0.5" />
               <div>
-                <span>{t("install.standaloneTitle")}</span>
-                <span className="muted-text ml-1">
+                <span className="font-medium text-foreground">{t("install.standaloneTitle")}</span>
+                <span className="text-foreground/70 ml-1">
                   {t("install.standaloneDesc")}
                 </span>
               </div>
@@ -103,8 +113,8 @@ export default function InstallAppDialog({
             <div className="flex items-start gap-2.5">
               <Wifi className="size-4 text-emerald-400 shrink-0 mt-0.5" />
               <div>
-                <span>{t("install.offlineTitle")}</span>
-                <span className="muted-text ml-1">
+                <span className="font-medium text-foreground">{t("install.offlineTitle")}</span>
+                <span className="text-foreground/70 ml-1">
                   {t("install.offlineDesc")}
                 </span>
               </div>
@@ -113,56 +123,85 @@ export default function InstallAppDialog({
             <div className="flex items-start gap-2.5">
               <Sparkles className="size-4 text-indigo-400 shrink-0 mt-0.5" />
               <div>
-                <span>{t("install.quickTitle")}</span>
-                <span className="muted-text ml-1">
+                <span className="font-medium text-foreground">{t("install.quickTitle")}</span>
+                <span className="text-foreground/70 ml-1">
                   {t("install.quickDesc")}
                 </span>
               </div>
             </div>
           </div>
 
-          {/* OS-Specific Instruction or Direct Action */}
+          {/* Device & Browser Specific Instructions / Status */}
           {installedSuccess ? (
-            <div className="flex items-center justify-center gap-2 py-3 text-emerald-400 font-semibold text-sm">
-              <CheckCircle2 className="size-5" />
+            <div className="flex items-center justify-center gap-2 py-3 rounded-component bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-semibold text-xs sm:text-sm">
+              <CheckCircle2 className="size-5 shrink-0" />
               <span>{t("install.installedSuccess")}</span>
             </div>
+          ) : isInstallable ? (
+            <div className="rounded-component border border-emerald-500/20 bg-emerald-500/5 p-3 flex items-start gap-2.5 text-xs text-foreground/80">
+              <Layers className="size-4 text-emerald-400 shrink-0 mt-0.5" />
+              <p>
+                {isMobile
+                  ? t("install.mobileInstallReady")
+                  : t("install.desktopInstallReady")}
+              </p>
+            </div>
           ) : isIOS ? (
-            <div className="rounded-2xl border border-foreground/10 bg-background/50 p-3.5 space-y-2.5 text-xs text-foreground/80">
+            <div className="rounded-component border border-foreground/10 bg-background/60 p-3 space-y-2 text-xs text-foreground/80">
               <p className="font-semibold text-foreground text-xs">{t("install.iosTitle")}</p>
-              <div className="flex items-center gap-2.5 text-foreground/70">
+              <div className="flex items-center gap-2.5 text-foreground/75">
                 <span className="size-6 rounded-lg bg-foreground/10 flex items-center justify-center shrink-0">
                   <Share className="size-3.5" />
                 </span>
                 <span>{t("install.iosStep1")}</span>
               </div>
-              <div className="flex items-center gap-2.5 text-foreground/70">
+              <div className="flex items-center gap-2.5 text-foreground/75">
                 <span className="size-6 rounded-lg bg-foreground/10 flex items-center justify-center shrink-0">
                   <PlusSquare className="size-3.5" />
                 </span>
                 <span>{t("install.iosStep2")}</span>
               </div>
             </div>
-          ) : !isInstallable ? (
-            <div className="rounded-2xl border border-foreground/10 bg-background/50 p-3 text-xs text-foreground/70">
-              <p className="font-medium text-foreground mb-1">{t("install.desktopTitle")}</p>
-              <p>
+          ) : isAndroid || isMobile ? (
+            <div className="rounded-component border border-foreground/10 bg-background/60 p-3 space-y-2 text-xs text-foreground/80">
+              <p className="font-semibold text-foreground text-xs">{t("install.androidTitle")}</p>
+              <div className="flex items-center gap-2.5 text-foreground/75">
+                <span className="size-6 rounded-lg bg-foreground/10 flex items-center justify-center shrink-0">
+                  <MoreVertical className="size-3.5" />
+                </span>
+                <span>{t("install.androidStep1")}</span>
+              </div>
+              <div className="flex items-center gap-2.5 text-foreground/75">
+                <span className="size-6 rounded-lg bg-foreground/10 flex items-center justify-center shrink-0">
+                  <PlusSquare className="size-3.5" />
+                </span>
+                <span>{t("install.androidStep2")}</span>
+              </div>
+            </div>
+          ) : (
+            <div className="rounded-component border border-foreground/10 bg-background/60 p-3 text-xs text-foreground/80">
+              <p className="font-semibold text-foreground mb-1">{t("install.desktopTitle")}</p>
+              <p className="leading-relaxed">
                 {t("install.desktopDesc")}
               </p>
             </div>
-          ) : null}
+          )}
 
           {/* Footer Actions */}
-          <div className="flex items-center justify-end gap-3">
+          <div className="flex items-center justify-end gap-3 pt-1">
             <Dialog.Close
               render={
                 <Button
                   type="button"
                   variant="card"
-                  className={"flex-1"}
+                  className={isInstallable && !installedSuccess ? "flex-1" : "w-full"}
                   onClick={() => setIsOpen(false)}
                 >
-                  {installedSuccess ? t("common.close") : t("install.later")}
+                  {installedSuccess
+                    ? t("common.close")
+                    : isInstallable
+                    ? t("install.later")
+                    : t("help.gotIt")}
                 </Button>
               }
             />
@@ -171,12 +210,12 @@ export default function InstallAppDialog({
               <Button
                 type="button"
                 variant="primary"
-                className={"flex-1"}
+                className="flex-1 flex items-center justify-center gap-2 font-medium"
                 onClick={handleInstall}
                 disabled={isInstalling}
               >
                 <span>{isInstalling ? t("install.installing") : t("install.installNow")}</span>
-                <Download />
+                <Download className="size-4" />
               </Button>
             )}
           </div>

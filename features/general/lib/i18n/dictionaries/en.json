@@ -214,8 +214,13 @@
     "iosTitle": "To install on iOS Safari:",
     "iosStep1": "1. Tap the Share icon in the Safari toolbar",
     "iosStep2": "2. Scroll down and tap \"Add to Home Screen\"",
+    "androidTitle": "To install on Android:",
+    "androidStep1": "1. Tap the browser menu (⋮) in the top or bottom bar",
+    "androidStep2": "2. Select \"Install app\" or \"Add to Home screen\"",
     "desktopTitle": "Desktop / Browser install:",
     "desktopDesc": "Click the install icon (⊕) in your browser's address bar, or open the browser menu (⋮) and select \"Install Arrow Up\".",
+    "mobileInstallReady": "Arrow Up is ready to install onto your home screen for instant, distraction-free access.",
+    "desktopInstallReady": "Install Arrow Up as a dedicated desktop app for faster launch and window isolation.",
     "later": "Later",
     "installing": "Installing...",
     "installNow": "Install Now"
@@ -242,6 +247,164 @@
     "requestsQueue": "Pending server requests queue and retry automatically",
     "todosDesc": "Review daily actions",
     "journalsDesc": "Reflect and review logs",
-    "missionsDesc": "Track active milestones"
+    "missionsDesc": "Track active milestones",
+    "quickNav": "Quick Navigation (Cached)",
+    "open": "Open",
+    "footer": "Arrow Up · Progressive Web App"
+  },
+  "help": {
+    "label": "Help & Guide",
+    "gotIt": "Got it",
+    "close": "Close",
+    "default": {
+      "title": "Arrow Up Guide",
+      "subtitle": "Boost your personal momentum and achieve daily clarity.",
+      "tip1Title": "Core Navigation",
+      "tip1Desc": "Use the bottom bar to switch between Todos, Journals, Skills, Rules, and Missions.",
+      "tip2Title": "Offline Resilience",
+      "tip2Desc": "All data stays cached locally so you can continue uninterrupted even with no connection.",
+      "tip3Title": "Daily Compounding",
+      "tip3Desc": "Small consistent actions done every single day compound into life-changing results."
+    },
+    "todos": {
+      "title": "Todos & Habits Guide",
+      "subtitle": "Master your daily schedule and build consistent momentum.",
+      "tip1Title": "Status Management",
+      "tip1Desc": "Track active actions and mark them as done when finished. Completed tasks help review your day.",
+      "tip2Title": "Focused Action",
+      "tip2Desc": "Filter between Todo, In-Progress, and Done tabs to maintain sharp focus on immediate priorities.",
+      "tip3Title": "Continuous Progress",
+      "tip3Desc": "Tap the '+' button to schedule new tasks with deadlines, time estimates, and life area tags."
+    },
+    "todosNew": {
+      "title": "New Todo Guide",
+      "subtitle": "Create actionable, focused tasks for your day.",
+      "tip1Title": "Actionable Titles",
+      "tip1Desc": "Start titles with active verbs (e.g. 'Read 20 pages' or 'Ship v1 release') for mental clarity.",
+      "tip2Title": "Set Deadlines",
+      "tip2Desc": "Assign target dates and times to prevent procrastination and structure your day.",
+      "tip3Title": "Life Categories",
+      "tip3Desc": "Tag tasks with Work, Sport, or Personal domains to maintain balanced daily effort."
+    },
+    "journals": {
+      "title": "Daily Journals Guide",
+      "subtitle": "Reflect on thoughts, learnings, and personal growth.",
+      "tip1Title": "Daily Reflection",
+      "tip1Desc": "Writing down observations and daily wins clears cognitive clutter and increases gratitude.",
+      "tip2Title": "Thematic Categories",
+      "tip2Desc": "Organize entries by category (Ideas, Gratitude, Retrospectives) for easy retrieval.",
+      "tip3Title": "Long-term Wisdom",
+      "tip3Desc": "Revisiting past journal notes reveals patterns in your decision-making and emotional states."
+    },
+    "journalsNew": {
+      "title": "New Journal Entry Guide",
+      "subtitle": "Capture your reflections, insights, and moments of gratitude.",
+      "tip1Title": "Express Freely",
+      "tip1Desc": "Write authentic notes about what worked today, lessons learned, and ideas for tomorrow.",
+      "tip2Title": "Select Categories",
+      "tip2Desc": "Attach relevant categories or create new ones to keep your personal journal organized.",
+      "tip3Title": "Capture Timely",
+      "tip3Desc": "Journaling either first thing in the morning or right before sleep yields the highest clarity."
+    },
+    "journalsCategories": {
+      "title": "Journal Categories Guide",
+      "subtitle": "Structure and categorize your reflective notes.",
+      "tip1Title": "Organize Themes",
+      "tip1Desc": "Group journal entries under meaningful labels like Personal, Career, Health, or Reading.",
+      "tip2Title": "Edit & Clean",
+      "tip2Desc": "Rename or delete obsolete categories anytime to maintain a streamlined structure.",
+      "tip3Title": "Quick Filtering",
+      "tip3Desc": "Categories let you instantly filter past entries to review specific aspects of your life."
+    },
+    "skills": {
+      "title": "Skills Mastery Guide",
+      "subtitle": "Track and level up your abilities systematically.",
+      "tip1Title": "Skill Levels",
+      "tip1Desc": "Monitor competency levels from novice to expert across multiple life domains.",
+      "tip2Title": "Deliberate Practice",
+      "tip2Desc": "Regular, focused 20-minute practice sessions outperform sporadic hours of unfocused practice.",
+      "tip3Title": "Growth Milestones",
+      "tip3Desc": "Set measurable achievements for each skill so you can tangibly observe your progress."
+    },
+    "skillsNew": {
+      "title": "New Skill Guide",
+      "subtitle": "Define a capability you want to acquire or sharpen.",
+      "tip1Title": "Define Clear Scope",
+      "tip1Desc": "Specify what mastering this skill looks like (e.g., 'TypeScript Mastery' or 'Swimming Sprint').",
+      "tip2Title": "Assign Domains",
+      "tip2Desc": "Connect skills to relevant life areas like Work or Sport to balance your development.",
+      "tip3Title": "Commit to Practice",
+      "tip3Desc": "Break down learning into manageable daily or weekly habits to guarantee consistency."
+    },
+    "skillsCategories": {
+      "title": "Skill Categories Guide",
+      "subtitle": "Organize competencies into thematic growth tracks.",
+      "tip1Title": "Thematic Tracks",
+      "tip1Desc": "Group skills into buckets like Technical, Communication, Physical Health, or Leadership.",
+      "tip2Title": "Balanced Portfolio",
+      "tip2Desc": "Aim for a well-rounded skill portfolio spanning both hard technical and soft interpersonal skills.",
+      "tip3Title": "Easy Maintenance",
+      "tip3Desc": "Keep category names short and direct for effortless scanning on mobile screens."
+    },
+    "rules": {
+      "title": "Life Rules & Principles Guide",
+      "subtitle": "Define guardrails and personal non-negotiables.",
+      "tip1Title": "Personal Code",
+      "tip1Desc": "Rules serve as automated decision-making filters when fatigue or distraction strikes.",
+      "tip2Title": "Guardrails",
+      "tip2Desc": "Establish boundary rules for sleep, screen time, physical health, and personal ethics.",
+      "tip3Title": "Review & Evolve",
+      "tip3Desc": "Regularly revisit your rules. Keep principles that serve you and refine ones that don't."
+    },
+    "rulesNew": {
+      "title": "New Rule Guide",
+      "subtitle": "Draft a clear, personal guideline for your conduct.",
+      "tip1Title": "Clarity & Simplicity",
+      "tip1Desc": "Formulate short, unambiguous principles (e.g., 'No screens after 11 PM', 'Walk 8k steps').",
+      "tip2Title": "Anchor to Values",
+      "tip2Desc": "Ensure every rule directly reinforces an outcome or identity you truly desire.",
+      "tip3Title": "High Compliance",
+      "tip3Desc": "Start with a few sacred non-negotiable rules before introducing more complex routines."
+    },
+    "missions": {
+      "title": "Missions & Goals Guide",
+      "subtitle": "Execute high-impact strategic initiatives and milestones.",
+      "tip1Title": "Macro Objectives",
+      "tip1Desc": "Missions are your highest-leverage goals that transform your life over weeks or months.",
+      "tip2Title": "Milestone Breakdown",
+      "tip2Desc": "Decompose intimidating goals into tangible, verifiable milestone checkpoints.",
+      "tip3Title": "Track Progress",
+      "tip3Desc": "Monitor deadline targets and celebrate each completed milestone along the journey."
+    },
+    "missionsNew": {
+      "title": "New Mission Guide",
+      "subtitle": "Launch a targeted strategic initiative with defined targets.",
+      "tip1Title": "Define Victory",
+      "tip1Desc": "State exactly what success looks like upon completing this mission.",
+      "tip2Title": "Realistic Deadlines",
+      "tip2Desc": "Set reasonable deadline targets to maintain positive urgency without burnout.",
+      "tip3Title": "Action Linkage",
+      "tip3Desc": "Schedule daily todos and habits that directly contribute to achieving this mission."
+    },
+    "profile": {
+      "title": "Profile & Settings Guide",
+      "subtitle": "Personalize your experience and manage preferences.",
+      "tip1Title": "Language & Theme",
+      "tip1Desc": "Switch between English and Persian, or Dark and Light themes with instant persistence.",
+      "tip2Title": "Overview Counts",
+      "tip2Desc": "Review high-level summaries of all your recorded todos, journals, skills, and missions.",
+      "tip3Title": "Secure Session",
+      "tip3Desc": "Easily manage your login session or log out whenever you need."
+    },
+    "search": {
+      "title": "Search Guide",
+      "subtitle": "Find tasks, journals, and skills instantly.",
+      "tip1Title": "Quick Query",
+      "tip1Desc": "Type keywords to quickly locate items across all your life modules.",
+      "tip2Title": "Instant Filtering",
+      "tip2Desc": "Use titles or categories to narrow down results effortlessly.",
+      "tip3Title": "Cross-Module Search",
+      "tip3Desc": "Search indexes your tasks, journal entries, and skills in one unified view."
+    }
   }
 }

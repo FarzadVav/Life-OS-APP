@@ -79,6 +79,7 @@ function SkillCategoriesPage() {
       <TopBar>
         <TopBar.Title asTitle>{t("common.categories")}</TopBar.Title>
         <TopBar.Btn backIcon href="/skills" position="left" />
+        <TopBar.HelpBtn position="right" />
       </TopBar>
 
       <PageItemsWrapper>

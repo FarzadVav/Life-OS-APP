@@ -11,7 +11,7 @@ import { missions } from "@/features/missions/constants";
 import Dialog from "@/features/general/components/ui/Dialog/Dialog";
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
 import { Button } from "@/features/general/components/ui/Button/Button";
-import CreateBtn from "@/features/general/components/module/CreateBtn/CreateBtn";
+import PageActionBtn from "@/features/general/components/module/PageActionBtn/PageActionBtn";
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
 import type {
   MissionAction,
@@ -373,6 +373,7 @@ function NewMissionPage() {
         </TopBar.Title>
 
         <TopBar.Btn backIcon href="/missions" position="left" />
+        <TopBar.HelpBtn position="right" />
       </TopBar>
 
       <Form
@@ -772,7 +773,7 @@ function NewMissionPage() {
           </div>
         </Dialog>
 
-        <CreateBtn submit />
+        <PageActionBtn submit />
       </Form>
     </PageWrapper>
   );

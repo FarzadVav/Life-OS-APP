@@ -20,7 +20,7 @@ export default function ConnectivityFallback({
     return (
       <div
         role="status"
-        className="w-full py-8 px-4 rounded-2xl bg-card border border-amber-500/20 flex flex-col items-center justify-center text-center gap-2 text-foreground/80"
+        className="w-full py-8 px-4 rounded-component bg-card border border-amber-500/20 flex flex-col items-center justify-center text-center gap-2 text-foreground/80"
       >
         <div className="size-9 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-500">
           <WifiOff className="size-4" />

@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 import { Select } from "@base-ui/react";
 import { CheckIcon, ChevronDownIcon } from "lucide-react";
@@ -13,8 +14,13 @@ type ThemeSwitcherProps = {
 };
 
 function ThemeSwitcher({ className }: ThemeSwitcherProps) {
+  const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
   const { t } = useLocale();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const items = [
     { value: "light", label: t("colorScheme.light") },
@@ -25,7 +31,7 @@ function ThemeSwitcher({ className }: ThemeSwitcherProps) {
   return (
     <Select.Root
       items={items}
-      value={theme}
+      value={mounted ? theme : null}
       onValueChange={(nextValue) => {
         if (nextValue) {
           setTheme(nextValue);

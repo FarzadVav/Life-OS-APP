@@ -1,6 +1,7 @@
 "use client";
 
 import { useSyncExternalStore, useState } from "react";
+import { usePathname } from "next/navigation";
 import { useOffline } from "next/offline";
 import { WifiOff, RefreshCw } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
@@ -25,6 +26,7 @@ function getOnlineServerSnapshot() {
 }
 
 export default function OfflineBanner() {
+  const pathname = usePathname();
   const nextIsOffline = useOffline();
   const isOnline = useSyncExternalStore(
     subscribeOnlineStatus,
@@ -34,7 +36,7 @@ export default function OfflineBanner() {
   const [isRetrying, setIsRetrying] = useState(false);
   const { t } = useLocale();
 
-  const isOffline = nextIsOffline || !isOnline;
+  const isOffline = (nextIsOffline || !isOnline) && pathname !== "/offline";
 
   const handleRetry = async () => {
     setIsRetrying(true);
@@ -59,7 +61,7 @@ export default function OfflineBanner() {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: -50, opacity: 0 }}
           transition={{ type: "spring", damping: 20, stiffness: 300 }}
-          className="fixed top-3 inset-x-3 z-50 mx-auto max-w-lg rounded-2xl border border-amber-500/25 bg-background/95 backdrop-blur-xl p-3 shadow-2xl text-xs text-foreground/90 flex items-center justify-between gap-3"
+          className="fixed top-3 inset-x-3 z-50 mx-auto max-w-lg rounded-component border border-amber-500/25 bg-background/95 backdrop-blur-xl p-3 shadow-2xl text-xs text-foreground/90 flex items-center justify-between gap-3"
         >
           <div className="flex items-center gap-2.5 min-w-0">
             <div className="relative flex items-center justify-center size-8 rounded-full bg-amber-500/10 text-amber-500 shrink-0">

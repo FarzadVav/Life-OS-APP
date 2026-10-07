@@ -2,7 +2,7 @@ import { Mission } from "@/features/missions/types";
 import { missions } from "@/features/missions/constants";
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
 import MissionCard from "@/features/missions/components/MissionCard/MissionCard";
-import CreateBtn from "@/features/general/components/module/CreateBtn/CreateBtn";
+import PageActionBtn from "@/features/general/components/module/PageActionBtn/PageActionBtn";
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
 import PageItemsWrapper from "@/features/general/components/static/PageItemsWrapper/PageItemsWrapper";
 import { getTranslations } from "@/features/general/lib/i18n/server";
@@ -26,6 +26,7 @@ async function MissionsPage() {
       <TopBar>
         <TopBar.Title asTitle>{t("missions.title")}</TopBar.Title>
         <TopBar.Btn backIcon href="/" position="left" />
+        <TopBar.HelpBtn position="right" />
       </TopBar>
 
       <PageItemsWrapper>
@@ -63,7 +64,7 @@ async function MissionsPage() {
           {t("missions.subtitle")}
         </p>
 
-        <CreateBtn href="/missions/new">{t("missions.new")}</CreateBtn>
+        <PageActionBtn href="/missions/new">{t("missions.new")}</PageActionBtn>
       </PageItemsWrapper>
     </PageWrapper>
   );

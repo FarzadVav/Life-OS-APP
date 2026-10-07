@@ -79,6 +79,7 @@ function JournalCategoriesPage() {
       <TopBar>
         <TopBar.Title asTitle>{t("common.categories")}</TopBar.Title>
         <TopBar.Btn backIcon href="/journals" position="left" />
+        <TopBar.HelpBtn position="right" />
       </TopBar>
 
       <PageItemsWrapper>

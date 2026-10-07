@@ -22,6 +22,7 @@ import { logout } from "@/features/auth/actions/auth";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 import LocaleSwitcher from "@/features/general/components/module/LocaleSwitcher/LocaleSwitcher";
 import ThemeSwitcher from "@/features/general/components/module/ThemeSwitcher/ThemeSwitcher";
+import PageActionBtn from "@/features/general/components/module/PageActionBtn/PageActionBtn";
 
 function UserProfilePage() {
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
@@ -55,6 +56,7 @@ function UserProfilePage() {
       <TopBar>
         <TopBar.Title asTitle>{t("profile.title")}</TopBar.Title>
         <TopBar.Btn backIcon href="/" position="left" />
+        <TopBar.HelpBtn position="right" />
       </TopBar>
 
       <PageItemsWrapper>
@@ -85,14 +87,12 @@ function UserProfilePage() {
           <ThemeSwitcher />
         </div>
 
-        <Button
-          variant="outline"
-          className="mx-auto mt-3"
+        <PageActionBtn
+          icon={<LogOutIcon />}
           onClick={() => setLogoutDialogOpen(true)}
         >
-          <LogOutIcon />
           {t("profile.logout")}
-        </Button>
+        </PageActionBtn>
       </PageItemsWrapper>
 
       <Dialog open={logoutDialogOpen} onOpenChange={setLogoutDialogOpen}>

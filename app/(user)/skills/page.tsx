@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
-import CreateBtn from "@/features/general/components/module/CreateBtn/CreateBtn";
+import PageActionBtn from "@/features/general/components/module/PageActionBtn/PageActionBtn";
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
 import PageItemsWrapper from "@/features/general/components/static/PageItemsWrapper/PageItemsWrapper";
 import ConnectivityFallback from "@/features/general/components/module/ConnectivityFallback/ConnectivityFallback";
@@ -16,6 +16,7 @@ async function SkillsPage() {
       <TopBar>
         <TopBar.Title asTitle>{t("skills.title")}</TopBar.Title>
         <TopBar.Btn backIcon href="/" position="left" />
+        <TopBar.HelpBtn position="right" />
       </TopBar>
 
       <PageItemsWrapper>
@@ -31,7 +32,7 @@ async function SkillsPage() {
           {t("skills.subtitle")}
         </p>
 
-        <CreateBtn href="/skills/new">{t("skills.new")}</CreateBtn>
+        <PageActionBtn href="/skills/new">{t("skills.new")}</PageActionBtn>
       </PageItemsWrapper>
     </PageWrapper>
   );
