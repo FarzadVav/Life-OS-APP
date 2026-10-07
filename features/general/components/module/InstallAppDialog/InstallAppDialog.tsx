@@ -72,7 +72,7 @@ export default function InstallAppDialog({
       >
         <span className="relative flex items-center justify-center">
           <Download className="size-5" />
-          <span className="absolute -top-0.75 -right-0.75 size-1.5 rounded-full bg-emerald-400" />
+          <span className="absolute -top-0.75 -right-0.75 size-1.5 rounded-xs bg-foreground" />
         </span>
       </TopBar.Btn>
 
@@ -101,7 +101,7 @@ export default function InstallAppDialog({
           {/* Value Highlights */}
           <div className="space-y-3 py-2 text-xs sm:text-sm">
             <div className="flex items-start gap-2.5">
-              <Zap className="size-4 text-amber-400 shrink-0 mt-0.5" />
+              <Zap className="size-4 text-foreground shrink-0 mt-0.5" />
               <div>
                 <span className="font-medium text-foreground">{t("install.standaloneTitle")}</span>
                 <span className="text-foreground/70 ml-1">
@@ -111,7 +111,7 @@ export default function InstallAppDialog({
             </div>
 
             <div className="flex items-start gap-2.5">
-              <Wifi className="size-4 text-emerald-400 shrink-0 mt-0.5" />
+              <Wifi className="size-4 text-foreground shrink-0 mt-0.5" />
               <div>
                 <span className="font-medium text-foreground">{t("install.offlineTitle")}</span>
                 <span className="text-foreground/70 ml-1">
@@ -121,7 +121,7 @@ export default function InstallAppDialog({
             </div>
 
             <div className="flex items-start gap-2.5">
-              <Sparkles className="size-4 text-indigo-400 shrink-0 mt-0.5" />
+              <Sparkles className="size-4 text-foreground shrink-0 mt-0.5" />
               <div>
                 <span className="font-medium text-foreground">{t("install.quickTitle")}</span>
                 <span className="text-foreground/70 ml-1">
@@ -133,13 +133,13 @@ export default function InstallAppDialog({
 
           {/* Device & Browser Specific Instructions / Status */}
           {installedSuccess ? (
-            <div className="flex items-center justify-center gap-2 py-3 rounded-component bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-semibold text-xs sm:text-sm">
+            <div className="flex items-center justify-center gap-2 py-3 rounded-component bg-card-thick border border-foreground/20 text-foreground font-semibold text-xs sm:text-sm">
               <CheckCircle2 className="size-5 shrink-0" />
               <span>{t("install.installedSuccess")}</span>
             </div>
           ) : isInstallable ? (
-            <div className="rounded-component border border-emerald-500/20 bg-emerald-500/5 p-3 flex items-start gap-2.5 text-xs text-foreground/80">
-              <Layers className="size-4 text-emerald-400 shrink-0 mt-0.5" />
+            <div className="rounded-component border border-foreground/20 bg-card-thick/50 p-3 flex items-start gap-2.5 text-xs text-foreground/80">
+              <Layers className="size-4 text-foreground shrink-0 mt-0.5" />
               <p>
                 {isMobile
                   ? t("install.mobileInstallReady")

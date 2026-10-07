@@ -7,7 +7,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 
 const buttonVariants = cva(
   [
-    "relative h-10 shrink-0 rounded-full px-4 [&_svg]:size-5",
+    "relative h-10 shrink-0 rounded-component px-4 [&_svg]:size-5",
     "inline-flex items-center justify-center gap-1.5",
     "whitespace-nowrap outline-none select-none",
     "disabled:pointer-events-none disabled:opacity-50",

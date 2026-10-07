@@ -29,11 +29,10 @@
 
 .embla__slide__number {
   background-color: var(--color-card);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-container);
   height: 100%;
 
-  border: 0.2rem solid var(--detail-medium-contrast);
-  border-radius: 1.8rem;
+  border: 1px solid var(--color-foreground);
 
   display: flex;
   align-items: center;

@@ -52,11 +52,11 @@ export function RichTextDialog({
     <BaseUIDialog.Root open={open} onOpenChange={onOpenChange}>
       <BaseUIDialog.Portal>
         <BaseUIDialog.Backdrop
-          className="fixed inset-0 z-50 bg-background/80 backdrop-blur-xs transition-opacity duration-200 data-ending-style:opacity-0 data-starting-style:opacity-0"
+          className="fixed inset-0 z-big-overlay bg-background/80 backdrop-blur-xs transition-opacity duration-200 data-ending-style:opacity-0 data-starting-style:opacity-0"
         />
 
         <BaseUIDialog.Popup
-          className="fixed inset-0 z-50 flex h-dvh w-screen flex-col bg-background text-foreground outline-none transition-all duration-200 data-ending-style:opacity-0 data-ending-style:scale-95 data-starting-style:opacity-0 data-starting-style:scale-95"
+          className="fixed inset-0 z-big-overlay flex h-dvh w-screen flex-col bg-background text-foreground outline-none transition-all duration-200 data-ending-style:opacity-0 data-ending-style:scale-95 data-starting-style:opacity-0 data-starting-style:scale-95"
         >
           {/* Header */}
           <header className="flex h-14 shrink-0 items-center justify-between border-b bg-card/40 px-4 backdrop-blur-md">

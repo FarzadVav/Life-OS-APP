@@ -44,7 +44,7 @@ function TodoCard({ todo, onToggle }: TodoCardProps) {
               className="shrink-0 transition-transform active:scale-90"
             >
               {todo.isDone ? (
-                <div className="flex size-5 items-center justify-center rounded-full bg-foreground">
+                <div className="flex size-5 items-center justify-center rounded-component bg-foreground">
                   <CheckIcon className="size-3.5 text-background" />
                 </div>
               ) : (
@@ -75,7 +75,7 @@ function TodoCard({ todo, onToggle }: TodoCardProps) {
               </div>
             </div>
 
-            <span className="shrink-0 rounded-full bg-card-thick px-2.5 py-0.5 text-xs font-medium">
+            <span className="shrink-0 rounded-component bg-card-thick px-2.5 py-0.5 text-xs font-medium">
               {todo.type}
             </span>
           </div>

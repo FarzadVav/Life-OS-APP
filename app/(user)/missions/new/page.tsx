@@ -18,6 +18,7 @@ import type {
   MissionDiscipline,
 } from "@/features/missions/types";
 import { parseDate, serializeDate } from "@/features/general/lib/utils";
+import RepeatIntervalInput from "@/features/general/components/ui/RepeatIntervalInput";
 
 function createId(): number {
   return Date.now() + Math.floor(Math.random() * 1000);
@@ -40,6 +41,7 @@ type DisciplineDraft = {
   id: number | null;
   title: string;
   repeatInterval: string;
+  history?: { date: string; isDone: boolean }[];
 };
 
 
@@ -86,7 +88,7 @@ function DifficultySelect({
         />
 
         <Select.Portal>
-          <Select.Positioner className="z-100">
+          <Select.Positioner className="z-small-overlay">
             <Select.Popup className="min-w-(--anchor-width) overflow-hidden rounded-md bg-card-thick p-1">
               <Select.List className="p-px">
                 {items.map((item) => (
@@ -115,7 +117,7 @@ function DifficultySelect({
         </Select.Portal>
       </Select.Root>
 
-      <Field.Error className="sub-text mt-0.5 text-red-400" />
+      <Field.Error className="sub-text mt-0.5 text-foreground" />
     </Field.Root>
   );
 }
@@ -154,7 +156,7 @@ function NewMissionPage() {
   const [disciplineDraft, setDisciplineDraft] = useState<DisciplineDraft>({
     id: null,
     title: "",
-    repeatInterval: "",
+    repeatInterval: "Every 1 Day",
   });
 
   useEffect(() => {
@@ -195,6 +197,7 @@ function NewMissionPage() {
           id: discipline.id,
           title: discipline.title,
           repeatInterval: discipline.repeatInterval,
+          history: discipline.history || [],
         })),
       );
     });
@@ -287,7 +290,8 @@ function NewMissionPage() {
     setDisciplineDraft({
       id: null,
       title: "",
-      repeatInterval: "",
+      repeatInterval: "Every 1 Day",
+      history: [],
     });
 
     setDisciplineDeleteDialogOpen(false);
@@ -299,7 +303,8 @@ function NewMissionPage() {
     setDisciplineDraft({
       id: discipline.id,
       title: discipline.title,
-      repeatInterval: discipline.repeatInterval,
+      repeatInterval: discipline.repeatInterval || "Every 1 Day",
+      history: discipline.history,
     });
 
     setDisciplineDeleteDialogOpen(false);
@@ -320,7 +325,7 @@ function NewMissionPage() {
 
   function saveDiscipline() {
     const nextTitle = disciplineDraft.title.trim();
-    const nextRepeatInterval = disciplineDraft.repeatInterval.trim();
+    const nextRepeatInterval = disciplineDraft.repeatInterval.trim() || "Every 1 Day";
     const disciplineId = disciplineDraft.id;
 
     if (!nextTitle) {
@@ -346,6 +351,7 @@ function NewMissionPage() {
           id: createId(),
           title: nextTitle,
           repeatInterval: nextRepeatInterval,
+          history: disciplineDraft.history || [],
         },
       ]);
     }
@@ -400,6 +406,7 @@ function NewMissionPage() {
                 id: discipline.id,
                 title: discipline.title,
                 repeatInterval: discipline.repeatInterval,
+                history: discipline.history,
               }),
             ),
           };
@@ -425,7 +432,7 @@ function NewMissionPage() {
             onChange={(event) => setTitle(event.target.value)}
           />
 
-          <Field.Error className="sub-text mt-0.5 text-red-400" />
+          <Field.Error className="sub-text mt-0.5 text-foreground" />
         </Field.Root>
 
         <DifficultySelect value={difficulty} onChange={setDifficulty} />
@@ -498,7 +505,7 @@ function NewMissionPage() {
                 }
               />
 
-              <Field.Error className="sub-text mt-0.5 text-red-400" />
+              <Field.Error className="sub-text mt-0.5 text-foreground" />
             </Field.Root>
 
             <Field.Root name="actionDeadline">
@@ -644,7 +651,7 @@ function NewMissionPage() {
               </Button>
             }
           >
-            <div className="relative z-10 flex min-h-0 flex-col gap-6">
+            <div className="relative z-front flex min-h-0 flex-col gap-6">
               <div>
                 <Dialog.Title className="font-bold">
                   {disciplineDraft.id !== null
@@ -676,7 +683,23 @@ function NewMissionPage() {
                   }
                 />
 
-                <Field.Error className="sub-text mt-0.5 text-red-400" />
+                <Field.Error className="sub-text mt-0.5 text-foreground" />
+              </Field.Root>
+
+              <Field.Root name="disciplineRepeatInterval">
+                <Field.Label className="mb-2 block font-bold">Repeat Interval</Field.Label>
+
+                <RepeatIntervalInput
+                  value={disciplineDraft.repeatInterval}
+                  onChange={(val) =>
+                    setDisciplineDraft((current) => ({
+                      ...current,
+                      repeatInterval: val,
+                    }))
+                  }
+                />
+
+                <Field.Error className="sub-text mt-0.5 text-foreground" />
               </Field.Root>
 
               <div className="flex items-center justify-end gap-3">
@@ -703,31 +726,43 @@ function NewMissionPage() {
           {disciplines.length > 0 && (
             <div className="mt-1 space-y-2">
               {disciplines.map((discipline) => (
-                <div
-                  key={discipline.id}
-                  className="flex items-center gap-3 rounded-md bg-card p-3"
-                >
-                  <p className="min-w-0 truncate font-medium">
-                    {discipline.title}
-                  </p>
+                <div key={discipline.id} className="flex flex-col gap-2">
+                  <div className="flex items-center gap-3 rounded-md bg-card p-3">
+                    <p className="min-w-0 truncate font-medium">
+                      {discipline.title}
+                    </p>
 
-                  <div className="ms-auto flex shrink-0 items-center gap-1">
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      onClick={() => openEditDiscipline(discipline)}
-                    >
-                      <EditIcon />
-                    </Button>
+                    <div className="ms-auto flex shrink-0 items-center gap-1">
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        onClick={() => openEditDiscipline(discipline)}
+                      >
+                        <EditIcon />
+                      </Button>
 
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      onClick={() => openDeleteDiscipline(discipline)}
-                    >
-                      <Trash2Icon />
-                    </Button>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        onClick={() => openDeleteDiscipline(discipline)}
+                      >
+                        <Trash2Icon />
+                      </Button>
+                    </div>
                   </div>
+                  {isEditMode && discipline.history && discipline.history.length > 0 && (
+                    <div className="rounded-md bg-card p-3 space-y-2">
+                      <p className="font-bold text-sm">Progress History</p>
+                      {discipline.history.map((record, idx) => (
+                        <div key={idx} className="flex items-center justify-between text-sm">
+                          <span>{new Date(record.date).toLocaleDateString()}</span>
+                          <span className={record.isDone ? "text-foreground font-bold" : "sub-text font-bold"}>
+                            {record.isDone ? "Did it" : "Didn't do it"}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               ))}
             </div>

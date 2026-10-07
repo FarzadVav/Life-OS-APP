@@ -55,7 +55,13 @@
     "todos": "Todos",
     "journals": "Journals",
     "skills": "Skills",
-    "missions": "Missions"
+    "missions": "Missions",
+    "rules": "Rules",
+    "total": "Total",
+    "completed": "Completed",
+    "pending": "Pending",
+    "actions": "Actions",
+    "doneActions": "Done Actions"
   },
   "language": {
     "title": "Language",

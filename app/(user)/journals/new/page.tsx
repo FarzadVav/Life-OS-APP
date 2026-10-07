@@ -81,7 +81,7 @@ function TypeSelect({
         />
 
         <Select.Portal>
-          <Select.Positioner className="z-100">
+          <Select.Positioner className="z-small-overlay">
             <Select.Popup className="min-w-(--anchor-width) overflow-hidden rounded-md bg-card-thick p-1">
               <Select.List className="p-px">
                 {items.map((item) => (
@@ -110,7 +110,7 @@ function TypeSelect({
         </Select.Portal>
       </Select.Root>
 
-      <Field.Error className="sub-text mt-0.5 text-red-400" />
+      <Field.Error className="sub-text mt-0.5 text-foreground" />
     </Field.Root>
   );
 }
@@ -204,7 +204,7 @@ function NewJournalPage() {
             onChange={(event) => setTitle(event.target.value)}
           />
 
-          <Field.Error className="sub-text mt-0.5 text-red-400" />
+          <Field.Error className="sub-text mt-0.5 text-foreground" />
         </Field.Root>
 
         <TypeSelect
@@ -226,7 +226,7 @@ function NewJournalPage() {
             minLength={5}
           />
 
-          <Field.Error className="sub-text mt-0.5 text-red-400" />
+          <Field.Error className="sub-text mt-0.5 text-foreground" />
         </Field.Root>
 
         <PageActionBtn submit />

@@ -71,8 +71,8 @@ export default function OfflinePage() {
           <ArrowLeft className="size-4 rtl:rotate-180" />
           <span>{t("offline.back")}</span>
         </button>
-        <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-medium">
-          <span className="size-1.5 rounded-full bg-amber-400 animate-pulse" />
+        <div className="flex items-center gap-2 px-3 py-1 rounded-component bg-card-thick border border-foreground/20 text-foreground text-xs font-medium">
+          <span className="size-1.5 rounded-xs bg-foreground animate-pulse" />
           <span>{t("offline.mode")}</span>
         </div>
       </header>
@@ -85,10 +85,9 @@ export default function OfflinePage() {
           transition={{ duration: 0.4 }}
           className="relative mb-6"
         >
-          {/* Subtle pulsating glow */}
-          <div className="absolute inset-0 rounded-full bg-amber-500/20 blur-2xl animate-pulse" />
-          <div className="relative size-24 rounded-3xl bg-card border border-foreground/15 flex items-center justify-center shadow-2xl">
-            <WifiOff className="size-10 text-amber-400" />
+          <div className="absolute inset-0 rounded-container bg-card-thick/40 blur-2xl animate-pulse" />
+          <div className="relative size-24 rounded-container bg-card border border-foreground/15 flex items-center justify-center shadow-2xl">
+            <WifiOff className="size-10 text-foreground" />
           </div>
         </motion.div>
 
@@ -123,7 +122,7 @@ export default function OfflinePage() {
             variant="primary"
             onClick={checkConnection}
             disabled={isChecking || onlineNow}
-            className="h-11 px-6 rounded-full text-sm font-semibold flex items-center gap-2 shadow-lg"
+            className="h-11 px-6 rounded-component text-sm font-semibold flex items-center gap-2 shadow-lg"
           >
             <RefreshCw className={`size-4 ${isChecking ? "animate-spin" : ""}`} />
             <span>{isChecking ? t("offline.checking") : onlineNow ? t("offline.reconnected") : t("offline.retry")}</span>
@@ -133,7 +132,7 @@ export default function OfflinePage() {
             variant="card"
             render={<Link href="/" />}
             nativeButton={false}
-            className="h-11 px-5 rounded-full text-sm font-medium flex items-center gap-2 border border-foreground/10"
+            className="h-11 px-5 rounded-component text-sm font-medium flex items-center gap-2 border border-foreground/10"
           >
             <Home className="size-4" />
             <span>{t("offline.home")}</span>
@@ -183,16 +182,16 @@ export default function OfflinePage() {
           className="mt-6 w-full p-4 rounded-component bg-card-thick/60 border border-foreground/10 text-start"
         >
           <div className="flex items-center gap-2 mb-2 text-xs font-semibold text-foreground/80">
-            <Sparkles className="size-3.5 text-amber-400" />
+            <Sparkles className="size-3.5 text-foreground" />
             <span>{t("offline.whatHappens")}</span>
           </div>
           <ul className="space-y-1.5 text-xs text-foreground/60">
             <li className="flex items-center gap-2">
-              <CheckCircle2 className="size-3.5 text-emerald-400 shrink-0" />
+              <CheckCircle2 className="size-3.5 text-foreground shrink-0" />
               <span>{t("offline.cachedPages")}</span>
             </li>
             <li className="flex items-center gap-2">
-              <CheckCircle2 className="size-3.5 text-emerald-400 shrink-0" />
+              <CheckCircle2 className="size-3.5 text-foreground shrink-0" />
               <span>{t("offline.requestsQueue")}</span>
             </li>
           </ul>

@@ -47,7 +47,7 @@ function LocaleSwitcher({ className }: LocaleSwitcherProps) {
       />
 
       <Select.Portal>
-        <Select.Positioner className="z-100">
+        <Select.Positioner className="z-small-overlay">
           <Select.Popup className="min-w-(--anchor-width) overflow-hidden rounded-md bg-card-thick p-1">
             <Select.List className="p-px">
               {items.map((item) => (

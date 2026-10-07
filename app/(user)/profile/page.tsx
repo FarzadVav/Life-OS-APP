@@ -7,12 +7,14 @@ import {
   LogOutIcon,
   RocketIcon,
   TrophyIcon,
+  ShieldCheckIcon,
 } from "lucide-react";
 
 import { todos } from "@/features/todos/constants";
 import { journals } from "@/features/journals/constants";
 import { skills } from "@/features/skills/constants";
 import { missions } from "@/features/missions/constants";
+import { rules } from "@/features/rules/constants";
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
 import Dialog from "@/features/general/components/ui/Dialog/Dialog";
 import { Button } from "@/features/general/components/ui/Button/Button";
@@ -28,26 +30,48 @@ function UserProfilePage() {
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
   const { t } = useLocale();
 
+  const todosCompleted = todos.filter((t) => t.isDone).length;
+  const todosPending = todos.length - todosCompleted;
+
+  const totalActions = missions.reduce((acc, m) => acc + m.actions.length, 0);
+  const completedActions = missions.reduce(
+    (acc, m) => acc + m.actions.filter((a) => a.isDone).length,
+    0,
+  );
+
   const stats = [
     {
       label: t("profile.todos"),
-      value: todos.length,
-      icon: <CheckSquareIcon className="size-4" />,
-    },
-    {
-      label: t("profile.journals"),
-      value: journals.length,
-      icon: <BookOpenIcon className="size-4" />,
-    },
-    {
-      label: t("profile.skills"),
-      value: skills.length,
-      icon: <TrophyIcon className="size-4" />,
+      icon: <CheckSquareIcon className="size-5 text-foreground" />,
+      details: [
+        { label: t("profile.total"), value: todos.length },
+        { label: t("profile.completed"), value: todosCompleted },
+        { label: t("profile.pending"), value: todosPending },
+      ],
     },
     {
       label: t("profile.missions"),
-      value: missions.length,
-      icon: <RocketIcon className="size-4" />,
+      icon: <RocketIcon className="size-5 text-foreground" />,
+      details: [
+        { label: t("profile.total"), value: missions.length },
+        { label: t("profile.actions"), value: totalActions },
+        { label: t("profile.doneActions"), value: completedActions },
+      ],
+    },
+    {
+      label: t("profile.journals"),
+      icon: <BookOpenIcon className="size-5 text-foreground" />,
+      details: [{ label: t("profile.total"), value: journals.length }],
+    },
+    {
+      label: t("profile.skills"),
+      icon: <TrophyIcon className="size-5 text-foreground" />,
+      details: [{ label: t("profile.total"), value: skills.length }],
+    },
+    {
+      label: t("profile.rules"),
+      icon: <ShieldCheckIcon className="size-5 text-foreground" />,
+      details: [{ label: t("profile.total"), value: rules.length }],
     },
   ];
 
@@ -60,17 +84,29 @@ function UserProfilePage() {
       </TopBar>
 
       <PageItemsWrapper>
-        <div className="grid w-full grid-cols-2 gap-3">
+        <div className="grid w-full grid-cols-1 gap-3 sm:grid-cols-2">
           {stats.map((stat) => (
             <div
               key={stat.label}
-              className="flex flex-col gap-2 rounded-component bg-card p-3"
+              className="flex flex-col gap-3 rounded-component bg-card p-4 shadow-sm"
             >
-              <div className="flex items-center gap-2 sub-text">
+              <div className="flex items-center gap-2 font-semibold">
                 {stat.icon}
                 <span>{stat.label}</span>
               </div>
-              <p className="text-2xl font-bold">{stat.value}</p>
+              <div className="flex flex-col gap-1 text-sm sub-text">
+                {stat.details.map((detail) => (
+                  <div
+                    key={detail.label}
+                    className="flex w-full items-center justify-between"
+                  >
+                    <span>{detail.label}</span>
+                    <span className="font-medium text-foreground">
+                      {detail.value}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
           ))}
         </div>

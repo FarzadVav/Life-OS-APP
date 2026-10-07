@@ -5,6 +5,7 @@ import {
   CalendarDaysIcon,
   ChevronRightIcon,
   InfoIcon,
+  Repeat2Icon,
   ShieldAlertIcon,
 } from "lucide-react";
 
@@ -29,7 +30,7 @@ function RuleCard({ rule }: RuleCardProps) {
           className="w-full rounded-component bg-card p-3 transition-opacity hover:opacity-90 cursor-pointer"
         >
           <div className="flex items-start gap-2.5">
-            <div className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-card-thick">
+            <div className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-component bg-card-thick">
               <ShieldAlertIcon className="size-3.5 text-foreground/80" />
             </div>
 
@@ -55,6 +56,16 @@ function RuleCard({ rule }: RuleCardProps) {
         <p className="mt-2 font-medium">{formatDate(rule.createdAt)}</p>
       </div>
 
+      {rule.repeatInterval && (
+        <div className="rounded-component bg-background p-3">
+          <div className="flex items-center gap-2 sub-text">
+            <Repeat2Icon className="size-4" />
+            <span>Repeat Interval</span>
+          </div>
+          <p className="mt-2 font-medium">{rule.repeatInterval}</p>
+        </div>
+      )}
+
       {rule.description && (
         <section className="space-y-2">
           <div className="flex items-center gap-2 sub-text">
@@ -67,6 +78,28 @@ function RuleCard({ rule }: RuleCardProps) {
           </div>
         </section>
       )}
+
+      <section className="space-y-2">
+        <h3 className="font-bold text-sm sub-text">Track Progress</h3>
+        <div className="flex gap-3">
+          <Button
+            type="button"
+            variant="outline"
+            className="flex-1 justify-center bg-card-thick text-foreground hover:bg-card-thick/80 border-foreground/20"
+            onClick={() => console.log('I Do:', rule.title)}
+          >
+            I Do
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            className="flex-1 justify-center bg-card-thick text-foreground/70 hover:bg-card-thick/80 border-foreground/20"
+            onClick={() => console.log("I Don't Do:", rule.title)}
+          >
+            I Don't Do
+          </Button>
+        </div>
+      </section>
 
       <div className="flex gap-3">
         <Drawer.Close

@@ -38,10 +38,10 @@ function TodosTabs() {
 
   return (
     <>
-      <div className="w-full flex rounded-full">
+      <div className="w-full flex gap-2">
         <Button
           nativeButton={false}
-          className="w-1/2 rounded-e-none"
+          className="flex-1 justify-center rounded-component"
           render={<Link href="?tab=today" />}
           variant={activeTab === "today" ? "primary" : "card"}
         >
@@ -49,7 +49,7 @@ function TodosTabs() {
         </Button>
         <Button
           nativeButton={false}
-          className="w-1/2 rounded-s-none"
+          className="flex-1 justify-center rounded-component"
           render={<Link href="?tab=upcoming" />}
           variant={activeTab === "upcoming" ? "primary" : "card"}
         >
@@ -68,10 +68,10 @@ function TodosTabs() {
             </span>
           </div>
 
-          <div className="h-1.5 overflow-hidden rounded-full bg-card-thick">
+          <div className="h-1.5 overflow-hidden rounded-container bg-card-thick">
             <motion.div
               initial={{ width: 0 }}
-              className="h-full rounded-full bg-foreground"
+              className="h-full rounded-container bg-foreground"
               transition={{ duration: 0.6, ease: "easeOut" }}
               animate={{ width: `${progressPercent}%` }}
             />

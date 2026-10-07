@@ -23,7 +23,7 @@ function Difficulty({ value }: { value: number }) {
       {Array.from({ length: 5 }).map((_, index) => (
         <div
           key={index}
-          className={`h-1.5 w-1/5 rounded-full ${
+          className={`h-1.5 w-1/5 rounded-xs ${
             index < value ? "bg-foreground" : "bg-card-thick"
           }`}
         />
@@ -68,10 +68,10 @@ function MissionCard({
               </div>
             </div>
           </div>
-          <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-card-thick">
+          <div className="mt-3 h-1.5 overflow-hidden rounded-container bg-card-thick">
             <motion.div
               initial={{ width: 6 }}
-              className="h-full rounded-full bg-foreground"
+              className="h-full rounded-container bg-foreground"
               transition={{ duration: 1, ease: "easeOut" }}
               animate={{ width: progress ? `${progress}%` : 6 }}
             />
@@ -90,10 +90,10 @@ function MissionCard({
           </span>
         </div>
 
-        <div className="h-1.5 overflow-hidden rounded-full bg-card mt-1.5">
+        <div className="h-1.5 overflow-hidden rounded-container bg-card mt-1.5">
           <motion.div
             initial={{ width: 0 }}
-            className="h-full rounded-full bg-foreground"
+            className="h-full rounded-container bg-foreground"
             transition={{ duration: 1, ease: "easeOut" }}
             animate={{ width: progress ? `${progress}%` : 6 }}
           />
@@ -155,7 +155,7 @@ function MissionCard({
           >
             <div className="translate-y-0.5 shrink-0">
               {action.isDone ? (
-                <div className="flex size-5 items-center justify-center rounded-full bg-foreground">
+                <div className="flex size-5 items-center justify-center rounded-component bg-foreground">
                   <CheckIcon className="size-3.5 text-background" />
                 </div>
               ) : (
@@ -193,16 +193,37 @@ function MissionCard({
         {mission.disciplines.map((discipline) => (
           <div
             key={discipline.id}
-            className="flex items-center gap-3 rounded-component bg-background p-3"
+            className="flex flex-col gap-3 rounded-component bg-background p-3"
           >
-            <div className="flex size-10 shrink-0 items-center justify-center rounded-md bg-card">
-              <Repeat2Icon className="size-4" />
+            <div className="flex items-center gap-3">
+              <div className="flex size-10 shrink-0 items-center justify-center rounded-md bg-card">
+                <Repeat2Icon className="size-4" />
+              </div>
+
+              <div className="flex-1 h-10 flex justify-between items-start flex-col">
+                <p>{discipline.title}</p>
+
+                <p className="sub-text">{discipline.repeatInterval}</p>
+              </div>
             </div>
 
-            <div className="flex-1 h-10 flex justify-between items-start flex-col">
-              <p>{discipline.title}</p>
-
-              <p className="sub-text">{discipline.repeatInterval}</p>
+            <div className="flex gap-2 w-full mt-1">
+              <Button
+                type="button"
+                variant="outline"
+                className="flex-1 justify-center py-1.5 h-auto text-xs bg-card-thick text-foreground hover:bg-card-thick/80 border-foreground/20"
+                onClick={() => console.log('I Do:', discipline.title)}
+              >
+                I Do
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                className="flex-1 justify-center py-1.5 h-auto text-xs bg-card-thick text-foreground/70 hover:bg-card-thick/80 border-foreground/20"
+                onClick={() => console.log("I Don't Do:", discipline.title)}
+              >
+                I Don't Do
+              </Button>
             </div>
           </div>
         ))}

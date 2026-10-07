@@ -34,7 +34,7 @@ function SkillCard({ skill }: SkillCardProps) {
           <div className="flex items-start justify-between gap-3">
             <p className="font-bold line-clamp-1 flex-1">{skill.title}</p>
             {skill.type ? (
-              <span className="shrink-0 rounded-full bg-card-thick px-2.5 py-0.5 text-xs font-medium">
+              <span className="shrink-0 rounded-component bg-card-thick px-2.5 py-0.5 text-xs font-medium">
                 {skill.type}
               </span>
             ) : null}

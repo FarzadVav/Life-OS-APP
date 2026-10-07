@@ -55,7 +55,13 @@
     "todos": "کارها",
     "journals": "خاطرات",
     "skills": "مهارت‌ها",
-    "missions": "ماموریت‌ها"
+    "missions": "ماموریت‌ها",
+    "rules": "قوانین",
+    "total": "کل",
+    "completed": "تکمیل شده",
+    "pending": "در حال انجام",
+    "actions": "اقدامات",
+    "doneActions": "اقدامات انجام شده"
   },
   "language": {
     "title": "زبان",

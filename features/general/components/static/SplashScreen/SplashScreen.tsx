@@ -40,7 +40,7 @@ function SplashScreen({ children }: PropsWithChildren) {
             transition={{ duration: 0.3, ease: "easeOut" }}
             initial={{ opacity: 1 }}
             exit={{ scale: 1.05, opacity: 0 }}
-            className="fixed inset-0 z-50 flex h-dvh w-screen items-center justify-center flex-col gap-3 bg-background"
+            className="fixed inset-0 z-big-overlay flex h-dvh w-screen items-center justify-center flex-col gap-3 bg-background"
           >
             <motion.div
               initial={{ scale: 0.8, translateY: "20%", opacity: 0 }}
@@ -53,13 +53,13 @@ function SplashScreen({ children }: PropsWithChildren) {
                 unoptimized
                 priority
                 alt="Arrow Up"
-                className="rounded-full shadow-2xl border border-foreground/10"
+                className="rounded-container shadow-2xl border border-foreground/10"
                 src="/images/arrow-up_logo.jpg"
               />
             </motion.div>
             <motion.p
               transition={{ delay: 0.15, duration: 0.45, ease: "easeOut" }}
-              className="text-3xl font-bold tracking-tight text-foreground z-10"
+              className="text-3xl font-bold tracking-tight text-foreground z-front"
               initial={{ scale: 0.85, translateY: "20%", opacity: 0 }}
               animate={{ scale: 1, translateY: 0, opacity: 1 }}
             >

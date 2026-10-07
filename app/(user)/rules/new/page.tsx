@@ -10,6 +10,7 @@ import { rules } from "@/features/rules/constants";
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
 import PageActionBtn from "@/features/general/components/module/PageActionBtn/PageActionBtn";
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
+import RepeatIntervalInput from "@/features/general/components/ui/RepeatIntervalInput";
 
 function NewRulePage() {
   const { t } = useLocale();
@@ -19,12 +20,16 @@ function NewRulePage() {
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [repeatInterval, setRepeatInterval] = useState("Every 1 Day");
+  const [history, setHistory] = useState<{ date: string; isDone: boolean }[]>([]);
 
   useEffect(() => {
     if (!editId) {
       queueMicrotask(() => {
         setTitle("");
         setDescription("");
+        setRepeatInterval("Every 1 Day");
+        setHistory([]);
       });
       return;
     }
@@ -37,6 +42,8 @@ function NewRulePage() {
     queueMicrotask(() => {
       setTitle(rule.title);
       setDescription(rule.description ?? "");
+      setRepeatInterval(rule.repeatInterval || "Every 1 Day");
+      setHistory(rule.history ?? []);
     });
   }, [editId]);
 
@@ -58,6 +65,7 @@ function NewRulePage() {
             id: editId ? Number(editId) : undefined,
             title,
             description,
+            repeatInterval,
             createdAt: new Date().toISOString(),
           };
 
@@ -78,7 +86,7 @@ function NewRulePage() {
             onChange={(event) => setTitle(event.target.value)}
           />
 
-          <Field.Error className="sub-text mt-0.5 text-red-400" />
+          <Field.Error className="sub-text mt-0.5 text-foreground" />
         </Field.Root>
 
         <Field.Root name="description">
@@ -98,8 +106,36 @@ function NewRulePage() {
             onChange={(event) => setDescription(event.target.value)}
           />
 
-          <Field.Error className="sub-text mt-0.5 text-red-400" />
+          <Field.Error className="sub-text mt-0.5 text-foreground" />
         </Field.Root>
+
+        <Field.Root name="repeatInterval">
+          <Field.Label className="mb-2 block font-bold">Repeat Interval</Field.Label>
+
+          <RepeatIntervalInput
+            value={repeatInterval}
+            onChange={(val) => setRepeatInterval(val)}
+            name="repeatInterval"
+          />
+
+          <Field.Error className="sub-text mt-0.5 text-foreground" />
+        </Field.Root>
+
+        {isEditMode && history.length > 0 && (
+          <section className="space-y-3">
+            <h3 className="font-bold">Progress History</h3>
+            <div className="space-y-2">
+              {history.map((record, idx) => (
+                <div key={idx} className="flex items-center justify-between rounded-md bg-card p-3 text-sm">
+                  <span>{new Date(record.date).toLocaleDateString()}</span>
+                  <span className={record.isDone ? "text-foreground font-bold" : "sub-text font-bold"}>
+                    {record.isDone ? "Did it" : "Didn't do it"}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
         <PageActionBtn submit />
       </Form>

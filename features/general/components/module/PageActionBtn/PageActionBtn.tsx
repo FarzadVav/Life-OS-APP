@@ -58,7 +58,7 @@ function PageActionBtn({
         {submit ? <CheckIcon /> : null}
 
         {pending && (
-          <span className="absolute inset-0 flex items-center justify-center rounded-full bg-foreground text-background">
+          <span className="absolute inset-0 flex items-center justify-center rounded-component bg-foreground text-background">
             <LoaderIcon className="animate-spin" />
           </span>
         )}

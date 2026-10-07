@@ -5,7 +5,7 @@
   --rdp-day-width: 40px;
   --rdp-day_button-height: 38px;
   --rdp-day_button-width: 38px;
-  --rdp-day_button-border-radius: 9999px;
+  --rdp-day_button-border-radius: var(--radius-component);
   --rdp-today-color: var(--color-foreground);
   --rdp-selected-border: none;
   --rdp-disabled-opacity: 0.25;
@@ -19,13 +19,13 @@
   background-color: var(--color-foreground) !important;
   color: var(--color-background) !important;
   font-weight: 600 !important;
-  border-radius: 9999px !important;
+  border-radius: var(--radius-component) !important;
 }
 
 /* Hover effect on day buttons */
 .rdp-day_button:hover:not([disabled]) {
   background-color: var(--color-card-thick);
-  border-radius: 9999px;
+  border-radius: var(--radius-component);
 }
 
 /* Today indicator: subtle neutral ring when not selected */
@@ -36,7 +36,7 @@
 
 /* Navigation Buttons: Previous / Next month */
 .rdp-nav_button {
-  border-radius: 9999px;
+  border-radius: var(--radius-component);
   color: var(--color-foreground);
   transition: background-color 0.15s ease;
 }

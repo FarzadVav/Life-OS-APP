@@ -60,7 +60,7 @@ export function RichTextarea({
         {isEmpty ? (
           <div className="flex flex-col items-center justify-center py-6 text-center">
             <p className="sub-text text-sm">{resolvedPlaceholder}</p>
-            <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-card-thick px-3 py-1 text-xs font-medium text-foreground/80 transition-colors group-hover:bg-foreground group-hover:text-background">
+            <span className="mt-3 inline-flex items-center gap-1.5 rounded-component bg-card-thick px-3 py-1 text-xs font-medium text-foreground/80 transition-colors group-hover:bg-foreground group-hover:text-background">
               <PenLineIcon className="size-3.5" />
               <span>{t("editor.fullscreen") || "Open Editor"}</span>
             </span>
@@ -72,7 +72,7 @@ export function RichTextarea({
               dangerouslySetInnerHTML={{ __html: value }}
             />
 
-            <span className="absolute top-2.5 end-2.5 inline-flex items-center gap-1 rounded bg-card-thick px-2 py-0.5 text-xs font-medium text-foreground/70 opacity-70 transition-opacity group-hover:opacity-100">
+            <span className="absolute top-2.5 end-2.5 inline-flex items-center gap-1 rounded-sm bg-card-thick px-2 py-0.5 text-xs font-medium text-foreground/70 opacity-70 transition-opacity group-hover:opacity-100">
               <Maximize2Icon className="size-3" />
               <span>{t("common.edit") || "Edit"}</span>
             </span>

@@ -9,6 +9,7 @@ export type MissionDiscipline = {
   id: number;
   title: string;
   repeatInterval: string;
+  history?: { date: string; isDone: boolean }[];
 };
 
 export type Mission = {

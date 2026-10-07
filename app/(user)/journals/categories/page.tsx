@@ -124,7 +124,7 @@ function JournalCategoriesPage() {
                 className="w-full flex items-center justify-between rounded-component bg-card p-3"
               >
                 <div className="flex items-center gap-2.5 min-w-0 flex-1 mr-2">
-                  <span className="shrink-0 rounded-full bg-card-thick p-2">
+                  <span className="shrink-0 rounded-component bg-card-thick p-2">
                     <TagIcon className="size-4 sub-text" />
                   </span>
                   <span className="font-bold text-sm truncate">
@@ -150,7 +150,7 @@ function JournalCategoriesPage() {
                     square
                     onClick={() => openDeleteDialog(category)}
                     aria-label={`Delete ${category.name}`}
-                    className="text-red-400 hover:text-red-500 hover:bg-red-500/10"
+                    className="text-foreground/60 hover:text-foreground hover:bg-card-thick"
                   >
                     <Trash2Icon className="size-4" />
                   </Button>

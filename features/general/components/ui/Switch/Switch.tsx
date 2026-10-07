@@ -7,7 +7,7 @@ import { cn } from "cn";
 
 const switchTrackVariants = cva(
   [
-    "group inline-flex shrink-0 cursor-pointer items-center rounded-full transition-colors duration-200 ease-in-out select-none",
+    "group inline-flex shrink-0 cursor-pointer items-center rounded-container transition-colors duration-200 ease-in-out select-none",
     "border border-foreground/20 bg-card-thick",
     "data-checked:bg-foreground data-checked:border-foreground",
     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background",
@@ -29,7 +29,7 @@ const switchTrackVariants = cva(
 
 const switchThumbVariants = cva(
   [
-    "pointer-events-none block rounded-full transition-all duration-200 ease-in-out",
+    "pointer-events-none block rounded-component transition-all duration-200 ease-in-out",
     "bg-foreground/70 shadow-sm",
     "data-checked:bg-background",
   ],

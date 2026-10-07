@@ -43,7 +43,7 @@ function LoginPage() {
               placeholder={t("login.usernamePlaceholder")}
             />
 
-            <Field.Error className="sub-text mt-0.5 text-red-400" />
+            <Field.Error className="sub-text mt-0.5 text-foreground" />
           </Field.Root>
 
           <Field.Root name="password">
@@ -75,11 +75,11 @@ function LoginPage() {
               </button>
             </div>
 
-            <Field.Error className="sub-text mt-0.5 text-red-400" />
+            <Field.Error className="sub-text mt-0.5 text-foreground" />
           </Field.Root>
 
           {state?.message && (
-            <p className="sub-text text-red-400">{state.message}</p>
+            <p className="sub-text text-foreground">{state.message}</p>
           )}
 
           <Button type="submit" className="w-full" disabled={pending}>

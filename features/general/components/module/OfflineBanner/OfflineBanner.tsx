@@ -61,12 +61,12 @@ export default function OfflineBanner() {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: -50, opacity: 0 }}
           transition={{ type: "spring", damping: 20, stiffness: 300 }}
-          className="fixed top-3 inset-x-3 z-50 mx-auto max-w-lg rounded-component border border-amber-500/25 bg-background/95 backdrop-blur-xl p-3 shadow-2xl text-xs text-foreground/90 flex items-center justify-between gap-3"
+          className="fixed top-3 inset-x-3 z-important mx-auto max-w-lg rounded-component border border-foreground/20 bg-background/95 backdrop-blur-xl p-3 shadow-2xl text-xs text-foreground/90 flex items-center justify-between gap-3"
         >
           <div className="flex items-center gap-2.5 min-w-0">
-            <div className="relative flex items-center justify-center size-8 rounded-full bg-amber-500/10 text-amber-500 shrink-0">
-              <span className="absolute size-2 rounded-full bg-amber-500 animate-ping opacity-75" />
-              <WifiOff className="size-4 relative z-10" />
+            <div className="relative flex items-center justify-center size-8 rounded-container bg-card-thick text-foreground shrink-0">
+              <span className="absolute size-2 rounded-xs bg-foreground animate-ping opacity-75" />
+              <WifiOff className="size-4 relative z-front" />
             </div>
             <div className="flex flex-col min-w-0">
               <span className="font-semibold text-foreground text-xs leading-tight">
@@ -81,7 +81,7 @@ export default function OfflineBanner() {
             type="button"
             onClick={handleRetry}
             disabled={isRetrying}
-            className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-foreground/10 hover:bg-foreground/15 text-foreground font-medium text-[11px] transition-colors cursor-pointer disabled:opacity-60"
+            className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-component bg-card-thick hover:bg-card-thick/80 text-foreground font-medium text-[11px] transition-colors cursor-pointer disabled:opacity-60"
           >
             <RefreshCw className={`size-3 ${isRetrying ? "animate-spin" : ""}`} />
             <span>{isRetrying ? t("offlineBanner.checking") : t("offlineBanner.retry")}</span>
