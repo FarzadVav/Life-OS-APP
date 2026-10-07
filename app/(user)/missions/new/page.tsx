@@ -76,7 +76,7 @@ function DifficultySelect({
             <Button
               type="button"
               variant="outline"
-              className="w-full justify-between rounded-md"
+              className="w-full justify-between rounded-component"
             >
               <Select.Value placeholder={t("missions.selectDifficulty")} />
 
@@ -89,7 +89,7 @@ function DifficultySelect({
 
         <Select.Portal>
           <Select.Positioner className="z-small-overlay">
-            <Select.Popup className="min-w-(--anchor-width) overflow-hidden rounded-md bg-card-thick p-1">
+            <Select.Popup className="min-w-(--anchor-width) overflow-hidden rounded-component bg-card-thick p-1">
               <Select.List className="p-px">
                 {items.map((item) => (
                   <Select.Item
@@ -100,7 +100,7 @@ function DifficultySelect({
                       <Button
                         type="button"
                         variant="ghost"
-                        className="w-full justify-between rounded-md"
+                        className="w-full justify-between rounded-component"
                       >
                         <Select.ItemText>{item.label}</Select.ItemText>
 
@@ -252,10 +252,10 @@ function NewMissionPage() {
         current.map((action) =>
           action.id === actionId
             ? {
-                ...action,
-                title: nextTitle,
-                deadline: nextDeadline,
-              }
+              ...action,
+              title: nextTitle,
+              deadline: nextDeadline,
+            }
             : action,
         ),
       );
@@ -337,10 +337,10 @@ function NewMissionPage() {
         current.map((discipline) =>
           discipline.id === disciplineId
             ? {
-                ...discipline,
-                title: nextTitle,
-                repeatInterval: nextRepeatInterval,
-              }
+              ...discipline,
+              title: nextTitle,
+              repeatInterval: nextRepeatInterval,
+            }
             : discipline,
         ),
       );
@@ -470,7 +470,7 @@ function NewMissionPage() {
                 type="button"
                 variant="outline"
                 onClick={openNewAction}
-                className="w-full justify-start rounded-md"
+                className="w-full justify-start rounded-component"
               >
                 Add action
               </Button>
@@ -550,7 +550,7 @@ function NewMissionPage() {
               {actions.map((action) => (
                 <div
                   key={action.id}
-                  className="flex items-center gap-3 rounded-md bg-card p-3"
+                  className="flex items-center gap-3 rounded-component bg-card p-3"
                 >
                   <p className="truncate font-medium">{action.title}</p>
 
@@ -645,7 +645,7 @@ function NewMissionPage() {
                 type="button"
                 variant="outline"
                 onClick={openNewDiscipline}
-                className="w-full justify-start rounded-md"
+                className="w-full justify-start rounded-component"
               >
                 Add discipline
               </Button>
@@ -727,7 +727,7 @@ function NewMissionPage() {
             <div className="mt-1 space-y-2">
               {disciplines.map((discipline) => (
                 <div key={discipline.id} className="flex flex-col gap-2">
-                  <div className="flex items-center gap-3 rounded-md bg-card p-3">
+                  <div className="flex items-center gap-3 rounded-component bg-card p-3">
                     <p className="min-w-0 truncate font-medium">
                       {discipline.title}
                     </p>
@@ -751,7 +751,7 @@ function NewMissionPage() {
                     </div>
                   </div>
                   {isEditMode && discipline.history && discipline.history.length > 0 && (
-                    <div className="rounded-md bg-card p-3 space-y-2">
+                    <div className="rounded-component bg-card p-3 space-y-2">
                       <p className="font-bold text-sm">Progress History</p>
                       {discipline.history.map((record, idx) => (
                         <div key={idx} className="flex items-center justify-between text-sm">

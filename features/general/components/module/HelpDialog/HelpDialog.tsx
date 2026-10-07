@@ -101,7 +101,7 @@ export default function HelpDialog({
         <div className="flex flex-col gap-5 max-w-sm w-full p-1">
           {/* Header */}
           <div className="flex items-center gap-3.5">
-            <div className="size-11 rounded-component bg-foreground/10 flex items-center justify-center shrink-0">
+            <div className="size-11 rounded-container bg-foreground/10 flex items-center justify-center shrink-0">
               <CircleHelp className="size-6 text-foreground" />
             </div>
             <div className="flex flex-col">
@@ -116,7 +116,7 @@ export default function HelpDialog({
 
           {/* Help Tips */}
           <div className="space-y-2.5 py-1 text-sm">
-            <div className="flex items-start gap-3 rounded-component border border-foreground/10 bg-background/50 p-3">
+            <div className="flex items-start gap-3 rounded-container border border-foreground/10 bg-background/50 p-3">
               <Lightbulb className="size-4.5 text-foreground shrink-0 mt-0.5" />
               <div className="flex flex-col gap-0.5">
                 <span className="font-semibold text-foreground text-xs">
@@ -128,7 +128,7 @@ export default function HelpDialog({
               </div>
             </div>
 
-            <div className="flex items-start gap-3 rounded-component border border-foreground/10 bg-background/50 p-3">
+            <div className="flex items-start gap-3 rounded-container border border-foreground/10 bg-background/50 p-3">
               <CheckCircle2 className="size-4.5 text-foreground shrink-0 mt-0.5" />
               <div className="flex flex-col gap-0.5">
                 <span className="font-semibold text-foreground text-xs">
@@ -140,7 +140,7 @@ export default function HelpDialog({
               </div>
             </div>
 
-            <div className="flex items-start gap-3 rounded-component border border-foreground/10 bg-background/50 p-3">
+            <div className="flex items-start gap-3 rounded-container border border-foreground/10 bg-background/50 p-3">
               <Sparkles className="size-4.5 text-foreground shrink-0 mt-0.5" />
               <div className="flex flex-col gap-0.5">
                 <span className="font-semibold text-foreground text-xs">

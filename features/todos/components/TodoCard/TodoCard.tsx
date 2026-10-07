@@ -31,7 +31,7 @@ function TodoCard({ todo, onToggle }: TodoCardProps) {
       trigger={
         <div
           key={todo.id}
-          className="group w-full rounded-component bg-card p-3 transition-opacity hover:opacity-90 cursor-pointer"
+          className="group w-full rounded-container bg-card p-3 transition-opacity hover:opacity-90 cursor-pointer"
         >
           <div className="flex items-center gap-3">
             <button
@@ -44,7 +44,7 @@ function TodoCard({ todo, onToggle }: TodoCardProps) {
               className="shrink-0 transition-transform active:scale-90"
             >
               {todo.isDone ? (
-                <div className="flex size-5 items-center justify-center rounded-component bg-foreground">
+                <div className="flex size-5 items-center justify-center rounded-container bg-foreground">
                   <CheckIcon className="size-3.5 text-background" />
                 </div>
               ) : (
@@ -54,9 +54,8 @@ function TodoCard({ todo, onToggle }: TodoCardProps) {
 
             <div className="min-w-0 flex-1">
               <p
-                className={`font-medium transition-all ${
-                  todo.isDone ? "line-through muted-text" : ""
-                }`}
+                className={`font-medium transition-all ${todo.isDone ? "line-through muted-text" : ""
+                  }`}
               >
                 {todo.title}
               </p>
@@ -75,7 +74,7 @@ function TodoCard({ todo, onToggle }: TodoCardProps) {
               </div>
             </div>
 
-            <span className="shrink-0 rounded-component bg-card-thick px-2.5 py-0.5 text-xs font-medium">
+            <span className="shrink-0 rounded-container bg-card-thick px-2.5 py-0.5 text-xs font-medium">
               {todo.type}
             </span>
           </div>
@@ -85,7 +84,7 @@ function TodoCard({ todo, onToggle }: TodoCardProps) {
       <Drawer.Title className="title">{todo.title}</Drawer.Title>
 
       <div className="grid grid-cols-3 gap-2">
-        <div className="rounded-component bg-background p-3">
+        <div className="rounded-container bg-background p-3">
           <div className="flex items-center gap-2 sub-text">
             <TagIcon className="size-4" />
             <span>{t("common.type")}</span>
@@ -93,7 +92,7 @@ function TodoCard({ todo, onToggle }: TodoCardProps) {
           <p className="mt-2 font-medium">{todo.type}</p>
         </div>
 
-        <div className="rounded-component bg-background p-3">
+        <div className="rounded-container bg-background p-3">
           <div className="flex items-center gap-2 sub-text">
             {isDaily ? (
               <ClockIcon className="size-4" />
@@ -107,22 +106,21 @@ function TodoCard({ todo, onToggle }: TodoCardProps) {
           </p>
         </div>
 
-        <div className="rounded-component bg-background p-3">
+        <div className="rounded-container bg-background p-3">
           <div className="flex items-center gap-2 sub-text">
             <CheckIcon className="size-4" />
             <span>{t("common.status")}</span>
           </div>
           <p
-            className={`mt-2 font-medium ${
-              todo.isDone ? "text-foreground" : "sub-text"
-            }`}
+            className={`mt-2 font-medium ${todo.isDone ? "text-foreground" : "sub-text"
+              }`}
           >
             {todo.isDone ? t("todos.completed") : t("todos.inProgress")}
           </p>
         </div>
       </div>
 
-      <label className="rounded-component bg-background p-3 flex items-center justify-between cursor-pointer select-none">
+      <label className="rounded-container bg-background p-3 flex items-center justify-between cursor-pointer select-none">
         <div className="flex flex-col">
           <span className="text-sm font-medium text-foreground">
             {todo.isDone ? t("todos.markAsIncomplete") : t("todos.markAsCompleted")}

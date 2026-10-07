@@ -27,7 +27,7 @@ async function RulesPage() {
             className="
               flex w-full flex-1
               items-center justify-center
-              rounded-component
+              rounded-container
               border-2 border-dashed
               p-3
             "

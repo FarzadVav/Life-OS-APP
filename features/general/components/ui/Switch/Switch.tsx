@@ -29,7 +29,7 @@ const switchTrackVariants = cva(
 
 const switchThumbVariants = cva(
   [
-    "pointer-events-none block rounded-component transition-all duration-200 ease-in-out",
+    "pointer-events-none block rounded-container transition-all duration-200 ease-in-out",
     "bg-foreground/70 shadow-sm",
     "data-checked:bg-background",
   ],

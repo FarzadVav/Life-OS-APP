@@ -71,8 +71,8 @@ export default function OfflinePage() {
           <ArrowLeft className="size-4 rtl:rotate-180" />
           <span>{t("offline.back")}</span>
         </button>
-        <div className="flex items-center gap-2 px-3 py-1 rounded-component bg-card-thick border border-foreground/20 text-foreground text-xs font-medium">
-          <span className="size-1.5 rounded-xs bg-foreground animate-pulse" />
+        <div className="flex items-center gap-2 px-3 py-1 rounded-container bg-card-thick border border-foreground/20 text-foreground text-xs font-medium">
+          <span className="size-1.5 bg-foreground animate-pulse" />
           <span>{t("offline.mode")}</span>
         </div>
       </header>
@@ -122,7 +122,7 @@ export default function OfflinePage() {
             variant="primary"
             onClick={checkConnection}
             disabled={isChecking || onlineNow}
-            className="h-11 px-6 rounded-component text-sm font-semibold flex items-center gap-2 shadow-lg"
+            className="h-11 px-6 rounded-container text-sm font-semibold flex items-center gap-2 shadow-lg"
           >
             <RefreshCw className={`size-4 ${isChecking ? "animate-spin" : ""}`} />
             <span>{isChecking ? t("offline.checking") : onlineNow ? t("offline.reconnected") : t("offline.retry")}</span>
@@ -132,7 +132,7 @@ export default function OfflinePage() {
             variant="card"
             render={<Link href="/" />}
             nativeButton={false}
-            className="h-11 px-5 rounded-component text-sm font-medium flex items-center gap-2 border border-foreground/10"
+            className="h-11 px-5 rounded-container text-sm font-medium flex items-center gap-2 border border-foreground/10"
           >
             <Home className="size-4" />
             <span>{t("offline.home")}</span>
@@ -154,10 +154,10 @@ export default function OfflinePage() {
               <Link
                 key={item.href}
                 href={item.href}
-                className="group flex items-center justify-between p-3.5 rounded-component bg-card hover:bg-card-thick border border-foreground/10 transition-colors text-start"
+                className="group flex items-center justify-between p-3.5 rounded-container bg-card hover:bg-card-thick border border-foreground/10 transition-colors text-start"
               >
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="size-9 rounded-xl bg-foreground/5 group-hover:bg-foreground/10 flex items-center justify-center shrink-0 transition-colors">
+                  <div className="size-9 rounded-component bg-foreground/5 group-hover:bg-foreground/10 flex items-center justify-center shrink-0 transition-colors">
                     <item.icon className="size-4 text-foreground/80" />
                   </div>
                   <div className="min-w-0">
@@ -179,7 +179,7 @@ export default function OfflinePage() {
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.5, duration: 0.4 }}
-          className="mt-6 w-full p-4 rounded-component bg-card-thick/60 border border-foreground/10 text-start"
+          className="mt-6 w-full p-4 rounded-container bg-card-thick/60 border border-foreground/10 text-start"
         >
           <div className="flex items-center gap-2 mb-2 text-xs font-semibold text-foreground/80">
             <Sparkles className="size-3.5 text-foreground" />

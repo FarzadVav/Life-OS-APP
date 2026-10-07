@@ -27,7 +27,9 @@ function SplashScreen({ children }: PropsWithChildren) {
       <div
         className={cn(
           "root w-full min-h-dvh transition-opacity duration-300",
-          showSplash ? "pointer-events-none select-none opacity-0" : "opacity-100",
+          showSplash
+            ? "pointer-events-none select-none opacity-0"
+            : "opacity-100",
         )}
       >
         {children}
@@ -53,7 +55,7 @@ function SplashScreen({ children }: PropsWithChildren) {
                 unoptimized
                 priority
                 alt="Arrow Up"
-                className="rounded-container shadow-2xl border border-foreground/10"
+                className="rounded-full shadow-2xl border border-foreground/10"
                 src="/images/arrow-up_logo.jpg"
               />
             </motion.div>

@@ -32,7 +32,7 @@ function LocalTimePickerDialog({
   title,
   description,
   showIcon = true,
-  className = "w-full justify-start rounded-md",
+  className = "w-full justify-start rounded-component",
 }: TimePickerDialogProps) {
   const { t } = useLocale();
   const resolvedLabel = label ?? t("timePicker.label");

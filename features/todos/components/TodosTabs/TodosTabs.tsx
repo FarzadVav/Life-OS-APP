@@ -41,7 +41,7 @@ function TodosTabs() {
       <div className="w-full flex gap-2">
         <Button
           nativeButton={false}
-          className="flex-1 justify-center rounded-component"
+          className="flex-1 justify-center rounded-container"
           render={<Link href="?tab=today" />}
           variant={activeTab === "today" ? "primary" : "card"}
         >
@@ -49,7 +49,7 @@ function TodosTabs() {
         </Button>
         <Button
           nativeButton={false}
-          className="flex-1 justify-center rounded-component"
+          className="flex-1 justify-center rounded-container"
           render={<Link href="?tab=upcoming" />}
           variant={activeTab === "upcoming" ? "primary" : "card"}
         >
@@ -58,7 +58,7 @@ function TodosTabs() {
       </div>
 
       {totalCount > 0 && (
-        <div className="w-full rounded-component bg-card p-3 space-y-2">
+        <div className="w-full rounded-container bg-card p-3 space-y-2">
           <div className="flex items-center justify-between text-xs">
             <span className="font-bold">
               {activeTab === "today" ? t("todos.dailyMomentum") : t("todos.upcomingTargets")}
@@ -79,7 +79,7 @@ function TodosTabs() {
         </div>
       )}
 
-      <div className="w-full overflow-hidden rounded-component">
+      <div className="w-full overflow-hidden rounded-container">
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={activeTab}
@@ -106,7 +106,7 @@ function TodosTabs() {
                 className="
                   flex w-full flex-1
                   items-center justify-center
-                  rounded-component
+                  rounded-container
                   border-2 border-dashed
                   p-6
                 "

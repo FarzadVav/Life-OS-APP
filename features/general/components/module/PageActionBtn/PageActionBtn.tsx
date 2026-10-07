@@ -38,8 +38,7 @@ function PageActionBtn({
     return <Button id="page-action-btn" className="hidden" />;
   }
 
-  const leftIcon =
-    icon !== undefined ? icon : !submit ? <PlusIcon /> : null;
+  const leftIcon = icon !== undefined ? icon : !submit ? <PlusIcon /> : null;
 
   return createPortal(
     <>
@@ -58,7 +57,7 @@ function PageActionBtn({
         {submit ? <CheckIcon /> : null}
 
         {pending && (
-          <span className="absolute inset-0 flex items-center justify-center rounded-component bg-foreground text-background">
+          <span className="absolute inset-0 flex items-center justify-center rounded-full bg-foreground text-background">
             <LoaderIcon className="animate-spin" />
           </span>
         )}

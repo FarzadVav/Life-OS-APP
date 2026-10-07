@@ -29,12 +29,12 @@ function SkillCard({ skill }: SkillCardProps) {
       trigger={
         <div
           key={skill.id}
-          className="w-full rounded-component bg-card p-3 transition-opacity hover:opacity-90 cursor-pointer"
+          className="w-full rounded-container bg-card p-3 transition-opacity hover:opacity-90 cursor-pointer"
         >
           <div className="flex items-start justify-between gap-3">
             <p className="font-bold line-clamp-1 flex-1">{skill.title}</p>
             {skill.type ? (
-              <span className="shrink-0 rounded-component bg-card-thick px-2.5 py-0.5 text-xs font-medium">
+              <span className="shrink-0 rounded-container bg-card-thick px-2.5 py-0.5 text-xs font-medium">
                 {skill.type}
               </span>
             ) : null}
@@ -60,7 +60,7 @@ function SkillCard({ skill }: SkillCardProps) {
       <Drawer.Title className="title">{skill.title}</Drawer.Title>
 
       <div className="grid grid-cols-3 gap-2">
-        <div className="rounded-component bg-background p-3">
+        <div className="rounded-container bg-background p-3">
           <div className="flex items-center gap-2 sub-text">
             <TagIcon className="size-4" />
             <span>{t("common.type")}</span>
@@ -68,7 +68,7 @@ function SkillCard({ skill }: SkillCardProps) {
           <p className="mt-2 font-medium">{skill.type || t("common.general")}</p>
         </div>
 
-        <div className="rounded-component bg-background p-3">
+        <div className="rounded-container bg-background p-3">
           <div className="flex items-center gap-2 sub-text">
             <CalendarDaysIcon className="size-4" />
             <span>{t("common.date")}</span>
@@ -76,7 +76,7 @@ function SkillCard({ skill }: SkillCardProps) {
           <p className="mt-2 font-medium">{formatDate(skill.createdAt)}</p>
         </div>
 
-        <div className="rounded-component bg-background p-3">
+        <div className="rounded-container bg-background p-3">
           <div className="flex items-center gap-2 sub-text">
             <ClockIcon className="size-4" />
             <span>{t("common.time")}</span>
@@ -91,7 +91,7 @@ function SkillCard({ skill }: SkillCardProps) {
           <span className="font-bold">{t("common.content")}</span>
         </div>
 
-        <div className="rounded-component bg-background p-4 text-sm leading-relaxed">
+        <div className="rounded-container bg-background p-4 text-sm leading-relaxed">
           <RichTextViewer content={skill.content} />
         </div>
       </section>

@@ -17,7 +17,7 @@ function LoginPage() {
 
   return (
     <div className="relative flex min-h-dvh w-full items-center justify-center flex-col p-3 gap-6">
-      <div className="flex w-full max-w-sm flex-col gap-6 rounded-component bg-card p-6">
+      <div className="flex w-full max-w-sm flex-col gap-6 rounded-container bg-card p-6">
         <p className="w-full text-sm leading-6 sub-text">{t("login.quote")}</p>
         <div className="flex flex-col gap-1">
           <h1 className="title">{t("login.title")}</h1>

@@ -46,7 +46,7 @@ export function RichTextToolbar({ editor, className }: RichTextToolbarProps) {
           editor.chain().focus().toggleHeading({ level: 1 }).run();
         }}
         className={cn(
-          "flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors cursor-pointer",
+          "flex items-center gap-1.5 rounded-component px-2.5 py-1.5 text-xs font-medium transition-colors cursor-pointer",
           isH1Active
             ? "bg-foreground text-background"
             : "bg-card-thick/80 text-foreground/80 hover:bg-card-thick hover:text-foreground",
@@ -66,7 +66,7 @@ export function RichTextToolbar({ editor, className }: RichTextToolbarProps) {
           editor.chain().focus().toggleHeading({ level: 3 }).run();
         }}
         className={cn(
-          "flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors cursor-pointer",
+          "flex items-center gap-1.5 rounded-component px-2.5 py-1.5 text-xs font-medium transition-colors cursor-pointer",
           isH3Active
             ? "bg-foreground text-background"
             : "bg-card-thick/80 text-foreground/80 hover:bg-card-thick hover:text-foreground",
@@ -86,7 +86,7 @@ export function RichTextToolbar({ editor, className }: RichTextToolbarProps) {
           editor.chain().focus().setParagraph().run();
         }}
         className={cn(
-          "flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors cursor-pointer",
+          "flex items-center gap-1.5 rounded-component px-2.5 py-1.5 text-xs font-medium transition-colors cursor-pointer",
           isParagraphActive
             ? "bg-foreground text-background"
             : "bg-card-thick/80 text-foreground/80 hover:bg-card-thick hover:text-foreground",
@@ -106,7 +106,7 @@ export function RichTextToolbar({ editor, className }: RichTextToolbarProps) {
           editor.chain().focus().toggleBulletList().run();
         }}
         className={cn(
-          "flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors cursor-pointer",
+          "flex items-center gap-1.5 rounded-component px-2.5 py-1.5 text-xs font-medium transition-colors cursor-pointer",
           isBulletListActive
             ? "bg-foreground text-background"
             : "bg-card-thick/80 text-foreground/80 hover:bg-card-thick hover:text-foreground",
@@ -128,7 +128,7 @@ export function RichTextToolbar({ editor, className }: RichTextToolbarProps) {
           e.preventDefault();
           editor.chain().focus().undo().run();
         }}
-        className="flex items-center rounded-md p-1.5 text-foreground/70 transition-colors hover:bg-card-thick hover:text-foreground disabled:pointer-events-none disabled:opacity-30 cursor-pointer"
+        className="flex items-center rounded-component p-1.5 text-foreground/70 transition-colors hover:bg-card-thick hover:text-foreground disabled:pointer-events-none disabled:opacity-30 cursor-pointer"
         title={t("editor.undo") || "Undo"}
       >
         <Undo2Icon className="size-4" />
@@ -142,7 +142,7 @@ export function RichTextToolbar({ editor, className }: RichTextToolbarProps) {
           e.preventDefault();
           editor.chain().focus().redo().run();
         }}
-        className="flex items-center rounded-md p-1.5 text-foreground/70 transition-colors hover:bg-card-thick hover:text-foreground disabled:pointer-events-none disabled:opacity-30 cursor-pointer"
+        className="flex items-center rounded-component p-1.5 text-foreground/70 transition-colors hover:bg-card-thick hover:text-foreground disabled:pointer-events-none disabled:opacity-30 cursor-pointer"
         title={t("editor.redo") || "Redo"}
       >
         <Redo2Icon className="size-4" />

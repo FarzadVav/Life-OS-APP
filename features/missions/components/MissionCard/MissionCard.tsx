@@ -23,7 +23,7 @@ function Difficulty({ value }: { value: number }) {
       {Array.from({ length: 5 }).map((_, index) => (
         <div
           key={index}
-          className={`h-1.5 w-1/5 rounded-xs ${
+          className={`h-1.5 w-1/5 ${
             index < value ? "bg-foreground" : "bg-card-thick"
           }`}
         />
@@ -51,7 +51,7 @@ function MissionCard({
       trigger={
         <div
           key={mission.id}
-          className="w-full rounded-component bg-card p-3 transition-opacity hover:opacity-90"
+          className="w-full rounded-container bg-card p-3 transition-opacity hover:opacity-90"
         >
           <div className="flex items-start gap-3">
             <div className="min-w-0 flex-1">
@@ -81,7 +81,7 @@ function MissionCard({
     >
       <Drawer.Title className="title">{mission.title}</Drawer.Title>
 
-      <div className="rounded-component bg-background p-3">
+      <div className="rounded-container bg-background p-3">
         <div className="flex items-center justify-between">
           <span className="font-bold">{t("common.progress")}</span>
 
@@ -103,7 +103,7 @@ function MissionCard({
       </div>
 
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-        <div className="rounded-component bg-background p-3">
+        <div className="rounded-container bg-background p-3">
           <div className="flex items-center gap-2 sub-text">
             <CalendarDaysIcon className="size-4" />
             <span>{t("common.deadline")}</span>
@@ -112,7 +112,7 @@ function MissionCard({
           <p className="mt-2">{formatDate(mission.deadline)}</p>
         </div>
 
-        <div className="rounded-component bg-background p-3">
+        <div className="rounded-container bg-background p-3">
           <div className="flex items-center gap-2 sub-text">
             <GaugeIcon className="size-4" />
             <span>{t("missions.difficulty")}</span>
@@ -123,7 +123,7 @@ function MissionCard({
           </div>
         </div>
 
-        <div className="rounded-component bg-background p-3">
+        <div className="rounded-container bg-background p-3">
           <div className="flex items-center gap-2 sub-text">
             <CheckIcon className="size-4" />
             <span>{t("missions.actionsLabel")}</span>
@@ -151,11 +151,11 @@ function MissionCard({
         {mission.actions.map((action) => (
           <div
             key={action.id}
-            className="flex items-start gap-3 rounded-component bg-background p-3 transition-opacity hover:bg-background/90"
+            className="flex items-start gap-3 rounded-container bg-background p-3 transition-opacity hover:bg-background/90"
           >
             <div className="translate-y-0.5 shrink-0">
               {action.isDone ? (
-                <div className="flex size-5 items-center justify-center rounded-component bg-foreground">
+                <div className="flex size-5 items-center justify-center rounded-container bg-foreground">
                   <CheckIcon className="size-3.5 text-background" />
                 </div>
               ) : (
@@ -193,10 +193,10 @@ function MissionCard({
         {mission.disciplines.map((discipline) => (
           <div
             key={discipline.id}
-            className="flex flex-col gap-3 rounded-component bg-background p-3"
+            className="flex flex-col gap-3 rounded-container bg-background p-3"
           >
             <div className="flex items-center gap-3">
-              <div className="flex size-10 shrink-0 items-center justify-center rounded-md bg-card">
+              <div className="flex size-10 shrink-0 items-center justify-center rounded-component bg-card">
                 <Repeat2Icon className="size-4" />
               </div>
 
@@ -212,7 +212,7 @@ function MissionCard({
                 type="button"
                 variant="outline"
                 className="flex-1 justify-center py-1.5 h-auto text-xs bg-card-thick text-foreground hover:bg-card-thick/80 border-foreground/20"
-                onClick={() => console.log('I Do:', discipline.title)}
+                onClick={() => console.log("I Do:", discipline.title)}
               >
                 I Do
               </Button>

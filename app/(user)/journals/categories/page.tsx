@@ -109,7 +109,7 @@ function JournalCategoriesPage() {
             className="
               flex w-full flex-1
               items-center justify-center
-              rounded-component
+              rounded-container
               border-2 border-dashed
               p-6
             "
@@ -121,10 +121,10 @@ function JournalCategoriesPage() {
             {categories.map((category) => (
               <div
                 key={category.id}
-                className="w-full flex items-center justify-between rounded-component bg-card p-3"
+                className="w-full flex items-center justify-between rounded-container bg-card p-3"
               >
                 <div className="flex items-center gap-2.5 min-w-0 flex-1 mr-2">
-                  <span className="shrink-0 rounded-component bg-card-thick p-2">
+                  <span className="shrink-0 rounded-container bg-card-thick p-2">
                     <TagIcon className="size-4 sub-text" />
                   </span>
                   <span className="font-bold text-sm truncate">

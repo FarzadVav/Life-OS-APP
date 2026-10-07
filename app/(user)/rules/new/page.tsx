@@ -99,7 +99,7 @@ function NewRulePage() {
             render={
               <textarea
                 rows={4}
-                className="w-full rounded-md border p-3 text-sm focus:outline-none"
+                className="w-full rounded-component border p-3 text-sm focus:outline-none"
               />
             }
             placeholder={t("rules.whyLabel")}
@@ -126,7 +126,7 @@ function NewRulePage() {
             <h3 className="font-bold">Progress History</h3>
             <div className="space-y-2">
               {history.map((record, idx) => (
-                <div key={idx} className="flex items-center justify-between rounded-md bg-card p-3 text-sm">
+                <div key={idx} className="flex items-center justify-between rounded-component bg-card p-3 text-sm">
                   <span>{new Date(record.date).toLocaleDateString()}</span>
                   <span className={record.isDone ? "text-foreground font-bold" : "sub-text font-bold"}>
                     {record.isDone ? "Did it" : "Didn't do it"}

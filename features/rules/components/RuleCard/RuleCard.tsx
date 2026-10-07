@@ -27,10 +27,10 @@ function RuleCard({ rule }: RuleCardProps) {
       trigger={
         <div
           key={rule.id}
-          className="w-full rounded-component bg-card p-3 transition-opacity hover:opacity-90 cursor-pointer"
+          className="w-full rounded-container bg-card p-3 transition-opacity hover:opacity-90 cursor-pointer"
         >
           <div className="flex items-start gap-2.5">
-            <div className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-component bg-card-thick">
+            <div className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-container bg-card-thick">
               <ShieldAlertIcon className="size-3.5 text-foreground/80" />
             </div>
 
@@ -48,7 +48,7 @@ function RuleCard({ rule }: RuleCardProps) {
     >
       <Drawer.Title className="title">{rule.title}</Drawer.Title>
 
-      <div className="rounded-component bg-background p-3">
+      <div className="rounded-container bg-background p-3">
         <div className="flex items-center gap-2 sub-text">
           <CalendarDaysIcon className="size-4" />
           <span>{t("rules.established")}</span>
@@ -57,7 +57,7 @@ function RuleCard({ rule }: RuleCardProps) {
       </div>
 
       {rule.repeatInterval && (
-        <div className="rounded-component bg-background p-3">
+        <div className="rounded-container bg-background p-3">
           <div className="flex items-center gap-2 sub-text">
             <Repeat2Icon className="size-4" />
             <span>Repeat Interval</span>
@@ -73,7 +73,7 @@ function RuleCard({ rule }: RuleCardProps) {
             <span className="font-bold">{t("rules.rationale")}</span>
           </div>
 
-          <div className="rounded-component bg-background p-4 text-sm leading-relaxed whitespace-pre-wrap">
+          <div className="rounded-container bg-background p-4 text-sm leading-relaxed whitespace-pre-wrap">
             {rule.description}
           </div>
         </section>

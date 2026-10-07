@@ -28,8 +28,8 @@ function JournalsTabs() {
     !hasCategories || activeTab === "all"
       ? journalsList
       : journalsList.filter(
-          (item) => item.type?.toLowerCase() === activeTab.toLowerCase(),
-        );
+        (item) => item.type?.toLowerCase() === activeTab.toLowerCase(),
+      );
 
   return (
     <>
@@ -83,7 +83,7 @@ function JournalsTabs() {
         </div>
       )}
 
-      <div className="w-full overflow-hidden rounded-component">
+      <div className="w-full overflow-hidden rounded-container">
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={hasCategories ? activeTab : "all"}
@@ -110,7 +110,7 @@ function JournalsTabs() {
                 className="
                   flex w-full flex-1
                   items-center justify-center
-                  rounded-component
+                  rounded-container
                   border-2 border-dashed
                   p-6
                 "

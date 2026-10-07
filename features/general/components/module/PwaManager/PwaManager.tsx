@@ -85,7 +85,7 @@ export default function PwaManager() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 30 }}
-          className="fixed bottom-20 inset-x-4 max-w-sm mx-auto z-important p-4 rounded-component bg-card border border-foreground/20 shadow-2xl flex items-center justify-between gap-3"
+          className="fixed bottom-20 inset-x-4 max-w-sm mx-auto z-important p-4 rounded-container bg-card border border-foreground/20 shadow-2xl flex items-center justify-between gap-3"
         >
           <div className="flex items-center gap-3">
             <Sparkles className="size-5 text-foreground shrink-0" />
@@ -97,7 +97,7 @@ export default function PwaManager() {
           <button
             onClick={handleUpdate}
             type="button"
-            className="px-3 py-1.5 rounded-component bg-foreground text-background text-xs font-semibold hover:bg-foreground/90 transition-colors shrink-0"
+            className="px-3 py-1.5 rounded-container bg-foreground text-background text-xs font-semibold hover:bg-foreground/90 transition-colors shrink-0"
           >
             {t("pwa.refresh")}
           </button>

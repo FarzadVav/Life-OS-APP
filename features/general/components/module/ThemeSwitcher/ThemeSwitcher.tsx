@@ -43,7 +43,7 @@ function ThemeSwitcher({ className }: ThemeSwitcherProps) {
           <Button
             type="button"
             variant="outline"
-            className={cn("justify-between rounded-md", className)}
+            className={cn("justify-between rounded-component", className)}
           >
             <Select.Value placeholder={t("profile.colorScheme")} />
 
@@ -56,7 +56,7 @@ function ThemeSwitcher({ className }: ThemeSwitcherProps) {
 
       <Select.Portal>
         <Select.Positioner className="z-small-overlay">
-          <Select.Popup className="min-w-(--anchor-width) overflow-hidden rounded-md bg-card-thick p-1">
+          <Select.Popup className="min-w-(--anchor-width) overflow-hidden rounded-component bg-card-thick p-1">
             <Select.List className="p-px">
               {items.map((item) => (
                 <Select.Item
@@ -67,7 +67,7 @@ function ThemeSwitcher({ className }: ThemeSwitcherProps) {
                     <Button
                       type="button"
                       variant="ghost"
-                      className="w-full justify-between rounded-md"
+                      className="w-full justify-between rounded-component"
                     >
                       <Select.ItemText>{item.label}</Select.ItemText>
 

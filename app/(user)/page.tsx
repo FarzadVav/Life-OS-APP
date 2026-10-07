@@ -21,22 +21,23 @@ async function UserHomePage() {
         <TopBar.Btn href="/profile" position="left">
           <UserIcon />
         </TopBar.Btn>
-        <TopBar.InstallBtn position="right" className="right-11" />
-        <TopBar.HelpBtn position="right" />
+        <TopBar.InstallBtn position="right" />
       </TopBar>
 
       <PageItemsWrapper>
-        <Suspense fallback={<ConnectivityFallback message={t("todos.loading")} />}>
+        <Suspense
+          fallback={<ConnectivityFallback message={t("todos.loading")} />}
+        >
           <TodosTabs />
         </Suspense>
 
-        <p className="sub-text w-full text-center">
-          {t("todos.subtitle")}
-        </p>
+        <p className="sub-text w-full text-center">{t("todos.subtitle")}</p>
 
         <Suspense
           fallback={
-            <PageActionBtn href="/todos/new?type=daily">{t("todos.new")}</PageActionBtn>
+            <PageActionBtn href="/todos/new?type=daily">
+              {t("todos.new")}
+            </PageActionBtn>
           }
         >
           <TodosActionBtn />

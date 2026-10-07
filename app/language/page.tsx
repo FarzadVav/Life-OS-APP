@@ -19,9 +19,8 @@ async function LanguagePage() {
             <input type="hidden" name="locale" value={option.value} />
             <button
               type="submit"
-              className={`w-full rounded-component bg-card p-3 text-left font-bold ${
-                locale === option.value ? "border border-foreground/40" : ""
-              }`}
+              className={`w-full rounded-container bg-card p-3 text-left font-bold ${locale === option.value ? "border border-foreground/40" : ""
+                }`}
             >
               {option.label}
             </button>

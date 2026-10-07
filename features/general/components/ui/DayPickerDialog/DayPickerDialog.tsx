@@ -42,7 +42,7 @@ function LocalDayPickerDialog({
   title,
   description,
   showIcon = false,
-  className = "w-full justify-start rounded-md",
+  className = "w-full justify-start rounded-component",
   dir = "ltr",
   locale = enUS,
   formatDate,

@@ -149,7 +149,7 @@ export default function RepeatIntervalInput({
               type="button"
               variant="outline"
               disabled={disabled}
-              className="h-10 min-w-[120px] flex-1 sm:flex-initial justify-between rounded-md px-3 font-medium"
+              className="h-10 min-w-[120px] flex-1 sm:flex-initial justify-between rounded-component px-3 font-medium"
             >
               <span>{activeUnitLabel}</span>
               <Select.Icon>
@@ -161,7 +161,7 @@ export default function RepeatIntervalInput({
 
         <Select.Portal>
           <Select.Positioner className="z-small-overlay">
-            <Select.Popup className="min-w-(--anchor-width) overflow-hidden rounded-md bg-card-thick p-1 shadow-lg border border-foreground/10">
+            <Select.Popup className="min-w-(--anchor-width) overflow-hidden rounded-component bg-card-thick p-1 shadow-lg border border-foreground/10">
               <Select.List className="p-px">
                 {unitItems.map((item) => (
                   <Select.Item
@@ -172,7 +172,7 @@ export default function RepeatIntervalInput({
                       <Button
                         type="button"
                         variant="ghost"
-                        className="w-full justify-between rounded-md text-sm"
+                        className="w-full justify-between rounded-component text-sm"
                       >
                         <Select.ItemText>{item.label}</Select.ItemText>
                         <Select.ItemIndicator>

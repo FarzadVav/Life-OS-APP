@@ -112,7 +112,7 @@ const LocalNumberField = forwardRef<HTMLDivElement, NumberFieldProps>(
         ) : (
           <BaseUINumberField.Group
             className={cn(
-              "inline-flex items-center rounded-md border border-foreground/20 bg-card overflow-hidden transition-colors",
+              "inline-flex items-center rounded-component border border-foreground/20 bg-card overflow-hidden transition-colors",
               "focus-within:ring-2 focus-within:ring-foreground/20 focus-within:border-foreground/50",
               currentSize.group,
               groupClassName,

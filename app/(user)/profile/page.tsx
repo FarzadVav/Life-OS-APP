@@ -84,41 +84,39 @@ function UserProfilePage() {
       </TopBar>
 
       <PageItemsWrapper>
-        <div className="grid w-full grid-cols-1 gap-3 sm:grid-cols-2">
-          {stats.map((stat) => (
-            <div
-              key={stat.label}
-              className="flex flex-col gap-3 rounded-component bg-card p-4 shadow-sm"
-            >
-              <div className="flex items-center gap-2 font-semibold">
-                {stat.icon}
-                <span>{stat.label}</span>
-              </div>
-              <div className="flex flex-col gap-1 text-sm sub-text">
-                {stat.details.map((detail) => (
-                  <div
-                    key={detail.label}
-                    className="flex w-full items-center justify-between"
-                  >
-                    <span>{detail.label}</span>
-                    <span className="font-medium text-foreground">
-                      {detail.value}
-                    </span>
-                  </div>
-                ))}
-              </div>
+        {stats.map((stat) => (
+          <div
+            key={stat.label}
+            className="w-full flex flex-col gap-3 rounded-container bg-card p-3"
+          >
+            <div className="flex items-center gap-2 font-semibold">
+              {stat.icon}
+              <span>{stat.label}</span>
             </div>
-          ))}
-        </div>
+            <div className="flex flex-col gap-1 text-sm sub-text">
+              {stat.details.map((detail) => (
+                <div
+                  key={detail.label}
+                  className="flex w-full items-center justify-between"
+                >
+                  <span>{detail.label}</span>
+                  <span className="font-medium text-foreground">
+                    {detail.value}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
 
         <p className="sub-text w-full text-center">{t("profile.quote")}</p>
 
-        <div className="flex w-full items-center justify-between gap-3 rounded-component bg-card p-3">
+        <div className="flex w-full items-center justify-between gap-3 rounded-container bg-card p-3">
           <span className="font-bold">{t("profile.language")}</span>
           <LocaleSwitcher />
         </div>
 
-        <div className="flex w-full items-center justify-between gap-3 rounded-component bg-card p-3">
+        <div className="flex w-full items-center justify-between gap-3 rounded-container bg-card p-3">
           <span className="font-bold">{t("profile.colorScheme")}</span>
           <ThemeSwitcher />
         </div>
