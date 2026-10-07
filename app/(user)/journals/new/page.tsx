@@ -15,6 +15,7 @@ import TopBar from "@/features/general/components/static/TopBar/TopBar";
 import { Button } from "@/features/general/components/ui/Button/Button";
 import PageActionBtn from "@/features/general/components/module/PageActionBtn/PageActionBtn";
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
+import { RichTextarea } from "@/features/general/components/ui/RichTextEditor";
 
 function TypeSelect({
   value,
@@ -201,18 +202,14 @@ function NewJournalPage() {
         <Field.Root name="content">
           <Field.Label className="block font-bold">{t("common.content")}</Field.Label>
 
-          <Field.Control
+          <RichTextarea
+            name="content"
+            value={content}
+            onChange={setContent}
+            placeholder={t("journals.contentPlaceholder")}
+            title={t("common.content")}
             required
             minLength={5}
-            value={content}
-            render={
-              <textarea
-                rows={6}
-                className="w-full rounded-md border p-3 text-sm focus:outline-none"
-              />
-            }
-            placeholder={t("journals.contentPlaceholder")}
-            onChange={(event) => setContent(event.target.value)}
           />
 
           <Field.Error className="sub-text mt-0.5 text-red-400" />

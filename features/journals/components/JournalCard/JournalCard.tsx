@@ -13,6 +13,8 @@ import { Journal } from "../../types";
 import Drawer from "@/features/general/components/ui/Drawer/Drawer";
 import { Button } from "@/features/general/components/ui/Button/Button";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
+import { stripHtml } from "@/features/general/lib/richText";
+import { RichTextViewer } from "@/features/general/components/ui/RichTextEditor";
 
 type JournalCardProps = {
   journal: Journal;
@@ -39,7 +41,7 @@ function JournalCard({ journal }: JournalCardProps) {
           </div>
 
           <p className="mt-1.5 line-clamp-2 sub-text text-sm">
-            {journal.content}
+            {stripHtml(journal.content)}
           </p>
 
           <div className="mt-3 flex items-center justify-between text-xs sub-text">
@@ -89,8 +91,8 @@ function JournalCard({ journal }: JournalCardProps) {
           <span className="font-bold">{t("common.content")}</span>
         </div>
 
-        <div className="rounded-component bg-background p-4 text-sm leading-relaxed whitespace-pre-wrap">
-          {journal.content}
+        <div className="rounded-component bg-background p-4 text-sm leading-relaxed">
+          <RichTextViewer content={journal.content} />
         </div>
       </section>
 

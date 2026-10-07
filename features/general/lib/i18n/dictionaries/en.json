@@ -406,5 +406,17 @@
       "tip3Title": "Cross-Module Search",
       "tip3Desc": "Search indexes your tasks, journal entries, and skills in one unified view."
     }
+  },
+  "editor": {
+    "heading": "Heading (H1)",
+    "title": "Title (H3)",
+    "paragraph": "Paragraph",
+    "bulletList": "Bullet List",
+    "done": "Done",
+    "fullscreen": "Full Screen Editor",
+    "clickToWrite": "Click to write content...",
+    "undo": "Undo",
+    "redo": "Redo",
+    "toolbar": "Rich text toolbar"
   }
 }

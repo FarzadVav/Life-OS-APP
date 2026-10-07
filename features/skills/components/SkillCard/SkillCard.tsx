@@ -13,6 +13,8 @@ import { Skill } from "../../types";
 import Drawer from "@/features/general/components/ui/Drawer/Drawer";
 import { Button } from "@/features/general/components/ui/Button/Button";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
+import { stripHtml } from "@/features/general/lib/richText";
+import { RichTextViewer } from "@/features/general/components/ui/RichTextEditor";
 
 function Mastery({ value }: { value: number }) {
   return (
@@ -54,7 +56,7 @@ function SkillCard({ skill }: SkillCardProps) {
           </div>
 
           <p className="mt-1.5 line-clamp-2 sub-text text-sm">
-            {skill.content}
+            {stripHtml(skill.content)}
           </p>
 
           <div className="mt-3 flex items-center justify-between gap-4">
@@ -105,8 +107,8 @@ function SkillCard({ skill }: SkillCardProps) {
           <span className="font-bold">{t("skills.playbook")}</span>
         </div>
 
-        <div className="rounded-component bg-background p-4 text-sm leading-relaxed whitespace-pre-wrap">
-          {skill.content}
+        <div className="rounded-component bg-background p-4 text-sm leading-relaxed">
+          <RichTextViewer content={skill.content} />
         </div>
       </section>
 

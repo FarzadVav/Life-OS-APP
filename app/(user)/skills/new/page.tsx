@@ -15,6 +15,7 @@ import TopBar from "@/features/general/components/static/TopBar/TopBar";
 import { Button } from "@/features/general/components/ui/Button/Button";
 import PageActionBtn from "@/features/general/components/module/PageActionBtn/PageActionBtn";
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
+import { RichTextarea } from "@/features/general/components/ui/RichTextEditor";
 
 function TypeSelect({
   value,
@@ -277,21 +278,17 @@ function NewSkillPage() {
 
         <Field.Root name="content">
           <Field.Label className="block font-bold">
-            Playbook / Content
+            {t("skills.playbook") || "Playbook / Content"}
           </Field.Label>
 
-          <Field.Control
+          <RichTextarea
+            name="content"
+            value={content}
+            onChange={setContent}
+            placeholder={t("skills.playbookPlaceholder")}
+            title={t("skills.playbook") || "Playbook / Content"}
             required
             minLength={5}
-            value={content}
-            render={
-              <textarea
-                rows={6}
-                className="w-full rounded-md border p-3 text-sm focus:outline-none"
-              />
-            }
-            placeholder={t("skills.playbookPlaceholder")}
-            onChange={(event) => setContent(event.target.value)}
           />
 
           <Field.Error className="sub-text mt-0.5 text-red-400" />
