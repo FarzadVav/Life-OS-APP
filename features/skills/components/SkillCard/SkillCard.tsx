@@ -4,8 +4,8 @@ import Link from "next/link";
 import {
   CalendarDaysIcon,
   ChevronRightIcon,
+  ClockIcon,
   FileTextIcon,
-  GaugeIcon,
   TagIcon,
 } from "lucide-react";
 
@@ -16,27 +16,12 @@ import { useLocale } from "@/features/general/components/module/LocaleProvider/L
 import { stripHtml } from "@/features/general/lib/richText";
 import { RichTextViewer } from "@/features/general/components/ui/RichTextEditor";
 
-function Mastery({ value }: { value: number }) {
-  return (
-    <div className="flex items-center gap-1">
-      {Array.from({ length: 5 }).map((_, index) => (
-        <div
-          key={index}
-          className={`h-1.5 w-1/5 rounded-full ${
-            index < value ? "bg-foreground" : "bg-card-thick"
-          }`}
-        />
-      ))}
-    </div>
-  );
-}
-
 type SkillCardProps = {
   skill: Skill;
 };
 
 function SkillCard({ skill }: SkillCardProps) {
-  const { formatDate, t } = useLocale();
+  const { formatDate, formatTime, t } = useLocale();
 
   return (
     <Drawer
@@ -59,13 +44,14 @@ function SkillCard({ skill }: SkillCardProps) {
             {stripHtml(skill.content)}
           </p>
 
-          <div className="mt-3 flex items-center justify-between gap-4">
-            <div className="w-24">
-              <Mastery value={skill.level} />
-            </div>
-
-            <span className="sub-text text-xs">
+          <div className="mt-3 flex items-center justify-between text-xs sub-text">
+            <span className="flex items-center gap-1">
+              <CalendarDaysIcon className="size-3.5" />
               {formatDate(skill.createdAt)}
+            </span>
+            <span className="flex items-center gap-1">
+              <ClockIcon className="size-3.5" />
+              {formatTime(skill.createdAt)}
             </span>
           </div>
         </div>
@@ -84,27 +70,25 @@ function SkillCard({ skill }: SkillCardProps) {
 
         <div className="rounded-component bg-background p-3">
           <div className="flex items-center gap-2 sub-text">
-            <GaugeIcon className="size-4" />
-            <span>{t("skills.mastery")}</span>
+            <CalendarDaysIcon className="size-4" />
+            <span>{t("common.date")}</span>
           </div>
-          <div className="mt-3">
-            <Mastery value={skill.level} />
-          </div>
+          <p className="mt-2 font-medium">{formatDate(skill.createdAt)}</p>
         </div>
 
         <div className="rounded-component bg-background p-3">
           <div className="flex items-center gap-2 sub-text">
-            <CalendarDaysIcon className="size-4" />
-            <span>{t("common.created")}</span>
+            <ClockIcon className="size-4" />
+            <span>{t("common.time")}</span>
           </div>
-          <p className="mt-2 font-medium">{formatDate(skill.createdAt)}</p>
+          <p className="mt-2 font-medium">{formatTime(skill.createdAt)}</p>
         </div>
       </div>
 
       <section className="space-y-2">
         <div className="flex items-center gap-2 sub-text">
           <FileTextIcon className="size-4" />
-          <span className="font-bold">{t("skills.playbook")}</span>
+          <span className="font-bold">{t("common.content")}</span>
         </div>
 
         <div className="rounded-component bg-background p-4 text-sm leading-relaxed">

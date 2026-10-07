@@ -99,19 +99,26 @@ function NewTodoPage() {
   const { t } = useLocale();
   const searchParams = useSearchParams();
   const editId = searchParams.get("editId");
+  const typeParam = searchParams.get("type") || searchParams.get("category");
   const isEditMode = Boolean(editId);
 
+  const defaultType: TodoType =
+    typeParam?.toLowerCase() === "upcoming" ? "Upcoming" : "Daily";
+
   const [title, setTitle] = useState("");
-  const [type, setType] = useState<TodoType>("Daily");
+  const [type, setType] = useState<TodoType>(defaultType);
   const [dailyTime, setDailyTime] = useState<string>(getDefaultTime());
   const [upcomingDate, setUpcomingDate] = useState<Date | null>(new Date());
   const [isDone, setIsDone] = useState(false);
 
   useEffect(() => {
     if (!editId) {
+      const resolvedType: TodoType =
+        typeParam?.toLowerCase() === "upcoming" ? "Upcoming" : "Daily";
+
       queueMicrotask(() => {
         setTitle("");
-        setType("Daily");
+        setType(resolvedType);
         setDailyTime(getDefaultTime());
         setUpcomingDate(new Date());
         setIsDone(false);
@@ -135,7 +142,7 @@ function NewTodoPage() {
         setUpcomingDate(parseDate(todo.deadline) ?? new Date());
       }
     });
-  }, [editId]);
+  }, [editId, typeParam]);
 
   return (
     <PageWrapper>

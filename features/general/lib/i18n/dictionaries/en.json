@@ -119,6 +119,7 @@
     "skillTitle": "Skill Title",
     "skillTitlePlaceholder": "e.g. High-Leverage Negotiation, React Compiler...",
     "playbookPlaceholder": "Write key steps, mental models, notes, or heuristics...",
+    "contentPlaceholder": "Write key steps, mental models, notes, or heuristics...",
     "selectCategory": "Select category",
     "noCategories": "No categories yet. Create one",
     "noSkills": "You haven't any skills",
@@ -127,7 +128,7 @@
     "createAria": "Create new skill",
     "editAria": "Edit skill",
     "mastery": "Mastery",
-    "playbook": "Playbook & Content"
+    "playbook": "Content"
   },
   "rules": {
     "title": "Rules",

@@ -6,7 +6,6 @@ import {
   ChevronRightIcon,
   InfoIcon,
   ShieldAlertIcon,
-  TagIcon,
 } from "lucide-react";
 
 import { Rule } from "../../types";
@@ -29,47 +28,31 @@ function RuleCard({ rule }: RuleCardProps) {
           key={rule.id}
           className="w-full rounded-component bg-card p-3 transition-opacity hover:opacity-90 cursor-pointer"
         >
-          <div className="flex items-start justify-between gap-3">
-            <div className="flex items-start gap-2.5 flex-1 min-w-0">
-              <div className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-card-thick">
-                <ShieldAlertIcon className="size-3.5 text-foreground/80" />
-              </div>
-
-              <div className="min-w-0 flex-1">
-                <p className="font-bold">{rule.title}</p>
-                {rule.description ? (
-                  <p className="mt-1 line-clamp-2 sub-text text-sm">
-                    {rule.description}
-                  </p>
-                ) : null}
-              </div>
+          <div className="flex items-start gap-2.5">
+            <div className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-card-thick">
+              <ShieldAlertIcon className="size-3.5 text-foreground/80" />
             </div>
 
-            <span className="shrink-0 rounded-full bg-card-thick px-2.5 py-0.5 text-xs font-medium">
-              {rule.category}
-            </span>
+            <div className="min-w-0 flex-1">
+              <p className="font-bold">{rule.title}</p>
+              {rule.description ? (
+                <p className="mt-1 line-clamp-2 sub-text text-sm">
+                  {rule.description}
+                </p>
+              ) : null}
+            </div>
           </div>
         </div>
       }
     >
       <Drawer.Title className="title">{rule.title}</Drawer.Title>
 
-      <div className="grid grid-cols-2 gap-2">
-        <div className="rounded-component bg-background p-3">
-          <div className="flex items-center gap-2 sub-text">
-            <TagIcon className="size-4" />
-            <span>{t("common.category")}</span>
-          </div>
-          <p className="mt-2 font-medium">{rule.category}</p>
+      <div className="rounded-component bg-background p-3">
+        <div className="flex items-center gap-2 sub-text">
+          <CalendarDaysIcon className="size-4" />
+          <span>{t("rules.established")}</span>
         </div>
-
-        <div className="rounded-component bg-background p-3">
-          <div className="flex items-center gap-2 sub-text">
-            <CalendarDaysIcon className="size-4" />
-            <span>{t("rules.established")}</span>
-          </div>
-          <p className="mt-2 font-medium">{formatDate(rule.createdAt)}</p>
-        </div>
+        <p className="mt-2 font-medium">{formatDate(rule.createdAt)}</p>
       </div>
 
       {rule.description && (

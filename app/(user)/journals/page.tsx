@@ -6,6 +6,7 @@ import PageWrapper from "@/features/general/components/static/PageWrapper/PageWr
 import PageItemsWrapper from "@/features/general/components/static/PageItemsWrapper/PageItemsWrapper";
 import ConnectivityFallback from "@/features/general/components/module/ConnectivityFallback/ConnectivityFallback";
 import JournalsTabs from "@/features/journals/components/JournalsTabs/JournalsTabs";
+import JournalsActionBtn from "@/features/journals/components/JournalsActionBtn/JournalsActionBtn";
 import { getTranslations } from "@/features/general/lib/i18n/server";
 
 async function JournalsPage() {
@@ -32,7 +33,13 @@ async function JournalsPage() {
           {t("journals.subtitle")}
         </p>
 
-        <PageActionBtn href="/journals/new">{t("journals.new")}</PageActionBtn>
+        <Suspense
+          fallback={
+            <PageActionBtn href="/journals/new">{t("journals.new")}</PageActionBtn>
+          }
+        >
+          <JournalsActionBtn />
+        </Suspense>
       </PageItemsWrapper>
     </PageWrapper>
   );

@@ -118,7 +118,8 @@
     "selectMasteryLevel": "انتخاب سطح مهارت",
     "skillTitle": "عنوان مهارت",
     "skillTitlePlaceholder": "مثلاً مذاکره حرفه‌ای، React Compiler...",
-    "playbookPlaceholder": "مراحل کلیدی، مدل‌های ذهنی، یادداشت‌ها یا تناقض‌ها را بنویسید...",
+    "playbookPlaceholder": "مراحل کلیدی، مدل‌های ذهنی، یادداشت‌ها یا اصول را بنویسید...",
+    "contentPlaceholder": "مراحل کلیدی، مدل‌های ذهنی، یادداشت‌ها یا اصول را بنویسید...",
     "selectCategory": "انتخاب دسته‌بندی",
     "noCategories": "هنوز دسته‌بندی‌ای نیست. یکی بسازید",
     "noSkills": "هیچ مهارتی ندارید",
@@ -127,7 +128,7 @@
     "createAria": "ایجاد مهارت جدید",
     "editAria": "ویرایش مهارت",
     "mastery": "مهارت",
-    "playbook": "راهنما و محتوا"
+    "playbook": "محتوا"
   },
   "rules": {
     "title": "قوانین",

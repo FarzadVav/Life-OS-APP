@@ -6,6 +6,7 @@ import PageWrapper from "@/features/general/components/static/PageWrapper/PageWr
 import PageItemsWrapper from "@/features/general/components/static/PageItemsWrapper/PageItemsWrapper";
 import ConnectivityFallback from "@/features/general/components/module/ConnectivityFallback/ConnectivityFallback";
 import SkillsTabs from "@/features/skills/components/SkillsTabs/SkillsTabs";
+import SkillsActionBtn from "@/features/skills/components/SkillsActionBtn/SkillsActionBtn";
 import { getTranslations } from "@/features/general/lib/i18n/server";
 
 async function SkillsPage() {
@@ -32,7 +33,13 @@ async function SkillsPage() {
           {t("skills.subtitle")}
         </p>
 
-        <PageActionBtn href="/skills/new">{t("skills.new")}</PageActionBtn>
+        <Suspense
+          fallback={
+            <PageActionBtn href="/skills/new">{t("skills.new")}</PageActionBtn>
+          }
+        >
+          <SkillsActionBtn />
+        </Suspense>
       </PageItemsWrapper>
     </PageWrapper>
   );

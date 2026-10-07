@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 
 import { Field, Form, Select } from "@base-ui/react";
@@ -119,18 +119,32 @@ function NewJournalPage() {
   const { t } = useLocale();
   const searchParams = useSearchParams();
   const editId = searchParams.get("editId");
+  const categoryParam = searchParams.get("category") || searchParams.get("type");
   const isEditMode = Boolean(editId);
   const { categories } = useJournalCategories();
 
+  const resolveCategory = useCallback(
+    (param: string | null): JournalType | null => {
+      if (!param) return null;
+      const matched = categories.find(
+        (c) => c.name.toLowerCase() === param.toLowerCase(),
+      );
+      return matched ? matched.name : param;
+    },
+    [categories],
+  );
+
   const [title, setTitle] = useState("");
-  const [type, setType] = useState<JournalType | null>(null);
+  const [type, setType] = useState<JournalType | null>(() =>
+    resolveCategory(categoryParam),
+  );
   const [content, setContent] = useState("");
 
   useEffect(() => {
     if (!editId) {
       queueMicrotask(() => {
         setTitle("");
-        setType(null);
+        setType(resolveCategory(categoryParam));
         setContent("");
       });
       return;
@@ -146,7 +160,7 @@ function NewJournalPage() {
       setType(journal.type ?? null);
       setContent(journal.content);
     });
-  }, [editId]);
+  }, [editId, categoryParam, resolveCategory]);
 
   return (
     <PageWrapper>

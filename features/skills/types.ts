@@ -10,6 +10,5 @@ export type Skill = {
   title: string;
   content: string;
   type?: SkillType;
-  level: number;
   createdAt: string;
 };
