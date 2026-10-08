@@ -82,7 +82,7 @@ export default function InstallAppDialog({
               height={52}
               unoptimized
               alt={t("install.title")}
-              src="/icons/icon-192x192.png"
+              src="/icon-192x192.png"
               className="size-13 rounded-container object-cover shadow-md border border-foreground/10 shrink-0"
             />
             <div className="flex flex-col min-w-0">

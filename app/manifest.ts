@@ -2,37 +2,38 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
+    id: "/",
+    scope: "/",
+    start_url: "/",
     name: "Arrow Up",
     short_name: "ArrowUp",
-    description: "Personal Operating System for Daily Momentum, Habits & Missions",
-    start_url: "/",
     display: "standalone",
-    background_color: "#101010",
-    theme_color: "#101010",
+    theme_color: "#fafafa",
+    background_color: "#fafafa",
     orientation: "portrait-primary",
-    scope: "/",
-    id: "/",
+    description:
+      "Personal Operating System for Daily Momentum, Habits & Missions",
     icons: [
       {
-        src: "/icons/icon-192x192.png",
+        src: "/icon-192x192.png",
         sizes: "192x192",
         type: "image/png",
         purpose: "any",
       },
       {
-        src: "/icons/icon-512x512.png",
+        src: "/icon-512x512.png",
         sizes: "512x512",
         type: "image/png",
         purpose: "any",
       },
       {
-        src: "/icons/icon-maskable-192x192.png",
+        src: "/icon-maskable-192x192.png",
         sizes: "192x192",
         type: "image/png",
         purpose: "maskable",
       },
       {
-        src: "/icons/icon-maskable-512x512.png",
+        src: "/icon-maskable-512x512.png",
         sizes: "512x512",
         type: "image/png",
         purpose: "maskable",
@@ -41,48 +42,48 @@ export default function manifest(): MetadataRoute.Manifest {
     shortcuts: [
       {
         name: "New Todo",
+        url: "/todos/new",
         short_name: "Todo",
         description: "Create a new todo item",
-        url: "/todos/new",
         icons: [
           {
-            src: "/icons/icon-192x192.png",
+            src: "/icon-192x192.png",
             sizes: "192x192",
           },
         ],
       },
       {
         name: "New Journal",
+        url: "/journals/new",
         short_name: "Journal",
         description: "Write a new journal entry",
-        url: "/journals/new",
         icons: [
           {
-            src: "/icons/icon-192x192.png",
+            src: "/icon-192x192.png",
             sizes: "192x192",
           },
         ],
       },
       {
         name: "Missions",
+        url: "/missions",
         short_name: "Missions",
         description: "Track and manage your missions",
-        url: "/missions",
         icons: [
           {
-            src: "/icons/icon-192x192.png",
+            src: "/icon-192x192.png",
             sizes: "192x192",
           },
         ],
       },
       {
         name: "Skills",
+        url: "/skills",
         short_name: "Skills",
         description: "Upgrade and monitor skills tree",
-        url: "/skills",
         icons: [
           {
-            src: "/icons/icon-192x192.png",
+            src: "/icon-192x192.png",
             sizes: "192x192",
           },
         ],

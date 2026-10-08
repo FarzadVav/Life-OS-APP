@@ -50,13 +50,13 @@ function SplashScreen({ children }: PropsWithChildren) {
               transition={{ duration: 0.45, ease: "easeOut" }}
             >
               <Image
+                priority
                 width={180}
                 height={180}
                 unoptimized
-                priority
                 alt="Arrow Up"
+                src="/logo.png"
                 className="rounded-full shadow-2xl border border-foreground/10"
-                src="/images/arrow-up_logo.jpg"
               />
             </motion.div>
             <motion.p

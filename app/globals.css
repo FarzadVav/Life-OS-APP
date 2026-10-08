@@ -14,31 +14,23 @@
   --font-vazirmatn: var(--font-vazirmatn);
 
   --radius-*: initial;
-  --radius-component: calc(var(--spacing) * 2);
-  /* 12px */
-  --radius-container: calc(var(--spacing) * 4);
-  /* 24px */
+  --radius-component: calc(var(--spacing) * 2); /* 12px */
+  --radius-container: calc(var(--spacing) * 4); /* 24px */
 
   --z-index-*: initial;
-  --z-index-back: -10;
-  /* back elements */
-  --z-index-default: 0;
-  /* default elements */
-  --z-index-front: 10;
-  /* front elements */
-  --z-index-important: 20;
-  /* important elements (.e.g header, footer) */
-  --z-index-small-overlay: 30;
-  /* small overlays (.e.g popover, select-box) */
-  --z-index-big-overlay: 40;
-  /* big overlays (.e.g modal, drawer-sheet) */
+  --z-index-back: -10; /* back elements */
+  --z-index-default: 0; /* default elements */
+  --z-index-front: 10; /* front elements */
+  --z-index-important: 20; /* important elements (.e.g header, footer) */
+  --z-index-small-overlay: 30; /* small overlays (.e.g popover, select-box) */
+  --z-index-big-overlay: 40; /* big overlays (.e.g modal, drawer-sheet) */
 }
 
 :root {
-  --background: #ffffff;
-  --foreground: #0a0a0a;
-  --card: #ffffff;
-  --card-thick: #f1f1f1;
+  --background: #fafafa;
+  --foreground: #101010;
+  --card: #efefef;
+  --card-thick: #dfdfdf;
 }
 
 .dark {
