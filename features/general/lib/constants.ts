@@ -2,8 +2,6 @@ import {
   HomeIcon,
   LayersIcon,
   PenLineIcon,
-  ShieldBanIcon,
-  CircleCheckBig,
 } from "lucide-react";
 
 import { FeaturesAreas, LifeArea, NavigationLink } from "./types";
@@ -64,21 +62,9 @@ export const NAVIGATION_LINKS: NavigationLink[] = [
     Icon: PenLineIcon,
   },
   {
-    href: "/skills",
-    name: "Skills",
-    matchPathname: "/skills",
+    href: "/framework",
+    name: "Framework",
+    matchPathname: "/framework",
     Icon: LayersIcon,
-  },
-  {
-    name: "Rules",
-    href: "/rules",
-    matchPathname: "/rules",
-    Icon: ShieldBanIcon,
-  },
-  {
-    name: "Missions",
-    href: "/missions",
-    matchPathname: "/missions",
-    Icon: CircleCheckBig,
   },
 ];

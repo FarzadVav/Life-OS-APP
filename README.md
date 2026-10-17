@@ -1,50 +1,31 @@
-# **Todos**
+# **Life OS (Arrow Up)**
 
-- Title
-- Deadline
-- Type (Daily, Upcoming)
-- Is It Done?
+Personal operating system for moving up and managing daily momentum, reflective journals, and life architecture.
 
-# **Journals**
+## **Features & Architecture**
 
-- Title
-- Content
-- Type (Logs, Feelings, Thoughts, Ideas, Wishes, Future)
+### **1. Todos & Missions**
+- **Home Page (`/`)**:
+  - **Today (Daily)**: Time-scheduled recurring and daily focus items with completion tracking.
+  - **Upcoming**: Scheduled future target dates with calendar pickers.
+  - **Missions**: Multi-step strategic objectives with difficulty ratings (1-5), milestone actions with status toggles, and real-time progress bars.
+- **Unified Creator (`/todos/new`)**:
+  - Dynamically configures fields according to item type (Daily -> time picker, Upcoming -> day picker, Mission -> day picker + difficulty select + actions milestone builder).
 
-# **Skills**
+### **2. Journals**
+- **Journals Page (`/journals`)**:
+  - Filterable by 6 immutable categories: **Logs**, **Thoughts**, **Feelings**, **Lessons**, **Ideas**, **Notes**.
+- **Journal Creator (`/journals/new`)**:
+  - Category selector, title, and rich text entry powered by TipTap editor.
 
-- Title
-- Content
-- Type (Lessons, Playbooks, Knowledge, Informations)
-
-# **Rules**
-
-- Title
-
-# **Missions**
-
-- Title
-- Deadline
-- Description
-- Weight (1, 2, 3, 4, 5\)
-- Type (Goal, Discipline)
-- Is It Done?
-
----
-
-# **Todos**
-
-- New and edit mission form (the first form + the basics)
-- Missions page
-- New and edit rules form
-- Rules page
-- New and edit skills form
-- Skills page
-- New and edit journals form
-- Journals page
-- New and edit todos form
-- Todos page
-- Database
-- APIs
-- APIs to Front-End
-- Testing and optimizing
+### **3. Framework**
+- **Framework Page (`/framework`)**:
+  - Icon: `Layers`
+  - 8 immutable categories: **Career**, **Mindset**, **Social**, **Health**, **Behavior**, **Finance**, **Lifestyle**, **Knowledge**.
+  - 3 structured sections per category:
+    1. **Visions**: Long-term mastery and destination.
+    2. **Rules**: Non-negotiable principles and operational boundaries.
+    3. **Concepts**: Deep mental models, timeless insights, and playbooks.
+  - Interactive cards opening rich text inspection drawers with editing and deletion support.
+- **Framework Item Creator (`/framework/new`)**:
+  - Title input, category selector, section selector, and full TipTap Rich Text Editor.

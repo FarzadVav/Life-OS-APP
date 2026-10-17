@@ -1,5 +1,5 @@
 // Service Worker for Arrow Up PWA
-const CACHE_NAME = "arrow-up-v3";
+const CACHE_NAME = "arrow-up-v4";
 const OFFLINE_URL = "/offline";
 
 const PRECACHE_ASSETS = [
@@ -116,6 +116,21 @@ self.addEventListener("fetch", (event) => {
 
   // Never intercept the service worker script itself
   if (url.pathname === "/sw.js") {
+    return;
+  }
+
+  // In development environments (localhost or local dev server), bypass caching for Next.js internal chunks
+  const isLocalHost =
+    url.hostname === "localhost" ||
+    url.hostname === "127.0.0.1" ||
+    url.hostname.startsWith("192.168.");
+
+  if (
+    isLocalHost &&
+    (url.pathname.startsWith("/_next/") ||
+      url.pathname.includes("turbopack") ||
+      url.pathname.includes("webpack"))
+  ) {
     return;
   }
 

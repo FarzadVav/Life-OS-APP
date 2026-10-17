@@ -3,6 +3,7 @@ import { Todo, TodoType } from "./types";
 export const TODO_TYPES: { value: TodoType; label: string }[] = [
   { value: "Daily", label: "Daily" },
   { value: "Upcoming", label: "Upcoming" },
+  { value: "Mission", label: "Mission" },
 ];
 
 export const todos: Todo[] = [
@@ -75,5 +76,95 @@ export const todos: Todo[] = [
     deadline: "2026-11-01",
     type: "Upcoming",
     isDone: false,
+  },
+  {
+    id: 101,
+    title: "Launch LifeOS v1 MVP to initial beta users",
+    deadline: "2026-10-30",
+    type: "Mission",
+    difficulty: 4,
+    isDone: false,
+    actions: [
+      {
+        id: 1001,
+        title: "Finalize offline sync and cache invalidation",
+        deadline: "2026-10-18",
+        isDone: true,
+      },
+      {
+        id: 1002,
+        title: "Draft documentation and help guides",
+        deadline: "2026-10-22",
+        isDone: true,
+      },
+      {
+        id: 1003,
+        title: "Deploy to staging and run smoke tests",
+        deadline: "2026-10-25",
+        isDone: false,
+      },
+      {
+        id: 1004,
+        title: "Send beta invites to 50 users",
+        deadline: "2026-10-30",
+        isDone: false,
+      },
+    ],
+  },
+  {
+    id: 102,
+    title: "Build automated wealth compounding engine",
+    deadline: "2026-12-15",
+    type: "Mission",
+    difficulty: 5,
+    isDone: false,
+    actions: [
+      {
+        id: 1005,
+        title: "Audit recurring monthly expenses & subscriptions",
+        deadline: "2026-10-20",
+        isDone: true,
+      },
+      {
+        id: 1006,
+        title: "Automate monthly DCA into index funds",
+        deadline: "2026-11-01",
+        isDone: false,
+      },
+      {
+        id: 1007,
+        title: "Establish 6-month liquid emergency buffer",
+        deadline: "2026-12-15",
+        isDone: false,
+      },
+    ],
+  },
+  {
+    id: 103,
+    title: "Run a sub-4 hour marathon",
+    deadline: "2026-11-20",
+    type: "Mission",
+    difficulty: 3,
+    isDone: false,
+    actions: [
+      {
+        id: 1008,
+        title: "Complete 28km Sunday long run",
+        deadline: "2026-10-24",
+        isDone: true,
+      },
+      {
+        id: 1009,
+        title: "Optimize race day carb loading strategy",
+        deadline: "2026-11-10",
+        isDone: false,
+      },
+      {
+        id: 1010,
+        title: "Taper volume by 40% two weeks out",
+        deadline: "2026-11-15",
+        isDone: false,
+      },
+    ],
   },
 ];

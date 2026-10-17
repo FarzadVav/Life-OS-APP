@@ -86,8 +86,10 @@ export default function RepeatIntervalInput({
 
   useEffect(() => {
     const nextParsed = parseRepeatInterval(value);
-    setCount(nextParsed.count);
-    setUnit(nextParsed.unit);
+    queueMicrotask(() => {
+      setCount(nextParsed.count);
+      setUnit(nextParsed.unit);
+    });
   }, [value]);
 
   function handleCountChange(nextCount: number | null) {

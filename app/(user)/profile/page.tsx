@@ -6,15 +6,12 @@ import {
   CheckSquareIcon,
   LogOutIcon,
   RocketIcon,
-  TrophyIcon,
-  ShieldCheckIcon,
+  LayersIcon,
 } from "lucide-react";
 
 import { todos } from "@/features/todos/constants";
 import { journals } from "@/features/journals/constants";
-import { skills } from "@/features/skills/constants";
-import { missions } from "@/features/missions/constants";
-import { rules } from "@/features/rules/constants";
+import { useFrameworkItems } from "@/features/framework/items";
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
 import Dialog from "@/features/general/components/ui/Dialog/Dialog";
 import { Button } from "@/features/general/components/ui/Button/Button";
@@ -29,49 +26,61 @@ import PageActionBtn from "@/features/general/components/module/PageActionBtn/Pa
 function UserProfilePage() {
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
   const { t } = useLocale();
+  const { items: frameworkItems } = useFrameworkItems();
 
-  const todosCompleted = todos.filter((t) => t.isDone).length;
-  const todosPending = todos.length - todosCompleted;
+  const dailyTodos = todos.filter((item) => item.type === "Daily");
+  const upcomingTodos = todos.filter((item) => item.type === "Upcoming");
+  const missionTodos = todos.filter((item) => item.type === "Mission");
 
-  const totalActions = missions.reduce((acc, m) => acc + m.actions.length, 0);
-  const completedActions = missions.reduce(
-    (acc, m) => acc + m.actions.filter((a) => a.isDone).length,
+  const completedDaily = dailyTodos.filter((item) => item.isDone).length;
+
+  const totalMissionActions = missionTodos.reduce(
+    (acc, m) => acc + (m.actions?.length || 0),
     0,
   );
+  const doneMissionActions = missionTodos.reduce(
+    (acc, m) => acc + (m.actions?.filter((a) => a.isDone).length || 0),
+    0,
+  );
+
+  const visionsCount = frameworkItems.filter(
+    (i) => i.section === "Visions",
+  ).length;
+  const rulesCount = frameworkItems.filter((i) => i.section === "Rules").length;
+  const conceptsCount = frameworkItems.filter(
+    (i) => i.section === "Concepts",
+  ).length;
 
   const stats = [
     {
       label: t("profile.todos"),
       icon: <CheckSquareIcon className="size-5 text-foreground" />,
       details: [
-        { label: t("profile.total"), value: todos.length },
-        { label: t("profile.completed"), value: todosCompleted },
-        { label: t("profile.pending"), value: todosPending },
+        { label: t("todos.today") || "Daily", value: `${completedDaily}/${dailyTodos.length}` },
+        { label: t("todos.upcoming") || "Upcoming", value: upcomingTodos.length },
       ],
     },
     {
-      label: t("profile.missions"),
+      label: t("todos.missions") || "Missions",
       icon: <RocketIcon className="size-5 text-foreground" />,
       details: [
-        { label: t("profile.total"), value: missions.length },
-        { label: t("profile.actions"), value: totalActions },
-        { label: t("profile.doneActions"), value: completedActions },
+        { label: t("profile.total"), value: missionTodos.length },
+        { label: t("missions.actionsLabel") || "Actions", value: `${doneMissionActions}/${totalMissionActions}` },
+      ],
+    },
+    {
+      label: t("framework.title") || "Framework",
+      icon: <LayersIcon className="size-5 text-foreground" />,
+      details: [
+        { label: t("framework.sections.visions") || "Visions", value: visionsCount },
+        { label: t("framework.sections.rules") || "Rules", value: rulesCount },
+        { label: t("framework.sections.concepts") || "Concepts", value: conceptsCount },
       ],
     },
     {
       label: t("profile.journals"),
       icon: <BookOpenIcon className="size-5 text-foreground" />,
       details: [{ label: t("profile.total"), value: journals.length }],
-    },
-    {
-      label: t("profile.skills"),
-      icon: <TrophyIcon className="size-5 text-foreground" />,
-      details: [{ label: t("profile.total"), value: skills.length }],
-    },
-    {
-      label: t("profile.rules"),
-      icon: <ShieldCheckIcon className="size-5 text-foreground" />,
-      details: [{ label: t("profile.total"), value: rules.length }],
     },
   ];
 

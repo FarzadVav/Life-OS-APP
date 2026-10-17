@@ -8,10 +8,16 @@ function TodosActionBtn() {
   const { t } = useLocale();
   const searchParams = useSearchParams();
   const tab = searchParams.get("tab");
-  const activeTab = tab === "upcoming" ? "upcoming" : "today";
-  const href = `/todos/new?type=${activeTab === "upcoming" ? "upcoming" : "daily"}`;
+  const isMission = tab === "missions";
+  const isUpcoming = tab === "upcoming";
 
-  return <PageActionBtn href={href}>{t("todos.new")}</PageActionBtn>;
+  const href = `/todos/new?type=${
+    isMission ? "mission" : isUpcoming ? "upcoming" : "daily"
+  }`;
+
+  const label = isMission ? t("todos.newMission") || "New Mission" : t("todos.new");
+
+  return <PageActionBtn href={href}>{label}</PageActionBtn>;
 }
 
 export default TodosActionBtn;

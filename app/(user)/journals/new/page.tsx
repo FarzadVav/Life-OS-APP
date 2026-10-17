@@ -1,16 +1,14 @@
 "use client";
 
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 
 import { Field, Form, Select } from "@base-ui/react";
-import { CheckIcon, ChevronDownIcon, PlusIcon } from "lucide-react";
+import { CheckIcon, ChevronDownIcon } from "lucide-react";
 
 import { journals } from "@/features/journals/constants";
-import { JournalType, JournalCategory } from "@/features/journals/types";
-import { useJournalCategories } from "@/features/journals/categories";
+import { JournalType, JOURNAL_CATEGORIES } from "@/features/journals/types";
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
 import { Button } from "@/features/general/components/ui/Button/Button";
 import PageActionBtn from "@/features/general/components/module/PageActionBtn/PageActionBtn";
@@ -20,34 +18,15 @@ import { RichTextarea } from "@/features/general/components/ui/RichTextEditor";
 function TypeSelect({
   value,
   onChange,
-  categories,
 }: {
   value: JournalType | null;
   onChange: (value: JournalType) => void;
-  categories: JournalCategory[];
 }) {
   const { t } = useLocale();
-  if (categories.length === 0) {
-    return (
-      <Field.Root name="type">
-        <Field.Label className="mb-1 font-bold">{t("common.category")}</Field.Label>
 
-        <Button
-          nativeButton={false}
-          variant="outline"
-          className="w-full justify-between rounded-component"
-          render={<Link href="/journals/categories" />}
-        >
-          <span className="sub-text">{t("journals.noCategories")}</span>
-          <PlusIcon className="size-4" />
-        </Button>
-      </Field.Root>
-    );
-  }
-
-  const items = categories.map((cat) => ({
-    value: cat.name,
-    label: cat.name,
+  const items = JOURNAL_CATEGORIES.map((cat) => ({
+    value: cat,
+    label: t(`journals.categories.${cat.toLowerCase()}`) || cat,
   }));
 
   return (
@@ -63,6 +42,7 @@ function TypeSelect({
             onChange(nextValue);
           }
         }}
+        required
       >
         <Select.Trigger
           render={
@@ -121,21 +101,20 @@ function NewJournalPage() {
   const editId = searchParams.get("editId");
   const categoryParam = searchParams.get("category") || searchParams.get("type");
   const isEditMode = Boolean(editId);
-  const { categories } = useJournalCategories();
 
   const resolveCategory = useCallback(
-    (param: string | null): JournalType | null => {
-      if (!param) return null;
-      const matched = categories.find(
-        (c) => c.name.toLowerCase() === param.toLowerCase(),
+    (param: string | null): JournalType => {
+      if (!param) return "Logs";
+      const matched = JOURNAL_CATEGORIES.find(
+        (c) => c.toLowerCase() === param.toLowerCase(),
       );
-      return matched ? matched.name : param;
+      return matched ?? "Logs";
     },
-    [categories],
+    [],
   );
 
   const [title, setTitle] = useState("");
-  const [type, setType] = useState<JournalType | null>(() =>
+  const [type, setType] = useState<JournalType>(() =>
     resolveCategory(categoryParam),
   );
   const [content, setContent] = useState("");
@@ -157,7 +136,7 @@ function NewJournalPage() {
 
     queueMicrotask(() => {
       setTitle(journal.title);
-      setType(journal.type ?? null);
+      setType(journal.type ?? "Logs");
       setContent(journal.content);
     });
   }, [editId, categoryParam, resolveCategory]);
@@ -210,7 +189,6 @@ function NewJournalPage() {
         <TypeSelect
           value={type}
           onChange={setType}
-          categories={categories}
         />
 
         <Field.Root name="content">

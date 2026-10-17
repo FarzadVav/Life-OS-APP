@@ -19,7 +19,7 @@ function ThemeSwitcher({ className }: ThemeSwitcherProps) {
   const { t } = useLocale();
 
   useEffect(() => {
-    setMounted(true);
+    queueMicrotask(() => setMounted(true));
   }, []);
 
   const items = [

@@ -1,4 +1,11 @@
-export type TodoType = "Daily" | "Upcoming";
+export type TodoType = "Daily" | "Upcoming" | "Mission";
+
+export type TodoAction = {
+  id: number;
+  title: string;
+  deadline: string;
+  isDone: boolean;
+};
 
 export type Todo = {
   id: number;
@@ -6,4 +13,6 @@ export type Todo = {
   deadline: string;
   type: TodoType;
   isDone: boolean;
+  difficulty?: number;
+  actions?: TodoAction[];
 };

@@ -31,7 +31,7 @@ export function RichTextDialog({
   // Sync draft when opened or when value changes from parent
   useEffect(() => {
     if (open) {
-      setDraft(value);
+      queueMicrotask(() => setDraft(value));
     }
   }, [open, value]);
 

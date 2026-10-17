@@ -9,7 +9,7 @@ import {
   Home,
   CheckSquare,
   BookOpen,
-  Target,
+  Layers,
   Sparkles,
   ArrowLeft,
   CheckCircle2,
@@ -56,7 +56,7 @@ export default function OfflinePage() {
   const offlineShortcuts = [
     { title: t("todos.title"), href: "/", icon: CheckSquare, desc: t("offline.todosDesc") },
     { title: t("journals.title"), href: "/journals", icon: BookOpen, desc: t("offline.journalsDesc") },
-    { title: t("missions.title"), href: "/missions", icon: Target, desc: t("offline.missionsDesc") },
+    { title: t("framework.title"), href: "/framework", icon: Layers, desc: t("framework.subtitle") },
   ];
 
   return (

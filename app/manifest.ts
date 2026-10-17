@@ -12,7 +12,7 @@ export default function manifest(): MetadataRoute.Manifest {
     background_color: "#fafafa",
     orientation: "portrait-primary",
     description:
-      "Personal Operating System for Daily Momentum, Habits & Missions",
+      "Personal Operating System for Daily Momentum, Habits & Framework",
     icons: [
       {
         src: "/icon-192x192.png",
@@ -44,7 +44,7 @@ export default function manifest(): MetadataRoute.Manifest {
         name: "New Todo",
         url: "/todos/new",
         short_name: "Todo",
-        description: "Create a new todo item",
+        description: "Create a new todo or mission",
         icons: [
           {
             src: "/icon-192x192.png",
@@ -65,22 +65,10 @@ export default function manifest(): MetadataRoute.Manifest {
         ],
       },
       {
-        name: "Missions",
-        url: "/missions",
-        short_name: "Missions",
-        description: "Track and manage your missions",
-        icons: [
-          {
-            src: "/icon-192x192.png",
-            sizes: "192x192",
-          },
-        ],
-      },
-      {
-        name: "Skills",
-        url: "/skills",
-        short_name: "Skills",
-        description: "Upgrade and monitor skills tree",
+        name: "Framework",
+        url: "/framework",
+        short_name: "Framework",
+        description: "Review your visions, rules, and concepts",
         icons: [
           {
             src: "/icon-192x192.png",

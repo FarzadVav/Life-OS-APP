@@ -23,35 +23,17 @@ function resolveTopic(pathname: string | null): string {
   if (pathname.startsWith("/todos/new")) {
     return "todosNew";
   }
-  if (pathname === "/journals/categories") {
-    return "journalsCategories";
-  }
   if (pathname.startsWith("/journals/new")) {
     return "journalsNew";
   }
   if (pathname.startsWith("/journals")) {
     return "journals";
   }
-  if (pathname === "/skills/categories") {
-    return "skillsCategories";
+  if (pathname.startsWith("/framework/new")) {
+    return "frameworkNew";
   }
-  if (pathname.startsWith("/skills/new")) {
-    return "skillsNew";
-  }
-  if (pathname.startsWith("/skills")) {
-    return "skills";
-  }
-  if (pathname.startsWith("/rules/new")) {
-    return "rulesNew";
-  }
-  if (pathname.startsWith("/rules")) {
-    return "rules";
-  }
-  if (pathname.startsWith("/missions/new")) {
-    return "missionsNew";
-  }
-  if (pathname.startsWith("/missions")) {
-    return "missions";
+  if (pathname.startsWith("/framework")) {
+    return "framework";
   }
   if (pathname.startsWith("/profile")) {
     return "profile";
