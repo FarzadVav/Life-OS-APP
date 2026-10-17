@@ -10,11 +10,12 @@ import {
   ChevronDownIcon,
   EditIcon,
   PlusIcon,
+  Repeat2Icon,
   Trash2Icon,
 } from "lucide-react";
 
 import { todos, TODO_TYPES } from "@/features/todos/constants";
-import { TodoType, TodoAction } from "@/features/todos/types";
+import { TodoType, TodoAction, TodoDiscipline } from "@/features/todos/types";
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
 import { Button } from "@/features/general/components/ui/Button/Button";
 import PageActionBtn from "@/features/general/components/module/PageActionBtn/PageActionBtn";
@@ -22,6 +23,7 @@ import PageWrapper from "@/features/general/components/static/PageWrapper/PageWr
 import Dialog from "@/features/general/components/ui/Dialog/Dialog";
 import TimePickerDialog from "@/features/general/components/ui/TimePickerDialog";
 import DayPickerDialog from "@/features/general/components/ui/DayPickerDialog";
+import RepeatIntervalInput from "@/features/general/components/ui/RepeatIntervalInput";
 import {
   getDefaultTime,
   parseDate,
@@ -153,7 +155,11 @@ function DifficultySelect({
               variant="outline"
               className="w-full justify-between rounded-component"
             >
-              <Select.Value placeholder={t("missions.selectDifficulty") || "Select difficulty"} />
+              <Select.Value
+                placeholder={
+                  t("missions.selectDifficulty") || "Select difficulty"
+                }
+              />
 
               <Select.Icon>
                 <ChevronDownIcon />
@@ -212,11 +218,14 @@ function NewTodoPage() {
   };
 
   const [title, setTitle] = useState("");
-  const [type, setType] = useState<TodoType>(() => resolveDefaultType(typeParam));
+  const [type, setType] = useState<TodoType>(() =>
+    resolveDefaultType(typeParam),
+  );
   const [dailyTime, setDailyTime] = useState<string>(getDefaultTime());
   const [targetDate, setTargetDate] = useState<Date | null>(new Date());
   const [difficulty, setDifficulty] = useState<number>(3);
   const [actions, setActions] = useState<TodoAction[]>([]);
+  const [disciplines, setDisciplines] = useState<TodoDiscipline[]>([]);
   const [isDone, setIsDone] = useState(false);
 
   // Dialog state for adding/editing mission action
@@ -231,6 +240,20 @@ function NewTodoPage() {
     deadline: new Date(),
   });
 
+  // Dialog state for adding/editing mission discipline
+  const [disciplineDialogOpen, setDisciplineDialogOpen] = useState(false);
+  const [disciplineDraft, setDisciplineDraft] = useState<{
+    id: number | null;
+    title: string;
+    repeatInterval: string;
+    history?: { date: string; isDone: boolean }[];
+  }>({
+    id: null,
+    title: "",
+    repeatInterval: "Every 1 Day",
+    history: [],
+  });
+
   useEffect(() => {
     if (!editId) {
       const resolved = resolveDefaultType(typeParam);
@@ -241,6 +264,7 @@ function NewTodoPage() {
         setTargetDate(new Date());
         setDifficulty(3);
         setActions([]);
+        setDisciplines([]);
         setIsDone(false);
       });
       return;
@@ -257,6 +281,7 @@ function NewTodoPage() {
       setIsDone(todo.isDone);
       setDifficulty(todo.difficulty || 3);
       setActions(todo.actions || []);
+      setDisciplines(todo.disciplines || []);
 
       if (todo.type === "Daily") {
         setDailyTime(todo.deadline.includes(":") ? todo.deadline : "12:00");
@@ -317,6 +342,57 @@ function NewTodoPage() {
     setActions((prev) => prev.filter((a) => a.id !== actionId));
   };
 
+  const openNewDiscipline = () => {
+    setDisciplineDraft({
+      id: null,
+      title: "",
+      repeatInterval: "Every 1 Day",
+      history: [],
+    });
+    setDisciplineDialogOpen(true);
+  };
+
+  const openEditDiscipline = (discipline: TodoDiscipline) => {
+    setDisciplineDraft({
+      id: discipline.id,
+      title: discipline.title,
+      repeatInterval: discipline.repeatInterval || "Every 1 Day",
+      history: discipline.history,
+    });
+    setDisciplineDialogOpen(true);
+  };
+
+  const saveDiscipline = () => {
+    const nextTitle = disciplineDraft.title.trim();
+    const nextInterval = disciplineDraft.repeatInterval.trim() || "Every 1 Day";
+    if (!nextTitle) return;
+
+    if (disciplineDraft.id !== null) {
+      setDisciplines((prev) =>
+        prev.map((d) =>
+          d.id === disciplineDraft.id
+            ? { ...d, title: nextTitle, repeatInterval: nextInterval }
+            : d,
+        ),
+      );
+    } else {
+      setDisciplines((prev) => [
+        ...prev,
+        {
+          id: Date.now() + Math.floor(Math.random() * 1000),
+          title: nextTitle,
+          repeatInterval: nextInterval,
+          history: [],
+        },
+      ]);
+    }
+    setDisciplineDialogOpen(false);
+  };
+
+  const deleteDiscipline = (disciplineId: number) => {
+    setDisciplines((prev) => prev.filter((d) => d.id !== disciplineId));
+  };
+
   return (
     <PageWrapper>
       <TopBar>
@@ -347,6 +423,7 @@ function NewTodoPage() {
             deadline,
             difficulty: type === "Mission" ? difficulty : undefined,
             actions: type === "Mission" ? actions : undefined,
+            disciplines: type === "Mission" ? disciplines : undefined,
             isDone,
           };
 
@@ -356,7 +433,9 @@ function NewTodoPage() {
         }}
       >
         <Field.Root name="title">
-          <Field.Label className="block font-bold">{t("common.title")}</Field.Label>
+          <Field.Label className="block font-bold">
+            {t("common.title")}
+          </Field.Label>
 
           <Field.Control
             required
@@ -365,7 +444,8 @@ function NewTodoPage() {
             className="input"
             placeholder={
               type === "Mission"
-                ? t("missions.titlePlaceholder") || "What is your main mission objective?"
+                ? t("missions.titlePlaceholder") ||
+                  "What is your main mission objective?"
                 : t("todos.titlePlaceholder")
             }
             onChange={(event) => setTitle(event.target.value)}
@@ -377,7 +457,9 @@ function NewTodoPage() {
         <TypeSelect value={type} onChange={setType} />
 
         <Field.Root name="deadline">
-          <Field.Label className="mb-1 font-bold">{t("common.deadline")}</Field.Label>
+          <Field.Label className="mb-1 font-bold">
+            {t("common.deadline")}
+          </Field.Label>
 
           {type === "Daily" ? (
             <TimePickerDialog value={dailyTime} onChange={setDailyTime} />
@@ -394,11 +476,9 @@ function NewTodoPage() {
 
         {type === "Mission" && (
           <>
-            <DifficultySelect
-              value={difficulty}
-              onChange={setDifficulty}
-            />
+            <DifficultySelect value={difficulty} onChange={setDifficulty} />
 
+            {/* Actions Section */}
             <Field.Root name="actions">
               <div className="flex items-center justify-between mb-2">
                 <Field.Label className="font-bold">
@@ -427,8 +507,12 @@ function NewTodoPage() {
                       className="flex items-center justify-between gap-3 rounded-component bg-card p-3"
                     >
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-medium">{act.title}</p>
-                        <p className="sub-text text-xs">{formatDate(act.deadline)}</p>
+                        <p className="truncate text-sm font-medium">
+                          {act.title}
+                        </p>
+                        <p className="sub-text text-xs">
+                          {formatDate(act.deadline)}
+                        </p>
                       </div>
 
                       <div className="flex shrink-0 items-center gap-1">
@@ -457,6 +541,70 @@ function NewTodoPage() {
               )}
             </Field.Root>
 
+            {/* Disciplines Section */}
+            <Field.Root name="disciplines">
+              <div className="flex items-center justify-between mb-2">
+                <Field.Label className="font-bold">
+                  {t("missions.disciplines") || "Disciplines"}
+                </Field.Label>
+                <span className="sub-text text-xs">
+                  {disciplines.length}{" "}
+                  {t("missions.disciplines") || "disciplines"}
+                </span>
+              </div>
+
+              <Button
+                type="button"
+                variant="outline"
+                onClick={openNewDiscipline}
+                className="w-full justify-center gap-1.5 rounded-component"
+              >
+                <PlusIcon className="size-4" />
+                <span>{t("missions.newDiscipline") || "Add Discipline"}</span>
+              </Button>
+
+              {disciplines.length > 0 && (
+                <div className="mt-3 space-y-2">
+                  {disciplines.map((d) => (
+                    <div
+                      key={d.id}
+                      className="flex items-center justify-between gap-3 rounded-component bg-card p-3"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-medium">{d.title}</p>
+                        <p className="sub-text text-xs flex items-center gap-1 mt-0.5">
+                          <Repeat2Icon className="size-3" />
+                          <span>{d.repeatInterval}</span>
+                        </p>
+                      </div>
+
+                      <div className="flex shrink-0 items-center gap-1">
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          square
+                          className="size-8"
+                          onClick={() => openEditDiscipline(d)}
+                        >
+                          <EditIcon className="size-3.5" />
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          square
+                          className="size-8"
+                          onClick={() => deleteDiscipline(d.id)}
+                        >
+                          <Trash2Icon className="size-3.5" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </Field.Root>
+
+            {/* Action Dialog */}
             <Dialog open={actionDialogOpen} onOpenChange={setActionDialogOpen}>
               <div className="p-1 space-y-4">
                 <div>
@@ -517,6 +665,86 @@ function NewTodoPage() {
                     disabled={actionDraft.title.trim().length < 2}
                   >
                     {actionDraft.id !== null
+                      ? t("common.save")
+                      : t("common.add")}
+                  </Button>
+                </div>
+              </div>
+            </Dialog>
+
+            {/* Discipline Dialog */}
+            <Dialog
+              open={disciplineDialogOpen}
+              onOpenChange={setDisciplineDialogOpen}
+            >
+              <div className="p-1 space-y-4">
+                <div>
+                  <Dialog.Title className="font-bold">
+                    {disciplineDraft.id !== null
+                      ? t("missions.editDiscipline") || "Edit Discipline"
+                      : t("missions.newDiscipline") || "New Discipline"}
+                  </Dialog.Title>
+                  <Dialog.Description className="sub-text text-xs mt-1">
+                    {disciplineDraft.id !== null
+                      ? t("missions.editDisciplineDesc") ||
+                        "Edit the discipline title and interval."
+                      : t("missions.createDisciplineDesc") ||
+                        "Define a repeated behavior supporting this mission."}
+                  </Dialog.Description>
+                </div>
+
+                <Field.Root name="disciplineTitle">
+                  <Field.Label className="mb-1 font-bold text-xs">
+                    {t("common.title")}
+                  </Field.Label>
+                  <Field.Control
+                    required
+                    minLength={3}
+                    className="input"
+                    value={disciplineDraft.title}
+                    placeholder={
+                      t("missions.disciplineTitlePlaceholder") ||
+                      "e.g. Work on core product daily"
+                    }
+                    onChange={(e) =>
+                      setDisciplineDraft((d) => ({
+                        ...d,
+                        title: e.target.value,
+                      }))
+                    }
+                  />
+                </Field.Root>
+
+                <Field.Root name="disciplineRepeatInterval">
+                  <Field.Label className="mb-1 font-bold text-xs">
+                    Repeat Interval
+                  </Field.Label>
+                  <RepeatIntervalInput
+                    value={disciplineDraft.repeatInterval}
+                    onChange={(val) =>
+                      setDisciplineDraft((d) => ({
+                        ...d,
+                        repeatInterval: val,
+                      }))
+                    }
+                  />
+                </Field.Root>
+
+                <div className="flex items-center justify-end gap-2 pt-2">
+                  <Dialog.Close
+                    render={
+                      <Button type="button" variant="ghost">
+                        {t("common.cancel")}
+                      </Button>
+                    }
+                  />
+                  <Button
+                    type="button"
+                    variant="primary"
+                    onClick={saveDiscipline}
+                    disabled={disciplineDraft.title.trim().length < 3}
+                  >
+                    {disciplineDraft.id !== null
                       ? t("common.save")
                       : t("common.add")}
                   </Button>

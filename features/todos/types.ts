@@ -7,6 +7,13 @@ export type TodoAction = {
   isDone: boolean;
 };
 
+export type TodoDiscipline = {
+  id: number;
+  title: string;
+  repeatInterval: string;
+  history?: { date: string; isDone: boolean }[];
+};
+
 export type Todo = {
   id: number;
   title: string;
@@ -15,4 +22,5 @@ export type Todo = {
   isDone: boolean;
   difficulty?: number;
   actions?: TodoAction[];
+  disciplines?: TodoDiscipline[];
 };

@@ -9,6 +9,7 @@ import {
   ChevronRightIcon,
   CircleIcon,
   GaugeIcon,
+  Repeat2Icon,
 } from "lucide-react";
 
 import { Todo } from "../../types";
@@ -34,12 +35,22 @@ function Difficulty({ value }: { value: number }) {
 type TodoMissionCardProps = {
   todo: Todo;
   onToggleAction?: (todoId: number, actionId: number) => void;
+  onToggleDiscipline?: (
+    todoId: number,
+    disciplineId: number,
+    isDone: boolean,
+  ) => void;
 };
 
-function TodoMissionCard({ todo, onToggleAction }: TodoMissionCardProps) {
+function TodoMissionCard({
+  todo,
+  onToggleAction,
+  onToggleDiscipline,
+}: TodoMissionCardProps) {
   const { formatDate, t } = useLocale();
 
   const actions = todo.actions || [];
+  const disciplines = todo.disciplines || [];
   const totalActions = actions.length;
   const completedActions = actions.filter((a) => a.isDone).length;
   const progress =
@@ -68,6 +79,15 @@ function TodoMissionCard({ todo, onToggleAction }: TodoMissionCardProps) {
                 </span>
                 <span className="sub-text">•</span>
                 <span className="sub-text">{progress}%</span>
+                {disciplines.length > 0 && (
+                  <>
+                    <span className="sub-text">•</span>
+                    <span className="sub-text flex items-center gap-1">
+                      <Repeat2Icon className="size-3" />
+                      {disciplines.length}
+                    </span>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -104,31 +124,31 @@ function TodoMissionCard({ todo, onToggleAction }: TodoMissionCardProps) {
         <p className="sub-text mt-1.5 text-xs">{progress}% completed</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+      <div className="grid grid-cols-3 gap-2">
         <div className="rounded-container bg-background p-3">
           <div className="flex items-center gap-2 sub-text">
             <CalendarDaysIcon className="size-4" />
-            <span>{t("common.deadline")}</span>
+            <span className="text-xs">{t("common.deadline")}</span>
           </div>
-          <p className="mt-2 text-sm font-medium">{formatDate(todo.deadline)}</p>
+          <p className="mt-2 text-xs font-medium">{formatDate(todo.deadline)}</p>
         </div>
 
         <div className="rounded-container bg-background p-3">
           <div className="flex items-center gap-2 sub-text">
             <GaugeIcon className="size-4" />
-            <span>{t("missions.difficulty") || "Difficulty"}</span>
+            <span className="text-xs">{t("missions.difficulty") || "Difficulty"}</span>
           </div>
           <div className="mt-3">
             <Difficulty value={todo.difficulty || 3} />
           </div>
         </div>
 
-        <div className="rounded-container bg-background p-3 col-span-2 sm:col-span-1">
+        <div className="rounded-container bg-background p-3">
           <div className="flex items-center gap-2 sub-text">
             <CheckIcon className="size-4" />
-            <span>{t("missions.actionsLabel") || "Actions"}</span>
+            <span className="text-xs">{t("missions.actionsLabel") || "Actions"}</span>
           </div>
-          <p className="mt-2 text-sm font-medium">{totalActions}</p>
+          <p className="mt-2 text-xs font-medium">{totalActions}</p>
         </div>
       </div>
 
@@ -181,6 +201,68 @@ function TodoMissionCard({ todo, onToggleAction }: TodoMissionCardProps) {
                     <CalendarIcon className="size-3" />
                     <span>{formatDate(action.deadline)}</span>
                   </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {disciplines.length > 0 && (
+        <section className="space-y-3">
+          <div>
+            <div className="flex items-center justify-between">
+              <h3 className="font-bold text-sm">
+                {t("missions.disciplines") || "Disciplines"}
+              </h3>
+              <span className="sub-text text-xs">{disciplines.length}</span>
+            </div>
+            <p className="sub-text mt-0.5 text-xs">
+              {t("missions.disciplinesSubtitle") ||
+                "Repeated behaviors that support the mission"}
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            {disciplines.map((discipline) => (
+              <div
+                key={discipline.id}
+                className="flex flex-col gap-3 rounded-container bg-background p-3"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="flex size-10 shrink-0 items-center justify-center rounded-component bg-card">
+                    <Repeat2Icon className="size-4" />
+                  </div>
+
+                  <div className="flex-1 h-10 flex justify-between items-start flex-col">
+                    <p className="text-sm font-medium">{discipline.title}</p>
+                    <p className="sub-text text-xs">
+                      {discipline.repeatInterval}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex gap-2 w-full mt-1">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="flex-1 justify-center py-1.5 h-auto text-xs bg-card-thick text-foreground hover:bg-card-thick/80 border-foreground/20"
+                    onClick={() =>
+                      onToggleDiscipline?.(todo.id, discipline.id, true)
+                    }
+                  >
+                    {t("missions.iDo") || "I Do"}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="flex-1 justify-center py-1.5 h-auto text-xs bg-card-thick text-foreground/70 hover:bg-card-thick/80 border-foreground/20"
+                    onClick={() =>
+                      onToggleDiscipline?.(todo.id, discipline.id, false)
+                    }
+                  >
+                    {t("missions.iDontDo") || "I Don't Do"}
+                  </Button>
                 </div>
               </div>
             ))}

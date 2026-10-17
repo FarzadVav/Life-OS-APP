@@ -73,6 +73,25 @@ function TodosTabs() {
     );
   };
 
+  const handleToggleMissionDiscipline = (
+    todoId: number,
+    disciplineId: number,
+    isDone: boolean,
+  ) => {
+    setTodosList((prev) =>
+      prev.map((todo) => {
+        if (todo.id !== todoId || !todo.disciplines) return todo;
+        const updatedDisciplines = todo.disciplines.map((d) => {
+          if (d.id !== disciplineId) return d;
+          const today = new Date().toISOString();
+          const newHistory = [...(d.history || []), { date: today, isDone }];
+          return { ...d, history: newHistory };
+        });
+        return { ...todo, disciplines: updatedDisciplines };
+      }),
+    );
+  };
+
   return (
     <>
       <div className="w-full flex gap-2">
@@ -165,6 +184,7 @@ function TodosTabs() {
                     key={mission.id}
                     todo={mission}
                     onToggleAction={handleToggleMissionAction}
+                    onToggleDiscipline={handleToggleMissionDiscipline}
                   />
                 ))
               : currentTodos.map((todo) => (
