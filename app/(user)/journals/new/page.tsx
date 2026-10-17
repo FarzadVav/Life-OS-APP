@@ -1,13 +1,18 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 
 import { Field, Form } from "@base-ui/react";
 import SelectDialog from "@/features/general/components/ui/SelectDialog";
 
-import { journals } from "@/features/journals/constants";
+import {
+  addJournal,
+  getJournal,
+  updateJournal,
+  useJournals,
+} from "@/features/journals/items";
 import { JournalType, JOURNAL_CATEGORIES } from "@/features/journals/types";
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
 import PageActionBtn from "@/features/general/components/module/PageActionBtn/PageActionBtn";
@@ -58,6 +63,9 @@ function NewJournalPage() {
   const categoryParam = searchParams.get("category") || searchParams.get("type");
   const isEditMode = Boolean(editId);
 
+  const router = useRouter();
+  useJournals();
+
   const resolveCategory = useCallback(
     (param: string | null): JournalType => {
       if (!param) return "Logs";
@@ -85,7 +93,7 @@ function NewJournalPage() {
       return;
     }
 
-    const journal = journals.find((item) => String(item.id) === editId);
+    const journal = getJournal(Number(editId));
     if (!journal) {
       return;
     }
@@ -111,20 +119,22 @@ function NewJournalPage() {
         className="w-full space-y-6"
         aria-label={isEditMode ? t("journals.editAria") : t("journals.createAria")}
         action={async () => {
-          const payload = {
-            id: editId ? Number(editId) : undefined,
-            title,
-            type,
-            content,
-            createdAt: new Date().toISOString(),
-          };
+          const targetCategory = type ?? "Logs";
+          if (isEditMode && editId) {
+            updateJournal(Number(editId), {
+              title,
+              type: targetCategory,
+              content,
+            });
+          } else {
+            addJournal({
+              title,
+              type: targetCategory,
+              content,
+            });
+          }
 
-          console.log(
-            isEditMode ? "Update journal:" : "Create journal:",
-            payload,
-          );
-
-          await new Promise((resolve) => setTimeout(resolve, 500));
+          router.push(`/journals/${targetCategory.toLowerCase()}`);
         }}
       >
         <Field.Root name="title">

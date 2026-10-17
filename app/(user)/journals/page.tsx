@@ -5,8 +5,7 @@ import PageActionBtn from "@/features/general/components/module/PageActionBtn/Pa
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
 import PageItemsWrapper from "@/features/general/components/static/PageItemsWrapper/PageItemsWrapper";
 import ConnectivityFallback from "@/features/general/components/module/ConnectivityFallback/ConnectivityFallback";
-import JournalsTabs from "@/features/journals/components/JournalsTabs/JournalsTabs";
-import JournalsActionBtn from "@/features/journals/components/JournalsActionBtn/JournalsActionBtn";
+import JournalsCategoryList from "@/features/journals/components/JournalsCategoryList/JournalsCategoryList";
 import { getTranslations } from "@/features/general/lib/i18n/server";
 
 async function JournalsPage() {
@@ -26,20 +25,14 @@ async function JournalsPage() {
             <ConnectivityFallback message={t("journals.loading")} />
           }
         >
-          <JournalsTabs />
+          <JournalsCategoryList />
         </Suspense>
 
-        <p className="sub-text w-full text-center">
+        <p className="sub-text w-full text-center text-xs">
           {t("journals.subtitle")}
         </p>
 
-        <Suspense
-          fallback={
-            <PageActionBtn href="/journals/new">{t("journals.new")}</PageActionBtn>
-          }
-        >
-          <JournalsActionBtn />
-        </Suspense>
+        <PageActionBtn href="/journals/new">{t("journals.new")}</PageActionBtn>
       </PageItemsWrapper>
     </PageWrapper>
   );

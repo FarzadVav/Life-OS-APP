@@ -128,6 +128,14 @@
       "lessons": "Lessons",
       "ideas": "Ideas",
       "notes": "Notes"
+    },
+    "categoryDesc": {
+      "logs": "Daily activity, execution notes, and progress logs",
+      "thoughts": "Reflections, mental models, and deep contemplations",
+      "feelings": "Emotional awareness, gratitude, and inner state",
+      "lessons": "Key insights, life lessons, and wisdom gathered",
+      "ideas": "Sparks of creativity, projects, and future concepts",
+      "notes": "Quick references, checklists, and working memos"
     }
   },
   "framework": {
@@ -159,6 +167,16 @@
       "finance": "Finance",
       "lifestyle": "Lifestyle",
       "knowledge": "Knowledge"
+    },
+    "categoryDesc": {
+      "career": "Mastery, high-impact craft, engineering quality, and focus",
+      "mindset": "Stoic equanimity, mental models, and emotional clarity",
+      "social": "Lifelong trusted circle, deep connection, and companionship",
+      "health": "Physical resilience, aerobic endurance, mobility, and sleep",
+      "behavior": "Frictionless habit architecture, discipline, and routines",
+      "finance": "Financial autonomy, compounding assets, and downside protection",
+      "lifestyle": "Minimalist sanctuary, intentional spaces, and nature access",
+      "knowledge": "Foundational reading, polymathic models, and deep learning"
     },
     "sections": {
       "visions": "Visions",

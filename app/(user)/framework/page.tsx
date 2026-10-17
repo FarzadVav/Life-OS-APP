@@ -5,8 +5,7 @@ import PageActionBtn from "@/features/general/components/module/PageActionBtn/Pa
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
 import PageItemsWrapper from "@/features/general/components/static/PageItemsWrapper/PageItemsWrapper";
 import ConnectivityFallback from "@/features/general/components/module/ConnectivityFallback/ConnectivityFallback";
-import FrameworkTabs from "@/features/framework/components/FrameworkTabs/FrameworkTabs";
-import FrameworkActionBtn from "@/features/framework/components/FrameworkActionBtn/FrameworkActionBtn";
+import FrameworkCategoryList from "@/features/framework/components/FrameworkCategoryList/FrameworkCategoryList";
 import { getTranslations } from "@/features/general/lib/i18n/server";
 
 async function FrameworkPage() {
@@ -28,7 +27,7 @@ async function FrameworkPage() {
             />
           }
         >
-          <FrameworkTabs />
+          <FrameworkCategoryList />
         </Suspense>
 
         <p className="sub-text w-full text-center text-xs">
@@ -36,15 +35,9 @@ async function FrameworkPage() {
             "Your non-negotiables, mental models, and sovereign vision across all life areas."}
         </p>
 
-        <Suspense
-          fallback={
-            <PageActionBtn href="/framework/new">
-              {t("framework.new") || "New"}
-            </PageActionBtn>
-          }
-        >
-          <FrameworkActionBtn />
-        </Suspense>
+        <PageActionBtn href="/framework/new">
+          {t("framework.new") || "New"}
+        </PageActionBtn>
       </PageItemsWrapper>
     </PageWrapper>
   );
