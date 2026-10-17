@@ -1,11 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Select } from "@base-ui/react";
-import { CheckIcon, ChevronDownIcon } from "lucide-react";
 import { cn } from "cn";
 import { NumberField } from "../NumberField";
-import { Button } from "../Button/Button";
+import SelectDialog from "../SelectDialog";
 
 export type RepeatIntervalUnit = "Day" | "Week" | "Month";
 
@@ -112,8 +110,6 @@ export default function RepeatIntervalInput({
     label: count > 1 ? u.pluralLabel : u.label,
   }));
 
-  const activeUnitLabel = count > 1 ? `${unit}s` : unit;
-
   return (
     <div
       className={cn(
@@ -135,60 +131,18 @@ export default function RepeatIntervalInput({
         className="shrink-0"
       />
 
-      <Select.Root
+      <SelectDialog
         items={unitItems}
         value={unit}
-        onValueChange={(nextVal) => {
+        onChange={(nextVal) => {
           if (nextVal) {
             handleUnitChange(nextVal as RepeatIntervalUnit);
           }
         }}
         disabled={disabled}
-      >
-        <Select.Trigger
-          render={
-            <Button
-              type="button"
-              variant="outline"
-              disabled={disabled}
-              className="h-10 min-w-[120px] flex-1 sm:flex-initial justify-between rounded-component px-3 font-medium"
-            >
-              <span>{activeUnitLabel}</span>
-              <Select.Icon>
-                <ChevronDownIcon className="size-4 opacity-60" />
-              </Select.Icon>
-            </Button>
-          }
-        />
-
-        <Select.Portal>
-          <Select.Positioner className="z-small-overlay">
-            <Select.Popup className="min-w-(--anchor-width) overflow-hidden rounded-component bg-card-thick p-1 shadow-lg border border-foreground/10">
-              <Select.List className="p-px">
-                {unitItems.map((item) => (
-                  <Select.Item
-                    key={item.value}
-                    value={item.value}
-                    nativeButton
-                    render={
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        className="w-full justify-between rounded-component text-sm"
-                      >
-                        <Select.ItemText>{item.label}</Select.ItemText>
-                        <Select.ItemIndicator>
-                          <CheckIcon className="size-4" />
-                        </Select.ItemIndicator>
-                      </Button>
-                    }
-                  />
-                ))}
-              </Select.List>
-            </Select.Popup>
-          </Select.Positioner>
-        </Select.Portal>
-      </Select.Root>
+        title="Interval Unit"
+        triggerClassName="min-w-[120px] flex-1 sm:flex-initial"
+      />
 
       {name && (
         <input

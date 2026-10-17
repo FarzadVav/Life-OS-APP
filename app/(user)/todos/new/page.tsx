@@ -4,10 +4,8 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 
-import { Field, Form, Select } from "@base-ui/react";
+import { Field, Form } from "@base-ui/react";
 import {
-  CheckIcon,
-  ChevronDownIcon,
   EditIcon,
   PlusIcon,
   Repeat2Icon,
@@ -24,6 +22,7 @@ import Dialog from "@/features/general/components/ui/Dialog/Dialog";
 import TimePickerDialog from "@/features/general/components/ui/TimePickerDialog";
 import DayPickerDialog from "@/features/general/components/ui/DayPickerDialog";
 import RepeatIntervalInput from "@/features/general/components/ui/RepeatIntervalInput";
+import SelectDialog from "@/features/general/components/ui/SelectDialog";
 import {
   getDefaultTime,
   parseDate,
@@ -53,62 +52,15 @@ function TypeSelect({
     <Field.Root name="type">
       <Field.Label className="mb-1 font-bold">{t("common.type")}</Field.Label>
 
-      <Select.Root
+      <SelectDialog
         name="type"
         items={items}
         value={value}
-        onValueChange={(nextValue) => {
-          if (nextValue) {
-            onChange(nextValue as TodoType);
-          }
-        }}
+        onChange={(next) => onChange(next as TodoType)}
+        title={t("common.type")}
+        placeholder={t("todos.selectType")}
         required
-      >
-        <Select.Trigger
-          render={
-            <Button
-              type="button"
-              variant="outline"
-              className="w-full justify-between rounded-component"
-            >
-              <Select.Value placeholder={t("todos.selectType")} />
-
-              <Select.Icon>
-                <ChevronDownIcon />
-              </Select.Icon>
-            </Button>
-          }
-        />
-
-        <Select.Portal>
-          <Select.Positioner className="z-small-overlay">
-            <Select.Popup className="min-w-(--anchor-width) overflow-hidden rounded-component bg-card-thick p-1">
-              <Select.List className="p-px">
-                {items.map((item) => (
-                  <Select.Item
-                    key={item.value}
-                    value={item.value}
-                    nativeButton
-                    render={
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        className="w-full justify-between rounded-component"
-                      >
-                        <Select.ItemText>{item.label}</Select.ItemText>
-
-                        <Select.ItemIndicator>
-                          <CheckIcon />
-                        </Select.ItemIndicator>
-                      </Button>
-                    }
-                  />
-                ))}
-              </Select.List>
-            </Select.Popup>
-          </Select.Positioner>
-        </Select.Portal>
-      </Select.Root>
+      />
 
       <Field.Error className="sub-text mt-0.5 text-foreground" />
     </Field.Root>
@@ -124,11 +76,11 @@ function DifficultySelect({
 }) {
   const { t } = useLocale();
   const items = [
-    { value: "1", label: "1 · " + (t("missions.level1") || "Easy") },
-    { value: "2", label: "2 · " + (t("missions.level2") || "Moderate") },
-    { value: "3", label: "3 · " + (t("missions.level3") || "Challenging") },
-    { value: "4", label: "4 · " + (t("missions.level4") || "Hard") },
-    { value: "5", label: "5 · " + (t("missions.level5") || "Epic") },
+    { value: 1, label: "1 · " + (t("missions.level1") || "Easy") },
+    { value: 2, label: "2 · " + (t("missions.level2") || "Moderate") },
+    { value: 3, label: "3 · " + (t("missions.level3") || "Challenging") },
+    { value: 4, label: "4 · " + (t("missions.level4") || "Hard") },
+    { value: 5, label: "5 · " + (t("missions.level5") || "Epic") },
   ];
 
   return (
@@ -137,66 +89,15 @@ function DifficultySelect({
         {t("missions.difficulty") || "Difficulty"}
       </Field.Label>
 
-      <Select.Root
+      <SelectDialog
         name="difficulty"
         items={items}
-        value={String(value)}
-        onValueChange={(nextValue) => {
-          if (nextValue) {
-            onChange(Number(nextValue));
-          }
-        }}
+        value={value}
+        onChange={(next) => onChange(Number(next))}
+        title={t("missions.difficulty") || "Difficulty"}
+        placeholder={t("missions.selectDifficulty") || "Select difficulty"}
         required
-      >
-        <Select.Trigger
-          render={
-            <Button
-              type="button"
-              variant="outline"
-              className="w-full justify-between rounded-component"
-            >
-              <Select.Value
-                placeholder={
-                  t("missions.selectDifficulty") || "Select difficulty"
-                }
-              />
-
-              <Select.Icon>
-                <ChevronDownIcon />
-              </Select.Icon>
-            </Button>
-          }
-        />
-
-        <Select.Portal>
-          <Select.Positioner className="z-small-overlay">
-            <Select.Popup className="min-w-(--anchor-width) overflow-hidden rounded-component bg-card-thick p-1">
-              <Select.List className="p-px">
-                {items.map((item) => (
-                  <Select.Item
-                    key={item.value}
-                    value={item.value}
-                    nativeButton
-                    render={
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        className="w-full justify-between rounded-component"
-                      >
-                        <Select.ItemText>{item.label}</Select.ItemText>
-
-                        <Select.ItemIndicator>
-                          <CheckIcon />
-                        </Select.ItemIndicator>
-                      </Button>
-                    }
-                  />
-                ))}
-              </Select.List>
-            </Select.Popup>
-          </Select.Positioner>
-        </Select.Portal>
-      </Select.Root>
+      />
 
       <Field.Error className="sub-text mt-0.5 text-foreground" />
     </Field.Root>

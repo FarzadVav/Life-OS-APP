@@ -4,8 +4,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 
-import { Field, Form, Select } from "@base-ui/react";
-import { CheckIcon, ChevronDownIcon } from "lucide-react";
+import { Field, Form } from "@base-ui/react";
+import SelectDialog from "@/features/general/components/ui/SelectDialog";
 
 import {
   FRAMEWORK_CATEGORIES,
@@ -20,7 +20,6 @@ import {
   useFrameworkItems,
 } from "@/features/framework/items";
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
-import { Button } from "@/features/general/components/ui/Button/Button";
 import PageActionBtn from "@/features/general/components/module/PageActionBtn/PageActionBtn";
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
 import { RichTextarea } from "@/features/general/components/ui/RichTextEditor";
@@ -45,64 +44,19 @@ function CategorySelect({
         {t("common.category")}
       </Field.Label>
 
-      <Select.Root
+      <SelectDialog
         name="category"
         items={items}
         value={value}
-        onValueChange={(nextValue) => {
+        onChange={(nextValue) => {
           if (nextValue) {
             onChange(nextValue as FrameworkCategory);
           }
         }}
+        title={t("common.category")}
+        placeholder={t("framework.selectCategory") || "Select category"}
         required
-      >
-        <Select.Trigger
-          render={
-            <Button
-              type="button"
-              variant="outline"
-              className="w-full justify-between rounded-component"
-            >
-              <Select.Value
-                placeholder={t("framework.selectCategory") || "Select category"}
-              />
-
-              <Select.Icon>
-                <ChevronDownIcon />
-              </Select.Icon>
-            </Button>
-          }
-        />
-
-        <Select.Portal>
-          <Select.Positioner className="z-small-overlay">
-            <Select.Popup className="min-w-(--anchor-width) overflow-hidden rounded-component bg-card-thick p-1">
-              <Select.List className="p-px">
-                {items.map((item) => (
-                  <Select.Item
-                    key={item.value}
-                    value={item.value}
-                    nativeButton
-                    render={
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        className="w-full justify-between rounded-component"
-                      >
-                        <Select.ItemText>{item.label}</Select.ItemText>
-
-                        <Select.ItemIndicator>
-                          <CheckIcon />
-                        </Select.ItemIndicator>
-                      </Button>
-                    }
-                  />
-                ))}
-              </Select.List>
-            </Select.Popup>
-          </Select.Positioner>
-        </Select.Portal>
-      </Select.Root>
+      />
 
       <Field.Error className="sub-text mt-0.5 text-foreground" />
     </Field.Root>
@@ -129,64 +83,19 @@ function SectionSelect({
         {t("framework.section") || "Section"}
       </Field.Label>
 
-      <Select.Root
+      <SelectDialog
         name="section"
         items={items}
         value={value}
-        onValueChange={(nextValue) => {
+        onChange={(nextValue) => {
           if (nextValue) {
             onChange(nextValue as FrameworkSection);
           }
         }}
+        title={t("framework.section") || "Section"}
+        placeholder={t("framework.selectSection") || "Select section"}
         required
-      >
-        <Select.Trigger
-          render={
-            <Button
-              type="button"
-              variant="outline"
-              className="w-full justify-between rounded-component"
-            >
-              <Select.Value
-                placeholder={t("framework.selectSection") || "Select section"}
-              />
-
-              <Select.Icon>
-                <ChevronDownIcon />
-              </Select.Icon>
-            </Button>
-          }
-        />
-
-        <Select.Portal>
-          <Select.Positioner className="z-small-overlay">
-            <Select.Popup className="min-w-(--anchor-width) overflow-hidden rounded-component bg-card-thick p-1">
-              <Select.List className="p-px">
-                {items.map((item) => (
-                  <Select.Item
-                    key={item.value}
-                    value={item.value}
-                    nativeButton
-                    render={
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        className="w-full justify-between rounded-component"
-                      >
-                        <Select.ItemText>{item.label}</Select.ItemText>
-
-                        <Select.ItemIndicator>
-                          <CheckIcon />
-                        </Select.ItemIndicator>
-                      </Button>
-                    }
-                  />
-                ))}
-              </Select.List>
-            </Select.Popup>
-          </Select.Positioner>
-        </Select.Portal>
-      </Select.Root>
+      />
 
       <Field.Error className="sub-text mt-0.5 text-foreground" />
     </Field.Root>

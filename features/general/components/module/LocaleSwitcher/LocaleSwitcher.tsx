@@ -1,12 +1,9 @@
 "use client";
 
-import { Select } from "@base-ui/react";
-import { CheckIcon, ChevronDownIcon } from "lucide-react";
-
 import { changeLocale } from "@/features/general/actions/locale";
 import { useLocale } from "../LocaleProvider/LocaleProvider";
-import { Button } from "../../ui/Button/Button";
-import { cn } from "cn";
+import { Locale } from "@/features/general/lib/i18n/config";
+import SelectDialog from "../../ui/SelectDialog";
 
 type LocaleSwitcherProps = {
   className?: string;
@@ -16,65 +13,23 @@ function LocaleSwitcher({ className }: LocaleSwitcherProps) {
   const { locale, t } = useLocale();
 
   const items = [
-    { value: "en", label: t("language.english") },
-    { value: "fa", label: t("language.persian") },
+    { value: "en" as const, label: t("language.english") },
+    { value: "fa" as const, label: t("language.persian") },
   ];
 
   return (
-    <Select.Root
+    <SelectDialog
       items={items}
       value={locale}
-      onValueChange={(nextValue) => {
+      onChange={(nextValue) => {
         if (nextValue) {
-          changeLocale(nextValue);
+          changeLocale(nextValue as Locale);
         }
       }}
-    >
-      <Select.Trigger
-        render={
-          <Button
-            type="button"
-            variant="outline"
-            className={cn("justify-between rounded-component", className)}
-          >
-            <Select.Value placeholder={t("profile.language")} />
-
-            <Select.Icon>
-              <ChevronDownIcon />
-            </Select.Icon>
-          </Button>
-        }
-      />
-
-      <Select.Portal>
-        <Select.Positioner className="z-small-overlay">
-          <Select.Popup className="min-w-(--anchor-width) overflow-hidden rounded-component bg-card-thick p-1">
-            <Select.List className="p-px">
-              {items.map((item) => (
-                <Select.Item
-                  key={item.value}
-                  value={item.value}
-                  nativeButton
-                  render={
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      className="w-full justify-between rounded-component"
-                    >
-                      <Select.ItemText>{item.label}</Select.ItemText>
-
-                      <Select.ItemIndicator>
-                        <CheckIcon />
-                      </Select.ItemIndicator>
-                    </Button>
-                  }
-                />
-              ))}
-            </Select.List>
-          </Select.Popup>
-        </Select.Positioner>
-      </Select.Portal>
-    </Select.Root>
+      title={t("profile.language")}
+      placeholder={t("profile.language")}
+      triggerClassName={className}
+    />
   );
 }
 

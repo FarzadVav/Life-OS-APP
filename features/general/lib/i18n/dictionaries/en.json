@@ -25,7 +25,13 @@
     "selectDate": "Select Date",
     "notSet": "Not set",
     "loading": "Loading...",
-    "waitingConnection": "Waiting for connection to load this section..."
+    "waitingConnection": "Waiting for connection to load this section...",
+    "select": "Select",
+    "search": "Search...",
+    "noResults": "No results found",
+    "selected": "selected",
+    "confirm": "Confirm",
+    "clear": "Clear"
   },
   "dates": {
     "notSet": "Not set",
