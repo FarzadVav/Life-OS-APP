@@ -8,9 +8,9 @@ Personal operating system for moving up and managing daily momentum, reflective 
 - **Home Page (`/`)**:
   - **Today (Daily)**: Time-scheduled recurring and daily focus items with completion tracking.
   - **Upcoming**: Scheduled future target dates with calendar pickers.
-  - **Missions**: Multi-step strategic objectives with difficulty ratings (1-5), milestone actions with status toggles, and real-time progress bars.
+  - **Missions**: Multi-step strategic objectives with Time and Energy Cost ratings (1-5), milestone actions with status toggles, and real-time progress bars.
 - **Unified Creator (`/todos/new`)**:
-  - Dynamically configures fields according to item type (Daily -> time picker, Upcoming -> day picker, Mission -> day picker + difficulty select + actions milestone builder).
+  - Dynamically configures fields according to item type (Daily -> time picker, Upcoming -> day picker, Mission -> day picker + Time and Energy Cost select + actions milestone builder).
 
 ### **2. Journals**
 - **Journals Page (`/journals`)**:

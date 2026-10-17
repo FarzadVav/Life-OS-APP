@@ -136,7 +136,7 @@ function TodoMissionCard({
         <div className="rounded-container bg-background p-3">
           <div className="flex items-center gap-2 sub-text">
             <GaugeIcon className="size-4" />
-            <span className="text-xs">{t("missions.difficulty") || "Difficulty"}</span>
+            <span className="text-xs truncate">{t("missions.difficulty") || "Time and Energy Cost"}</span>
           </div>
           <div className="mt-3">
             <Difficulty value={todo.difficulty || 3} />

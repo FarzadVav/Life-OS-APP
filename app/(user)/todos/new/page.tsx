@@ -86,7 +86,7 @@ function DifficultySelect({
   return (
     <Field.Root name="difficulty">
       <Field.Label className="mb-1 font-bold">
-        {t("missions.difficulty") || "Difficulty"}
+        {t("missions.difficulty") || "Time and Energy Cost"}
       </Field.Label>
 
       <SelectDialog
@@ -94,8 +94,8 @@ function DifficultySelect({
         items={items}
         value={value}
         onChange={(next) => onChange(Number(next))}
-        title={t("missions.difficulty") || "Difficulty"}
-        placeholder={t("missions.selectDifficulty") || "Select difficulty"}
+        title={t("missions.difficulty") || "Time and Energy Cost"}
+        placeholder={t("missions.selectDifficulty") || "Select Time and Energy Cost"}
         required
       />
 

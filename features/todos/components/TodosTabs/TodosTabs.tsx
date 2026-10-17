@@ -1,15 +1,14 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { AnimatePresence, motion } from "motion/react";
+import { motion } from "motion/react";
 
 import { Todo } from "../../types";
 import { todos as initialTodos } from "../../constants";
 import TodoCard from "../TodoCard/TodoCard";
 import TodoMissionCard from "../TodoMissionCard/TodoMissionCard";
-import { Button } from "@/features/general/components/ui/Button/Button";
+import SlideTabs, { SlideTabItem } from "@/features/general/components/ui/SlideTabs";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 
 function TodosTabs() {
@@ -92,126 +91,92 @@ function TodosTabs() {
     );
   };
 
+  const tabs: SlideTabItem[] = [
+    {
+      id: "today",
+      label: t("todos.today"),
+      href: "?tab=today",
+    },
+    {
+      id: "upcoming",
+      label: t("todos.upcoming"),
+      href: "?tab=upcoming",
+    },
+    {
+      id: "missions",
+      label: t("todos.missions") || "Missions",
+      href: "?tab=missions",
+    },
+  ];
+
   return (
-    <>
-      <div className="w-full flex gap-2">
-        <Button
-          nativeButton={false}
-          className="flex-1 justify-center rounded-container"
-          render={<Link href="?tab=today" />}
-          variant={activeTab === "today" ? "primary" : "card"}
-        >
-          {t("todos.today")}
-        </Button>
-        <Button
-          nativeButton={false}
-          className="flex-1 justify-center rounded-container"
-          render={<Link href="?tab=upcoming" />}
-          variant={activeTab === "upcoming" ? "primary" : "card"}
-        >
-          {t("todos.upcoming")}
-        </Button>
-        <Button
-          nativeButton={false}
-          className="flex-1 justify-center rounded-container"
-          render={<Link href="?tab=missions" />}
-          variant={activeTab === "missions" ? "primary" : "card"}
-        >
-          {t("todos.missions") || "Missions"}
-        </Button>
-      </div>
+    <SlideTabs
+      tabs={tabs}
+      activeId={activeTab}
+      between={
+        totalCount > 0 ? (
+          <div className="w-full rounded-container bg-card p-3 space-y-2">
+            <div className="flex items-center justify-between text-xs">
+              <span className="font-bold">
+                {activeTab === "today"
+                  ? t("todos.dailyMomentum")
+                  : activeTab === "upcoming"
+                    ? t("todos.upcomingTargets")
+                    : t("todos.activeMissions") || "Mission Progress"}
+              </span>
+              <span className="sub-text">
+                {t("todos.completedOf", {
+                  done: completedCount,
+                  total: totalCount,
+                })}
+              </span>
+            </div>
 
-      {totalCount > 0 && (
-        <div className="w-full rounded-container bg-card p-3 space-y-2">
-          <div className="flex items-center justify-between text-xs">
-            <span className="font-bold">
-              {activeTab === "today"
-                ? t("todos.dailyMomentum")
-                : activeTab === "upcoming"
-                  ? t("todos.upcomingTargets")
-                  : t("todos.activeMissions") || "Mission Progress"}
-            </span>
-            <span className="sub-text">
-              {t("todos.completedOf", {
-                done: completedCount,
-                total: totalCount,
-              })}
-            </span>
+            <div className="h-1.5 overflow-hidden rounded-container bg-card-thick">
+              <motion.div
+                initial={{ width: 0 }}
+                className="h-full rounded-container bg-foreground"
+                transition={{ duration: 0.6, ease: "easeOut" }}
+                animate={{ width: `${progressPercent}%` }}
+              />
+            </div>
           </div>
+        ) : null
+      }
+    >
+      <div className="w-full space-y-3">
+        {activeTab === "missions"
+          ? currentTodos.map((mission) => (
+              <TodoMissionCard
+                key={mission.id}
+                todo={mission}
+                onToggleAction={handleToggleMissionAction}
+                onToggleDiscipline={handleToggleMissionDiscipline}
+              />
+            ))
+          : currentTodos.map((todo) => (
+              <TodoCard key={todo.id} todo={todo} onToggle={handleToggle} />
+            ))}
 
-          <div className="h-1.5 overflow-hidden rounded-container bg-card-thick">
-            <motion.div
-              initial={{ width: 0 }}
-              className="h-full rounded-container bg-foreground"
-              transition={{ duration: 0.6, ease: "easeOut" }}
-              animate={{ width: `${progressPercent}%` }}
-            />
-          </div>
-        </div>
-      )}
-
-      <div className="w-full overflow-hidden rounded-container">
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.div
-            key={activeTab}
-            className="w-full space-y-3"
-            transition={{ ease: "linear", duration: 0.15 }}
-            initial={{
-              translateX:
-                activeTab === "today"
-                  ? "-10%"
-                  : activeTab === "missions"
-                    ? "10%"
-                    : "0%",
-              opacity: 0,
-              filter: "blur(4px)",
-            }}
-            animate={{ translateX: 0, opacity: 1, filter: "none" }}
-            exit={{
-              translateX:
-                activeTab === "today"
-                  ? "-10%"
-                  : activeTab === "missions"
-                    ? "10%"
-                    : "0%",
-              opacity: 0,
-              filter: "blur(4px)",
-            }}
+        {currentTodos.length === 0 && (
+          <div
+            className="
+              flex w-full flex-1
+              items-center justify-center
+              rounded-container
+              border-2 border-dashed
+              p-6
+            "
           >
-            {activeTab === "missions"
-              ? currentTodos.map((mission) => (
-                  <TodoMissionCard
-                    key={mission.id}
-                    todo={mission}
-                    onToggleAction={handleToggleMissionAction}
-                    onToggleDiscipline={handleToggleMissionDiscipline}
-                  />
-                ))
-              : currentTodos.map((todo) => (
-                  <TodoCard key={todo.id} todo={todo} onToggle={handleToggle} />
-                ))}
-
-            {currentTodos.length === 0 && (
-              <div
-                className="
-                  flex w-full flex-1
-                  items-center justify-center
-                  rounded-container
-                  border-2 border-dashed
-                  p-6
-                "
-              >
-                <p className="sub-text">
-                  {activeTab === "missions"
-                    ? t("todos.noMissions") || "You haven't any missions"
-                    : t("todos.noTodos") || "You haven't any todos in this section"}
-                </p>
-              </div>
-            )}
-          </motion.div>
-        </AnimatePresence>
+            <p className="sub-text">
+              {activeTab === "missions"
+                ? t("todos.noMissions") || "You haven't any missions"
+                : t("todos.noTodos") || "You haven't any todos in this section"}
+            </p>
+          </div>
+        )}
       </div>
-    </>
+    </SlideTabs>
   );
 }
 
