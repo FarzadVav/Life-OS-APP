@@ -1,0 +1,448 @@
+import { JournalCategory, FrameworkCategory, FrameworkSection, TodoType } from '../entities';
+
+export const SEED_USER = {
+  id: 1,
+  username: 'admin',
+  password: 'password123',
+  name: 'Farhad Vahdati',
+  email: 'admin@lifeos.local',
+  locale: 'fa',
+  colorScheme: 'system',
+};
+
+export const SEED_TODOS = [
+  // --- Daily Focus ---
+  {
+    title: 'Review pull requests and deploy SaaS hotfix',
+    type: TodoType.DAILY,
+    deadline: '10:30',
+    isDone: true,
+  },
+  {
+    title: 'Cold shower and 20-minute mobility routine',
+    type: TodoType.DAILY,
+    deadline: '07:00',
+    isDone: true,
+  },
+  {
+    title: 'Deep work: Write 500 lines of core logic',
+    type: TodoType.DAILY,
+    deadline: '13:00',
+    isDone: false,
+  },
+  {
+    title: 'Read 20 pages of Systems Architecture',
+    type: TodoType.DAILY,
+    deadline: '18:00',
+    isDone: false,
+  },
+  {
+    title: 'Track macros and drink 3L water',
+    type: TodoType.DAILY,
+    deadline: '21:30',
+    isDone: false,
+  },
+
+  // --- Upcoming Targets ---
+  {
+    title: 'Prepare presentation for Q4 product roadmap',
+    type: TodoType.UPCOMING,
+    deadline: '2026-10-22',
+    isDone: false,
+  },
+  {
+    title: 'Finalize Stripe & ZarinPal payment gateway integration',
+    type: TodoType.UPCOMING,
+    deadline: '2026-10-25',
+    isDone: false,
+  },
+  {
+    title: 'Schedule quarterly team sync and performance reviews',
+    type: TodoType.UPCOMING,
+    deadline: '2026-10-28',
+    isDone: false,
+  },
+  {
+    title: 'Renew developer server & cloud certificates',
+    type: TodoType.UPCOMING,
+    deadline: '2026-11-02',
+    isDone: true,
+  },
+  {
+    title: 'Deploy public marketing landing page v2',
+    type: TodoType.UPCOMING,
+    deadline: '2026-11-10',
+    isDone: false,
+  },
+
+  // --- Missions ---
+  {
+    title: 'Launch LifeOS v1 MVP to initial beta users',
+    type: TodoType.MISSION,
+    deadline: '2026-10-30',
+    difficulty: 4,
+    isDone: false,
+    actions: [
+      {
+        title: 'Finalize offline sync and cache invalidation',
+        deadline: '2026-10-18',
+        isDone: true,
+      },
+      {
+        title: 'Draft documentation and interactive help guides',
+        deadline: '2026-10-22',
+        isDone: true,
+      },
+      {
+        title: 'Deploy to staging and run smoke tests',
+        deadline: '2026-10-25',
+        isDone: false,
+      },
+      {
+        title: 'Send beta invites to 50 curated high-performers',
+        deadline: '2026-10-30',
+        isDone: false,
+      },
+    ],
+    disciplines: [
+      {
+        title: 'Work on core product architecture daily',
+        repeatInterval: 'Every 1 Day',
+        history: [
+          { date: '2026-10-15T10:00:00Z', isDone: true },
+          { date: '2026-10-16T10:00:00Z', isDone: true },
+          { date: '2026-10-17T10:00:00Z', isDone: true },
+        ],
+      },
+      {
+        title: 'Collect feedback from potential early adopters',
+        repeatInterval: 'Every 2 Days',
+        history: [
+          { date: '2026-10-15T14:00:00Z', isDone: true },
+          { date: '2026-10-17T14:00:00Z', isDone: true },
+        ],
+      },
+    ],
+  },
+  {
+    title: 'Build automated wealth compounding engine',
+    type: TodoType.MISSION,
+    deadline: '2026-12-15',
+    difficulty: 5,
+    isDone: false,
+    actions: [
+      {
+        title: 'Audit recurring monthly expenses & unnecessary subscriptions',
+        deadline: '2026-10-20',
+        isDone: true,
+      },
+      {
+        title: 'Automate monthly DCA into global index funds and gold reserve',
+        deadline: '2026-11-01',
+        isDone: false,
+      },
+      {
+        title: 'Establish 6-month liquid emergency buffer in high-yield account',
+        deadline: '2026-12-15',
+        isDone: false,
+      },
+    ],
+    disciplines: [
+      {
+        title: 'Track discretionary expenses before sleep',
+        repeatInterval: 'Every 1 Day',
+        history: [
+          { date: '2026-10-16T21:00:00Z', isDone: true },
+          { date: '2026-10-17T21:00:00Z', isDone: true },
+        ],
+      },
+    ],
+  },
+  {
+    title: 'Run a sub-4 hour marathon',
+    type: TodoType.MISSION,
+    deadline: '2026-11-20',
+    difficulty: 3,
+    isDone: false,
+    actions: [
+      {
+        title: 'Complete 28km Sunday long run with negative splits',
+        deadline: '2026-10-24',
+        isDone: true,
+      },
+      {
+        title: 'Optimize race day carb loading & hydration protocol',
+        deadline: '2026-11-10',
+        isDone: false,
+      },
+      {
+        title: 'Taper volume by 40% two weeks prior to race day',
+        deadline: '2026-11-15',
+        isDone: false,
+      },
+    ],
+    disciplines: [
+      {
+        title: 'Morning mobility, calf stretches, and foam rolling',
+        repeatInterval: 'Every 1 Day',
+        history: [
+          { date: '2026-10-16T07:00:00Z', isDone: true },
+          { date: '2026-10-17T07:00:00Z', isDone: true },
+        ],
+      },
+      {
+        title: 'Zone 2 heart rate aerobic endurance run (60 mins)',
+        repeatInterval: 'Every 2 Days',
+        history: [
+          { date: '2026-10-15T06:30:00Z', isDone: true },
+          { date: '2026-10-17T06:30:00Z', isDone: true },
+        ],
+      },
+    ],
+  },
+];
+
+export const SEED_JOURNALS = [
+  {
+    title: 'Reflecting on deep work & morning momentum',
+    content:
+      '<p>Woke up at 6:30 AM without alarm. Completed a 2-hour uninterrupted coding session on the core architecture. When external notifications are muted, mental clarity reaches a completely different plane. Need to protect this time slot religiously.</p>',
+    type: JournalCategory.LOGS,
+    createdAt: new Date('2026-10-17T07:45:00Z'),
+  },
+  {
+    title: 'SaaS micro-features and customer onboarding flow',
+    content:
+      '<p>Idea for onboarding: Instead of a generic 5-step tour that users immediately skip, trigger an interactive challenge that lets them configure their first real mission in under 60 seconds. Frictionless "aha" moment.</p>',
+    type: JournalCategory.IDEAS,
+    createdAt: new Date('2026-10-16T18:20:00Z'),
+  },
+  {
+    title: 'Calm evening after heavy workout',
+    content:
+      '<p>Pushed hard in today\'s pull-up and upper body training session. Feeling peaceful and physically grounded. Experiencing gratitude for health, endurance, and quiet evenings where I can just read and breathe.</p>',
+    type: JournalCategory.FEELINGS,
+    createdAt: new Date('2026-10-15T21:15:00Z'),
+  },
+  {
+    title: 'Daily execution log: Feature-based modular refactoring',
+    content:
+      '<p>Implemented the feature architecture across the app. Cleaned up dependencies, harmonized UI tokens, and verified Drawer interactions. Clean code reduces cognitive anxiety significantly.</p>',
+    type: JournalCategory.LOGS,
+    createdAt: new Date('2026-10-14T14:30:00Z'),
+  },
+  {
+    title: 'Vision 2028: Autonomous freedom & craftsmanship',
+    content:
+      '<p>Envisioning myself running independent software products with hundreds of happy users, living in a quiet place close to nature, with full control over time and creative energy. Daily discipline today constructs that reality.</p>',
+    type: JournalCategory.THOUGHTS,
+    createdAt: new Date('2026-10-13T10:00:00Z'),
+  },
+  {
+    title: 'A wish for sustained curiosity & humility',
+    content:
+      '<p>I wish to never lose the hunger to learn foundational things from scratch — whether it\'s low-level systems, new languages, or human psychology. True confidence is quiet and always curious.</p>',
+    type: JournalCategory.LESSONS,
+    createdAt: new Date('2026-10-12T22:40:00Z'),
+  },
+  {
+    title: 'Core engineering principles checklist',
+    content:
+      '<p>Key principles: 1. Keep state local until needed globally. 2. Build for resilience and offline-first. 3. Prefer declarative primitives over complex imperatives. 4. Never sacrifice user experience for micro-optimizations.</p>',
+    type: JournalCategory.NOTES,
+    createdAt: new Date('2026-10-10T16:00:00Z'),
+  },
+  {
+    title: 'Mental stillness during high pressure deadlines',
+    content:
+      '<p>Urgency is often an emotional illusion created by disorganized thoughts. When feeling overwhelmed, write down all moving pieces on physical paper, categorize by priority, and tackle solely the first item with zero regard for the rest.</p>',
+    type: JournalCategory.THOUGHTS,
+    createdAt: new Date('2026-10-08T11:20:00Z'),
+  },
+];
+
+export const SEED_FRAMEWORK_ITEMS = [
+  // 1. Career
+  {
+    category: FrameworkCategory.CAREER,
+    section: FrameworkSection.VISIONS,
+    title: 'Autonomous Software Craftsmanship & High-Impact Products',
+    content:
+      '<p>Build and scale sovereign software systems that solve real problems for tens of thousands of users. Master distributed architecture and maintain relentless engineering quality without bureaucratic compromises.</p>',
+  },
+  {
+    category: FrameworkCategory.CAREER,
+    section: FrameworkSection.RULES,
+    title: 'Never ship without testing core invariants',
+    content:
+      '<p>Always verify critical user journeys, edge cases, and offline states before deploying. Speed is a byproduct of high confidence, not sloppy shortcuts.</p>',
+  },
+  {
+    category: FrameworkCategory.CAREER,
+    section: FrameworkSection.CONCEPTS,
+    title: 'First Principles & System Bottlenecks (Theory of Constraints)',
+    content:
+      '<p>Identify the single constraining factor in any project or architecture. Optimize only that bottleneck; optimizing non-bottlenecks creates illusionary progress.</p>',
+  },
+
+  // 2. Mindset
+  {
+    category: FrameworkCategory.MINDSET,
+    section: FrameworkSection.VISIONS,
+    title: 'Stoic Equanimity & Unshakeable Inner Clarity',
+    content:
+      '<p>Remain unperturbed by external chaos, delays, or opinions. Cultivate an inner citadel of reasoned decision-making, genuine humility, and relentless focus on what can be influenced.</p>',
+  },
+  {
+    category: FrameworkCategory.MINDSET,
+    section: FrameworkSection.RULES,
+    title: '10-Second Pause Before Responding Under Stress',
+    content:
+      '<p>When triggered by an unexpected crisis, harsh comment, or unexpected obstacle, consciously breathe and wait 10 seconds. Never respond from acute emotional agitation.</p>',
+  },
+  {
+    category: FrameworkCategory.MINDSET,
+    section: FrameworkSection.CONCEPTS,
+    title: 'Dichotomy of Control (Epictetus)',
+    content:
+      '<p>Some things are in our control (our thoughts, reactions, choices, actions) and others are not (outcomes, weather, other people\'s behaviors). Invest 100% of energy into the former.</p>',
+  },
+
+  // 3. Health
+  {
+    category: FrameworkCategory.HEALTH,
+    section: FrameworkSection.VISIONS,
+    title: 'Agile, Resilient Body with High Aerobic & Strength Reserve',
+    content:
+      '<p>Maintain single-digit body fat, sub-4-hour marathon cardiovascular base, and pain-free joints through mobility and consistent calisthenics.</p>',
+  },
+  {
+    category: FrameworkCategory.HEALTH,
+    section: FrameworkSection.RULES,
+    title: 'No Screens 60 Minutes Before Sleep & Consistent Sleep Window',
+    content:
+      '<p>Protect circadian rhythms. Dim household lights after 9:30 PM, put phone on charger in another room, and read physical books to wind down.</p>',
+  },
+  {
+    category: FrameworkCategory.HEALTH,
+    section: FrameworkSection.CONCEPTS,
+    title: 'Zone 2 Cardio & Mitochondrial Density',
+    content:
+      '<p>Low-intensity aerobic training builds capillary and mitochondrial networks, powering all other physical and cognitive capacities without inducing excessive systemic fatigue.</p>',
+  },
+
+  // 4. Finance
+  {
+    category: FrameworkCategory.FINANCE,
+    section: FrameworkSection.VISIONS,
+    title: 'Absolute Financial Autonomy & Multigenerational Resilience',
+    content:
+      '<p>Own assets that produce passive cash flow exceeding 3x living expenses, freeing all cognitive surplus for meaningful creative pursuits.</p>',
+  },
+  {
+    category: FrameworkCategory.FINANCE,
+    section: FrameworkSection.RULES,
+    title: 'Save & Invest First, Spend What Remains',
+    content:
+      '<p>Automate 40%+ of all net monthly earnings directly into investment accounts on payday. Lifestyle inflation must strictly lag income growth by at least 2 years.</p>',
+  },
+  {
+    category: FrameworkCategory.FINANCE,
+    section: FrameworkSection.CONCEPTS,
+    title: 'Compound Interest & Asymmetric Risk/Reward',
+    content:
+      '<p>Protect downside first (zero high-interest debt, liquid emergency fund). Then pursue convex opportunities where potential gain vastly outweighs the capped loss.</p>',
+  },
+
+  // 5. Behavior
+  {
+    category: FrameworkCategory.BEHAVIOR,
+    section: FrameworkSection.VISIONS,
+    title: 'Frictionless Execution & Deep Focus Habit Architecture',
+    content:
+      '<p>A lifestyle where essential habits happen automatically without relying on transient bursts of motivation.</p>',
+  },
+  {
+    category: FrameworkCategory.BEHAVIOR,
+    section: FrameworkSection.RULES,
+    title: 'Never miss twice in a row',
+    content:
+      '<p>Missing a habit once is an accident; missing it twice is the beginning of a new, negative habit. Re-engage immediately the next day.</p>',
+  },
+  {
+    category: FrameworkCategory.BEHAVIOR,
+    section: FrameworkSection.CONCEPTS,
+    title: 'Habit Stacking & Implementation Intentions',
+    content:
+      '<p>Anchor a desired new behavior immediately after an established daily routine: "After I pour my morning water, I will sit down for 20 minutes of deep study."</p>',
+  },
+
+  // 6. Social
+  {
+    category: FrameworkCategory.SOCIAL,
+    section: FrameworkSection.VISIONS,
+    title: 'Deep, Trusted Circle of Synergistic Companions',
+    content:
+      '<p>Nurture lifelong friendships with individuals committed to truth, mutual elevation, craftsmanship, and compassionate accountability.</p>',
+  },
+  {
+    category: FrameworkCategory.SOCIAL,
+    section: FrameworkSection.RULES,
+    title: 'Weekly deliberate outreach to one close friend or family member',
+    content:
+      '<p>Never let connections drift due to busy schedules. Send an authentic update, call, or plan an in-person meal every week.</p>',
+  },
+  {
+    category: FrameworkCategory.SOCIAL,
+    section: FrameworkSection.CONCEPTS,
+    title: 'Active Constructive Responding',
+    content:
+      '<p>When others share good news, celebrate enthusiastically with authentic questions rather than minimizing or changing the subject.</p>',
+  },
+
+  // 7. Lifestyle
+  {
+    category: FrameworkCategory.LIFESTYLE,
+    section: FrameworkSection.VISIONS,
+    title: 'Minimalist, Nature-Adjacent Living with Creative Sanctuary',
+    content:
+      '<p>Surroundings composed only of well-made, functional objects. Regular access to trails, fresh air, natural sunlight, and quiet work spaces.</p>',
+  },
+  {
+    category: FrameworkCategory.LIFESTYLE,
+    section: FrameworkSection.RULES,
+    title: 'Quarterly declutter: One in, one out',
+    content:
+      '<p>Physical clutter leads directly to cognitive clutter. Regularly donate or recycle unused clothes, books, and gadgets.</p>',
+  },
+  {
+    category: FrameworkCategory.LIFESTYLE,
+    section: FrameworkSection.CONCEPTS,
+    title: 'Essentialism: The Disciplined Pursuit of Less',
+    content:
+      '<p>If it is not a definite yes, it is a clear no. Protect focus for the highest-leverage vital few rather than the trivial many.</p>',
+  },
+
+  // 8. Knowledge
+  {
+    category: FrameworkCategory.KNOWLEDGE,
+    section: FrameworkSection.VISIONS,
+    title: 'Polymathic Grasp of Core Universal Disciplines',
+    content:
+      '<p>Deep comprehension of computation, evolutionary biology, economics, physics, and cognitive psychology to reason across domains seamlessly.</p>',
+  },
+  {
+    category: FrameworkCategory.KNOWLEDGE,
+    section: FrameworkSection.RULES,
+    title: 'Read 30 minutes of non-fiction book every single day',
+    content:
+      '<p>Social media feeds are ephemeral noise; books are condensed wisdom. Read with a pen or note app to extract core mental models.</p>',
+  },
+  {
+    category: FrameworkCategory.KNOWLEDGE,
+    section: FrameworkSection.CONCEPTS,
+    title: 'Feynman Technique for Deep Understanding',
+    content:
+      '<p>To test whether you truly understand a concept, explain it in simple language as if teaching an intelligent 10-year-old. Identify gaps where jargon hides ignorance.</p>',
+  },
+];

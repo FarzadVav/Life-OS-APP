@@ -1,0 +1,25 @@
+import { OptionalProps } from '@mikro-orm/core';
+import { Entity, ManyToOne, Property } from '@mikro-orm/decorators/legacy';
+import { BaseEntity } from './BaseEntity';
+import { Todo } from './Todo';
+import { TodoActionRepository } from '@/features/todos/repositories/todo-action.repository';
+
+@Entity({ tableName: 'todo_actions', repository: () => TodoActionRepository })
+export class TodoAction extends BaseEntity {
+  [OptionalProps]?: 'createdAt' | 'updatedAt' | 'isDone';
+
+  @Property({ type: 'string' })
+  title!: string;
+
+  /**
+   * Deadline date string in "YYYY-MM-DD" format
+   */
+  @Property({ type: 'string' })
+  deadline!: string;
+
+  @Property({ type: 'boolean', default: false })
+  isDone: boolean = false;
+
+  @ManyToOne(() => Todo, { nullable: false, deleteRule: 'cascade' })
+  mission!: Todo;
+}
