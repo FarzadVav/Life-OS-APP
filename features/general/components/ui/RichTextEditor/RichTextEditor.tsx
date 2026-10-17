@@ -1,12 +1,15 @@
 "use client";
 
-import { useEffect } from "react";
-import { useEditor, EditorContent } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
-import Placeholder from "@tiptap/extension-placeholder";
 import { cn } from "cn";
+import { useEffect } from "react";
+import StarterKit from "@tiptap/starter-kit";
+import { Undo2Icon, Redo2Icon } from "lucide-react";
+import { useEditor, EditorContent } from "@tiptap/react";
+import Placeholder from "@tiptap/extension-placeholder";
+
 import { RichTextToolbar } from "./RichTextToolbar";
 import { toEditorHtml } from "@/features/general/lib/richText";
+import { useLocale } from "../../module/LocaleProvider/LocaleProvider";
 
 export type RichTextEditorProps = {
   value: string;
@@ -35,6 +38,10 @@ export function RichTextEditor({
           keepMarks: true,
           keepAttributes: false,
         },
+        orderedList: {
+          keepMarks: true,
+          keepAttributes: false,
+        },
       }),
       Placeholder.configure({
         placeholder: placeholder || "Write your content here...",
@@ -47,7 +54,7 @@ export function RichTextEditor({
     editorProps: {
       attributes: {
         class:
-          "tiptap-content min-h-[320px] outline-none select-text cursor-text text-base leading-relaxed py-2",
+          "tiptap-content overflow-y-auto flex-1 outline-none select-text cursor-text text-base leading-relaxed py-2",
       },
     },
     onUpdate: ({ editor: currentEditor }) => {
@@ -60,6 +67,8 @@ export function RichTextEditor({
     },
   });
 
+  const { t } = useLocale();
+
   // Keep content in sync if value changed from outside
   useEffect(() => {
     if (!editor) return;
@@ -71,22 +80,51 @@ export function RichTextEditor({
   }, [value, editor]);
 
   return (
-    <div className={cn("flex flex-1 flex-col overflow-hidden", className)}>
-      {showToolbar ? <RichTextToolbar editor={editor} /> : null}
+    <>
+      <div className="flex flex-col h-[calc(100%-10.5rem)]">
+        {showToolbar ? <RichTextToolbar editor={editor} /> : null}
 
-      <div
-        className="flex-1 overflow-y-auto px-4 py-6 md:px-8 cursor-text"
-        onClick={() => {
+        <div onClick={() => {
           if (editor && !editor.isFocused) {
             editor.commands.focus("end");
           }
-        }}
-      >
-        <div className="mx-auto max-w-3xl min-h-full">
+        }}>
           <EditorContent editor={editor} />
         </div>
       </div>
-    </div>
+
+      {editor ? (
+        <div className="flex h-14 shrink-0 items-center justify-end gap-3 border-t bg-card/40 px-4 sm:px-6 backdrop-blur-md [&>button]:w-1/2 sticky bottom-14">
+          {/* Undo */}
+          <button
+            type="button"
+            disabled={!editor.can().undo()}
+            onMouseDown={(e) => {
+              e.preventDefault();
+              editor.chain().focus().undo().run();
+            }}
+            className="flex items-center rounded-component p-1.5 text-foreground/70 transition-colors hover:bg-card-thick hover:text-foreground disabled:pointer-events-none disabled:opacity-30 cursor-pointer w-1/2 justify-center border"
+            title={t("editor.undo") || "Undo"}
+          >
+            <Undo2Icon className="size-4" />
+          </button>
+
+          {/* Redo */}
+          <button
+            type="button"
+            disabled={!editor.can().redo()}
+            onMouseDown={(e) => {
+              e.preventDefault();
+              editor.chain().focus().redo().run();
+            }}
+            className="flex items-center rounded-component p-1.5 text-foreground/70 transition-colors hover:bg-card-thick hover:text-foreground disabled:pointer-events-none disabled:opacity-30 cursor-pointer w-1/2 justify-center border"
+            title={t("editor.redo") || "Redo"}
+          >
+            <Redo2Icon className="size-4" />
+          </button>
+        </div>
+      ) : null}
+    </>
   );
 }
 

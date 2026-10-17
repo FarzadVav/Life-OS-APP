@@ -368,12 +368,14 @@
     }
   },
   "editor": {
-    "heading": "Heading (H1)",
-    "title": "Title (H3)",
+    "heading": "Heading",
+    "title": "Title",
     "paragraph": "Paragraph",
     "bulletList": "Bullet List",
+    "numberList": "Number List",
+    "close": "Close",
     "done": "Done",
-    "fullscreen": "Full Screen Editor",
+    "fullscreen": "Text Editor",
     "clickToWrite": "Click to write content...",
     "undo": "Undo",
     "redo": "Redo",
