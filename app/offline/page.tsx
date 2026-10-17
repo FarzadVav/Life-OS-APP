@@ -1,206 +1,54 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import {
-  WifiOff,
-  RefreshCw,
-  Home,
-  CheckSquare,
-  BookOpen,
-  Layers,
-  Sparkles,
-  ArrowLeft,
-  CheckCircle2,
-} from "lucide-react";
-import { motion } from "motion/react";
+import { WifiOff, RefreshCw } from "lucide-react";
+
 import { Button } from "@/features/general/components/ui/Button/Button";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 
 export default function OfflinePage() {
   const { t } = useLocale();
-  const router = useRouter();
-  const [isChecking, setIsChecking] = useState(false);
-  const [onlineNow, setOnlineNow] = useState(false);
+  const [isRetrying, setIsRetrying] = useState(false);
 
   useEffect(() => {
     const handleOnline = () => {
-      setOnlineNow(true);
-      setTimeout(() => {
-        router.replace("/");
-        router.refresh();
-      }, 1000);
+      window.location.reload();
     };
 
     window.addEventListener("online", handleOnline);
     return () => window.removeEventListener("online", handleOnline);
-  }, [router]);
+  }, []);
 
-  const checkConnection = async () => {
-    setIsChecking(true);
-    try {
-      await fetch("/favicon.ico", { cache: "no-store", method: "HEAD" });
-      setOnlineNow(true);
-      setTimeout(() => {
-        router.replace("/");
-        router.refresh();
-      }, 800);
-    } catch {
-      setOnlineNow(false);
-    } finally {
-      setIsChecking(false);
-    }
+  const handleRetry = () => {
+    setIsRetrying(true);
+    window.location.reload();
   };
 
-  const offlineShortcuts = [
-    { title: t("todos.title"), href: "/", icon: CheckSquare, desc: t("offline.todosDesc") },
-    { title: t("journals.title"), href: "/journals", icon: BookOpen, desc: t("offline.journalsDesc") },
-    { title: t("framework.title"), href: "/framework", icon: Layers, desc: t("framework.subtitle") },
-  ];
-
   return (
-    <main className="min-h-screen w-full flex flex-col justify-between p-4 sm:p-6 pb-20">
-      {/* Top Header */}
-      <header className="w-full flex items-center justify-between py-2">
-        <button
-          onClick={() => router.back()}
-          type="button"
-          className="flex items-center gap-1.5 text-xs text-foreground/70 hover:text-foreground transition-colors cursor-pointer"
-        >
-          <ArrowLeft className="size-4 rtl:rotate-180" />
-          <span>{t("offline.back")}</span>
-        </button>
-        <div className="flex items-center gap-2 px-3 py-1 rounded-container bg-card-thick border border-foreground/20 text-foreground text-xs font-medium">
-          <span className="size-1.5 bg-foreground animate-pulse" />
-          <span>{t("offline.mode")}</span>
+    <main className="min-h-screen w-full flex items-center justify-center p-4">
+      <div className="w-full max-w-sm rounded-container bg-card border border-foreground/15 p-6 sm:p-8 flex flex-col items-center text-center shadow-lg">
+        <div className="size-16 rounded-container bg-card-thick border border-foreground/10 flex items-center justify-center mb-5 text-foreground">
+          <WifiOff className="size-8" />
         </div>
-      </header>
 
-      {/* Main Hero Card */}
-      <div className="flex-1 flex flex-col items-center justify-center my-8 text-center max-w-md mx-auto w-full">
-        <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.4 }}
-          className="relative mb-6"
+        <h1 className="text-xl font-bold text-foreground">
+          {t("offline.title")}
+        </h1>
+
+        <p className="mt-2 text-xs sm:text-sm text-foreground/60 leading-relaxed">
+          {t("offline.description")}
+        </p>
+
+        <Button
+          variant="primary"
+          onClick={handleRetry}
+          disabled={isRetrying}
+          className="mt-6 w-full h-10 rounded-container text-xs sm:text-sm font-semibold flex items-center justify-center gap-2"
         >
-          <div className="absolute inset-0 rounded-container bg-card-thick/40 blur-2xl animate-pulse" />
-          <div className="relative size-24 rounded-container bg-card border border-foreground/15 flex items-center justify-center shadow-2xl">
-            <WifiOff className="size-10 text-foreground" />
-          </div>
-        </motion.div>
-
-        <motion.h1
-          initial={{ y: 15, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.1, duration: 0.4 }}
-          className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground"
-        >
-          {onlineNow ? t("offline.restored") : t("offline.noConnection")}
-        </motion.h1>
-
-        <motion.p
-          initial={{ y: 15, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.2, duration: 0.4 }}
-          className="mt-3 text-sm text-foreground/60 leading-relaxed max-w-sm"
-        >
-          {onlineNow
-            ? t("offline.restoredDesc")
-            : t("offline.offlineDesc")}
-        </motion.p>
-
-        {/* Action Controls */}
-        <motion.div
-          initial={{ y: 15, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.3, duration: 0.4 }}
-          className="mt-6 flex flex-wrap items-center justify-center gap-3 w-full"
-        >
-          <Button
-            variant="primary"
-            onClick={checkConnection}
-            disabled={isChecking || onlineNow}
-            className="h-11 px-6 rounded-container text-sm font-semibold flex items-center gap-2 shadow-lg"
-          >
-            <RefreshCw className={`size-4 ${isChecking ? "animate-spin" : ""}`} />
-            <span>{isChecking ? t("offline.checking") : onlineNow ? t("offline.reconnected") : t("offline.retry")}</span>
-          </Button>
-
-          <Button
-            variant="card"
-            render={<Link href="/" />}
-            nativeButton={false}
-            className="h-11 px-5 rounded-container text-sm font-medium flex items-center gap-2 border border-foreground/10"
-          >
-            <Home className="size-4" />
-            <span>{t("offline.home")}</span>
-          </Button>
-        </motion.div>
-
-        {/* Cached Sections */}
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.4, duration: 0.4 }}
-          className="mt-10 w-full"
-        >
-          <h2 className="text-xs font-semibold text-foreground/50 uppercase tracking-wider mb-3 text-start">
-            {t("offline.quickNav")}
-          </h2>
-          <div className="grid grid-cols-1 gap-2.5">
-            {offlineShortcuts.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="group flex items-center justify-between p-3.5 rounded-container bg-card hover:bg-card-thick border border-foreground/10 transition-colors text-start"
-              >
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="size-9 rounded-component bg-foreground/5 group-hover:bg-foreground/10 flex items-center justify-center shrink-0 transition-colors">
-                    <item.icon className="size-4 text-foreground/80" />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-sm font-semibold text-foreground leading-tight">{item.title}</p>
-                    <p className="text-xs text-foreground/60 leading-tight mt-0.5 truncate">{item.desc}</p>
-                  </div>
-                </div>
-                <span className="text-xs text-foreground/40 group-hover:text-foreground/70 transition-colors flex items-center gap-1 shrink-0 ml-2">
-                  <span>{t("offline.open")}</span>
-                  <span className="inline-block rtl:rotate-180">→</span>
-                </span>
-              </Link>
-            ))}
-          </div>
-        </motion.div>
-
-        {/* Offline Features Pill */}
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.5, duration: 0.4 }}
-          className="mt-6 w-full p-4 rounded-container bg-card-thick/60 border border-foreground/10 text-start"
-        >
-          <div className="flex items-center gap-2 mb-2 text-xs font-semibold text-foreground/80">
-            <Sparkles className="size-3.5 text-foreground" />
-            <span>{t("offline.whatHappens")}</span>
-          </div>
-          <ul className="space-y-1.5 text-xs text-foreground/60">
-            <li className="flex items-center gap-2">
-              <CheckCircle2 className="size-3.5 text-foreground shrink-0" />
-              <span>{t("offline.cachedPages")}</span>
-            </li>
-            <li className="flex items-center gap-2">
-              <CheckCircle2 className="size-3.5 text-foreground shrink-0" />
-              <span>{t("offline.requestsQueue")}</span>
-            </li>
-          </ul>
-        </motion.div>
+          <RefreshCw className={`size-4 ${isRetrying ? "animate-spin" : ""}`} />
+          <span>{t("offline.retry")}</span>
+        </Button>
       </div>
-
-      <footer className="text-center text-[11px] text-foreground/40">
-        {t("offline.footer")}
-      </footer>
     </main>
   );
 }

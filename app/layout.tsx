@@ -9,7 +9,6 @@ import { getDictionary } from "@/features/general/lib/i18n/dictionary";
 import PwaScript from "@/features/general/components/static/PwaScript/PwaScript";
 import PwaManager from "@/features/general/components/module/PwaManager/PwaManager";
 import SplashScreen from "@/features/general/components/static/SplashScreen/SplashScreen";
-import OfflineBanner from "@/features/general/components/module/OfflineBanner/OfflineBanner";
 import ThemeProvider from "@/features/general/components/module/ThemeProvider/ThemeProvider";
 import LocaleProvider from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 
@@ -76,7 +75,6 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       <body className="max-w-3xl mx-auto">
         <ThemeProvider>
           <LocaleProvider locale={locale} dictionary={dictionary}>
-            <OfflineBanner />
             <PwaManager />
             <SplashScreen>{children}</SplashScreen>
           </LocaleProvider>

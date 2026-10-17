@@ -229,12 +229,7 @@
   "search": {
     "title": "Search"
   },
-  "offlineBanner": {
-    "checking": "Checking...",
-    "retry": "Retry",
-    "pendingRetry": "Pending requests will retry once back online.",
-    "streamIn": "Content will stream in automatically once back online."
-  },
+
   "pwa": {
     "updateAvailable": "Update Available",
     "freshVersion": "A fresh version of Arrow Up is ready.",
@@ -273,25 +268,9 @@
     "notSet": "Not set"
   },
   "offline": {
-    "back": "Back",
-    "mode": "Offline Mode",
-    "restored": "Connection Restored!",
-    "noConnection": "No Internet Connection",
-    "restoredDesc": "Your device is back online. Syncing pending requests and reloading...",
-    "offlineDesc": "Arrow Up is running in offline mode. Your cached data and app shell remain fully accessible.",
-    "checking": "Checking Connection...",
-    "reconnected": "Reconnected",
-    "retry": "Retry Connection",
-    "home": "Home",
-    "whatHappens": "What happens while offline?",
-    "cachedPages": "Cached pages load without interruption",
-    "requestsQueue": "Pending server requests queue and retry automatically",
-    "todosDesc": "Review daily actions",
-    "journalsDesc": "Reflect and review logs",
-    "missionsDesc": "Track active milestones",
-    "quickNav": "Quick Navigation (Cached)",
-    "open": "Open",
-    "footer": "Arrow Up · Progressive Web App"
+    "title": "No Internet Connection",
+    "description": "Please check your network connection and try again.",
+    "retry": "Try Again"
   },
   "help": {
     "label": "Help & Guide",
