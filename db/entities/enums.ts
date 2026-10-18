@@ -19,7 +19,6 @@ export enum FrameworkCategory {
   SOCIAL = 'Social',
   HEALTH = 'Health',
   BEHAVIOR = 'Behavior',
-  FINANCE = 'Finance',
   LIFESTYLE = 'Lifestyle',
   KNOWLEDGE = 'Knowledge',
 }

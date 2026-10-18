@@ -331,29 +331,6 @@ export const SEED_FRAMEWORK_ITEMS = [
       '<p>Low-intensity aerobic training builds capillary and mitochondrial networks, powering all other physical and cognitive capacities without inducing excessive systemic fatigue.</p>',
   },
 
-  // 4. Finance
-  {
-    category: FrameworkCategory.FINANCE,
-    section: FrameworkSection.VISIONS,
-    title: 'Absolute Financial Autonomy & Multigenerational Resilience',
-    content:
-      '<p>Own assets that produce passive cash flow exceeding 3x living expenses, freeing all cognitive surplus for meaningful creative pursuits.</p>',
-  },
-  {
-    category: FrameworkCategory.FINANCE,
-    section: FrameworkSection.RULES,
-    title: 'Save & Invest First, Spend What Remains',
-    content:
-      '<p>Automate 40%+ of all net monthly earnings directly into investment accounts on payday. Lifestyle inflation must strictly lag income growth by at least 2 years.</p>',
-  },
-  {
-    category: FrameworkCategory.FINANCE,
-    section: FrameworkSection.CONCEPTS,
-    title: 'Compound Interest & Asymmetric Risk/Reward',
-    content:
-      '<p>Protect downside first (zero high-interest debt, liquid emergency fund). Then pursue convex opportunities where potential gain vastly outweighs the capped loss.</p>',
-  },
-
   // 5. Behavior
   {
     category: FrameworkCategory.BEHAVIOR,

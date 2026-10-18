@@ -164,7 +164,6 @@
       "social": "Social",
       "health": "Health",
       "behavior": "Behavior",
-      "finance": "Finance",
       "lifestyle": "Lifestyle",
       "knowledge": "Knowledge"
     },
@@ -174,7 +173,6 @@
       "social": "Lifelong trusted circle, deep connection, and companionship",
       "health": "Physical resilience, aerobic endurance, mobility, and sleep",
       "behavior": "Frictionless habit architecture, discipline, and routines",
-      "finance": "Financial autonomy, compounding assets, and downside protection",
       "lifestyle": "Minimalist sanctuary, intentional spaces, and nature access",
       "knowledge": "Foundational reading, polymathic models, and deep learning"
     },
@@ -340,7 +338,7 @@
       "title": "New Framework Item Guide",
       "subtitle": "Articulate a core vision, boundary rule, or mental model.",
       "tip1Title": "Clear Categorization",
-      "tip1Desc": "Choose the most relevant life domain (Career, Mindset, Health, Finance, etc.).",
+      "tip1Desc": "Choose the most relevant life domain (Career, Mindset, Health, etc.).",
       "tip2Title": "Select Section",
       "tip2Desc": "Decide whether this is a long-term Vision, an operational Rule, or an educational Concept.",
       "tip3Title": "Rich Text Formatting",

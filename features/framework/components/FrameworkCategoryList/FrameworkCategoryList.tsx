@@ -6,7 +6,6 @@ import {
   Brain,
   Briefcase,
   ChevronRight,
-  Coins,
   HeartPulse,
   Sparkles,
   Target,
@@ -50,11 +49,6 @@ const CATEGORY_META: Record<
     icon: Target,
     descriptionKey: "framework.categoryDesc.behavior",
     fallbackDescription: "Frictionless habit architecture, discipline, and routines",
-  },
-  Finance: {
-    icon: Coins,
-    descriptionKey: "framework.categoryDesc.finance",
-    fallbackDescription: "Financial autonomy, compounding assets, and downside protection",
   },
   Lifestyle: {
     icon: Sparkles,

@@ -6,7 +6,6 @@ export const FRAMEWORK_CATEGORIES = [
   'Social',
   'Health',
   'Behavior',
-  'Finance',
   'Lifestyle',
   'Knowledge',
 ] as const;

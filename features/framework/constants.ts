@@ -94,35 +94,6 @@ export const INITIAL_FRAMEWORK_ITEMS: FrameworkItem[] = [
     createdAt: "2026-10-09T07:30:00Z",
   },
 
-  // Finance
-  {
-    id: 10,
-    category: "Finance",
-    section: "Visions",
-    title: "Absolute Financial Autonomy & Multigenerational Resilience",
-    content:
-      "<p>Own assets that produce passive cash flow exceeding 3x living expenses, freeing all cognitive surplus for meaningful creative pursuits.</p>",
-    createdAt: "2026-10-10T16:00:00Z",
-  },
-  {
-    id: 11,
-    category: "Finance",
-    section: "Rules",
-    title: "Save & Invest First, Spend What Remains",
-    content:
-      "<p>Automate 40%+ of all net monthly earnings directly into investment accounts on payday. Lifestyle inflation must strictly lag income growth by at least 2 years.</p>",
-    createdAt: "2026-10-11T12:00:00Z",
-  },
-  {
-    id: 12,
-    category: "Finance",
-    section: "Concepts",
-    title: "Compound Interest & Asymmetric Risk/Reward",
-    content:
-      "<p>Protect downside first (zero high-interest debt, liquid emergency fund). Then pursue convex opportunities where potential gain vastly outweighs the capped loss.</p>",
-    createdAt: "2026-10-12T13:00:00Z",
-  },
-
   // Behavior
   {
     id: 13,
