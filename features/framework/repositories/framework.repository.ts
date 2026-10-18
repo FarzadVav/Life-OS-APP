@@ -3,20 +3,12 @@ import { FrameworkCategory, FrameworkSection } from '@/db/entities/enums';
 import { User } from '@/db/entities/User';
 import type { FrameworkItem } from '@/db/entities/FrameworkItem';
 
-export interface CreateFrameworkItemData {
-  title: string;
-  content: string;
-  category: FrameworkCategory;
-  section: FrameworkSection;
-  userId?: number;
-}
+import type {
+  CreateFrameworkItemData,
+  UpdateFrameworkItemData,
+} from '@/features/framework/types';
 
-export interface UpdateFrameworkItemData {
-  title?: string;
-  content?: string;
-  category?: FrameworkCategory;
-  section?: FrameworkSection;
-}
+export type { CreateFrameworkItemData, UpdateFrameworkItemData };
 
 export class FrameworkRepository extends EntityRepository<FrameworkItem> {
   async findAllItems(userId?: number): Promise<FrameworkItem[]> {
@@ -52,8 +44,8 @@ export class FrameworkRepository extends EntityRepository<FrameworkItem> {
     const item = this.create({
       title: data.title.trim(),
       content: data.content,
-      category: data.category,
-      section: data.section,
+      category: data.category as unknown as FrameworkCategory,
+      section: data.section as unknown as FrameworkSection,
       user,
     });
     await this.em.flush();
@@ -69,8 +61,8 @@ export class FrameworkRepository extends EntityRepository<FrameworkItem> {
     this.assign(item, {
       ...(data.title !== undefined ? { title: data.title.trim() } : {}),
       ...(data.content !== undefined ? { content: data.content } : {}),
-      ...(data.category !== undefined ? { category: data.category } : {}),
-      ...(data.section !== undefined ? { section: data.section } : {}),
+      ...(data.category !== undefined ? { category: data.category as unknown as FrameworkCategory } : {}),
+      ...(data.section !== undefined ? { section: data.section as unknown as FrameworkSection } : {}),
     });
 
     await this.em.flush();

@@ -5,7 +5,8 @@ import { redirect } from 'next/navigation';
 import { withRequestContext } from '@/db';
 import { LOCALE_COOKIE } from '@/features/general/lib/i18n/config';
 import { createSession } from '../lib/session';
-import type { LoginFormState } from '../lib/definitions';
+import { type } from 'arktype';
+import { LoginInputSchema, type LoginFormState } from '../lib/definitions';
 
 /**
  * Server Action mutation for handling user login and registration directly with client-side forms.
@@ -25,29 +26,30 @@ export async function loginMutation(
   const username = String(formData.get('username') ?? '').trim();
   const password = String(formData.get('password') ?? '');
 
-  const errors: NonNullable<LoginFormState>['errors'] = {};
+  // Validate form inputs using ArkType schema
+  const validation = LoginInputSchema({ username, password });
+  if (validation instanceof type.errors) {
+    const errors: NonNullable<LoginFormState>['errors'] = {};
 
-  if (!username) {
-    errors.username = [isEn ? 'Username is required.' : 'نام کاربری الزامی است.'];
-  } else if (username.length < 3) {
-    errors.username = [
-      isEn
-        ? 'Username must be at least 3 characters long.'
-        : 'نام کاربری باید حداقل ۳ کاراکتر باشد.',
-    ];
-  }
+    for (const problem of validation) {
+      const field = String(problem.path[0] ?? '') as 'username' | 'password';
+      if (field === 'username' || field === 'password') {
+        if (!errors[field]) {
+          errors[field] = [];
+        }
+        const msg = isEn
+          ? problem.message
+          : field === 'username'
+            ? username.length === 0
+              ? 'نام کاربری الزامی است.'
+              : 'نام کاربری باید حداقل ۳ کاراکتر باشد.'
+            : password.length === 0
+              ? 'رمز عبور الزامی است.'
+              : 'رمز عبور باید حداقل ۶ کاراکتر باشد.';
+        errors[field]?.push(msg);
+      }
+    }
 
-  if (!password) {
-    errors.password = [isEn ? 'Password is required.' : 'رمز عبور الزامی است.'];
-  } else if (password.length < 6) {
-    errors.password = [
-      isEn
-        ? 'Password must be at least 6 characters long.'
-        : 'رمز عبور باید حداقل ۶ کاراکتر باشد.',
-    ];
-  }
-
-  if (Object.keys(errors).length > 0) {
     return {
       errors,
       inputs: { username },

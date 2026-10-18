@@ -2,17 +2,9 @@ import { EntityRepository } from '@mikro-orm/sqlite';
 import { Todo } from '@/db/entities/Todo';
 import type { TodoAction } from '@/db/entities/TodoAction';
 
-export interface CreateActionData {
-  title: string;
-  deadline: string;
-  isDone?: boolean;
-}
+import type { CreateActionData, UpdateActionData } from '@/features/todos/types';
 
-export interface UpdateActionData {
-  title?: string;
-  deadline?: string;
-  isDone?: boolean;
-}
+export type { CreateActionData, UpdateActionData };
 
 export class TodoActionRepository extends EntityRepository<TodoAction> {
   async findByMission(missionId: number): Promise<TodoAction[]> {

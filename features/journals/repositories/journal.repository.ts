@@ -3,18 +3,9 @@ import { JournalCategory } from '@/db/entities/enums';
 import { User } from '@/db/entities/User';
 import type { Journal } from '@/db/entities/Journal';
 
-export interface CreateJournalData {
-  title: string;
-  content: string;
-  type: JournalCategory;
-  userId?: number;
-}
+import type { CreateJournalData, UpdateJournalData } from '@/features/journals/types';
 
-export interface UpdateJournalData {
-  title?: string;
-  content?: string;
-  type?: JournalCategory;
-}
+export type { CreateJournalData, UpdateJournalData };
 
 export class JournalRepository extends EntityRepository<Journal> {
   async findAllJournals(
@@ -67,7 +58,7 @@ export class JournalRepository extends EntityRepository<Journal> {
     const journal = this.create({
       title: data.title.trim(),
       content: data.content,
-      type: data.type,
+      type: data.type as unknown as JournalCategory,
       user,
     });
     await this.em.flush();
@@ -83,7 +74,7 @@ export class JournalRepository extends EntityRepository<Journal> {
     this.assign(journal, {
       ...(data.title !== undefined ? { title: data.title.trim() } : {}),
       ...(data.content !== undefined ? { content: data.content } : {}),
-      ...(data.type !== undefined ? { type: data.type } : {}),
+      ...(data.type !== undefined ? { type: data.type as unknown as JournalCategory } : {}),
     });
 
     await this.em.flush();

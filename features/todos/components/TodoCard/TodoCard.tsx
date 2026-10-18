@@ -8,6 +8,7 @@ import {
   CircleIcon,
   ClockIcon,
   TagIcon,
+  Trash2Icon,
 } from "lucide-react";
 
 import { Todo } from "../../types";
@@ -19,9 +20,10 @@ import { useLocale } from "@/features/general/components/module/LocaleProvider/L
 type TodoCardProps = {
   todo: Todo;
   onToggle?: (id: number) => void;
+  onDelete?: (id: number) => void;
 };
 
-function TodoCard({ todo, onToggle }: TodoCardProps) {
+function TodoCard({ todo, onToggle, onDelete }: TodoCardProps) {
   const isDaily = todo.type === "Daily";
   const { formatDeadline, t } = useLocale();
 
@@ -136,7 +138,24 @@ function TodoCard({ todo, onToggle }: TodoCardProps) {
         />
       </label>
 
-      <div className="flex gap-3">
+      <div className="flex gap-2">
+        {onDelete && (
+          <Drawer.Close
+            render={
+              <Button
+                type="button"
+                variant="card"
+                square
+                className="size-10 justify-center text-foreground/70 hover:text-foreground"
+                onClick={() => onDelete(todo.id)}
+                aria-label={t("common.delete")}
+              >
+                <Trash2Icon className="size-4" />
+              </Button>
+            }
+          />
+        )}
+
         <Drawer.Close
           render={
             <Button
@@ -144,7 +163,7 @@ function TodoCard({ todo, onToggle }: TodoCardProps) {
               variant="card"
               className="flex-1 justify-center"
             >
-              Close
+              {t("common.close") || "Close"}
             </Button>
           }
         />
@@ -156,14 +175,14 @@ function TodoCard({ todo, onToggle }: TodoCardProps) {
               type="button"
               variant="primary"
               nativeButton={false}
-              className="w-full justify-center"
+              className="flex-1 justify-center"
               render={
                 <Link
-                  className="flex flex-1"
+                  className="flex flex-1 items-center justify-center gap-1"
                   href={`/todos/new?editId=${todo.id}`}
                 >
                   <span>{t("common.edit")}</span>
-                  <ChevronRightIcon />
+                  <ChevronRightIcon className="size-4" />
                 </Link>
               }
             />

@@ -3,10 +3,9 @@ import { Todo } from '@/db/entities/Todo';
 import { DisciplineHistory } from '@/db/entities/DisciplineHistory';
 import type { TodoDiscipline } from '@/db/entities/TodoDiscipline';
 
-export interface CreateDisciplineData {
-  title: string;
-  repeatInterval: string;
-}
+import type { CreateDisciplineData } from '@/features/todos/types';
+
+export type { CreateDisciplineData };
 
 export class TodoDisciplineRepository extends EntityRepository<TodoDiscipline> {
   async findByMission(missionId: number): Promise<TodoDiscipline[]> {

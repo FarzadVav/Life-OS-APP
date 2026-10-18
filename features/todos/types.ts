@@ -1,26 +1,141 @@
-export type TodoType = "Daily" | "Upcoming" | "Mission";
+import { type } from 'arktype';
 
-export type TodoAction = {
-  id: number;
-  title: string;
-  deadline: string;
-  isDone: boolean;
-};
+/**
+ * ArkType schema and inferred type for Todo type variants.
+ */
+export const TodoTypeSchema = type.enumerated('Daily', 'Upcoming', 'Mission');
+export type TodoType = typeof TodoTypeSchema.infer;
 
-export type TodoDiscipline = {
-  id: number;
-  title: string;
-  repeatInterval: string;
-  history?: { date: string; isDone: boolean }[];
-};
+/**
+ * ArkType schema and inferred type for sub-action items in missions.
+ */
+export const TodoActionSchema = type({
+  id: 'number',
+  title: 'string',
+  deadline: 'string',
+  isDone: 'boolean',
+});
+export type TodoAction = typeof TodoActionSchema.infer;
 
-export type Todo = {
-  id: number;
-  title: string;
-  deadline: string;
-  type: TodoType;
-  isDone: boolean;
-  difficulty?: number;
-  actions?: TodoAction[];
-  disciplines?: TodoDiscipline[];
-};
+/**
+ * ArkType schema for recurring discipline completion history.
+ */
+export const TodoDisciplineHistorySchema = type({
+  date: 'string',
+  isDone: 'boolean',
+});
+export type TodoDisciplineHistory = typeof TodoDisciplineHistorySchema.infer;
+
+/**
+ * ArkType schema and inferred type for recurring mission disciplines.
+ */
+export const TodoDisciplineSchema = type({
+  id: 'number',
+  title: 'string',
+  repeatInterval: 'string',
+  'history?': TodoDisciplineHistorySchema.array(),
+});
+export type TodoDiscipline = typeof TodoDisciplineSchema.infer;
+
+/**
+ * ArkType schema and inferred type for a complete Todo entity.
+ */
+export const TodoSchema = type({
+  id: 'number',
+  title: 'string',
+  deadline: 'string',
+  type: TodoTypeSchema,
+  isDone: 'boolean',
+  'difficulty?': 'number',
+  'actions?': TodoActionSchema.array(),
+  'disciplines?': TodoDisciplineSchema.array(),
+});
+export type Todo = typeof TodoSchema.infer;
+
+/**
+ * ArkType schemas for Todo Repository mutations and data operations.
+ */
+export const CreateTodoSchema = type({
+  title: 'string >= 1',
+  type: TodoTypeSchema,
+  deadline: 'string >= 1',
+  'difficulty?': 'number',
+  'userId?': 'number',
+  'isDone?': 'boolean',
+  'actions?': type({
+    'id?': 'number',
+    title: 'string >= 1',
+    deadline: 'string >= 1',
+    'isDone?': 'boolean',
+  }).array(),
+  'disciplines?': type({
+    'id?': 'number',
+    title: 'string >= 1',
+    repeatInterval: 'string >= 1',
+  }).array(),
+});
+export type CreateTodoData = typeof CreateTodoSchema.infer;
+
+export const UpdateTodoSchema = type({
+  'id?': 'number',
+  'title?': 'string >= 1',
+  'type?': TodoTypeSchema,
+  'deadline?': 'string >= 1',
+  'isDone?': 'boolean',
+  'difficulty?': 'number',
+  'actions?': type({
+    'id?': 'number',
+    title: 'string >= 1',
+    deadline: 'string >= 1',
+    'isDone?': 'boolean',
+  }).array(),
+  'disciplines?': type({
+    'id?': 'number',
+    title: 'string >= 1',
+    repeatInterval: 'string >= 1',
+  }).array(),
+});
+export type UpdateTodoData = typeof UpdateTodoSchema.infer;
+
+export const CreateActionSchema = type({
+  title: 'string >= 1',
+  deadline: 'string >= 1',
+  'isDone?': 'boolean',
+});
+export type CreateActionData = typeof CreateActionSchema.infer;
+
+export const UpdateActionSchema = type({
+  'title?': 'string >= 1',
+  'deadline?': 'string >= 1',
+  'isDone?': 'boolean',
+});
+export type UpdateActionData = typeof UpdateActionSchema.infer;
+
+export const CreateDisciplineSchema = type({
+  title: 'string >= 1',
+  repeatInterval: 'string >= 1',
+});
+export type CreateDisciplineData = typeof CreateDisciplineSchema.infer;
+
+/**
+ * Form state for Base UI and React 19 useActionState form handling.
+ */
+export type TodoFormState = {
+  errors?: {
+    title?: string[];
+    type?: string[];
+    deadline?: string[];
+    difficulty?: string[];
+    general?: string[];
+  };
+  message?: string;
+  inputs?: {
+    id?: number;
+    title?: string;
+    type?: TodoType;
+    deadline?: string;
+    difficulty?: number;
+  };
+  success?: boolean;
+  todoId?: number;
+} | null;

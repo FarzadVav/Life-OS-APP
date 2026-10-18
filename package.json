@@ -25,6 +25,7 @@
     "@tiptap/pm": "^3.31.4",
     "@tiptap/react": "^3.31.4",
     "@tiptap/starter-kit": "^3.31.4",
+    "arktype": "^2.2.8",
     "class-variance-authority": "^0.7.1",
     "cn": "^0.3.0",
     "embla-carousel": "^8.6.0",

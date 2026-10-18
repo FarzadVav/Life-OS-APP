@@ -1,19 +1,22 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+import { useActionState, useEffect, useState } from "react";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 
 import { Field, Form } from "@base-ui/react";
 import {
   EditIcon,
+  LoaderIcon,
   PlusIcon,
   Repeat2Icon,
   Trash2Icon,
 } from "lucide-react";
 
-import { todos, TODO_TYPES } from "@/features/todos/constants";
+import { TODO_TYPES } from "@/features/todos/constants";
 import { TodoType, TodoAction, TodoDiscipline } from "@/features/todos/types";
+import { useTodo } from "@/features/todos/hooks";
+import { createTodoMutation, updateTodoMutation, deleteTodoMutation } from "@/features/todos/mutations";
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
 import { Button } from "@/features/general/components/ui/Button/Button";
 import PageActionBtn from "@/features/general/components/module/PageActionBtn/PageActionBtn";
@@ -53,7 +56,7 @@ function TypeSelect({
       <Field.Label className="mb-1 font-bold">{t("common.type")}</Field.Label>
 
       <SelectDialog
-        name="type"
+        name="typeSelect"
         items={items}
         value={value}
         onChange={(next) => onChange(next as TodoType)}
@@ -62,7 +65,7 @@ function TypeSelect({
         required
       />
 
-      <Field.Error className="sub-text mt-0.5 text-foreground" />
+      <Field.Error className="sub-text mt-0.5 text-foreground text-xs" />
     </Field.Root>
   );
 }
@@ -90,7 +93,7 @@ function DifficultySelect({
       </Field.Label>
 
       <SelectDialog
-        name="difficulty"
+        name="difficultySelect"
         items={items}
         value={value}
         onChange={(next) => onChange(Number(next))}
@@ -99,17 +102,20 @@ function DifficultySelect({
         required
       />
 
-      <Field.Error className="sub-text mt-0.5 text-foreground" />
+      <Field.Error className="sub-text mt-0.5 text-foreground text-xs" />
     </Field.Root>
   );
 }
 
 function NewTodoPage() {
   const { t, formatDate } = useLocale();
+  const router = useRouter();
   const searchParams = useSearchParams();
   const editId = searchParams.get("editId");
   const typeParam = searchParams.get("type") || searchParams.get("category");
   const isEditMode = Boolean(editId);
+
+  const { todo, isLoading: isTodoLoading } = useTodo(editId ? Number(editId) : null);
 
   const resolveDefaultType = (param: string | null): TodoType => {
     const lower = param?.toLowerCase();
@@ -128,6 +134,8 @@ function NewTodoPage() {
   const [actions, setActions] = useState<TodoAction[]>([]);
   const [disciplines, setDisciplines] = useState<TodoDiscipline[]>([]);
   const [isDone, setIsDone] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   // Dialog state for adding/editing mission action
   const [actionDialogOpen, setActionDialogOpen] = useState(false);
@@ -155,6 +163,21 @@ function NewTodoPage() {
     history: [],
   });
 
+  // Native form handling via React 19 useActionState + Base UI Form
+  const [state, formAction, pending] = useActionState(
+    isEditMode ? updateTodoMutation : createTodoMutation,
+    null,
+  );
+
+  // When mutation succeeds, navigate back to home and refresh
+  useEffect(() => {
+    if (state?.success) {
+      router.push("/");
+      router.refresh();
+    }
+  }, [state?.success, router]);
+
+  // Load existing todo details if in edit mode
   useEffect(() => {
     if (!editId) {
       const resolved = resolveDefaultType(typeParam);
@@ -171,26 +194,40 @@ function NewTodoPage() {
       return;
     }
 
-    const todo = todos.find((item) => String(item.id) === editId);
-    if (!todo) {
-      return;
+    if (todo) {
+      queueMicrotask(() => {
+        setTitle(todo.title);
+        setType(todo.type);
+        setIsDone(todo.isDone);
+        setDifficulty(todo.difficulty || 3);
+        setActions(todo.actions || []);
+        setDisciplines(todo.disciplines || []);
+
+        if (todo.type === "Daily") {
+          setDailyTime(todo.deadline.includes(":") ? todo.deadline : "12:00");
+        } else {
+          setTargetDate(parseDate(todo.deadline) ?? new Date());
+        }
+      });
     }
+  }, [editId, todo, typeParam]);
 
-    queueMicrotask(() => {
-      setTitle(todo.title);
-      setType(todo.type);
-      setIsDone(todo.isDone);
-      setDifficulty(todo.difficulty || 3);
-      setActions(todo.actions || []);
-      setDisciplines(todo.disciplines || []);
-
-      if (todo.type === "Daily") {
-        setDailyTime(todo.deadline.includes(":") ? todo.deadline : "12:00");
-      } else {
-        setTargetDate(parseDate(todo.deadline) ?? new Date());
+  const handleDelete = async () => {
+    if (!editId) return;
+    setIsDeleting(true);
+    try {
+      const res = await deleteTodoMutation(Number(editId));
+      if (res.success) {
+        setDeleteDialogOpen(false);
+        router.push("/");
+        router.refresh();
       }
-    });
-  }, [editId, typeParam]);
+    } catch (err) {
+      console.error("Delete error:", err);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   const openNewAction = () => {
     setActionDraft({
@@ -307,356 +344,429 @@ function NewTodoPage() {
               : t("todos.new")}
         </TopBar.Title>
         <TopBar.Btn backIcon href="/" position="left" />
-        <TopBar.HelpBtn position="right" />
+
+        {isEditMode ? (
+          <TopBar.Btn
+            position="right"
+            onClick={() => setDeleteDialogOpen(true)}
+            aria-label={t("common.delete")}
+            className="text-foreground/70 hover:text-foreground"
+          >
+            <Trash2Icon className="size-5" />
+          </TopBar.Btn>
+        ) : (
+          <TopBar.HelpBtn position="right" />
+        )}
       </TopBar>
 
-      <Form
-        className="w-full space-y-6"
-        aria-label={isEditMode ? t("todos.editAria") : t("todos.createAria")}
-        action={async () => {
-          const deadline =
-            type === "Daily" ? dailyTime : serializeDate(targetDate);
-
-          const payload = {
-            id: editId ? Number(editId) : undefined,
-            title,
-            type,
-            deadline,
-            difficulty: type === "Mission" ? difficulty : undefined,
-            actions: type === "Mission" ? actions : undefined,
-            disciplines: type === "Mission" ? disciplines : undefined,
-            isDone,
-          };
-
-          console.log(isEditMode ? "Update todo:" : "Create todo:", payload);
-
-          await new Promise((resolve) => setTimeout(resolve, 500));
-        }}
-      >
-        <Field.Root name="title">
-          <Field.Label className="block font-bold">
-            {t("common.title")}
-          </Field.Label>
-
-          <Field.Control
-            required
-            minLength={3}
-            value={title}
-            className="input"
-            placeholder={
-              type === "Mission"
-                ? t("missions.titlePlaceholder") ||
-                  "What is your main mission objective?"
-                : t("todos.titlePlaceholder")
-            }
-            onChange={(event) => setTitle(event.target.value)}
-          />
-
-          <Field.Error className="sub-text mt-0.5 text-foreground" />
-        </Field.Root>
-
-        <TypeSelect value={type} onChange={setType} />
-
-        <Field.Root name="deadline">
-          <Field.Label className="mb-1 font-bold">
-            {t("common.deadline")}
-          </Field.Label>
-
-          {type === "Daily" ? (
-            <TimePickerDialog value={dailyTime} onChange={setDailyTime} />
-          ) : (
-            <DayPickerDialog value={targetDate} onChange={setTargetDate} />
+      {isEditMode && isTodoLoading && !todo ? (
+        <div className="flex w-full items-center justify-center p-12 text-foreground/40 gap-2">
+          <LoaderIcon className="size-5 animate-spin" />
+          <span className="text-xs sub-text">{t("common.loading")}</span>
+        </div>
+      ) : (
+        <Form
+          className="w-full space-y-6"
+          aria-label={isEditMode ? t("todos.editAria") : t("todos.createAria")}
+          action={formAction}
+          errors={state?.errors}
+        >
+          {state?.errors?.general && (
+            <div
+              role="alert"
+              className="p-3 text-xs rounded-component bg-foreground/5 border border-foreground/15 text-foreground leading-relaxed"
+            >
+              {state.errors.general.join(", ")}
+            </div>
           )}
 
+          {/* Hidden inputs to pass composite state to Server Action */}
+          {isEditMode && <input type="hidden" name="id" value={editId ?? ""} />}
+          <input type="hidden" name="type" value={type} />
           <input
             type="hidden"
             name="deadline"
             value={type === "Daily" ? dailyTime : serializeDate(targetDate)}
           />
-        </Field.Root>
+          <input type="hidden" name="isDone" value={String(isDone)} />
+          {type === "Mission" && (
+            <>
+              <input type="hidden" name="difficulty" value={difficulty} />
+              <input
+                type="hidden"
+                name="actions"
+                value={JSON.stringify(actions)}
+              />
+              <input
+                type="hidden"
+                name="disciplines"
+                value={JSON.stringify(disciplines)}
+              />
+            </>
+          )}
 
-        {type === "Mission" && (
-          <>
-            <DifficultySelect value={difficulty} onChange={setDifficulty} />
+          <Field.Root name="title">
+            <Field.Label className="block font-bold">
+              {t("common.title")}
+            </Field.Label>
 
-            {/* Actions Section */}
-            <Field.Root name="actions">
-              <div className="flex items-center justify-between mb-2">
-                <Field.Label className="font-bold">
-                  {t("missions.actionsLabel") || "Actions"}
-                </Field.Label>
-                <span className="sub-text text-xs">
-                  {actions.length} {t("missions.actionsLabel") || "actions"}
-                </span>
-              </div>
+            <Field.Control
+              required
+              minLength={3}
+              name="title"
+              value={title}
+              disabled={pending}
+              className="input"
+              placeholder={
+                type === "Mission"
+                  ? t("missions.titlePlaceholder") ||
+                    "What is your main mission objective?"
+                  : t("todos.titlePlaceholder")
+              }
+              onChange={(event) => setTitle(event.target.value)}
+            />
 
-              <Button
-                type="button"
-                variant="outline"
-                onClick={openNewAction}
-                className="w-full justify-center gap-1.5 rounded-component"
-              >
-                <PlusIcon className="size-4" />
-                <span>{t("missions.newAction") || "Add Action"}</span>
-              </Button>
+            <Field.Error className="sub-text mt-0.5 text-foreground text-xs" />
+          </Field.Root>
 
-              {actions.length > 0 && (
-                <div className="mt-3 space-y-2">
-                  {actions.map((act) => (
-                    <div
-                      key={act.id}
-                      className="flex items-center justify-between gap-3 rounded-component bg-card p-3"
-                    >
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-medium">
-                          {act.title}
-                        </p>
-                        <p className="sub-text text-xs">
-                          {formatDate(act.deadline)}
-                        </p>
-                      </div>
+          <TypeSelect value={type} onChange={setType} />
 
-                      <div className="flex shrink-0 items-center gap-1">
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          square
-                          className="size-8"
-                          onClick={() => openEditAction(act)}
-                        >
-                          <EditIcon className="size-3.5" />
-                        </Button>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          square
-                          className="size-8"
-                          onClick={() => deleteAction(act.id)}
-                        >
-                          <Trash2Icon className="size-3.5" />
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </Field.Root>
+          <Field.Root name="deadline">
+            <Field.Label className="mb-1 font-bold">
+              {t("common.deadline")}
+            </Field.Label>
 
-            {/* Disciplines Section */}
-            <Field.Root name="disciplines">
-              <div className="flex items-center justify-between mb-2">
-                <Field.Label className="font-bold">
-                  {t("missions.disciplines") || "Disciplines"}
-                </Field.Label>
-                <span className="sub-text text-xs">
-                  {disciplines.length}{" "}
-                  {t("missions.disciplines") || "disciplines"}
-                </span>
-              </div>
+            {type === "Daily" ? (
+              <TimePickerDialog value={dailyTime} onChange={setDailyTime} />
+            ) : (
+              <DayPickerDialog value={targetDate} onChange={setTargetDate} />
+            )}
 
-              <Button
-                type="button"
-                variant="outline"
-                onClick={openNewDiscipline}
-                className="w-full justify-center gap-1.5 rounded-component"
-              >
-                <PlusIcon className="size-4" />
-                <span>{t("missions.newDiscipline") || "Add Discipline"}</span>
-              </Button>
+            <Field.Error className="sub-text mt-0.5 text-foreground text-xs" />
+          </Field.Root>
 
-              {disciplines.length > 0 && (
-                <div className="mt-3 space-y-2">
-                  {disciplines.map((d) => (
-                    <div
-                      key={d.id}
-                      className="flex items-center justify-between gap-3 rounded-component bg-card p-3"
-                    >
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-medium">{d.title}</p>
-                        <p className="sub-text text-xs flex items-center gap-1 mt-0.5">
-                          <Repeat2Icon className="size-3" />
-                          <span>{d.repeatInterval}</span>
-                        </p>
-                      </div>
+          {type === "Mission" && (
+            <>
+              <DifficultySelect value={difficulty} onChange={setDifficulty} />
 
-                      <div className="flex shrink-0 items-center gap-1">
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          square
-                          className="size-8"
-                          onClick={() => openEditDiscipline(d)}
-                        >
-                          <EditIcon className="size-3.5" />
-                        </Button>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          square
-                          className="size-8"
-                          onClick={() => deleteDiscipline(d.id)}
-                        >
-                          <Trash2Icon className="size-3.5" />
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </Field.Root>
-
-            {/* Action Dialog */}
-            <Dialog open={actionDialogOpen} onOpenChange={setActionDialogOpen}>
-              <div className="p-1 space-y-4">
-                <div>
-                  <Dialog.Title className="font-bold">
-                    {actionDraft.id !== null
-                      ? t("missions.editAction") || "Edit Action"
-                      : t("missions.newAction") || "Add Action"}
-                  </Dialog.Title>
-                  <Dialog.Description className="sub-text text-xs mt-1">
-                    {t("missions.createActionDesc") ||
-                      "Define a concrete, actionable milestone."}
-                  </Dialog.Description>
-                </div>
-
-                <Field.Root name="actionTitle">
-                  <Field.Label className="mb-1 font-bold text-xs">
-                    {t("common.title")}
+              {/* Actions Section */}
+              <Field.Root name="actions">
+                <div className="flex items-center justify-between mb-2">
+                  <Field.Label className="font-bold">
+                    {t("missions.actionsLabel") || "Actions"}
                   </Field.Label>
-                  <Field.Control
-                    required
-                    minLength={2}
-                    className="input"
-                    value={actionDraft.title}
-                    placeholder={
-                      t("missions.actionTitlePlaceholder") ||
-                      "e.g. Complete architecture design"
-                    }
-                    onChange={(e) =>
-                      setActionDraft((d) => ({ ...d, title: e.target.value }))
-                    }
-                  />
-                </Field.Root>
-
-                <Field.Root name="actionDeadline">
-                  <Field.Label className="mb-1 font-bold text-xs">
-                    {t("common.deadline")}
-                  </Field.Label>
-                  <DayPickerDialog
-                    value={actionDraft.deadline}
-                    onChange={(date) =>
-                      setActionDraft((d) => ({ ...d, deadline: date }))
-                    }
-                  />
-                </Field.Root>
-
-                <div className="flex items-center justify-end gap-2 pt-2">
-                  <Dialog.Close
-                    render={
-                      <Button type="button" variant="ghost">
-                        {t("common.cancel")}
-                      </Button>
-                    }
-                  />
-                  <Button
-                    type="button"
-                    variant="primary"
-                    onClick={saveAction}
-                    disabled={actionDraft.title.trim().length < 2}
-                  >
-                    {actionDraft.id !== null
-                      ? t("common.save")
-                      : t("common.add")}
-                  </Button>
+                  <span className="sub-text text-xs">
+                    {actions.length} {t("missions.actionsLabel") || "actions"}
+                  </span>
                 </div>
-              </div>
-            </Dialog>
 
-            {/* Discipline Dialog */}
-            <Dialog
-              open={disciplineDialogOpen}
-              onOpenChange={setDisciplineDialogOpen}
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={openNewAction}
+                  disabled={pending}
+                  className="w-full justify-center gap-1.5 rounded-component"
+                >
+                  <PlusIcon className="size-4" />
+                  <span>{t("missions.newAction") || "Add Action"}</span>
+                </Button>
+
+                {actions.length > 0 && (
+                  <div className="mt-3 space-y-2">
+                    {actions.map((act) => (
+                      <div
+                        key={act.id}
+                        className="flex items-center justify-between gap-3 rounded-component bg-card p-3"
+                      >
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate text-sm font-medium">
+                            {act.title}
+                          </p>
+                          <p className="sub-text text-xs">
+                            {formatDate(act.deadline)}
+                          </p>
+                        </div>
+
+                        <div className="flex shrink-0 items-center gap-1">
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            square
+                            className="size-8"
+                            onClick={() => openEditAction(act)}
+                            disabled={pending}
+                          >
+                            <EditIcon className="size-3.5" />
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            square
+                            className="size-8"
+                            onClick={() => deleteAction(act.id)}
+                            disabled={pending}
+                          >
+                            <Trash2Icon className="size-3.5" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </Field.Root>
+
+              {/* Disciplines Section */}
+              <Field.Root name="disciplines">
+                <div className="flex items-center justify-between mb-2">
+                  <Field.Label className="font-bold">
+                    {t("missions.disciplines") || "Disciplines"}
+                  </Field.Label>
+                  <span className="sub-text text-xs">
+                    {disciplines.length}{" "}
+                    {t("missions.disciplines") || "disciplines"}
+                  </span>
+                </div>
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={openNewDiscipline}
+                  disabled={pending}
+                  className="w-full justify-center gap-1.5 rounded-component"
+                >
+                  <PlusIcon className="size-4" />
+                  <span>{t("missions.newDiscipline") || "Add Discipline"}</span>
+                </Button>
+
+                {disciplines.length > 0 && (
+                  <div className="mt-3 space-y-2">
+                    {disciplines.map((d) => (
+                      <div
+                        key={d.id}
+                        className="flex items-center justify-between gap-3 rounded-component bg-card p-3"
+                      >
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate text-sm font-medium">{d.title}</p>
+                          <p className="sub-text text-xs flex items-center gap-1 mt-0.5">
+                            <Repeat2Icon className="size-3" />
+                            <span>{d.repeatInterval}</span>
+                          </p>
+                        </div>
+
+                        <div className="flex shrink-0 items-center gap-1">
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            square
+                            className="size-8"
+                            onClick={() => openEditDiscipline(d)}
+                            disabled={pending}
+                          >
+                            <EditIcon className="size-3.5" />
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            square
+                            className="size-8"
+                            onClick={() => deleteDiscipline(d.id)}
+                            disabled={pending}
+                          >
+                            <Trash2Icon className="size-3.5" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </Field.Root>
+
+              {/* Action Dialog */}
+              <Dialog open={actionDialogOpen} onOpenChange={setActionDialogOpen}>
+                <div className="p-1 space-y-4">
+                  <div>
+                    <Dialog.Title className="font-bold">
+                      {actionDraft.id !== null
+                        ? t("missions.editAction") || "Edit Action"
+                        : t("missions.newAction") || "Add Action"}
+                    </Dialog.Title>
+                    <Dialog.Description className="sub-text text-xs mt-1">
+                      {t("missions.createActionDesc") ||
+                        "Define a concrete, actionable milestone."}
+                    </Dialog.Description>
+                  </div>
+
+                  <Field.Root name="actionTitle">
+                    <Field.Label className="mb-1 font-bold text-xs">
+                      {t("common.title")}
+                    </Field.Label>
+                    <Field.Control
+                      required
+                      minLength={2}
+                      className="input"
+                      value={actionDraft.title}
+                      placeholder={
+                        t("missions.actionTitlePlaceholder") ||
+                        "e.g. Complete architecture design"
+                      }
+                      onChange={(e) =>
+                        setActionDraft((d) => ({ ...d, title: e.target.value }))
+                      }
+                    />
+                  </Field.Root>
+
+                  <Field.Root name="actionDeadline">
+                    <Field.Label className="mb-1 font-bold text-xs">
+                      {t("common.deadline")}
+                    </Field.Label>
+                    <DayPickerDialog
+                      value={actionDraft.deadline}
+                      onChange={(date) =>
+                        setActionDraft((d) => ({ ...d, deadline: date }))
+                      }
+                    />
+                  </Field.Root>
+
+                  <div className="flex items-center justify-end gap-2 pt-2">
+                    <Dialog.Close
+                      render={
+                        <Button type="button" variant="ghost">
+                          {t("common.cancel")}
+                        </Button>
+                      }
+                    />
+                    <Button
+                      type="button"
+                      variant="primary"
+                      onClick={saveAction}
+                      disabled={actionDraft.title.trim().length < 2}
+                    >
+                      {actionDraft.id !== null
+                        ? t("common.save")
+                        : t("common.add")}
+                    </Button>
+                  </div>
+                </div>
+              </Dialog>
+
+              {/* Discipline Dialog */}
+              <Dialog
+                open={disciplineDialogOpen}
+                onOpenChange={setDisciplineDialogOpen}
+              >
+                <div className="p-1 space-y-4">
+                  <div>
+                    <Dialog.Title className="font-bold">
+                      {disciplineDraft.id !== null
+                        ? t("missions.editDiscipline") || "Edit Discipline"
+                        : t("missions.newDiscipline") || "New Discipline"}
+                    </Dialog.Title>
+                    <Dialog.Description className="sub-text text-xs mt-1">
+                      {disciplineDraft.id !== null
+                        ? t("missions.editDisciplineDesc") ||
+                          "Edit the discipline title and interval."
+                        : t("missions.createDisciplineDesc") ||
+                          "Define a repeated behavior supporting this mission."}
+                    </Dialog.Description>
+                  </div>
+
+                  <Field.Root name="disciplineTitle">
+                    <Field.Label className="mb-1 font-bold text-xs">
+                      {t("common.title")}
+                    </Field.Label>
+                    <Field.Control
+                      required
+                      minLength={3}
+                      className="input"
+                      value={disciplineDraft.title}
+                      placeholder={
+                        t("missions.disciplineTitlePlaceholder") ||
+                        "e.g. Work on core product daily"
+                      }
+                      onChange={(e) =>
+                        setDisciplineDraft((d) => ({
+                          ...d,
+                          title: e.target.value,
+                        }))
+                      }
+                    />
+                  </Field.Root>
+
+                  <Field.Root name="disciplineRepeatInterval">
+                    <Field.Label className="mb-1 font-bold text-xs">
+                      Repeat Interval
+                    </Field.Label>
+                    <RepeatIntervalInput
+                      value={disciplineDraft.repeatInterval}
+                      onChange={(val) =>
+                        setDisciplineDraft((d) => ({
+                          ...d,
+                          repeatInterval: val,
+                        }))
+                      }
+                    />
+                  </Field.Root>
+
+                  <div className="flex items-center justify-end gap-2 pt-2">
+                    <Dialog.Close
+                      render={
+                        <Button type="button" variant="ghost">
+                          {t("common.cancel")}
+                        </Button>
+                      }
+                    />
+                    <Button
+                      type="button"
+                      variant="primary"
+                      onClick={saveDiscipline}
+                      disabled={disciplineDraft.title.trim().length < 3}
+                    >
+                      {disciplineDraft.id !== null
+                        ? t("common.save")
+                        : t("common.add")}
+                    </Button>
+                  </div>
+                </div>
+              </Dialog>
+            </>
+          )}
+
+          <PageActionBtn submit disabled={pending} />
+        </Form>
+      )}
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <div className="p-1 space-y-4">
+          <div>
+            <Dialog.Title className="font-bold">
+              {t("common.delete")}
+            </Dialog.Title>
+            <Dialog.Description className="sub-text text-xs mt-1">
+              {t("common.confirm") || "Are you sure you want to delete this item?"}
+            </Dialog.Description>
+          </div>
+
+          <div className="flex items-center justify-end gap-2 pt-2">
+            <Dialog.Close
+              render={
+                <Button type="button" variant="ghost" disabled={isDeleting}>
+                  {t("common.cancel")}
+                </Button>
+              }
+            />
+            <Button
+              type="button"
+              variant="primary"
+              onClick={handleDelete}
+              disabled={isDeleting}
+              className="bg-red-600 text-white hover:bg-red-700"
             >
-              <div className="p-1 space-y-4">
-                <div>
-                  <Dialog.Title className="font-bold">
-                    {disciplineDraft.id !== null
-                      ? t("missions.editDiscipline") || "Edit Discipline"
-                      : t("missions.newDiscipline") || "New Discipline"}
-                  </Dialog.Title>
-                  <Dialog.Description className="sub-text text-xs mt-1">
-                    {disciplineDraft.id !== null
-                      ? t("missions.editDisciplineDesc") ||
-                        "Edit the discipline title and interval."
-                      : t("missions.createDisciplineDesc") ||
-                        "Define a repeated behavior supporting this mission."}
-                  </Dialog.Description>
-                </div>
-
-                <Field.Root name="disciplineTitle">
-                  <Field.Label className="mb-1 font-bold text-xs">
-                    {t("common.title")}
-                  </Field.Label>
-                  <Field.Control
-                    required
-                    minLength={3}
-                    className="input"
-                    value={disciplineDraft.title}
-                    placeholder={
-                      t("missions.disciplineTitlePlaceholder") ||
-                      "e.g. Work on core product daily"
-                    }
-                    onChange={(e) =>
-                      setDisciplineDraft((d) => ({
-                        ...d,
-                        title: e.target.value,
-                      }))
-                    }
-                  />
-                </Field.Root>
-
-                <Field.Root name="disciplineRepeatInterval">
-                  <Field.Label className="mb-1 font-bold text-xs">
-                    Repeat Interval
-                  </Field.Label>
-                  <RepeatIntervalInput
-                    value={disciplineDraft.repeatInterval}
-                    onChange={(val) =>
-                      setDisciplineDraft((d) => ({
-                        ...d,
-                        repeatInterval: val,
-                      }))
-                    }
-                  />
-                </Field.Root>
-
-                <div className="flex items-center justify-end gap-2 pt-2">
-                  <Dialog.Close
-                    render={
-                      <Button type="button" variant="ghost">
-                        {t("common.cancel")}
-                      </Button>
-                    }
-                  />
-                  <Button
-                    type="button"
-                    variant="primary"
-                    onClick={saveDiscipline}
-                    disabled={disciplineDraft.title.trim().length < 3}
-                  >
-                    {disciplineDraft.id !== null
-                      ? t("common.save")
-                      : t("common.add")}
-                  </Button>
-                </div>
-              </div>
-            </Dialog>
-          </>
-        )}
-
-        <PageActionBtn submit />
-      </Form>
+              {isDeleting ? t("common.loading") : t("common.delete")}
+            </Button>
+          </div>
+        </div>
+      </Dialog>
     </PageWrapper>
   );
 }

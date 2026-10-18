@@ -1,22 +1,48 @@
 import { EntityRepository } from '@mikro-orm/sqlite';
 import { TodoType } from '@/db/entities/enums';
 import { User } from '@/db/entities/User';
+import { TodoAction } from '@/db/entities/TodoAction';
+import { TodoDiscipline } from '@/db/entities/TodoDiscipline';
 import type { Todo } from '@/db/entities/Todo';
 
-export interface CreateTodoData {
-  title: string;
-  type: TodoType;
-  deadline: string;
-  difficulty?: number;
-  userId?: number;
-}
+import type { CreateTodoData, UpdateTodoData, Todo as TodoDto } from '@/features/todos/types';
 
-export interface UpdateTodoData {
-  title?: string;
-  type?: TodoType;
-  deadline?: string;
-  isDone?: boolean;
-  difficulty?: number;
+export type { CreateTodoData, UpdateTodoData };
+
+/**
+ * Safely transforms a MikroORM Todo entity and its initialized collections
+ * into a plain Todo DTO object matching the ArkType Todo schema.
+ */
+export function serializeTodo(todo: Todo): TodoDto {
+  return {
+    id: todo.id,
+    title: todo.title,
+    type: todo.type as unknown as TodoDto['type'],
+    deadline: todo.deadline,
+    isDone: todo.isDone,
+    difficulty: todo.difficulty,
+    actions: todo.actions?.isInitialized()
+      ? todo.actions.getItems().map((a) => ({
+          id: a.id,
+          title: a.title,
+          deadline: a.deadline,
+          isDone: a.isDone,
+        }))
+      : undefined,
+    disciplines: todo.disciplines?.isInitialized()
+      ? todo.disciplines.getItems().map((d) => ({
+          id: d.id,
+          title: d.title,
+          repeatInterval: d.repeatInterval,
+          history: d.history?.isInitialized()
+            ? d.history.getItems().map((h) => ({
+                date: h.date,
+                isDone: h.isDone,
+              }))
+            : undefined,
+        }))
+      : undefined,
+  };
 }
 
 export class TodoRepository extends EntityRepository<Todo> {
@@ -50,47 +76,172 @@ export class TodoRepository extends EntityRepository<Todo> {
     });
   }
 
-  async findMissionById(id: number): Promise<Todo | null> {
-    return this.findOne(
-      { id, type: TodoType.MISSION },
-      { populate: ['actions', 'disciplines.history'] },
-    );
+  async findAllTodos(
+    userId?: number,
+    options?: { populateRelations?: boolean },
+  ): Promise<Todo[]> {
+    const where: Record<string, unknown> = {};
+    if (userId) {
+      where.user = userId;
+    }
+    return this.find(where, {
+      populate: options?.populateRelations !== false ? ['actions', 'disciplines.history'] : [],
+      orderBy: { deadline: 'ASC' },
+    });
+  }
+
+  async findById(id: number, userId?: number): Promise<Todo | null> {
+    const where: Record<string, unknown> = { id };
+    if (userId) {
+      where.user = userId;
+    }
+    return this.findOne(where, {
+      populate: ['actions', 'disciplines.history'],
+    });
+  }
+
+  async findMissionById(id: number, userId?: number): Promise<Todo | null> {
+    const where: Record<string, unknown> = { id, type: TodoType.MISSION };
+    if (userId) {
+      where.user = userId;
+    }
+    return this.findOne(where, {
+      populate: ['actions', 'disciplines.history'],
+    });
   }
 
   async createTodo(data: CreateTodoData): Promise<Todo> {
     const user = data.userId ? this.em.getReference(User, data.userId) : undefined;
     const todo = this.create({
       title: data.title.trim(),
-      type: data.type,
+      type: data.type as unknown as TodoType,
       deadline: data.deadline.trim(),
       difficulty: data.difficulty,
-      isDone: false,
+      isDone: data.isDone ?? false,
       user,
     });
+
+    if (data.actions && data.actions.length > 0) {
+      for (const act of data.actions) {
+        todo.actions.add(
+          this.em.create(TodoAction, {
+            title: act.title.trim(),
+            deadline: act.deadline.trim(),
+            isDone: act.isDone ?? false,
+            mission: todo,
+          }),
+        );
+      }
+    }
+
+    if (data.disciplines && data.disciplines.length > 0) {
+      for (const disc of data.disciplines) {
+        todo.disciplines.add(
+          this.em.create(TodoDiscipline, {
+            title: disc.title.trim(),
+            repeatInterval: disc.repeatInterval.trim(),
+            mission: todo,
+          }),
+        );
+      }
+    }
+
     await this.em.flush();
     return todo;
   }
 
-  async updateTodo(id: number, data: UpdateTodoData): Promise<Todo | null> {
-    const todo = await this.findOne({ id });
+  async updateTodo(id: number, data: UpdateTodoData, userId?: number): Promise<Todo | null> {
+    const where: Record<string, unknown> = { id };
+    if (userId) {
+      where.user = userId;
+    }
+    const todo = await this.findOne(where, {
+      populate: ['actions', 'disciplines.history'],
+    });
     if (!todo) {
       return null;
     }
 
     this.assign(todo, {
       ...(data.title !== undefined ? { title: data.title.trim() } : {}),
-      ...(data.type !== undefined ? { type: data.type } : {}),
+      ...(data.type !== undefined ? { type: data.type as unknown as TodoType } : {}),
       ...(data.deadline !== undefined ? { deadline: data.deadline.trim() } : {}),
       ...(data.isDone !== undefined ? { isDone: data.isDone } : {}),
       ...(data.difficulty !== undefined ? { difficulty: data.difficulty } : {}),
     });
 
+    // Synchronize nested actions if provided
+    if (data.actions !== undefined) {
+      const existingActionMap = new Map(todo.actions.getItems().map((a) => [a.id, a]));
+      const newActionIds = new Set<number>();
+
+      for (const actData of data.actions) {
+        if (actData.id && existingActionMap.has(actData.id)) {
+          const existing = existingActionMap.get(actData.id)!;
+          this.em.assign(existing, {
+            title: actData.title.trim(),
+            deadline: actData.deadline.trim(),
+            ...(actData.isDone !== undefined ? { isDone: actData.isDone } : {}),
+          });
+          newActionIds.add(existing.id);
+        } else {
+          const newAct = this.em.create(TodoAction, {
+            title: actData.title.trim(),
+            deadline: actData.deadline.trim(),
+            isDone: actData.isDone ?? false,
+            mission: todo,
+          });
+          todo.actions.add(newAct);
+        }
+      }
+
+      for (const existing of todo.actions.getItems()) {
+        if (existing.id && !newActionIds.has(existing.id) && !data.actions.some((a) => a.id === existing.id)) {
+          todo.actions.remove(existing);
+        }
+      }
+    }
+
+    // Synchronize nested disciplines if provided
+    if (data.disciplines !== undefined) {
+      const existingDiscMap = new Map(todo.disciplines.getItems().map((d) => [d.id, d]));
+      const newDiscIds = new Set<number>();
+
+      for (const discData of data.disciplines) {
+        if (discData.id && existingDiscMap.has(discData.id)) {
+          const existing = existingDiscMap.get(discData.id)!;
+          this.em.assign(existing, {
+            title: discData.title.trim(),
+            repeatInterval: discData.repeatInterval.trim(),
+          });
+          newDiscIds.add(existing.id);
+        } else {
+          const newDisc = this.em.create(TodoDiscipline, {
+            title: discData.title.trim(),
+            repeatInterval: discData.repeatInterval.trim(),
+            mission: todo,
+          });
+          todo.disciplines.add(newDisc);
+        }
+      }
+
+      for (const existing of todo.disciplines.getItems()) {
+        if (existing.id && !newDiscIds.has(existing.id) && !data.disciplines.some((d) => d.id === existing.id)) {
+          todo.disciplines.remove(existing);
+        }
+      }
+    }
+
     await this.em.flush();
     return todo;
   }
 
-  async toggleDone(id: number): Promise<Todo | null> {
-    const todo = await this.findOne({ id });
+  async toggleDone(id: number, userId?: number): Promise<Todo | null> {
+    const where: Record<string, unknown> = { id };
+    if (userId) {
+      where.user = userId;
+    }
+    const todo = await this.findOne(where);
     if (!todo) {
       return null;
     }
@@ -100,8 +251,12 @@ export class TodoRepository extends EntityRepository<Todo> {
     return todo;
   }
 
-  async deleteTodo(id: number): Promise<boolean> {
-    const todo = await this.findOne({ id });
+  async deleteTodo(id: number, userId?: number): Promise<boolean> {
+    const where: Record<string, unknown> = { id };
+    if (userId) {
+      where.user = userId;
+    }
+    const todo = await this.findOne(where);
     if (!todo) {
       return false;
     }

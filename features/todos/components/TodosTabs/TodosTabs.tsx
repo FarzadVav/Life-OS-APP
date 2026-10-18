@@ -1,18 +1,25 @@
 "use client";
 
-import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { motion } from "motion/react";
+import { LoaderIcon } from "lucide-react";
 
-import { Todo } from "../../types";
-import { todos as initialTodos } from "../../constants";
+import { useTodos } from "../../hooks";
 import TodoCard from "../TodoCard/TodoCard";
 import TodoMissionCard from "../TodoMissionCard/TodoMissionCard";
 import SlideTabs, { SlideTabItem } from "@/features/general/components/ui/SlideTabs";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 
 function TodosTabs() {
-  const [todosList, setTodosList] = useState<Todo[]>(initialTodos);
+  const {
+    todos: todosList,
+    isLoading,
+    toggleTodo,
+    toggleMissionAction,
+    recordMissionDiscipline,
+    deleteTodo,
+  } = useTodos();
+
   const sp = useSearchParams();
   const { t } = useLocale();
 
@@ -46,29 +53,12 @@ function TodosTabs() {
     totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
 
   const handleToggle = (id: number) => {
-    setTodosList((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, isDone: !item.isDone } : item,
-      ),
-    );
+    toggleTodo(id).catch((err) => console.error("Toggle error:", err));
   };
 
   const handleToggleMissionAction = (todoId: number, actionId: number) => {
-    setTodosList((prev) =>
-      prev.map((todo) => {
-        if (todo.id !== todoId || !todo.actions) return todo;
-        const updatedActions = todo.actions.map((act) =>
-          act.id === actionId ? { ...act, isDone: !act.isDone } : act,
-        );
-        const allDone =
-          updatedActions.length > 0 &&
-          updatedActions.every((act) => act.isDone);
-        return {
-          ...todo,
-          actions: updatedActions,
-          isDone: allDone,
-        };
-      }),
+    toggleMissionAction(todoId, actionId).catch((err) =>
+      console.error("Toggle mission action error:", err),
     );
   };
 
@@ -77,18 +67,13 @@ function TodosTabs() {
     disciplineId: number,
     isDone: boolean,
   ) => {
-    setTodosList((prev) =>
-      prev.map((todo) => {
-        if (todo.id !== todoId || !todo.disciplines) return todo;
-        const updatedDisciplines = todo.disciplines.map((d) => {
-          if (d.id !== disciplineId) return d;
-          const today = new Date().toISOString();
-          const newHistory = [...(d.history || []), { date: today, isDone }];
-          return { ...d, history: newHistory };
-        });
-        return { ...todo, disciplines: updatedDisciplines };
-      }),
+    recordMissionDiscipline(todoId, disciplineId, isDone).catch((err) =>
+      console.error("Record discipline error:", err),
     );
+  };
+
+  const handleDelete = (id: number) => {
+    deleteTodo(id).catch((err) => console.error("Delete error:", err));
   };
 
   const tabs: SlideTabItem[] = [
@@ -145,35 +130,50 @@ function TodosTabs() {
       }
     >
       <div className="w-full space-y-3">
-        {activeTab === "missions"
-          ? currentTodos.map((mission) => (
-              <TodoMissionCard
-                key={mission.id}
-                todo={mission}
-                onToggleAction={handleToggleMissionAction}
-                onToggleDiscipline={handleToggleMissionDiscipline}
-              />
-            ))
-          : currentTodos.map((todo) => (
-              <TodoCard key={todo.id} todo={todo} onToggle={handleToggle} />
-            ))}
-
-        {currentTodos.length === 0 && (
-          <div
-            className="
-              flex w-full flex-1
-              items-center justify-center
-              rounded-container
-              border-2 border-dashed
-              p-6
-            "
-          >
-            <p className="sub-text">
-              {activeTab === "missions"
-                ? t("todos.noMissions") || "You haven't any missions"
-                : t("todos.noTodos") || "You haven't any todos in this section"}
-            </p>
+        {isLoading && todosList.length === 0 ? (
+          <div className="flex w-full items-center justify-center p-8 text-foreground/40 gap-2">
+            <LoaderIcon className="size-5 animate-spin" />
+            <span className="text-xs sub-text">{t("common.loading")}</span>
           </div>
+        ) : (
+          <>
+            {activeTab === "missions"
+              ? currentTodos.map((mission) => (
+                  <TodoMissionCard
+                    key={mission.id}
+                    todo={mission}
+                    onToggleAction={handleToggleMissionAction}
+                    onToggleDiscipline={handleToggleMissionDiscipline}
+                    onDelete={handleDelete}
+                  />
+                ))
+              : currentTodos.map((todo) => (
+                  <TodoCard
+                    key={todo.id}
+                    todo={todo}
+                    onToggle={handleToggle}
+                    onDelete={handleDelete}
+                  />
+                ))}
+
+            {currentTodos.length === 0 && (
+              <div
+                className="
+                  flex w-full flex-1
+                  items-center justify-center
+                  rounded-container
+                  border-2 border-dashed
+                  p-6
+                "
+              >
+                <p className="sub-text">
+                  {activeTab === "missions"
+                    ? t("todos.noMissions") || "You haven't any missions"
+                    : t("todos.noTodos") || "You haven't any todos in this section"}
+                </p>
+              </div>
+            )}
+          </>
         )}
       </div>
     </SlideTabs>

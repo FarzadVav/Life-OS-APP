@@ -10,6 +10,7 @@ import {
   CircleIcon,
   GaugeIcon,
   Repeat2Icon,
+  Trash2Icon,
 } from "lucide-react";
 
 import { Todo } from "../../types";
@@ -40,12 +41,14 @@ type TodoMissionCardProps = {
     disciplineId: number,
     isDone: boolean,
   ) => void;
+  onDelete?: (id: number) => void;
 };
 
 function TodoMissionCard({
   todo,
   onToggleAction,
   onToggleDiscipline,
+  onDelete,
 }: TodoMissionCardProps) {
   const { formatDate, t } = useLocale();
 
@@ -270,7 +273,24 @@ function TodoMissionCard({
         </section>
       )}
 
-      <div className="flex gap-3">
+      <div className="flex gap-2">
+        {onDelete && (
+          <Drawer.Close
+            render={
+              <Button
+                type="button"
+                variant="card"
+                square
+                className="size-10 justify-center text-foreground/70 hover:text-foreground"
+                onClick={() => onDelete(todo.id)}
+                aria-label={t("common.delete")}
+              >
+                <Trash2Icon className="size-4" />
+              </Button>
+            }
+          />
+        )}
+
         <Drawer.Close
           render={
             <Button
@@ -290,14 +310,14 @@ function TodoMissionCard({
               type="button"
               variant="primary"
               nativeButton={false}
-              className="w-full justify-center"
+              className="flex-1 justify-center"
               render={
                 <Link
-                  className="flex flex-1"
+                  className="flex flex-1 items-center justify-center gap-1"
                   href={`/todos/new?editId=${todo.id}&type=mission`}
                 >
                   <span>{t("common.edit")}</span>
-                  <ChevronRightIcon />
+                  <ChevronRightIcon className="size-4" />
                 </Link>
               }
             />

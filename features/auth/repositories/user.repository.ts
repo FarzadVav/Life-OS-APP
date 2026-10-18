@@ -1,23 +1,9 @@
 import { EntityRepository } from '@mikro-orm/sqlite';
 import type { User } from '@/db/entities';
 import { verifyPassword, hashPassword } from '../lib/passwords';
+import type { CreateUserData, UpdateUserData } from '../lib/definitions';
 
-export interface CreateUserData {
-  username: string;
-  password: string;
-  name?: string;
-  email?: string;
-  locale?: string;
-  colorScheme?: string;
-}
-
-export interface UpdateUserData {
-  name?: string;
-  email?: string;
-  locale?: string;
-  colorScheme?: string;
-  password?: string;
-}
+export type { CreateUserData, UpdateUserData };
 
 export class UserRepository extends EntityRepository<User> {
   async findById(id: number): Promise<User | null> {
