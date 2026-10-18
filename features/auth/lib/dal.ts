@@ -1,33 +1,25 @@
-import "server-only";
+import 'server-only';
+import { cache } from 'react';
+import { redirect } from 'next/navigation';
+import { getSessionQuery, getCurrentUserQuery } from '../queries';
+import type { AuthUser } from './definitions';
 
-import { cache } from "react";
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
-
-import { decrypt } from "./session";
-
+/**
+ * Verifies that the user has a valid active session.
+ * If not authenticated, redirects directly to /login.
+ */
 export const verifySession = cache(async () => {
-  const cookie = (await cookies()).get("session")?.value;
-  const session = await decrypt(cookie);
-
+  const session = await getSessionQuery();
   if (!session?.userId) {
-    redirect("/login");
+    redirect('/login');
   }
 
-  return { isAuth: true, userId: session.userId as string };
+  return { isAuth: true, userId: session.userId, username: session.username };
 });
 
-export const getSession = cache(async () => {
-  const cookie = (await cookies()).get("session")?.value;
-  const session = await decrypt(cookie);
-
-  if (!session?.userId) {
-    return null;
-  }
-
-  return {
-    isAuth: true,
-    userId: session.userId as string,
-    username: session.username as string,
-  };
+/**
+ * Retrieves the current user from the database via UserRepository (wrapped with React cache).
+ */
+export const getCurrentUser = cache(async (): Promise<AuthUser | null> => {
+  return getCurrentUserQuery();
 });

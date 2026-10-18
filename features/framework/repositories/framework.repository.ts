@@ -1,5 +1,7 @@
 import { EntityRepository } from '@mikro-orm/sqlite';
-import { FrameworkCategory, FrameworkItem, FrameworkSection, User } from '@/db/entities';
+import { FrameworkCategory, FrameworkSection } from '@/db/entities/enums';
+import { User } from '@/db/entities/User';
+import type { FrameworkItem } from '@/db/entities/FrameworkItem';
 
 export interface CreateFrameworkItemData {
   title: string;

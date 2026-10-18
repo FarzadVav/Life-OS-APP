@@ -4,9 +4,8 @@ import { BaseEntity } from './BaseEntity';
 import { Todo } from './Todo';
 import { Journal } from './Journal';
 import { FrameworkItem } from './FrameworkItem';
-import { UserRepository } from '@/features/auth/repositories/user.repository';
 
-@Entity({ tableName: 'users', repository: () => UserRepository })
+@Entity({ tableName: 'users' })
 export class User extends BaseEntity {
   [OptionalProps]?: 'createdAt' | 'updatedAt' | 'locale' | 'colorScheme';
 

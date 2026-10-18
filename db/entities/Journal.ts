@@ -1,19 +1,12 @@
-import { OptionalProps } from '@mikro-orm/core';
+import { OptionalProps, type Rel } from '@mikro-orm/core';
 import { Entity, Enum, ManyToOne, Property } from '@mikro-orm/decorators/legacy';
 import { BaseEntity } from './BaseEntity';
 import { User } from './User';
-import { JournalRepository } from '@/features/journals/repositories/journal.repository';
+import { JournalCategory } from './enums';
 
-export enum JournalCategory {
-  LOGS = 'Logs',
-  THOUGHTS = 'Thoughts',
-  FEELINGS = 'Feelings',
-  LESSONS = 'Lessons',
-  IDEAS = 'Ideas',
-  NOTES = 'Notes',
-}
+export { JournalCategory };
 
-@Entity({ tableName: 'journals', repository: () => JournalRepository })
+@Entity({ tableName: 'journals' })
 export class Journal extends BaseEntity {
   [OptionalProps]?: 'createdAt' | 'updatedAt' | 'type';
 
@@ -30,5 +23,5 @@ export class Journal extends BaseEntity {
   type: JournalCategory = JournalCategory.LOGS;
 
   @ManyToOne(() => User, { nullable: true, deleteRule: 'cascade' })
-  user?: User;
+  user?: Rel<User>;
 }

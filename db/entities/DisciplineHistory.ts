@@ -1,4 +1,4 @@
-import { OptionalProps } from '@mikro-orm/core';
+import { OptionalProps, type Rel } from '@mikro-orm/core';
 import { Entity, ManyToOne, Property } from '@mikro-orm/decorators/legacy';
 import { BaseEntity } from './BaseEntity';
 import { TodoDiscipline } from './TodoDiscipline';
@@ -17,5 +17,5 @@ export class DisciplineHistory extends BaseEntity {
   isDone: boolean = true;
 
   @ManyToOne(() => TodoDiscipline, { nullable: false, deleteRule: 'cascade' })
-  discipline!: TodoDiscipline;
+  discipline!: Rel<TodoDiscipline>;
 }

@@ -1,18 +1,14 @@
-import { Cascade, Collection, OptionalProps } from '@mikro-orm/core';
+import { Cascade, Collection, OptionalProps, type Rel } from '@mikro-orm/core';
 import { Entity, Enum, ManyToOne, OneToMany, Property } from '@mikro-orm/decorators/legacy';
 import { BaseEntity } from './BaseEntity';
 import { User } from './User';
 import { TodoAction } from './TodoAction';
 import { TodoDiscipline } from './TodoDiscipline';
-import { TodoRepository } from '@/features/todos/repositories/todo.repository';
+import { TodoType } from './enums';
 
-export enum TodoType {
-  DAILY = 'Daily',
-  UPCOMING = 'Upcoming',
-  MISSION = 'Mission',
-}
+export { TodoType };
 
-@Entity({ tableName: 'todos', repository: () => TodoRepository })
+@Entity({ tableName: 'todos' })
 export class Todo extends BaseEntity {
   [OptionalProps]?: 'createdAt' | 'updatedAt' | 'isDone' | 'type';
 
@@ -39,7 +35,7 @@ export class Todo extends BaseEntity {
   difficulty?: number;
 
   @ManyToOne(() => User, { nullable: true, deleteRule: 'cascade' })
-  user?: User;
+  user?: Rel<User>;
 
   @OneToMany(() => TodoAction, (action) => action.mission, { cascade: [Cascade.ALL], orphanRemoval: true })
   actions = new Collection<TodoAction>(this);

@@ -41,6 +41,20 @@ declare global {
   var __mikro_orm_cache__: Services | undefined;
 }
 
+function createServices(orm: MikroORM, em: EntityManager): Services {
+  return {
+    orm,
+    em,
+    user: new UserRepository(em, User),
+    todo: new TodoRepository(em, Todo),
+    todoAction: new TodoActionRepository(em, TodoAction),
+    todoDiscipline: new TodoDisciplineRepository(em, TodoDiscipline),
+    disciplineHistory: em.getRepository(DisciplineHistory),
+    journal: new JournalRepository(em, Journal),
+    frameworkItem: new FrameworkRepository(em, FrameworkItem),
+  };
+}
+
 /**
  * Initializes and returns the MikroORM services singleton with custom feature repositories.
  */
@@ -54,19 +68,7 @@ export async function initORM(options?: Partial<Options>): Promise<Services> {
     ...options,
   });
 
-  const em = orm.em;
-
-  const services: Services = {
-    orm,
-    em,
-    user: em.getRepository(User) as UserRepository,
-    todo: em.getRepository(Todo) as TodoRepository,
-    todoAction: em.getRepository(TodoAction) as TodoActionRepository,
-    todoDiscipline: em.getRepository(TodoDiscipline) as TodoDisciplineRepository,
-    disciplineHistory: em.getRepository(DisciplineHistory),
-    journal: em.getRepository(Journal) as JournalRepository,
-    frameworkItem: em.getRepository(FrameworkItem) as FrameworkRepository,
-  };
+  const services = createServices(orm, orm.em);
 
   if (process.env.NODE_ENV !== 'production') {
     globalThis.__mikro_orm_cache__ = services;
@@ -82,8 +84,11 @@ export async function initORM(options?: Partial<Options>): Promise<Services> {
 export async function withRequestContext<T>(
   callback: (services: Services) => Promise<T>,
 ): Promise<T> {
-  const services = await initORM();
-  return RequestContext.create(services.orm.em, () => callback(services));
+  const { orm } = await initORM();
+  return RequestContext.create(orm.em, () => {
+    const scopedServices = createServices(orm, orm.em);
+    return callback(scopedServices);
+  });
 }
 
 /**

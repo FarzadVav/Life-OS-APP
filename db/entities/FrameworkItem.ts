@@ -1,27 +1,12 @@
-import { OptionalProps } from '@mikro-orm/core';
+import { OptionalProps, type Rel } from '@mikro-orm/core';
 import { Entity, Enum, ManyToOne, Property } from '@mikro-orm/decorators/legacy';
 import { BaseEntity } from './BaseEntity';
 import { User } from './User';
-import { FrameworkRepository } from '@/features/framework/repositories/framework.repository';
+import { FrameworkCategory, FrameworkSection } from './enums';
 
-export enum FrameworkCategory {
-  CAREER = 'Career',
-  MINDSET = 'Mindset',
-  SOCIAL = 'Social',
-  HEALTH = 'Health',
-  BEHAVIOR = 'Behavior',
-  FINANCE = 'Finance',
-  LIFESTYLE = 'Lifestyle',
-  KNOWLEDGE = 'Knowledge',
-}
+export { FrameworkCategory, FrameworkSection };
 
-export enum FrameworkSection {
-  VISIONS = 'Visions',
-  RULES = 'Rules',
-  CONCEPTS = 'Concepts',
-}
-
-@Entity({ tableName: 'framework_items', repository: () => FrameworkRepository })
+@Entity({ tableName: 'framework_items' })
 export class FrameworkItem extends BaseEntity {
   [OptionalProps]?: 'createdAt' | 'updatedAt';
 
@@ -41,5 +26,5 @@ export class FrameworkItem extends BaseEntity {
   section!: FrameworkSection;
 
   @ManyToOne(() => User, { nullable: true, deleteRule: 'cascade' })
-  user?: User;
+  user?: Rel<User>;
 }

@@ -1,14 +1,36 @@
-import "server-only";
-
 export type SessionPayload = {
   userId: string;
   username: string;
   expiresAt: Date;
 };
 
-// Demo credentials — replace with a real user store / auth provider.
-export const DEMO_USER = {
-  id: "1",
-  username: "admin",
-  password: "password123",
+export type AuthUser = {
+  id: number;
+  username: string;
+  name?: string | null;
+  email?: string | null;
+  locale: string;
+  colorScheme: string;
+  createdAt: string;
 };
+
+export type LoginFormState =
+  | {
+      errors?: {
+        username?: string[];
+        password?: string[];
+      };
+      message?: string;
+      inputs?: {
+        username?: string;
+      };
+      success?: boolean;
+    }
+  | undefined;
+
+export type LogoutFormState =
+  | {
+      message?: string;
+      success?: boolean;
+    }
+  | undefined;

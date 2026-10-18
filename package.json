@@ -38,7 +38,8 @@
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "reflect-metadata": "^0.2.2",
-    "server-only": "^0.0.1"
+    "server-only": "^0.0.1",
+    "swr": "^2.5.1"
   },
   "devDependencies": {
     "@mikro-orm/cli": "^7.2.5",

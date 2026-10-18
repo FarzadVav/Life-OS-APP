@@ -1,5 +1,6 @@
 import { EntityRepository } from '@mikro-orm/sqlite';
-import { User } from '@/db/entities';
+import type { User } from '@/db/entities';
+import { verifyPassword, hashPassword } from '../lib/passwords';
 
 export interface CreateUserData {
   username: string;
@@ -29,6 +30,70 @@ export class UserRepository extends EntityRepository<User> {
 
   async findByEmail(email: string): Promise<User | null> {
     return this.findOne({ email });
+  }
+
+  /**
+   * Verifies username and password using the password verification utility.
+   * Returns user if credentials match, otherwise null.
+   */
+  async verifyCredentials(username: string, password: string): Promise<User | null> {
+    const cleanUsername = username.trim();
+    const user = await this.findOne({ username: cleanUsername });
+    if (!user || !user.password) {
+      return null;
+    }
+
+    const isValid = verifyPassword(password, user.password);
+    if (!isValid) {
+      return null;
+    }
+
+    return user;
+  }
+
+  /**
+   * Attempts to authenticate an existing user or creates a new user if not found.
+   * - If user exists and password matches: returns { user, status: 'LOGGED_IN' }
+   * - If user exists and password fails: returns { user: null, status: 'INVALID_CREDENTIALS' }
+   * - If user does not exist: creates a new user and returns { user, status: 'CREATED' }
+   */
+  async loginOrCreate(
+    username: string,
+    password: string,
+    options?: { locale?: string; colorScheme?: string },
+  ): Promise<{
+    user: User | null;
+    status: 'LOGGED_IN' | 'CREATED' | 'INVALID_CREDENTIALS';
+  }> {
+    const cleanUsername = username.trim();
+    const existingUser = await this.findOne({ username: cleanUsername });
+
+    if (existingUser) {
+      if (!existingUser.password) {
+        return { user: null, status: 'INVALID_CREDENTIALS' };
+      }
+
+      const isValid = verifyPassword(password, existingUser.password);
+      if (!isValid) {
+        return { user: null, status: 'INVALID_CREDENTIALS' };
+      }
+
+      return { user: existingUser, status: 'LOGGED_IN' };
+    }
+
+    try {
+      const hashedPassword = hashPassword(password);
+      const newUser = this.create({
+        username: cleanUsername,
+        password: hashedPassword,
+        locale: options?.locale ?? 'fa',
+        colorScheme: options?.colorScheme ?? 'system',
+      });
+      await this.em.flush();
+      return { user: newUser, status: 'CREATED' };
+    } catch {
+      return { user: null, status: 'INVALID_CREDENTIALS' };
+    }
   }
 
   async createUser(data: CreateUserData): Promise<User> {

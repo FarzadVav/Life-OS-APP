@@ -1,5 +1,6 @@
 import { EntityRepository } from '@mikro-orm/sqlite';
-import { Todo, TodoAction } from '@/db/entities';
+import { Todo } from '@/db/entities/Todo';
+import type { TodoAction } from '@/db/entities/TodoAction';
 
 export interface CreateActionData {
   title: string;

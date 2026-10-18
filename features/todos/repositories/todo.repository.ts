@@ -1,5 +1,7 @@
 import { EntityRepository } from '@mikro-orm/sqlite';
-import { Todo, TodoType, User } from '@/db/entities';
+import { TodoType } from '@/db/entities/enums';
+import { User } from '@/db/entities/User';
+import type { Todo } from '@/db/entities/Todo';
 
 export interface CreateTodoData {
   title: string;

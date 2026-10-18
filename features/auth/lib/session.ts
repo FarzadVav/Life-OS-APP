@@ -5,7 +5,9 @@ import { cookies } from "next/headers";
 
 import { SessionPayload } from "./definitions";
 
-const secretKey = process.env.SESSION_SECRET;
+const secretKey =
+  process.env.SESSION_SECRET ||
+  "life-os-default-super-secret-key-32-chars-minimum-token-auth!";
 const encodedKey = new TextEncoder().encode(secretKey);
 
 export async function encrypt(payload: SessionPayload) {

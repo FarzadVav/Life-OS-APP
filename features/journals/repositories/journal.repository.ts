@@ -1,5 +1,7 @@
 import { EntityRepository } from '@mikro-orm/sqlite';
-import { Journal, JournalCategory, User } from '@/db/entities';
+import { JournalCategory } from '@/db/entities/enums';
+import { User } from '@/db/entities/User';
+import type { Journal } from '@/db/entities/Journal';
 
 export interface CreateJournalData {
   title: string;

@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useActionState, useState } from "react";
 import {
   BookOpenIcon,
   CheckSquareIcon,
   LogOutIcon,
   RocketIcon,
   LayersIcon,
+  UserIcon,
 } from "lucide-react";
 
 import { todos } from "@/features/todos/constants";
@@ -17,7 +18,8 @@ import Dialog from "@/features/general/components/ui/Dialog/Dialog";
 import { Button } from "@/features/general/components/ui/Button/Button";
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
 import PageItemsWrapper from "@/features/general/components/static/PageItemsWrapper/PageItemsWrapper";
-import { logout } from "@/features/auth/actions/auth";
+import { logoutMutation } from "@/features/auth/mutations";
+import { useCurrentUser } from "@/features/auth/hooks";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 import LocaleSwitcher from "@/features/general/components/module/LocaleSwitcher/LocaleSwitcher";
 import ThemeSwitcher from "@/features/general/components/module/ThemeSwitcher/ThemeSwitcher";
@@ -25,6 +27,8 @@ import PageActionBtn from "@/features/general/components/module/PageActionBtn/Pa
 
 function UserProfilePage() {
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
+  const [, logoutAction, isLoggingOut] = useActionState(logoutMutation, undefined);
+  const { user: currentUser } = useCurrentUser();
   const { t } = useLocale();
   const { items: frameworkItems } = useFrameworkItems();
 
@@ -93,6 +97,26 @@ function UserProfilePage() {
       </TopBar>
 
       <PageItemsWrapper>
+        {/* User Card fetched via SWR */}
+        <div className="w-full flex items-center gap-3.5 p-4 rounded-container bg-card border border-foreground/5 shadow-xs">
+          <div className="size-12 rounded-full bg-foreground/10 flex items-center justify-center shrink-0 text-foreground font-bold text-base">
+            {currentUser?.name
+              ? currentUser.name.slice(0, 2).toUpperCase()
+              : currentUser?.username
+                ? currentUser.username.slice(0, 2).toUpperCase()
+                : <UserIcon className="size-5" />}
+          </div>
+          <div className="flex flex-col min-w-0">
+            <span className="font-bold text-foreground text-base tracking-tight truncate">
+              {currentUser?.name || currentUser?.username || "..."}
+            </span>
+            <span className="sub-text text-xs truncate mt-0.5">
+              {currentUser?.username ? `@${currentUser.username}` : "..."}
+              {currentUser?.email ? ` • ${currentUser.email}` : ""}
+            </span>
+          </div>
+        </div>
+
         {stats.map((stat) => (
           <div
             key={stat.label}
@@ -152,15 +176,15 @@ function UserProfilePage() {
           <div className="flex items-center justify-end gap-3">
             <Dialog.Close
               render={
-                <Button type="button" variant="card" className="flex-1">
+                <Button type="button" variant="card" className="flex-1" disabled={isLoggingOut}>
                   {t("common.cancel")}
                 </Button>
               }
             />
 
-            <form action={logout} className="flex-1">
-              <Button type="submit" variant="primary" className="w-full">
-                {t("profile.logout")}
+            <form action={logoutAction} className="flex-1">
+              <Button type="submit" variant="primary" className="w-full" disabled={isLoggingOut}>
+                {isLoggingOut ? t("common.loading") : t("profile.logout")}
               </Button>
             </form>
           </div>

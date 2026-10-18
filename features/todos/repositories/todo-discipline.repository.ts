@@ -1,5 +1,7 @@
 import { EntityRepository } from '@mikro-orm/sqlite';
-import { DisciplineHistory, Todo, TodoDiscipline } from '@/db/entities';
+import { Todo } from '@/db/entities/Todo';
+import { DisciplineHistory } from '@/db/entities/DisciplineHistory';
+import type { TodoDiscipline } from '@/db/entities/TodoDiscipline';
 
 export interface CreateDisciplineData {
   title: string;

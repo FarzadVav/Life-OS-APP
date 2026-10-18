@@ -39,17 +39,17 @@
   },
   "login": {
     "title": "Welcome to Arrow Up",
-    "subtitle": "Log in to continue your journey.",
+    "subtitle": "Enter your credentials to sign in or create an account.",
     "quote": "In memory of those who left us, so that Iran endures, tomorrow endures, and we remain to build the future",
-    "formLabel": "Login form",
+    "formLabel": "Login or register form",
     "username": "Username",
     "usernamePlaceholder": "Your username...",
     "password": "Password",
     "passwordPlaceholder": "Your password...",
     "showPassword": "Show password",
     "hidePassword": "Hide password",
-    "submit": "Login",
-    "pending": "Logging in..."
+    "submit": "Sign In / Register",
+    "pending": "Authenticating..."
   },
   "profile": {
     "title": "Profile",
