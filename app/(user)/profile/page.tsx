@@ -10,9 +10,9 @@ import {
   UserIcon,
 } from "lucide-react";
 
-import { todos } from "@/features/todos/constants";
-import { journals } from "@/features/journals/constants";
-import { useFrameworkItems } from "@/features/framework/items";
+import { useTodos } from "@/features/todos/hooks";
+import { useJournalsStats } from "@/features/journals/hooks";
+import { useFrameworkStats } from "@/features/framework/hooks";
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
 import Dialog from "@/features/general/components/ui/Dialog/Dialog";
 import { Button } from "@/features/general/components/ui/Button/Button";
@@ -30,7 +30,9 @@ function UserProfilePage() {
   const [, logoutAction, isLoggingOut] = useActionState(logoutMutation, undefined);
   const { user: currentUser } = useCurrentUser();
   const { t } = useLocale();
-  const { items: frameworkItems } = useFrameworkItems();
+  const { todos = [] } = useTodos();
+  const { stats: frameworkStats } = useFrameworkStats();
+  const { stats: journalStats } = useJournalsStats();
 
   const dailyTodos = todos.filter((item) => item.type === "Daily");
   const upcomingTodos = todos.filter((item) => item.type === "Upcoming");
@@ -47,13 +49,10 @@ function UserProfilePage() {
     0,
   );
 
-  const visionsCount = frameworkItems.filter(
-    (i) => i.section === "Visions",
-  ).length;
-  const rulesCount = frameworkItems.filter((i) => i.section === "Rules").length;
-  const conceptsCount = frameworkItems.filter(
-    (i) => i.section === "Concepts",
-  ).length;
+  const visionsCount = frameworkStats?.bySection?.visions ?? 0;
+  const rulesCount = frameworkStats?.bySection?.rules ?? 0;
+  const conceptsCount = frameworkStats?.bySection?.concepts ?? 0;
+  const totalJournals = journalStats?.total ?? 0;
 
   const stats = [
     {
@@ -84,7 +83,7 @@ function UserProfilePage() {
     {
       label: t("profile.journals"),
       icon: <BookOpenIcon className="size-5 text-foreground" />,
-      details: [{ label: t("profile.total"), value: journals.length }],
+      details: [{ label: t("profile.total"), value: totalJournals }],
     },
   ];
 

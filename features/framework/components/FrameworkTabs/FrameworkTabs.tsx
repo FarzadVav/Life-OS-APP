@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
+import { LoaderIcon } from "lucide-react";
 
 import {
   FRAMEWORK_CATEGORIES,
@@ -10,7 +11,7 @@ import {
   FrameworkCategory,
   FrameworkSection,
 } from "../../types";
-import { useFrameworkItems } from "../../items";
+import { useFrameworkItems } from "../../hooks";
 import FrameworkItemCard from "../FrameworkItemCard/FrameworkItemCard";
 import { Button } from "@/features/general/components/ui/Button/Button";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
@@ -32,18 +33,21 @@ function resolveSection(param: string | null): FrameworkSection {
 }
 
 export function FrameworkTabs() {
-  const { items } = useFrameworkItems();
-  const { t } = useLocale();
   const sp = useSearchParams();
-
   const activeCategory = resolveCategory(sp.get("category"));
   const activeSection = resolveSection(sp.get("section"));
 
-  const filteredItems = items.filter(
-    (item) =>
-      item.category.toLowerCase() === activeCategory.toLowerCase() &&
-      item.section.toLowerCase() === activeSection.toLowerCase(),
+  const { items: filteredItems, isLoading, deleteItem } = useFrameworkItems(
+    activeCategory,
+    activeSection,
   );
+  const { t } = useLocale();
+
+  const handleDelete = (id: number) => {
+    deleteItem(id).catch((err) =>
+      console.error("Failed to delete framework item:", err),
+    );
+  };
 
   return (
     <>
@@ -58,7 +62,7 @@ export function FrameworkTabs() {
               nativeButton={false}
               render={
                 <Link
-                  href={`?category=${encodeURIComponent(
+                  href={`/framework?category=${encodeURIComponent(
                     category.toLowerCase(),
                   )}&section=${encodeURIComponent(
                     activeSection.toLowerCase(),
@@ -75,8 +79,8 @@ export function FrameworkTabs() {
         })}
       </div>
 
-      {/* Section Switcher (Visions, Rules, Concepts) */}
-      <div className="w-full flex gap-2">
+      {/* Section Sub-Pills (Visions, Rules, Concepts) */}
+      <div className="w-full flex items-center gap-2 py-1">
         {FRAMEWORK_SECTIONS.map((section) => {
           const isActive =
             section.toLowerCase() === activeSection.toLowerCase();
@@ -84,16 +88,16 @@ export function FrameworkTabs() {
             <Button
               key={section}
               nativeButton={false}
-              className="flex-1 justify-center rounded-container"
               render={
                 <Link
-                  href={`?category=${encodeURIComponent(
+                  href={`/framework?category=${encodeURIComponent(
                     activeCategory.toLowerCase(),
                   )}&section=${encodeURIComponent(section.toLowerCase())}`}
                   scroll={false}
                 />
               }
-              variant={isActive ? "primary" : "card"}
+              variant={isActive ? "primary" : "ghost"}
+              className="flex-1 justify-center text-xs"
             >
               {t(`framework.sections.${section.toLowerCase()}`) || section}
             </Button>
@@ -101,57 +105,66 @@ export function FrameworkTabs() {
         })}
       </div>
 
-      {/* Items Section */}
+      {/* Items List */}
       <div className="w-full overflow-hidden rounded-container">
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.div
-            key={`${activeCategory}-${activeSection}`}
-            className="w-full space-y-3"
-            transition={{ ease: "linear", duration: 0.15 }}
-            initial={{
-              translateX: "-10%",
-              opacity: 0,
-              filter: "blur(4px)",
-            }}
-            animate={{ translateX: 0, opacity: 1, filter: "none" }}
-            exit={{
-              translateX: "10%",
-              opacity: 0,
-              filter: "blur(4px)",
-            }}
-          >
-            {filteredItems.map((item) => (
-              <FrameworkItemCard key={item.id} item={item} />
-            ))}
+        {isLoading && filteredItems.length === 0 ? (
+          <div className="flex w-full items-center justify-center p-12 text-foreground/40 gap-2">
+            <LoaderIcon className="size-5 animate-spin" />
+            <span className="text-xs sub-text">{t("common.loading")}</span>
+          </div>
+        ) : (
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={`${activeCategory}-${activeSection}`}
+              className="w-full space-y-3"
+              transition={{ ease: "linear", duration: 0.15 }}
+              initial={{
+                translateX: "-10%",
+                opacity: 0,
+                filter: "blur(4px)",
+              }}
+              animate={{ translateX: 0, opacity: 1, filter: "none" }}
+              exit={{
+                translateX: "10%",
+                opacity: 0,
+                filter: "blur(4px)",
+              }}
+            >
+              {filteredItems.map((item) => (
+                <FrameworkItemCard
+                  key={item.id}
+                  item={item}
+                  onDelete={handleDelete}
+                />
+              ))}
 
-            {filteredItems.length === 0 && (
-              <div
-                className="
-                  flex w-full flex-1
-                  flex-col
-                  items-center justify-center
-                  rounded-container
-                  border-2 border-dashed
-                  p-8
-                  text-center
-                "
-              >
-                <p className="sub-text text-sm">
-                  {t("framework.emptySection", {
-                    section:
-                      t(`framework.sections.${activeSection.toLowerCase()}`) ||
-                      activeSection,
-                    category:
-                      t(
-                        `framework.categories.${activeCategory.toLowerCase()}`,
-                      ) || activeCategory,
-                  }) ||
-                    `No ${activeSection} defined for ${activeCategory} yet.`}
-                </p>
-              </div>
-            )}
-          </motion.div>
-        </AnimatePresence>
+              {filteredItems.length === 0 && (
+                <div
+                  className="
+                    flex w-full flex-1
+                    items-center justify-center
+                    rounded-container
+                    border-2 border-dashed
+                    p-6
+                  "
+                >
+                  <p className="sub-text">
+                    {t("framework.emptySection", {
+                      section:
+                        t(
+                          `framework.sections.${activeSection.toLowerCase()}`,
+                        ) || activeSection,
+                      category:
+                        t(
+                          `framework.categories.${activeCategory.toLowerCase()}`,
+                        ) || activeCategory,
+                    })}
+                  </p>
+                </div>
+              )}
+            </motion.div>
+          </AnimatePresence>
+        )}
       </div>
     </>
   );

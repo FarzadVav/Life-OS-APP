@@ -1,13 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import { LoaderIcon } from "lucide-react";
 
 import {
   FRAMEWORK_SECTIONS,
   FrameworkCategory,
   FrameworkSection,
 } from "../../types";
-import { useFrameworkItems } from "../../items";
+import { useFrameworkItems } from "../../hooks";
 import FrameworkItemCard from "../FrameworkItemCard/FrameworkItemCard";
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
 import PageActionBtn from "@/features/general/components/module/PageActionBtn/PageActionBtn";
@@ -27,7 +28,7 @@ export default function FrameworkCategoryView({
   initialSection = "Visions",
   categoryTitle,
 }: FrameworkCategoryViewProps) {
-  const { items } = useFrameworkItems();
+  const { items, isLoading, deleteItem } = useFrameworkItems(category);
   const { t } = useLocale();
 
   const [activeSection, setActiveSection] =
@@ -58,6 +59,12 @@ export default function FrameworkCategoryView({
     };
   });
 
+  const handleDelete = (id: number) => {
+    deleteItem(id).catch((err) =>
+      console.error("Failed to delete framework item:", err),
+    );
+  };
+
   return (
     <PageWrapper>
       <TopBar>
@@ -74,31 +81,44 @@ export default function FrameworkCategoryView({
           onTabChange={(id) => setActiveSection(id as FrameworkSection)}
         >
           <div className="w-full space-y-3">
-            {filteredItems.map((item) => (
-              <FrameworkItemCard key={item.id} item={item} />
-            ))}
-
-            {filteredItems.length === 0 && (
-              <div
-                className="
-                  flex w-full flex-1
-                  flex-col
-                  items-center justify-center
-                  rounded-container
-                  border-2 border-dashed
-                  border-foreground/15
-                  p-8
-                  text-center
-                  gap-2
-                "
-              >
-                <p className="sub-text text-sm">
-                  {t("framework.emptySection", {
-                    section: sectionLabel,
-                    category: categoryTitle,
-                  })}
-                </p>
+            {isLoading && items.length === 0 ? (
+              <div className="flex w-full items-center justify-center p-12 text-foreground/40 gap-2">
+                <LoaderIcon className="size-5 animate-spin" />
+                <span className="text-xs sub-text">{t("common.loading")}</span>
               </div>
+            ) : (
+              <>
+                {filteredItems.map((item) => (
+                  <FrameworkItemCard
+                    key={item.id}
+                    item={item}
+                    onDelete={handleDelete}
+                  />
+                ))}
+
+                {filteredItems.length === 0 && (
+                  <div
+                    className="
+                      flex w-full flex-1
+                      flex-col
+                      items-center justify-center
+                      rounded-container
+                      border-2 border-dashed
+                      border-foreground/15
+                      p-8
+                      text-center
+                      gap-2
+                    "
+                  >
+                    <p className="sub-text text-sm">
+                      {t("framework.emptySection", {
+                        section: sectionLabel,
+                        category: categoryTitle,
+                      })}
+                    </p>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </SlideTabs>

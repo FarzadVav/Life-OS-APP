@@ -34,6 +34,7 @@ export interface Services {
   todoDiscipline: TodoDisciplineRepository;
   disciplineHistory: EntityRepository<DisciplineHistory>;
   journal: JournalRepository;
+  framework: FrameworkRepository;
   frameworkItem: FrameworkRepository;
 }
 
@@ -42,6 +43,7 @@ declare global {
 }
 
 function createServices(orm: MikroORM, em: EntityManager): Services {
+  const frameworkRepo = new FrameworkRepository(em, FrameworkItem);
   return {
     orm,
     em,
@@ -51,7 +53,8 @@ function createServices(orm: MikroORM, em: EntityManager): Services {
     todoDiscipline: new TodoDisciplineRepository(em, TodoDiscipline),
     disciplineHistory: em.getRepository(DisciplineHistory),
     journal: new JournalRepository(em, Journal),
-    frameworkItem: new FrameworkRepository(em, FrameworkItem),
+    framework: frameworkRepo,
+    frameworkItem: frameworkRepo,
   };
 }
 

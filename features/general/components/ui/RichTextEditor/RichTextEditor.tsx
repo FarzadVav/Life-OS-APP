@@ -81,7 +81,7 @@ export function RichTextEditor({
 
   return (
     <>
-      <div className="flex flex-col h-[calc(100%-10.5rem)]">
+      <div className={cn("flex flex-col h-[calc(100%-10.5rem)]", className)}>
         {showToolbar ? <RichTextToolbar editor={editor} /> : null}
 
         <div onClick={() => {

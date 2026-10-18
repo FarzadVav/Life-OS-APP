@@ -1,11 +1,14 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useActionState } from "react";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 
 import { Field, Form } from "@base-ui/react";
+import { LoaderIcon, Trash2Icon } from "lucide-react";
 import SelectDialog from "@/features/general/components/ui/SelectDialog";
+import Dialog from "@/features/general/components/ui/Dialog/Dialog";
+import { Button } from "@/features/general/components/ui/Button/Button";
 
 import {
   FRAMEWORK_CATEGORIES,
@@ -13,12 +16,12 @@ import {
   FrameworkCategory,
   FrameworkSection,
 } from "@/features/framework/types";
+import { useFrameworkItem } from "@/features/framework/hooks";
 import {
-  addFrameworkItem,
-  getFrameworkItem,
-  updateFrameworkItem,
-  useFrameworkItems,
-} from "@/features/framework/items";
+  createFrameworkItemMutation,
+  updateFrameworkItemMutation,
+  deleteFrameworkItemMutation,
+} from "@/features/framework/mutations";
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
 import PageActionBtn from "@/features/general/components/module/PageActionBtn/PageActionBtn";
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
@@ -45,7 +48,7 @@ function CategorySelect({
       </Field.Label>
 
       <SelectDialog
-        name="category"
+        name="categorySelect"
         items={items}
         value={value}
         onChange={(nextValue) => {
@@ -58,7 +61,7 @@ function CategorySelect({
         required
       />
 
-      <Field.Error className="sub-text mt-0.5 text-foreground" />
+      <Field.Error className="sub-text mt-0.5 text-foreground text-xs" />
     </Field.Root>
   );
 }
@@ -84,7 +87,7 @@ function SectionSelect({
       </Field.Label>
 
       <SelectDialog
-        name="section"
+        name="sectionSelect"
         items={items}
         value={value}
         onChange={(nextValue) => {
@@ -97,7 +100,7 @@ function SectionSelect({
         required
       />
 
-      <Field.Error className="sub-text mt-0.5 text-foreground" />
+      <Field.Error className="sub-text mt-0.5 text-foreground text-xs" />
     </Field.Root>
   );
 }
@@ -111,8 +114,9 @@ function NewFrameworkItemPage() {
   const sectionParam = searchParams.get("section");
   const isEditMode = Boolean(editId);
 
-  // We use useFrameworkItems so any changes are hooked into reactive store
-  useFrameworkItems();
+  const { item, isLoading: isItemLoading } = useFrameworkItem(
+    editId ? Number(editId) : null,
+  );
 
   const resolveCategory = useCallback(
     (param: string | null): FrameworkCategory => {
@@ -144,7 +148,32 @@ function NewFrameworkItemPage() {
     resolveSection(sectionParam),
   );
   const [content, setContent] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
+  // Native form handling via React 19 useActionState + Base UI Form
+  const [state, formAction, pending] = useActionState(
+    isEditMode ? updateFrameworkItemMutation : createFrameworkItemMutation,
+    null,
+  );
+
+  const singularSection = section.endsWith("s")
+    ? section.slice(0, -1)
+    : section;
+
+  const backHref = `/framework?category=${encodeURIComponent(
+    category.toLowerCase(),
+  )}&section=${encodeURIComponent(section.toLowerCase())}`;
+
+  // Navigate back to category upon success
+  useEffect(() => {
+    if (state?.success) {
+      router.push(backHref);
+      router.refresh();
+    }
+  }, [state?.success, backHref, router]);
+
+  // Load existing framework item details if in edit mode
   useEffect(() => {
     if (!editId) {
       queueMicrotask(() => {
@@ -156,22 +185,32 @@ function NewFrameworkItemPage() {
       return;
     }
 
-    const item = getFrameworkItem(Number(editId));
-    if (!item) {
-      return;
+    if (item) {
+      queueMicrotask(() => {
+        setTitle(item.title);
+        setCategory(item.category);
+        setSection(item.section);
+        setContent(item.content);
+      });
     }
+  }, [editId, item, categoryParam, sectionParam, resolveCategory, resolveSection]);
 
-    queueMicrotask(() => {
-      setTitle(item.title);
-      setCategory(item.category);
-      setSection(item.section);
-      setContent(item.content);
-    });
-  }, [editId, categoryParam, sectionParam, resolveCategory, resolveSection]);
-
-  const singularSection = section.endsWith("s")
-    ? section.slice(0, -1)
-    : section;
+  const handleDelete = async () => {
+    if (!editId) return;
+    setIsDeleting(true);
+    try {
+      const res = await deleteFrameworkItemMutation(Number(editId));
+      if (res.success) {
+        setDeleteDialogOpen(false);
+        router.push(backHref);
+        router.refresh();
+      }
+    } catch (err) {
+      console.error("Delete error:", err);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   const pageTitle = isEditMode
     ? t("framework.editItem", {
@@ -183,95 +222,141 @@ function NewFrameworkItemPage() {
           t(`framework.sections.${section.toLowerCase()}`) || singularSection,
       }) || `New ${singularSection}`;
 
-  const backHref = `/framework?category=${encodeURIComponent(
-    category.toLowerCase(),
-  )}&section=${encodeURIComponent(section.toLowerCase())}`;
-
   return (
     <PageWrapper>
       <TopBar>
         <TopBar.Title asTitle>{pageTitle}</TopBar.Title>
         <TopBar.Btn backIcon href={backHref} position="left" />
-        <TopBar.HelpBtn position="right" />
+
+        {isEditMode ? (
+          <TopBar.Btn
+            position="right"
+            onClick={() => setDeleteDialogOpen(true)}
+            aria-label={t("common.delete")}
+            className="text-foreground/70 hover:text-foreground"
+          >
+            <Trash2Icon className="size-5" />
+          </TopBar.Btn>
+        ) : (
+          <TopBar.HelpBtn position="right" />
+        )}
       </TopBar>
 
-      <Form
-        className="w-full space-y-6"
-        aria-label={
-          isEditMode
-            ? t("framework.editAria") || "Edit framework item"
-            : t("framework.createAria") || "Create framework item"
-        }
-        action={async () => {
-          if (!title.trim()) return;
-
-          if (isEditMode && editId) {
-            updateFrameworkItem(Number(editId), {
-              title,
-              content,
-              category,
-              section,
-            });
-          } else {
-            addFrameworkItem({
-              title,
-              content,
-              category,
-              section,
-            });
-          }
-
-          router.push(backHref);
-        }}
-      >
-        <Field.Root name="title">
-          <Field.Label className="block font-bold">
-            {t("common.title")}
-          </Field.Label>
-
-          <Field.Control
-            required
-            minLength={3}
-            value={title}
-            className="input"
-            placeholder={
-              t(`framework.placeholder.${section.toLowerCase()}`) ||
-              `Title for this ${singularSection.toLowerCase()}...`
-            }
-            onChange={(event) => setTitle(event.target.value)}
-          />
-
-          <Field.Error className="sub-text mt-0.5 text-foreground" />
-        </Field.Root>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <CategorySelect value={category} onChange={setCategory} />
-          <SectionSelect value={section} onChange={setSection} />
+      {isEditMode && isItemLoading && !item ? (
+        <div className="flex w-full items-center justify-center p-12 text-foreground/40 gap-2">
+          <LoaderIcon className="size-5 animate-spin" />
+          <span className="text-xs sub-text">{t("common.loading")}</span>
         </div>
+      ) : (
+        <Form
+          className="w-full space-y-6"
+          aria-label={
+            isEditMode
+              ? t("framework.editAria") || "Edit framework item"
+              : t("framework.createAria") || "Create framework item"
+          }
+          action={formAction}
+          errors={state?.errors}
+        >
+          {state?.errors?.general && (
+            <div
+              role="alert"
+              className="p-3 text-xs rounded-component bg-foreground/5 border border-foreground/15 text-foreground leading-relaxed"
+            >
+              {state.errors.general.join(", ")}
+            </div>
+          )}
 
-        <Field.Root name="content">
-          <Field.Label className="block font-bold">
-            {t("common.content")}
-          </Field.Label>
+          {/* Hidden inputs to pass data to Server Action */}
+          {isEditMode && <input type="hidden" name="id" value={editId ?? ""} />}
+          <input type="hidden" name="category" value={category} />
+          <input type="hidden" name="section" value={section} />
+          <input type="hidden" name="content" value={content} />
 
-          <RichTextarea
-            name="content"
-            value={content}
-            onChange={setContent}
-            placeholder={
-              t("framework.contentPlaceholder") ||
-              "Write in detail using the rich text editor..."
-            }
-            title={pageTitle}
-            required
-            minLength={5}
-          />
+          <Field.Root name="title">
+            <Field.Label className="block font-bold">
+              {t("common.title")}
+            </Field.Label>
 
-          <Field.Error className="sub-text mt-0.5 text-foreground" />
-        </Field.Root>
+            <Field.Control
+              required
+              minLength={3}
+              name="title"
+              value={title}
+              disabled={pending}
+              className="input"
+              placeholder={
+                t(`framework.placeholder.${section.toLowerCase()}`) ||
+                `Title for this ${singularSection.toLowerCase()}...`
+              }
+              onChange={(event) => setTitle(event.target.value)}
+            />
 
-        <PageActionBtn submit />
-      </Form>
+            <Field.Error className="sub-text mt-0.5 text-foreground text-xs" />
+          </Field.Root>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <CategorySelect value={category} onChange={setCategory} />
+            <SectionSelect value={section} onChange={setSection} />
+          </div>
+
+          <Field.Root name="content">
+            <Field.Label className="block font-bold">
+              {t("common.content")}
+            </Field.Label>
+
+            <RichTextarea
+              value={content}
+              onChange={setContent}
+              placeholder={
+                t("framework.contentPlaceholder") ||
+                "Write in detail using the rich text editor..."
+              }
+              title={pageTitle}
+              required
+              minLength={5}
+            />
+
+            <Field.Error className="sub-text mt-0.5 text-foreground text-xs" />
+          </Field.Root>
+
+          <PageActionBtn submit disabled={pending} />
+        </Form>
+      )}
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <div className="p-1 space-y-4">
+          <div>
+            <Dialog.Title className="font-bold">
+              {t("common.delete")}
+            </Dialog.Title>
+            <Dialog.Description className="sub-text text-xs mt-1">
+              {t("framework.confirmDelete") ||
+                "Are you sure you want to delete this framework item?"}
+            </Dialog.Description>
+          </div>
+
+          <div className="flex items-center justify-end gap-2 pt-2">
+            <Dialog.Close
+              render={
+                <Button type="button" variant="ghost" disabled={isDeleting}>
+                  {t("common.cancel")}
+                </Button>
+              }
+            />
+            <Button
+              type="button"
+              variant="primary"
+              onClick={handleDelete}
+              disabled={isDeleting}
+              className="bg-red-600 text-white hover:bg-red-700"
+            >
+              {isDeleting ? t("common.loading") : t("common.delete")}
+            </Button>
+          </div>
+        </div>
+      </Dialog>
     </PageWrapper>
   );
 }

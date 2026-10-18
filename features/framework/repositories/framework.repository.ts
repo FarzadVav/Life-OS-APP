@@ -6,9 +6,24 @@ import type { FrameworkItem } from '@/db/entities/FrameworkItem';
 import type {
   CreateFrameworkItemData,
   UpdateFrameworkItemData,
+  FrameworkItem as FrameworkItemDto,
 } from '@/features/framework/types';
 
 export type { CreateFrameworkItemData, UpdateFrameworkItemData };
+
+/**
+ * Safely transforms a MikroORM FrameworkItem entity into a plain FrameworkItem DTO object.
+ */
+export function serializeFrameworkItem(item: FrameworkItem): FrameworkItemDto {
+  return {
+    id: item.id,
+    title: item.title,
+    content: item.content,
+    category: item.category as unknown as FrameworkItemDto['category'],
+    section: item.section as unknown as FrameworkItemDto['section'],
+    createdAt: item.createdAt instanceof Date ? item.createdAt.toISOString() : String(item.createdAt),
+  };
+}
 
 export class FrameworkRepository extends EntityRepository<FrameworkItem> {
   async findAllItems(userId?: number): Promise<FrameworkItem[]> {
@@ -20,14 +35,30 @@ export class FrameworkRepository extends EntityRepository<FrameworkItem> {
   }
 
   async findByCategoryAndSection(
-    category: FrameworkCategory,
-    section?: FrameworkSection,
+    category?: FrameworkCategory | string,
+    section?: FrameworkSection | string,
     userId?: number,
   ): Promise<FrameworkItem[]> {
-    const where: Record<string, unknown> = { category };
-    if (section) {
-      where.section = section;
+    const where: Record<string, unknown> = {};
+
+    if (category && category !== 'all') {
+      const matchedCategory = Object.values(FrameworkCategory).find(
+        (c) => c.toLowerCase() === category.toLowerCase(),
+      );
+      if (matchedCategory) {
+        where.category = matchedCategory;
+      }
     }
+
+    if (section && section !== 'all') {
+      const matchedSection = Object.values(FrameworkSection).find(
+        (s) => s.toLowerCase() === section.toLowerCase(),
+      );
+      if (matchedSection) {
+        where.section = matchedSection;
+      }
+    }
+
     if (userId) {
       where.user = userId;
     }
@@ -35,8 +66,12 @@ export class FrameworkRepository extends EntityRepository<FrameworkItem> {
     return this.find(where, { orderBy: { createdAt: 'DESC' } });
   }
 
-  async findById(id: number): Promise<FrameworkItem | null> {
-    return this.findOne({ id });
+  async findById(id: number, userId?: number): Promise<FrameworkItem | null> {
+    const where: Record<string, unknown> = { id };
+    if (userId) {
+      where.user = userId;
+    }
+    return this.findOne(where);
   }
 
   async createItem(data: CreateFrameworkItemData): Promise<FrameworkItem> {
@@ -52,8 +87,12 @@ export class FrameworkRepository extends EntityRepository<FrameworkItem> {
     return item;
   }
 
-  async updateItem(id: number, data: UpdateFrameworkItemData): Promise<FrameworkItem | null> {
-    const item = await this.findOne({ id });
+  async updateItem(id: number, data: UpdateFrameworkItemData, userId?: number): Promise<FrameworkItem | null> {
+    const where: Record<string, unknown> = { id };
+    if (userId) {
+      where.user = userId;
+    }
+    const item = await this.findOne(where);
     if (!item) {
       return null;
     }
@@ -69,8 +108,12 @@ export class FrameworkRepository extends EntityRepository<FrameworkItem> {
     return item;
   }
 
-  async deleteItem(id: number): Promise<boolean> {
-    const item = await this.findOne({ id });
+  async deleteItem(id: number, userId?: number): Promise<boolean> {
+    const where: Record<string, unknown> = { id };
+    if (userId) {
+      where.user = userId;
+    }
+    const item = await this.findOne(where);
     if (!item) {
       return false;
     }

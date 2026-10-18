@@ -5,7 +5,6 @@ import { useState } from "react";
 import { ChevronRightIcon, Trash2Icon, EditIcon } from "lucide-react";
 
 import { FrameworkItem } from "../../types";
-import { deleteFrameworkItem } from "../../items";
 import Drawer from "@/features/general/components/ui/Drawer/Drawer";
 import Dialog from "@/features/general/components/ui/Dialog/Dialog";
 import { Button } from "@/features/general/components/ui/Button/Button";
@@ -15,16 +14,17 @@ import { useLocale } from "@/features/general/components/module/LocaleProvider/L
 
 type FrameworkItemCardProps = {
   item: FrameworkItem;
+  onDelete?: (id: number) => void;
 };
 
-export function FrameworkItemCard({ item }: FrameworkItemCardProps) {
+export function FrameworkItemCard({ item, onDelete }: FrameworkItemCardProps) {
   const { formatDate, t } = useLocale();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   const excerpt = stripHtml(item.content);
 
   const handleDelete = () => {
-    deleteFrameworkItem(item.id);
+    onDelete?.(item.id);
     setDeleteDialogOpen(false);
   };
 

@@ -43,7 +43,7 @@ export type FrameworkItem = typeof FrameworkItemSchema.infer;
  */
 export const CreateFrameworkItemSchema = type({
   title: 'string >= 1',
-  content: 'string',
+  content: 'string >= 1',
   category: FrameworkCategorySchema,
   section: FrameworkSectionSchema,
   'userId?': 'number',
@@ -51,9 +51,33 @@ export const CreateFrameworkItemSchema = type({
 export type CreateFrameworkItemData = typeof CreateFrameworkItemSchema.infer;
 
 export const UpdateFrameworkItemSchema = type({
+  'id?': 'number',
   'title?': 'string >= 1',
-  'content?': 'string',
+  'content?': 'string >= 1',
   'category?': FrameworkCategorySchema,
   'section?': FrameworkSectionSchema,
 });
 export type UpdateFrameworkItemData = typeof UpdateFrameworkItemSchema.infer;
+
+/**
+ * Form state for Base UI and React 19 useActionState form handling.
+ */
+export type FrameworkItemFormState = {
+  errors?: {
+    title?: string[];
+    content?: string[];
+    category?: string[];
+    section?: string[];
+    general?: string[];
+  };
+  message?: string;
+  inputs?: {
+    id?: number;
+    title?: string;
+    content?: string;
+    category?: FrameworkCategory;
+    section?: FrameworkSection;
+  };
+  success?: boolean;
+  itemId?: number;
+} | null;

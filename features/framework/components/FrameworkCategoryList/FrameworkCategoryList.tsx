@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 
 import { FRAMEWORK_CATEGORIES, FrameworkCategory } from "../../types";
-import { useFrameworkItems } from "../../items";
+import { useFrameworkStats } from "../../hooks";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 
 const CATEGORY_META: Record<
@@ -69,7 +69,7 @@ const CATEGORY_META: Record<
 };
 
 export default function FrameworkCategoryList() {
-  const { items } = useFrameworkItems();
+  const { stats } = useFrameworkStats();
   const { t } = useLocale();
 
   return (
@@ -77,9 +77,7 @@ export default function FrameworkCategoryList() {
       {FRAMEWORK_CATEGORIES.map((category) => {
         const meta = CATEGORY_META[category];
         const Icon = meta.icon;
-        const count = items.filter(
-          (i) => i.category.toLowerCase() === category.toLowerCase(),
-        ).length;
+        const count = stats?.byCategory?.[category as unknown as FrameworkCategory] ?? 0;
         const label =
           t(`framework.categories.${category.toLowerCase()}`) || category;
         const desc = t(meta.descriptionKey) || meta.fallbackDescription;
