@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  serverExternalPackages: ["@mikro-orm/core", "@mikro-orm/sqlite", "better-sqlite3"],
+  serverExternalPackages: ["@mikro-orm/core", "@mikro-orm/postgresql", "pg"],
   async headers() {
     return [
       {

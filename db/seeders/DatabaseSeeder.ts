@@ -140,7 +140,7 @@ export class DatabaseSeeder extends Seeder {
 
     // Flush all seeded entities
     await em.flush();
-    console.log('✨ All seed data successfully committed to SQLite database!');
+    console.log('✨ All seed data successfully committed to PostgreSQL database!');
   }
 }
 

@@ -1,18 +1,9 @@
 import 'reflect-metadata';
-import fs from 'node:fs';
-import path from 'node:path';
-import { MikroORM } from '@mikro-orm/sqlite';
+import { MikroORM } from '@mikro-orm/postgresql';
 import config from '../mikro-orm.config';
 
 async function dbPush() {
-  console.log('🔄 Running db:push (Schema Synchronization)...');
-
-  const dbPath = (config as { dbName?: string }).dbName || path.resolve(process.cwd(), 'data', 'life-os.db');
-  const dbDir = path.dirname(dbPath);
-  if (dbDir && !fs.existsSync(dbDir)) {
-    fs.mkdirSync(dbDir, { recursive: true });
-    console.log(`📁 Created database directory at: ${dbDir}`);
-  }
+  console.log('🔄 Running db:push (PostgreSQL Schema Synchronization)...');
 
   const orm = await MikroORM.init(config);
 
@@ -23,7 +14,7 @@ async function dbPush() {
     if (!updateDump.trim()) {
       console.log('✅ Database schema is already up to date! No changes needed.');
     } else {
-      console.log('🔨 Applying schema changes to SQLite:');
+      console.log('🔨 Applying schema changes to PostgreSQL:');
       console.log(updateDump.trim());
       await generator.update();
       console.log('✨ Database schema successfully synchronized!');
@@ -32,9 +23,9 @@ async function dbPush() {
     console.warn('⚠️ Update check notice, attempting fresh create if empty...', (error as Error).message);
     try {
       await orm.schema.create();
-      console.log('✨ Fresh database schema created successfully!');
+      console.log('✨ Fresh database schema created successfully on PostgreSQL!');
     } catch (createError) {
-      console.error('❌ Failed to push schema to database:', createError);
+      console.error('❌ Failed to push schema to PostgreSQL:', createError);
       process.exit(1);
     }
   } finally {

@@ -2,6 +2,7 @@
 
 import { cn } from "cn";
 import { type Editor } from "@tiptap/react";
+import { BoldIcon } from "lucide-react";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 
 type RichTextToolbarProps = {
@@ -19,6 +20,7 @@ export function RichTextToolbar({ editor, className }: RichTextToolbarProps) {
   const isH1Active = editor.isActive("heading", { level: 1 });
   const isH3Active = editor.isActive("heading", { level: 3 });
   const isParagraphActive = editor.isActive("paragraph");
+  const isBoldActive = editor.isActive("bold");
   const isBulletListActive = editor.isActive("bulletList");
   const isOrderedListActive = editor.isActive("orderedList");
 
@@ -86,6 +88,26 @@ export function RichTextToolbar({ editor, className }: RichTextToolbarProps) {
         aria-pressed={isParagraphActive}
       >
         <span>{t("editor.paragraph") || "Paragraph"}</span>
+      </button>
+
+      {/* Bold */}
+      <button
+        type="button"
+        onMouseDown={(e) => {
+          e.preventDefault();
+          editor.chain().focus().toggleBold().run();
+        }}
+        className={cn(
+          "rounded-component px-2.5 py-1.5 text-xs font-semibold transition-colors cursor-pointer select-none inline-flex items-center gap-1",
+          isBoldActive
+            ? "bg-foreground text-background"
+            : "bg-card-thick/80 text-foreground/80 hover:bg-card-thick hover:text-foreground",
+        )}
+        title={t("editor.bold") || "Bold"}
+        aria-pressed={isBoldActive}
+      >
+        <BoldIcon className="size-3.5" />
+        <span>{t("editor.bold") || "Bold"}</span>
       </button>
 
       {/* Bullet List */}

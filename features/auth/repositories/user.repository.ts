@@ -1,4 +1,4 @@
-import { EntityRepository } from '@mikro-orm/sqlite';
+import { EntityRepository } from '@mikro-orm/postgresql';
 import type { User } from '@/db/entities';
 import { verifyPassword, hashPassword } from '../lib/passwords';
 import type { CreateUserData, UpdateUserData } from '../lib/definitions';

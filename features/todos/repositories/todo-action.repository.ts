@@ -1,4 +1,4 @@
-import { EntityRepository } from '@mikro-orm/sqlite';
+import { EntityRepository } from '@mikro-orm/postgresql';
 import { Todo } from '@/db/entities/Todo';
 import type { TodoAction } from '@/db/entities/TodoAction';
 

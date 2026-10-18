@@ -366,6 +366,7 @@ function NewTodoPage() {
         </div>
       ) : (
         <Form
+          id="todo-form"
           className="w-full space-y-6"
           aria-label={isEditMode ? t("todos.editAria") : t("todos.createAria")}
           action={formAction}
@@ -731,7 +732,7 @@ function NewTodoPage() {
             </>
           )}
 
-          <PageActionBtn submit disabled={pending} />
+          <PageActionBtn submit disabled={pending} form="todo-form" />
         </Form>
       )}
 

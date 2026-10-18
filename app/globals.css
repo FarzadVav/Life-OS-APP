@@ -157,6 +157,13 @@ input[id^="base-ui"][id$="-hidden-input"] {
   color: var(--color-foreground);
 }
 
+.tiptap-content strong,
+.ProseMirror strong,
+.tiptap-content b,
+.ProseMirror b {
+  font-weight: 700;
+}
+
 .tiptap-content ul,
 .ProseMirror ul {
   list-style-type: disc;

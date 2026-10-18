@@ -249,6 +249,7 @@ function NewFrameworkItemPage() {
         </div>
       ) : (
         <Form
+          id="framework-form"
           className="w-full space-y-6"
           aria-label={
             isEditMode
@@ -320,7 +321,7 @@ function NewFrameworkItemPage() {
             <Field.Error className="sub-text mt-0.5 text-foreground text-xs" />
           </Field.Root>
 
-          <PageActionBtn submit disabled={pending} />
+          <PageActionBtn submit disabled={pending} form="framework-form" />
         </Form>
       )}
 

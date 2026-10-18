@@ -173,6 +173,7 @@ function NewJournalPage() {
         </div>
       ) : (
         <Form
+          id="journal-form"
           className="w-full space-y-6"
           aria-label={isEditMode ? t("journals.editAria") : t("journals.createAria")}
           action={formAction}
@@ -226,7 +227,7 @@ function NewJournalPage() {
             <Field.Error className="sub-text mt-0.5 text-foreground text-xs" />
           </Field.Root>
 
-          <PageActionBtn submit disabled={pending} />
+          <PageActionBtn submit disabled={pending} form="journal-form" />
         </Form>
       )}
 

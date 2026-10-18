@@ -5,7 +5,7 @@ import {
   type Options,
   type EntityManager,
   type EntityRepository,
-} from '@mikro-orm/sqlite';
+} from '@mikro-orm/postgresql';
 import config from './mikro-orm.config';
 import {
   User,

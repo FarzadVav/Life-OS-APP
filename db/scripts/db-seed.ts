@@ -1,18 +1,10 @@
 import 'reflect-metadata';
-import fs from 'node:fs';
-import path from 'node:path';
-import { MikroORM } from '@mikro-orm/sqlite';
+import { MikroORM } from '@mikro-orm/postgresql';
 import config from '../mikro-orm.config';
 import { DatabaseSeeder } from '../seeders/DatabaseSeeder';
 
 async function dbSeed() {
-  console.log('🌱 Starting db:seed process...');
-
-  const dbPath = (config as { dbName?: string }).dbName || path.resolve(process.cwd(), 'data', 'life-os.db');
-  const dbDir = path.dirname(dbPath);
-  if (dbDir && !fs.existsSync(dbDir)) {
-    fs.mkdirSync(dbDir, { recursive: true });
-  }
+  console.log('🌱 Starting db:seed process on PostgreSQL...');
 
   const orm = await MikroORM.init(config);
 
@@ -23,7 +15,7 @@ async function dbSeed() {
     const seeder = orm.seeder;
     await seeder.seed(DatabaseSeeder);
 
-    console.log('✅ Seeding completed successfully!');
+    console.log('✅ PostgreSQL seeding completed successfully!');
   } catch (error) {
     console.error('❌ Failed to seed database:', error);
     process.exit(1);
