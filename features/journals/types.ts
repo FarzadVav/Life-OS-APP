@@ -38,15 +38,37 @@ export type Journal = typeof JournalSchema.infer;
  */
 export const CreateJournalSchema = type({
   title: 'string >= 1',
-  content: 'string',
+  content: 'string >= 1',
   type: JournalCategorySchema,
   'userId?': 'number',
 });
 export type CreateJournalData = typeof CreateJournalSchema.infer;
 
 export const UpdateJournalSchema = type({
+  'id?': 'number',
   'title?': 'string >= 1',
-  'content?': 'string',
+  'content?': 'string >= 1',
   'type?': JournalCategorySchema,
 });
 export type UpdateJournalData = typeof UpdateJournalSchema.infer;
+
+/**
+ * Form state for Base UI and React 19 useActionState form handling.
+ */
+export type JournalFormState = {
+  errors?: {
+    title?: string[];
+    content?: string[];
+    type?: string[];
+    general?: string[];
+  };
+  message?: string;
+  inputs?: {
+    id?: number;
+    title?: string;
+    content?: string;
+    type?: JournalCategory;
+  };
+  success?: boolean;
+  journalId?: number;
+} | null;

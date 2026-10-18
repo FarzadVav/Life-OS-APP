@@ -7,6 +7,7 @@ import {
   ClockIcon,
   FileTextIcon,
   TagIcon,
+  Trash2Icon,
 } from "lucide-react";
 
 import { Journal } from "../../types";
@@ -18,9 +19,10 @@ import { RichTextViewer } from "@/features/general/components/ui/RichTextEditor"
 
 type JournalCardProps = {
   journal: Journal;
+  onDelete?: (id: number) => void;
 };
 
-function JournalCard({ journal }: JournalCardProps) {
+function JournalCard({ journal, onDelete }: JournalCardProps) {
   const { formatDate, formatTime, t } = useLocale();
 
   return (
@@ -96,7 +98,24 @@ function JournalCard({ journal }: JournalCardProps) {
         </div>
       </section>
 
-      <div className="flex gap-3">
+      <div className="flex gap-2">
+        {onDelete && (
+          <Drawer.Close
+            render={
+              <Button
+                type="button"
+                variant="card"
+                square
+                className="size-10 justify-center text-foreground/70 hover:text-foreground"
+                onClick={() => onDelete(journal.id)}
+                aria-label={t("common.delete")}
+              >
+                <Trash2Icon className="size-4" />
+              </Button>
+            }
+          />
+        )}
+
         <Drawer.Close
           render={
             <Button
@@ -104,7 +123,7 @@ function JournalCard({ journal }: JournalCardProps) {
               variant="card"
               className="flex-1 justify-center"
             >
-              Close
+              {t("common.close") || "Close"}
             </Button>
           }
         />
@@ -116,14 +135,14 @@ function JournalCard({ journal }: JournalCardProps) {
               type="button"
               variant="primary"
               nativeButton={false}
-              className="w-full justify-center"
+              className="flex-1 justify-center"
               render={
                 <Link
-                  className="flex flex-1"
+                  className="flex flex-1 items-center justify-center gap-1"
                   href={`/journals/new?editId=${journal.id}`}
                 >
                   <span>{t("common.edit")}</span>
-                  <ChevronRightIcon />
+                  <ChevronRightIcon className="size-4" />
                 </Link>
               }
             />

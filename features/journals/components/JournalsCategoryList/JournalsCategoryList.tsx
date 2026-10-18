@@ -12,8 +12,8 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
-import { JOURNAL_CATEGORIES, JournalType } from "../../types";
-import { useJournals } from "../../items";
+import { JOURNAL_CATEGORIES, JournalCategory, JournalType } from "../../types";
+import { useJournalsStats } from "../../hooks";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 
 const CATEGORY_META: Record<
@@ -57,7 +57,7 @@ const CATEGORY_META: Record<
 };
 
 export default function JournalsCategoryList() {
-  const { journals } = useJournals();
+  const { stats } = useJournalsStats();
   const { t } = useLocale();
 
   return (
@@ -65,9 +65,7 @@ export default function JournalsCategoryList() {
       {JOURNAL_CATEGORIES.map((category) => {
         const meta = CATEGORY_META[category];
         const Icon = meta.icon;
-        const count = journals.filter(
-          (j) => j.type?.toLowerCase() === category.toLowerCase(),
-        ).length;
+        const count = stats?.counts?.[category as unknown as JournalCategory] ?? 0;
         const label =
           t(`journals.categories.${category.toLowerCase()}`) || category;
         const desc = t(meta.descriptionKey) || meta.fallbackDescription;

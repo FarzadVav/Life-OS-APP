@@ -1,19 +1,22 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useActionState } from "react";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 
 import { Field, Form } from "@base-ui/react";
+import { LoaderIcon, Trash2Icon } from "lucide-react";
 import SelectDialog from "@/features/general/components/ui/SelectDialog";
+import Dialog from "@/features/general/components/ui/Dialog/Dialog";
+import { Button } from "@/features/general/components/ui/Button/Button";
 
-import {
-  addJournal,
-  getJournal,
-  updateJournal,
-  useJournals,
-} from "@/features/journals/items";
 import { JournalType, JOURNAL_CATEGORIES } from "@/features/journals/types";
+import { useJournal } from "@/features/journals/hooks";
+import {
+  createJournalMutation,
+  updateJournalMutation,
+  deleteJournalMutation,
+} from "@/features/journals/mutations";
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
 import PageActionBtn from "@/features/general/components/module/PageActionBtn/PageActionBtn";
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
@@ -38,7 +41,7 @@ function TypeSelect({
       <Field.Label className="mb-1 font-bold">{t("common.category")}</Field.Label>
 
       <SelectDialog
-        name="type"
+        name="typeSelect"
         items={items}
         value={value ?? undefined}
         onChange={(nextValue) => {
@@ -51,20 +54,22 @@ function TypeSelect({
         required
       />
 
-      <Field.Error className="sub-text mt-0.5 text-foreground" />
+      <Field.Error className="sub-text mt-0.5 text-foreground text-xs" />
     </Field.Root>
   );
 }
 
 function NewJournalPage() {
   const { t } = useLocale();
+  const router = useRouter();
   const searchParams = useSearchParams();
   const editId = searchParams.get("editId");
   const categoryParam = searchParams.get("category") || searchParams.get("type");
   const isEditMode = Boolean(editId);
 
-  const router = useRouter();
-  useJournals();
+  const { journal, isLoading: isJournalLoading } = useJournal(
+    editId ? Number(editId) : null,
+  );
 
   const resolveCategory = useCallback(
     (param: string | null): JournalType => {
@@ -82,28 +87,62 @@ function NewJournalPage() {
     resolveCategory(categoryParam),
   );
   const [content, setContent] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
+  // Native form handling via React 19 useActionState + Base UI Form
+  const [state, formAction, pending] = useActionState(
+    isEditMode ? updateJournalMutation : createJournalMutation,
+    null,
+  );
+
+  // Navigate back to category upon success
+  useEffect(() => {
+    if (state?.success) {
+      const targetCategory = type ?? "Logs";
+      router.push(`/journals/${targetCategory.toLowerCase()}`);
+      router.refresh();
+    }
+  }, [state?.success, type, router]);
+
+  // Load existing journal details if in edit mode
   useEffect(() => {
     if (!editId) {
+      const resolved = resolveCategory(categoryParam);
       queueMicrotask(() => {
         setTitle("");
-        setType(resolveCategory(categoryParam));
+        setType(resolved);
         setContent("");
       });
       return;
     }
 
-    const journal = getJournal(Number(editId));
-    if (!journal) {
-      return;
+    if (journal) {
+      queueMicrotask(() => {
+        setTitle(journal.title);
+        setType((journal.type as JournalType) ?? "Logs");
+        setContent(journal.content);
+      });
     }
+  }, [editId, journal, categoryParam, resolveCategory]);
 
-    queueMicrotask(() => {
-      setTitle(journal.title);
-      setType(journal.type ?? "Logs");
-      setContent(journal.content);
-    });
-  }, [editId, categoryParam, resolveCategory]);
+  const handleDelete = async () => {
+    if (!editId) return;
+    setIsDeleting(true);
+    try {
+      const res = await deleteJournalMutation(Number(editId));
+      if (res.success) {
+        setDeleteDialogOpen(false);
+        const targetCategory = type ?? "Logs";
+        router.push(`/journals/${targetCategory.toLowerCase()}`);
+        router.refresh();
+      }
+    } catch (err) {
+      console.error("Delete error:", err);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   return (
     <PageWrapper>
@@ -112,69 +151,117 @@ function NewJournalPage() {
           {isEditMode ? t("journals.edit") : t("journals.new")}
         </TopBar.Title>
         <TopBar.Btn backIcon href="/journals" position="left" />
-        <TopBar.HelpBtn position="right" />
+
+        {isEditMode ? (
+          <TopBar.Btn
+            position="right"
+            onClick={() => setDeleteDialogOpen(true)}
+            aria-label={t("common.delete")}
+            className="text-foreground/70 hover:text-foreground"
+          >
+            <Trash2Icon className="size-5" />
+          </TopBar.Btn>
+        ) : (
+          <TopBar.HelpBtn position="right" />
+        )}
       </TopBar>
 
-      <Form
-        className="w-full space-y-6"
-        aria-label={isEditMode ? t("journals.editAria") : t("journals.createAria")}
-        action={async () => {
-          const targetCategory = type ?? "Logs";
-          if (isEditMode && editId) {
-            updateJournal(Number(editId), {
-              title,
-              type: targetCategory,
-              content,
-            });
-          } else {
-            addJournal({
-              title,
-              type: targetCategory,
-              content,
-            });
-          }
+      {isEditMode && isJournalLoading && !journal ? (
+        <div className="flex w-full items-center justify-center p-12 text-foreground/40 gap-2">
+          <LoaderIcon className="size-5 animate-spin" />
+          <span className="text-xs sub-text">{t("common.loading")}</span>
+        </div>
+      ) : (
+        <Form
+          className="w-full space-y-6"
+          aria-label={isEditMode ? t("journals.editAria") : t("journals.createAria")}
+          action={formAction}
+          errors={state?.errors}
+        >
+          {state?.errors?.general && (
+            <div
+              role="alert"
+              className="p-3 text-xs rounded-component bg-foreground/5 border border-foreground/15 text-foreground leading-relaxed"
+            >
+              {state.errors.general.join(", ")}
+            </div>
+          )}
 
-          router.push(`/journals/${targetCategory.toLowerCase()}`);
-        }}
-      >
-        <Field.Root name="title">
-          <Field.Label className="block font-bold">{t("common.title")}</Field.Label>
+          {/* Hidden inputs to pass data to Server Action */}
+          {isEditMode && <input type="hidden" name="id" value={editId ?? ""} />}
+          <input type="hidden" name="type" value={type ?? "Logs"} />
+          <input type="hidden" name="content" value={content} />
 
-          <Field.Control
-            required
-            minLength={3}
-            value={title}
-            className="input"
-            placeholder={t("journals.titlePlaceholder")}
-            onChange={(event) => setTitle(event.target.value)}
-          />
+          <Field.Root name="title">
+            <Field.Label className="block font-bold">{t("common.title")}</Field.Label>
 
-          <Field.Error className="sub-text mt-0.5 text-foreground" />
-        </Field.Root>
+            <Field.Control
+              required
+              minLength={3}
+              name="title"
+              value={title}
+              disabled={pending}
+              className="input"
+              placeholder={t("journals.titlePlaceholder")}
+              onChange={(event) => setTitle(event.target.value)}
+            />
 
-        <TypeSelect
-          value={type}
-          onChange={setType}
-        />
+            <Field.Error className="sub-text mt-0.5 text-foreground text-xs" />
+          </Field.Root>
 
-        <Field.Root name="content">
-          <Field.Label className="block font-bold">{t("common.content")}</Field.Label>
+          <TypeSelect value={type} onChange={setType} />
 
-          <RichTextarea
-            name="content"
-            value={content}
-            onChange={setContent}
-            placeholder={t("journals.contentPlaceholder")}
-            title={t("common.content")}
-            required
-            minLength={5}
-          />
+          <Field.Root name="content">
+            <Field.Label className="block font-bold">{t("common.content")}</Field.Label>
 
-          <Field.Error className="sub-text mt-0.5 text-foreground" />
-        </Field.Root>
+            <RichTextarea
+              value={content}
+              onChange={setContent}
+              placeholder={t("journals.contentPlaceholder")}
+              title={t("common.content")}
+              required
+              minLength={5}
+            />
 
-        <PageActionBtn submit />
-      </Form>
+            <Field.Error className="sub-text mt-0.5 text-foreground text-xs" />
+          </Field.Root>
+
+          <PageActionBtn submit disabled={pending} />
+        </Form>
+      )}
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <div className="p-1 space-y-4">
+          <div>
+            <Dialog.Title className="font-bold">
+              {t("common.delete")}
+            </Dialog.Title>
+            <Dialog.Description className="sub-text text-xs mt-1">
+              {t("common.confirm") || "Are you sure you want to delete this item?"}
+            </Dialog.Description>
+          </div>
+
+          <div className="flex items-center justify-end gap-2 pt-2">
+            <Dialog.Close
+              render={
+                <Button type="button" variant="ghost" disabled={isDeleting}>
+                  {t("common.cancel")}
+                </Button>
+              }
+            />
+            <Button
+              type="button"
+              variant="primary"
+              onClick={handleDelete}
+              disabled={isDeleting}
+              className="bg-red-600 text-white hover:bg-red-700"
+            >
+              {isDeleting ? t("common.loading") : t("common.delete")}
+            </Button>
+          </div>
+        </div>
+      </Dialog>
     </PageWrapper>
   );
 }

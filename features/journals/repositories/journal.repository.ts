@@ -3,9 +3,22 @@ import { JournalCategory } from '@/db/entities/enums';
 import { User } from '@/db/entities/User';
 import type { Journal } from '@/db/entities/Journal';
 
-import type { CreateJournalData, UpdateJournalData } from '@/features/journals/types';
+import type { CreateJournalData, UpdateJournalData, Journal as JournalDto } from '@/features/journals/types';
 
 export type { CreateJournalData, UpdateJournalData };
+
+/**
+ * Safely transforms a MikroORM Journal entity into a plain Journal DTO object.
+ */
+export function serializeJournal(journal: Journal): JournalDto {
+  return {
+    id: journal.id,
+    title: journal.title,
+    content: journal.content,
+    type: journal.type as unknown as JournalDto['type'],
+    createdAt: journal.createdAt instanceof Date ? journal.createdAt.toISOString() : String(journal.createdAt),
+  };
+}
 
 export class JournalRepository extends EntityRepository<Journal> {
   async findAllJournals(
@@ -24,8 +37,13 @@ export class JournalRepository extends EntityRepository<Journal> {
     });
   }
 
-  async findByCategory(category: JournalCategory, userId?: number): Promise<Journal[]> {
-    const where: Record<string, unknown> = { type: category };
+  async findByCategory(category: JournalCategory | string, userId?: number): Promise<Journal[]> {
+    const matchedCategory =
+      Object.values(JournalCategory).find(
+        (c) => c.toLowerCase() === category.toLowerCase(),
+      ) ?? JournalCategory.LOGS;
+
+    const where: Record<string, unknown> = { type: matchedCategory };
     if (userId) {
       where.user = userId;
     }
@@ -33,8 +51,12 @@ export class JournalRepository extends EntityRepository<Journal> {
     return this.find(where, { orderBy: { createdAt: 'DESC' } });
   }
 
-  async findById(id: number): Promise<Journal | null> {
-    return this.findOne({ id });
+  async findById(id: number, userId?: number): Promise<Journal | null> {
+    const where: Record<string, unknown> = { id };
+    if (userId) {
+      where.user = userId;
+    }
+    return this.findOne(where);
   }
 
   async searchJournals(query: string, userId?: number): Promise<Journal[]> {
@@ -65,8 +87,12 @@ export class JournalRepository extends EntityRepository<Journal> {
     return journal;
   }
 
-  async updateJournal(id: number, data: UpdateJournalData): Promise<Journal | null> {
-    const journal = await this.findOne({ id });
+  async updateJournal(id: number, data: UpdateJournalData, userId?: number): Promise<Journal | null> {
+    const where: Record<string, unknown> = { id };
+    if (userId) {
+      where.user = userId;
+    }
+    const journal = await this.findOne(where);
     if (!journal) {
       return null;
     }
@@ -81,8 +107,12 @@ export class JournalRepository extends EntityRepository<Journal> {
     return journal;
   }
 
-  async deleteJournal(id: number): Promise<boolean> {
-    const journal = await this.findOne({ id });
+  async deleteJournal(id: number, userId?: number): Promise<boolean> {
+    const where: Record<string, unknown> = { id };
+    if (userId) {
+      where.user = userId;
+    }
+    const journal = await this.findOne(where);
     if (!journal) {
       return false;
     }
