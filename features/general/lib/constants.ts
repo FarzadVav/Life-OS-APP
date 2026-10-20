@@ -1,6 +1,5 @@
 import {
   HomeIcon,
-  LayersIcon,
   PenLineIcon,
 } from "lucide-react";
 
@@ -60,11 +59,5 @@ export const NAVIGATION_LINKS: NavigationLink[] = [
     name: "Journals",
     matchPathname: "/journals",
     Icon: PenLineIcon,
-  },
-  {
-    href: "/framework",
-    name: "Framework",
-    matchPathname: "/framework",
-    Icon: LayersIcon,
   },
 ];

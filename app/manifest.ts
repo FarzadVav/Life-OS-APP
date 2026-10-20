@@ -12,7 +12,7 @@ export default function manifest(): MetadataRoute.Manifest {
     background_color: "#fafafa",
     orientation: "portrait-primary",
     description:
-      "Personal Operating System for Daily Momentum, Habits & Framework",
+      "Personal Operating System for Daily Momentum & Habits",
     icons: [
       {
         src: "/icon-192x192.png",
@@ -57,18 +57,6 @@ export default function manifest(): MetadataRoute.Manifest {
         url: "/journals/new",
         short_name: "Journal",
         description: "Write a new journal entry",
-        icons: [
-          {
-            src: "/icon-192x192.png",
-            sizes: "192x192",
-          },
-        ],
-      },
-      {
-        name: "Framework",
-        url: "/framework",
-        short_name: "Framework",
-        description: "Review your visions, rules, and concepts",
         icons: [
           {
             src: "/icon-192x192.png",

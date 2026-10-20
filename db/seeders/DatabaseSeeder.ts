@@ -7,13 +7,11 @@ import {
   TodoDiscipline,
   DisciplineHistory,
   Journal,
-  FrameworkItem,
 } from '../entities';
 import {
   SEED_USER,
   SEED_TODOS,
   SEED_JOURNALS,
-  SEED_FRAMEWORK_ITEMS,
 } from './seedData';
 
 export class DatabaseSeeder extends Seeder {
@@ -46,11 +44,6 @@ export class DatabaseSeeder extends Seeder {
     const existingJournals = await em.find(Journal, { user });
     if (existingJournals.length > 0) {
       em.remove(existingJournals);
-    }
-
-    const existingFramework = await em.find(FrameworkItem, { user });
-    if (existingFramework.length > 0) {
-      em.remove(existingFramework);
     }
 
     await em.flush();
@@ -122,21 +115,6 @@ export class DatabaseSeeder extends Seeder {
       em.persist(journal);
     }
     console.log(`📖 Seeded ${SEED_JOURNALS.length} Journal entries across 6 categories`);
-
-    // 4. Seed Framework Items
-    for (const fwData of SEED_FRAMEWORK_ITEMS) {
-      const fwItem = em.create(FrameworkItem, {
-        title: fwData.title,
-        content: fwData.content,
-        category: fwData.category,
-        section: fwData.section,
-        user,
-      });
-      em.persist(fwItem);
-    }
-    console.log(
-      `🏛️ Seeded ${SEED_FRAMEWORK_ITEMS.length} Framework items (Visions, Rules, Concepts across all 8 life areas)`,
-    );
 
     // Flush all seeded entities
     await em.flush();

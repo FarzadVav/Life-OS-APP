@@ -6,4 +6,3 @@ export * from './TodoAction';
 export * from './TodoDiscipline';
 export * from './DisciplineHistory';
 export * from './Journal';
-export * from './FrameworkItem';

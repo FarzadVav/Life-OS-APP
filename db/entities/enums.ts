@@ -13,19 +13,3 @@ export enum JournalCategory {
   NOTES = 'Notes',
 }
 
-export enum FrameworkCategory {
-  CAREER = 'Career',
-  MINDSET = 'Mindset',
-  SOCIAL = 'Social',
-  HEALTH = 'Health',
-  BEHAVIOR = 'Behavior',
-  FINANCE = 'Finance',
-  LIFESTYLE = 'Lifestyle',
-  KNOWLEDGE = 'Knowledge',
-}
-
-export enum FrameworkSection {
-  VISIONS = 'Visions',
-  RULES = 'Rules',
-  CONCEPTS = 'Concepts',
-}

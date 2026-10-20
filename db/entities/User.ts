@@ -3,7 +3,6 @@ import { Entity, OneToMany, Property, Unique } from '@mikro-orm/decorators/legac
 import { BaseEntity } from './BaseEntity';
 import { Todo } from './Todo';
 import { Journal } from './Journal';
-import { FrameworkItem } from './FrameworkItem';
 
 @Entity({ tableName: 'users' })
 export class User extends BaseEntity {
@@ -33,7 +32,4 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Journal, (journal) => journal.user, { cascade: [Cascade.ALL], orphanRemoval: true })
   journals = new Collection<Journal>(this);
-
-  @OneToMany(() => FrameworkItem, (item) => item.user, { cascade: [Cascade.ALL], orphanRemoval: true })
-  frameworkItems = new Collection<FrameworkItem>(this);
 }

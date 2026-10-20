@@ -6,13 +6,11 @@ import {
   CheckSquareIcon,
   LogOutIcon,
   RocketIcon,
-  LayersIcon,
   UserIcon,
 } from "lucide-react";
 
 import { useTodos } from "@/features/todos/hooks";
 import { useJournalsStats } from "@/features/journals/hooks";
-import { useFrameworkStats } from "@/features/framework/hooks";
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
 import Dialog from "@/features/general/components/ui/Dialog/Dialog";
 import { Button } from "@/features/general/components/ui/Button/Button";
@@ -31,7 +29,6 @@ function UserProfilePage() {
   const { user: currentUser } = useCurrentUser();
   const { t } = useLocale();
   const { todos = [] } = useTodos();
-  const { stats: frameworkStats } = useFrameworkStats();
   const { stats: journalStats } = useJournalsStats();
 
   const dailyTodos = todos.filter((item) => item.type === "Daily");
@@ -49,9 +46,6 @@ function UserProfilePage() {
     0,
   );
 
-  const visionsCount = frameworkStats?.bySection?.visions ?? 0;
-  const rulesCount = frameworkStats?.bySection?.rules ?? 0;
-  const conceptsCount = frameworkStats?.bySection?.concepts ?? 0;
   const totalJournals = journalStats?.total ?? 0;
 
   const stats = [
@@ -69,15 +63,6 @@ function UserProfilePage() {
       details: [
         { label: t("profile.total"), value: missionTodos.length },
         { label: t("missions.actionsLabel") || "Actions", value: `${doneMissionActions}/${totalMissionActions}` },
-      ],
-    },
-    {
-      label: t("framework.title") || "Framework",
-      icon: <LayersIcon className="size-5 text-foreground" />,
-      details: [
-        { label: t("framework.sections.visions") || "Visions", value: visionsCount },
-        { label: t("framework.sections.rules") || "Rules", value: rulesCount },
-        { label: t("framework.sections.concepts") || "Concepts", value: conceptsCount },
       ],
     },
     {

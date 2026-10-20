@@ -29,12 +29,6 @@ function resolveTopic(pathname: string | null): string {
   if (pathname.startsWith("/journals")) {
     return "journals";
   }
-  if (pathname.startsWith("/framework/new")) {
-    return "frameworkNew";
-  }
-  if (pathname.startsWith("/framework")) {
-    return "framework";
-  }
   if (pathname.startsWith("/profile")) {
     return "profile";
   }

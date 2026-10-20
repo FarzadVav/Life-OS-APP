@@ -61,7 +61,6 @@
     "colorScheme": "Color Scheme",
     "todos": "Todos",
     "journals": "Journals",
-    "framework": "Framework",
     "missions": "Missions",
     "total": "Total",
     "completed": "Completed",
@@ -138,57 +137,6 @@
       "notes": "Quick references, checklists, and working memos"
     }
   },
-  "framework": {
-    "title": "Framework",
-    "new": "New Item",
-    "newItem": "New Item",
-    "edit": "Edit Item",
-    "newVision": "New Vision",
-    "newRule": "New Rule",
-    "newConcept": "New Concept",
-    "newItemWithSection": "New {section}",
-    "editItem": "Edit {section}",
-    "subtitle": "Sovereign principles, mental models, and long-term visions across all life areas.",
-    "loading": "Loading framework...",
-    "section": "Section",
-    "selectSection": "Select section",
-    "selectCategory": "Select category",
-    "contentPlaceholder": "Write detailed content using the rich text editor...",
-    "confirmDelete": "Are you sure you want to delete this framework item?",
-    "emptySection": "No {section} defined for {category} yet.",
-    "createAria": "Create new framework item",
-    "editAria": "Edit framework item",
-    "categories": {
-      "career": "Career",
-      "mindset": "Mindset",
-      "social": "Social",
-      "health": "Health",
-      "behavior": "Behavior",
-      "finance": "Finance",
-      "lifestyle": "Lifestyle",
-      "knowledge": "Knowledge"
-    },
-    "categoryDesc": {
-      "career": "Mastery, high-impact craft, engineering quality, and focus",
-      "mindset": "Stoic equanimity, mental models, and emotional clarity",
-      "social": "Lifelong trusted circle, deep connection, and companionship",
-      "health": "Physical resilience, aerobic endurance, mobility, and sleep",
-      "behavior": "Frictionless habit architecture, discipline, and routines",
-      "finance": "Financial autonomy, compounding assets, and downside protection",
-      "lifestyle": "Minimalist sanctuary, intentional spaces, and nature access",
-      "knowledge": "Foundational reading, polymathic models, and deep learning"
-    },
-    "sections": {
-      "visions": "Visions",
-      "rules": "Rules",
-      "concepts": "Concepts"
-    },
-    "placeholder": {
-      "visions": "e.g. Autonomous Software Craftsmanship...",
-      "rules": "e.g. 10-Second Pause Before Responding Under Stress...",
-      "concepts": "e.g. Theory of Constraints & Bottlenecks..."
-    }
-  },
   "missions": {
     "title": "Missions",
     "new": "New Mission",
@@ -229,7 +177,6 @@
   "search": {
     "title": "Search"
   },
-
   "pwa": {
     "updateAvailable": "Update Available",
     "freshVersion": "A fresh version of Arrow Up is ready.",
@@ -280,7 +227,7 @@
       "title": "Arrow Up Guide",
       "subtitle": "Boost your personal momentum and achieve daily clarity.",
       "tip1Title": "Core Navigation",
-      "tip1Desc": "Use the bottom bar to switch between Todos, Journals, and Framework.",
+      "tip1Desc": "Use the bottom bar to switch between Todos and Journals.",
       "tip2Title": "Offline Resilience",
       "tip2Desc": "All data stays cached locally so you can continue uninterrupted even with no connection.",
       "tip3Title": "Daily Compounding",
@@ -326,45 +273,25 @@
       "tip3Title": "Rich Text Formatting",
       "tip3Desc": "Use the TipTap rich editor to structure your writing with headings, lists, and formatting."
     },
-    "framework": {
-      "title": "Framework Guide",
-      "subtitle": "Ground your life in sovereign visions, clear rules, and mental models.",
-      "tip1Title": "Visions",
-      "tip1Desc": "Visions define what ultimate mastery and fulfillment look like in each area of your life.",
-      "tip2Title": "Rules",
-      "tip2Desc": "Rules serve as non-negotiable boundaries and automated decision filters.",
-      "tip3Title": "Concepts",
-      "tip3Desc": "Concepts store timeless mental models and playbooks you can review anytime."
-    },
-    "frameworkNew": {
-      "title": "New Framework Item Guide",
-      "subtitle": "Articulate a core vision, boundary rule, or mental model.",
-      "tip1Title": "Clear Categorization",
-      "tip1Desc": "Choose the most relevant life domain (Career, Mindset, Health, Finance, etc.).",
-      "tip2Title": "Select Section",
-      "tip2Desc": "Decide whether this is a long-term Vision, an operational Rule, or an educational Concept.",
-      "tip3Title": "Rich Text Formatting",
-      "tip3Desc": "Use the TipTap editor to format key takeaways, bullet lists, and principles."
-    },
     "profile": {
       "title": "Profile & Settings Guide",
       "subtitle": "Personalize your experience and manage preferences.",
       "tip1Title": "Language & Theme",
       "tip1Desc": "Switch between English and Persian, or Dark and Light themes with instant persistence.",
       "tip2Title": "Overview Counts",
-      "tip2Desc": "Review high-level summaries of all your recorded todos, journals, and framework items.",
+      "tip2Desc": "Review high-level summaries of all your recorded todos and journals.",
       "tip3Title": "Secure Session",
       "tip3Desc": "Easily manage your login session or log out whenever you need."
     },
     "search": {
       "title": "Search Guide",
-      "subtitle": "Find tasks, journals, and framework items instantly.",
+      "subtitle": "Find tasks and journals instantly.",
       "tip1Title": "Quick Query",
       "tip1Desc": "Type keywords to quickly locate items across all your life modules.",
       "tip2Title": "Instant Filtering",
       "tip2Desc": "Use titles or categories to narrow down results effortlessly.",
       "tip3Title": "Cross-Module Search",
-      "tip3Desc": "Search indexes your tasks, journal entries, and framework items in one unified view."
+      "tip3Desc": "Search indexes your tasks and journal entries in one unified view."
     }
   },
   "editor": {

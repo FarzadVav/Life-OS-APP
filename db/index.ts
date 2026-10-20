@@ -14,7 +14,6 @@ import {
   TodoDiscipline,
   DisciplineHistory,
   Journal,
-  FrameworkItem,
 } from './entities';
 import { UserRepository } from '@/features/auth/repositories';
 import {
@@ -23,7 +22,6 @@ import {
   TodoDisciplineRepository,
 } from '@/features/todos/repositories';
 import { JournalRepository } from '@/features/journals/repositories';
-import { FrameworkRepository } from '@/features/framework/repositories';
 
 export interface Services {
   orm: MikroORM;
@@ -34,8 +32,6 @@ export interface Services {
   todoDiscipline: TodoDisciplineRepository;
   disciplineHistory: EntityRepository<DisciplineHistory>;
   journal: JournalRepository;
-  framework: FrameworkRepository;
-  frameworkItem: FrameworkRepository;
 }
 
 declare global {
@@ -43,7 +39,6 @@ declare global {
 }
 
 function createServices(orm: MikroORM, em: EntityManager): Services {
-  const frameworkRepo = new FrameworkRepository(em, FrameworkItem);
   return {
     orm,
     em,
@@ -53,8 +48,6 @@ function createServices(orm: MikroORM, em: EntityManager): Services {
     todoDiscipline: new TodoDisciplineRepository(em, TodoDiscipline),
     disciplineHistory: em.getRepository(DisciplineHistory),
     journal: new JournalRepository(em, Journal),
-    framework: frameworkRepo,
-    frameworkItem: frameworkRepo,
   };
 }
 
