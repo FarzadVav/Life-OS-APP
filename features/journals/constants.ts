@@ -48,7 +48,7 @@ export const journals: Journal[] = [
     title: "A wish for sustained curiosity & humility",
     content:
       "I wish to never lose the hunger to learn foundational things from scratch — whether it's low-level systems, new languages, or human psychology. True confidence is quiet and always curious.",
-    type: "Lessons",
+    type: "Notes",
     createdAt: "2026-09-29T22:40:00",
   },
   {

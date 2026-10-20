@@ -3,6 +3,9 @@ import { Entity, OneToMany, Property, Unique } from '@mikro-orm/decorators/legac
 import { BaseEntity } from './BaseEntity';
 import { Todo } from './Todo';
 import { Journal } from './Journal';
+import { LifeArea } from './LifeArea';
+import { Skill } from './Skill';
+import { Habit } from './Habit';
 
 @Entity({ tableName: 'users' })
 export class User extends BaseEntity {
@@ -32,4 +35,13 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Journal, (journal) => journal.user, { cascade: [Cascade.ALL], orphanRemoval: true })
   journals = new Collection<Journal>(this);
+
+  @OneToMany(() => LifeArea, (lifeArea) => lifeArea.user, { cascade: [Cascade.ALL], orphanRemoval: true })
+  lifeAreas = new Collection<LifeArea>(this);
+
+  @OneToMany(() => Skill, (skill) => skill.user, { cascade: [Cascade.ALL], orphanRemoval: true })
+  skills = new Collection<Skill>(this);
+
+  @OneToMany(() => Habit, (habit) => habit.user, { cascade: [Cascade.ALL], orphanRemoval: true })
+  habits = new Collection<Habit>(this);
 }

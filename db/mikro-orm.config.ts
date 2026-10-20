@@ -9,6 +9,10 @@ import {
   TodoDiscipline,
   DisciplineHistory,
   Journal,
+  LifeArea,
+  Skill,
+  Habit,
+  HabitHistory,
 } from './entities';
 
 // Supabase project xeigermybdqjnruwhcss (ap-northeast-1).
@@ -51,6 +55,10 @@ export const config = defineConfig({
     TodoDiscipline,
     DisciplineHistory,
     Journal,
+    LifeArea,
+    Skill,
+    Habit,
+    HabitHistory,
   ],
   extensions: [SeedManager],
   allowGlobalContext: true,

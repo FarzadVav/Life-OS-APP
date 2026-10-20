@@ -3,6 +3,7 @@ import { TodoType } from '@/db/entities/enums';
 import { User } from '@/db/entities/User';
 import { TodoAction } from '@/db/entities/TodoAction';
 import { TodoDiscipline } from '@/db/entities/TodoDiscipline';
+import { LifeArea } from '@/db/entities/LifeArea';
 import type { Todo } from '@/db/entities/Todo';
 
 import type { CreateTodoData, UpdateTodoData, Todo as TodoDto } from '@/features/todos/types';
@@ -14,6 +15,15 @@ export type { CreateTodoData, UpdateTodoData };
  * into a plain Todo DTO object matching the ArkType Todo schema.
  */
 export function serializeTodo(todo: Todo): TodoDto {
+  const lifeAreaDto =
+    todo.lifeArea && typeof todo.lifeArea === 'object' && 'title' in todo.lifeArea
+      ? {
+          id: todo.lifeArea.id,
+          title: todo.lifeArea.title,
+          vision: todo.lifeArea.vision,
+        }
+      : undefined;
+
   return {
     id: todo.id,
     title: todo.title,
@@ -21,6 +31,8 @@ export function serializeTodo(todo: Todo): TodoDto {
     deadline: todo.deadline,
     isDone: todo.isDone,
     difficulty: todo.difficulty,
+    lifeAreaId: todo.lifeArea?.id ?? null,
+    lifeArea: lifeAreaDto,
     actions: todo.actions?.isInitialized()
       ? todo.actions.getItems().map((a) => ({
           id: a.id,
@@ -30,17 +42,30 @@ export function serializeTodo(todo: Todo): TodoDto {
         }))
       : undefined,
     disciplines: todo.disciplines?.isInitialized()
-      ? todo.disciplines.getItems().map((d) => ({
-          id: d.id,
-          title: d.title,
-          repeatInterval: d.repeatInterval,
-          history: d.history?.isInitialized()
-            ? d.history.getItems().map((h) => ({
-                date: h.date,
-                isDone: h.isDone,
-              }))
-            : undefined,
-        }))
+      ? todo.disciplines.getItems().map((d) => {
+          const discLifeAreaDto =
+            d.lifeArea && typeof d.lifeArea === 'object' && 'title' in d.lifeArea
+              ? {
+                  id: d.lifeArea.id,
+                  title: d.lifeArea.title,
+                  vision: d.lifeArea.vision,
+                }
+              : undefined;
+
+          return {
+            id: d.id,
+            title: d.title,
+            repeatInterval: d.repeatInterval,
+            lifeAreaId: d.lifeArea?.id ?? null,
+            lifeArea: discLifeAreaDto,
+            history: d.history?.isInitialized()
+              ? d.history.getItems().map((h) => ({
+                  date: h.date,
+                  isDone: h.isDone,
+                }))
+              : undefined,
+          };
+        })
       : undefined,
   };
 }
@@ -51,7 +76,10 @@ export class TodoRepository extends EntityRepository<Todo> {
     if (userId) {
       where.user = userId;
     }
-    return this.find(where, { orderBy: { deadline: 'ASC' } });
+    return this.find(where, {
+      populate: ['lifeArea'],
+      orderBy: { deadline: 'ASC' },
+    });
   }
 
   async findUpcoming(userId?: number): Promise<Todo[]> {
@@ -59,7 +87,10 @@ export class TodoRepository extends EntityRepository<Todo> {
     if (userId) {
       where.user = userId;
     }
-    return this.find(where, { orderBy: { deadline: 'ASC' } });
+    return this.find(where, {
+      populate: ['lifeArea'],
+      orderBy: { deadline: 'ASC' },
+    });
   }
 
   async findMissions(
@@ -71,7 +102,9 @@ export class TodoRepository extends EntityRepository<Todo> {
       where.user = userId;
     }
     return this.find(where, {
-      populate: options?.populateRelations ? ['actions', 'disciplines.history'] : [],
+      populate: options?.populateRelations
+        ? ['actions', 'disciplines.history', 'disciplines.lifeArea', 'lifeArea']
+        : ['lifeArea'],
       orderBy: { deadline: 'ASC' },
     });
   }
@@ -85,7 +118,10 @@ export class TodoRepository extends EntityRepository<Todo> {
       where.user = userId;
     }
     return this.find(where, {
-      populate: options?.populateRelations !== false ? ['actions', 'disciplines.history'] : [],
+      populate:
+        options?.populateRelations !== false
+          ? ['actions', 'disciplines.history', 'disciplines.lifeArea', 'lifeArea']
+          : ['lifeArea'],
       orderBy: { deadline: 'ASC' },
     });
   }
@@ -96,7 +132,7 @@ export class TodoRepository extends EntityRepository<Todo> {
       where.user = userId;
     }
     return this.findOne(where, {
-      populate: ['actions', 'disciplines.history'],
+      populate: ['actions', 'disciplines.history', 'disciplines.lifeArea', 'lifeArea'],
     });
   }
 
@@ -106,12 +142,16 @@ export class TodoRepository extends EntityRepository<Todo> {
       where.user = userId;
     }
     return this.findOne(where, {
-      populate: ['actions', 'disciplines.history'],
+      populate: ['actions', 'disciplines.history', 'disciplines.lifeArea', 'lifeArea'],
     });
   }
 
   async createTodo(data: CreateTodoData): Promise<Todo> {
     const user = data.userId ? this.em.getReference(User, data.userId) : undefined;
+    const lifeArea = data.lifeAreaId
+      ? this.em.getReference(LifeArea, data.lifeAreaId)
+      : undefined;
+
     const todo = this.create({
       title: data.title.trim(),
       type: data.type as unknown as TodoType,
@@ -119,6 +159,7 @@ export class TodoRepository extends EntityRepository<Todo> {
       difficulty: data.difficulty,
       isDone: data.isDone ?? false,
       user,
+      lifeArea,
     });
 
     if (data.actions && data.actions.length > 0) {
@@ -136,10 +177,15 @@ export class TodoRepository extends EntityRepository<Todo> {
 
     if (data.disciplines && data.disciplines.length > 0) {
       for (const disc of data.disciplines) {
+        const discLifeArea = disc.lifeAreaId
+          ? this.em.getReference(LifeArea, disc.lifeAreaId)
+          : lifeArea;
+
         todo.disciplines.add(
           this.em.create(TodoDiscipline, {
             title: disc.title.trim(),
             repeatInterval: disc.repeatInterval.trim(),
+            lifeArea: discLifeArea,
             mission: todo,
           }),
         );
@@ -156,11 +202,19 @@ export class TodoRepository extends EntityRepository<Todo> {
       where.user = userId;
     }
     const todo = await this.findOne(where, {
-      populate: ['actions', 'disciplines.history'],
+      populate: ['actions', 'disciplines.history', 'disciplines.lifeArea', 'lifeArea'],
     });
+
     if (!todo) {
       return null;
     }
+
+    const lifeArea =
+      data.lifeAreaId !== undefined
+        ? data.lifeAreaId
+          ? this.em.getReference(LifeArea, data.lifeAreaId)
+          : undefined
+        : todo.lifeArea;
 
     this.assign(todo, {
       ...(data.title !== undefined ? { title: data.title.trim() } : {}),
@@ -168,6 +222,7 @@ export class TodoRepository extends EntityRepository<Todo> {
       ...(data.deadline !== undefined ? { deadline: data.deadline.trim() } : {}),
       ...(data.isDone !== undefined ? { isDone: data.isDone } : {}),
       ...(data.difficulty !== undefined ? { difficulty: data.difficulty } : {}),
+      ...(data.lifeAreaId !== undefined ? { lifeArea } : {}),
     });
 
     // Synchronize nested actions if provided
@@ -208,17 +263,26 @@ export class TodoRepository extends EntityRepository<Todo> {
       const newDiscIds = new Set<number>();
 
       for (const discData of data.disciplines) {
+        const itemLifeArea =
+          discData.lifeAreaId !== undefined
+            ? discData.lifeAreaId
+              ? this.em.getReference(LifeArea, discData.lifeAreaId)
+              : undefined
+            : lifeArea;
+
         if (discData.id && existingDiscMap.has(discData.id)) {
           const existing = existingDiscMap.get(discData.id)!;
           this.em.assign(existing, {
             title: discData.title.trim(),
             repeatInterval: discData.repeatInterval.trim(),
+            ...(discData.lifeAreaId !== undefined ? { lifeArea: itemLifeArea } : {}),
           });
           newDiscIds.add(existing.id);
         } else {
           const newDisc = this.em.create(TodoDiscipline, {
             title: discData.title.trim(),
             repeatInterval: discData.repeatInterval.trim(),
+            lifeArea: itemLifeArea,
             mission: todo,
           });
           todo.disciplines.add(newDisc);

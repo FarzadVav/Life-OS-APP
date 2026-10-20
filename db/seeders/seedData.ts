@@ -242,7 +242,7 @@ export const SEED_JOURNALS = [
     title: 'A wish for sustained curiosity & humility',
     content:
       '<p>I wish to never lose the hunger to learn foundational things from scratch — whether it\'s low-level systems, new languages, or human psychology. True confidence is quiet and always curious.</p>',
-    type: JournalCategory.LESSONS,
+    type: JournalCategory.NOTES,
     createdAt: new Date('2026-10-12T22:40:00Z'),
   },
   {

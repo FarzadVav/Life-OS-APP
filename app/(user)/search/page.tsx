@@ -9,7 +9,7 @@ async function SearchPage() {
     <PageWrapper>
       <TopBar>
         <TopBar.Title asTitle>{t("search.title")}</TopBar.Title>
-        <TopBar.Btn backIcon href="/" position="left" />
+        <TopBar.Btn backIcon href="/profile" position="left" />
         <TopBar.HelpBtn position="right" />
       </TopBar>
       <div className="flex flex-1 items-center justify-center p-6 text-center sub-text">

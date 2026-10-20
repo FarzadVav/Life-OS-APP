@@ -7,6 +7,16 @@ export const TodoTypeSchema = type.enumerated('Daily', 'Upcoming', 'Mission');
 export type TodoType = typeof TodoTypeSchema.infer;
 
 /**
+ * Summary schema for Life Area referenced in Todo and Disciplines.
+ */
+export const TodoLifeAreaSummarySchema = type({
+  id: 'number',
+  title: 'string',
+  'vision?': 'string',
+});
+export type TodoLifeAreaSummary = typeof TodoLifeAreaSummarySchema.infer;
+
+/**
  * ArkType schema and inferred type for sub-action items in missions.
  */
 export const TodoActionSchema = type({
@@ -33,6 +43,8 @@ export const TodoDisciplineSchema = type({
   id: 'number',
   title: 'string',
   repeatInterval: 'string',
+  'lifeAreaId?': 'number | null',
+  'lifeArea?': TodoLifeAreaSummarySchema,
   'history?': TodoDisciplineHistorySchema.array(),
 });
 export type TodoDiscipline = typeof TodoDisciplineSchema.infer;
@@ -47,6 +59,8 @@ export const TodoSchema = type({
   type: TodoTypeSchema,
   isDone: 'boolean',
   'difficulty?': 'number',
+  'lifeAreaId?': 'number | null',
+  'lifeArea?': TodoLifeAreaSummarySchema,
   'actions?': TodoActionSchema.array(),
   'disciplines?': TodoDisciplineSchema.array(),
 });
@@ -61,6 +75,7 @@ export const CreateTodoSchema = type({
   deadline: 'string >= 1',
   'difficulty?': 'number',
   'userId?': 'number',
+  'lifeAreaId?': 'number | null',
   'isDone?': 'boolean',
   'actions?': type({
     'id?': 'number',
@@ -72,6 +87,7 @@ export const CreateTodoSchema = type({
     'id?': 'number',
     title: 'string >= 1',
     repeatInterval: 'string >= 1',
+    'lifeAreaId?': 'number | null',
   }).array(),
 });
 export type CreateTodoData = typeof CreateTodoSchema.infer;
@@ -83,6 +99,7 @@ export const UpdateTodoSchema = type({
   'deadline?': 'string >= 1',
   'isDone?': 'boolean',
   'difficulty?': 'number',
+  'lifeAreaId?': 'number | null',
   'actions?': type({
     'id?': 'number',
     title: 'string >= 1',
@@ -93,6 +110,7 @@ export const UpdateTodoSchema = type({
     'id?': 'number',
     title: 'string >= 1',
     repeatInterval: 'string >= 1',
+    'lifeAreaId?': 'number | null',
   }).array(),
 });
 export type UpdateTodoData = typeof UpdateTodoSchema.infer;
@@ -114,6 +132,7 @@ export type UpdateActionData = typeof UpdateActionSchema.infer;
 export const CreateDisciplineSchema = type({
   title: 'string >= 1',
   repeatInterval: 'string >= 1',
+  'lifeAreaId?': 'number | null',
 });
 export type CreateDisciplineData = typeof CreateDisciplineSchema.infer;
 
@@ -126,6 +145,7 @@ export type TodoFormState = {
     type?: string[];
     deadline?: string[];
     difficulty?: string[];
+    lifeAreaId?: string[];
     general?: string[];
   };
   message?: string;
@@ -135,6 +155,7 @@ export type TodoFormState = {
     type?: TodoType;
     deadline?: string;
     difficulty?: number;
+    lifeAreaId?: number | null;
   };
   success?: boolean;
   todoId?: number;

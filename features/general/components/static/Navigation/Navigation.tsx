@@ -22,6 +22,7 @@ function Navigation() {
             <Button
               key={item.href}
               nativeButton={false}
+              aria-label={item.name}
               render={<Link href={item.href} />}
               className="h-full flex-1 flex-col px-0"
               variant={isPathnameMatch ? "card" : "ghost"}

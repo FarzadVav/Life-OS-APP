@@ -77,5 +77,5 @@ export async function loginMutation(
     username: result.user.username,
   });
 
-  redirect('/');
+  redirect('/profile');
 }

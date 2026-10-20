@@ -4,6 +4,7 @@ import { BaseEntity } from './BaseEntity';
 import { User } from './User';
 import { TodoAction } from './TodoAction';
 import { TodoDiscipline } from './TodoDiscipline';
+import { LifeArea } from './LifeArea';
 import { TodoType } from './enums';
 
 export { TodoType };
@@ -36,6 +37,9 @@ export class Todo extends BaseEntity {
 
   @ManyToOne(() => User, { nullable: true, deleteRule: 'cascade' })
   user?: Rel<User>;
+
+  @ManyToOne(() => LifeArea, { nullable: true, deleteRule: 'set null' })
+  lifeArea?: Rel<LifeArea>;
 
   @OneToMany(() => TodoAction, (action) => action.mission, { cascade: [Cascade.ALL], orphanRemoval: true })
   actions = new Collection<TodoAction>(this);

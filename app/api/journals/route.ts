@@ -9,7 +9,7 @@ import { CreateJournalSchema } from '@/features/journals/types';
 export const dynamic = 'force-dynamic';
 
 /**
- * GET /api/journals?category=Logs|Thoughts|Feelings|Lessons|Ideas|Notes|all
+ * GET /api/journals?category=Logs|Thoughts|Feelings|Ideas|Notes|all
  * Calls getJournalsQuery and returns JSON payload for client SWR consumption.
  */
 export async function GET(request: NextRequest) {

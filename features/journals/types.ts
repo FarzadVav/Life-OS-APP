@@ -4,7 +4,6 @@ export const JOURNAL_CATEGORIES = [
   'Logs',
   'Thoughts',
   'Feelings',
-  'Lessons',
   'Ideas',
   'Notes',
 ] as const;

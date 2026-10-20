@@ -8,6 +8,7 @@ import {
   CheckIcon,
   ChevronRightIcon,
   CircleIcon,
+  CompassIcon,
   GaugeIcon,
   Repeat2Icon,
   Trash2Icon,
@@ -82,6 +83,14 @@ function TodoMissionCard({
                 </span>
                 <span className="sub-text">•</span>
                 <span className="sub-text">{progress}%</span>
+                {todo.lifeArea?.title && (
+                  <>
+                    <span className="sub-text">•</span>
+                    <span className="sub-text text-foreground font-medium truncate max-w-[110px]">
+                      {todo.lifeArea.title}
+                    </span>
+                  </>
+                )}
                 {disciplines.length > 0 && (
                   <>
                     <span className="sub-text">•</span>
@@ -153,6 +162,16 @@ function TodoMissionCard({
           </div>
           <p className="mt-2 text-xs font-medium">{totalActions}</p>
         </div>
+
+        {todo.lifeArea?.title && (
+          <div className="col-span-3 rounded-container bg-background p-3">
+            <div className="flex items-center gap-2 sub-text">
+              <CompassIcon className="size-4" />
+              <span className="text-xs">{t("lifeAreas.title") || "Life Area"}</span>
+            </div>
+            <p className="mt-2 text-xs font-medium">{todo.lifeArea.title}</p>
+          </div>
+        )}
       </div>
 
       {totalActions > 0 && (
@@ -179,22 +198,24 @@ function TodoMissionCard({
                     onToggleAction?.(todo.id, action.id);
                   }
                 }}
-                className="flex items-start gap-3 rounded-container bg-background p-3 transition-opacity hover:bg-background/90 cursor-pointer"
+                className={`w-full flex items-center gap-3 p-3 rounded-container bg-background transition-opacity cursor-pointer text-left select-none ${
+                  action.isDone ? "opacity-60" : ""
+                }`}
               >
-                <div className="translate-y-0.5 shrink-0">
+                <div className="shrink-0">
                   {action.isDone ? (
                     <div className="flex size-5 items-center justify-center rounded-container bg-foreground">
                       <CheckIcon className="size-3.5 text-background" />
                     </div>
                   ) : (
-                    <CircleIcon className="size-5 muted-text" />
+                    <CircleIcon className="size-5 sub-text" />
                   )}
                 </div>
 
-                <div className="flex-1 min-w-0">
+                <div className="min-w-0 flex-1">
                   <p
-                    className={`text-sm ${
-                      action.isDone ? "muted-text line-through" : ""
+                    className={`font-medium text-sm ${
+                      action.isDone ? "line-through sub-text" : ""
                     }`}
                   >
                     {action.title}
@@ -239,8 +260,11 @@ function TodoMissionCard({
 
                   <div className="flex-1 h-10 flex justify-between items-start flex-col">
                     <p className="text-sm font-medium">{discipline.title}</p>
-                    <p className="sub-text text-xs">
-                      {discipline.repeatInterval}
+                    <p className="sub-text text-xs flex items-center gap-1.5">
+                      <span>{discipline.repeatInterval}</span>
+                      {discipline.lifeArea?.title && (
+                        <span>• {discipline.lifeArea.title}</span>
+                      )}
                     </p>
                   </div>
                 </div>
@@ -258,8 +282,8 @@ function TodoMissionCard({
                   </Button>
                   <Button
                     type="button"
-                    variant="outline"
-                    className="flex-1 justify-center py-1.5 h-auto text-xs bg-card-thick text-foreground/70 hover:bg-card-thick/80 border-foreground/20"
+                    variant="ghost"
+                    className="flex-1 justify-center py-1.5 h-auto text-xs text-foreground/60 hover:text-foreground"
                     onClick={() =>
                       onToggleDiscipline?.(todo.id, discipline.id, false)
                     }
@@ -314,7 +338,7 @@ function TodoMissionCard({
               render={
                 <Link
                   className="flex flex-1 items-center justify-center gap-1"
-                  href={`/todos/new?editId=${todo.id}&type=mission`}
+                  href={`/todos/new?editId=${todo.id}`}
                 >
                   <span>{t("common.edit")}</span>
                   <ChevronRightIcon className="size-4" />

@@ -4,8 +4,8 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     id: "/",
     scope: "/",
-    start_url: "/",
     name: "Arrow Up",
+    start_url: "/profile",
     short_name: "ArrowUp",
     display: "standalone",
     theme_color: "#fafafa",

@@ -19,6 +19,12 @@ export async function createTodoMutation(
   const difficultyRaw = formData.get('difficulty');
   const difficulty = difficultyRaw ? Number(difficultyRaw) : undefined;
 
+  const lifeAreaIdRaw = formData.get('lifeAreaId');
+  const lifeAreaId =
+    lifeAreaIdRaw && lifeAreaIdRaw !== '' && lifeAreaIdRaw !== '0' && lifeAreaIdRaw !== 'none'
+      ? Number(lifeAreaIdRaw)
+      : null;
+
   let actions: CreateTodoData['actions'] = undefined;
   const actionsRaw = formData.get('actions');
   if (actionsRaw) {
@@ -45,6 +51,7 @@ export async function createTodoMutation(
     type: typeValue,
     deadline,
     ...(difficulty !== undefined ? { difficulty } : {}),
+    ...(lifeAreaId !== undefined ? { lifeAreaId } : {}),
     ...(actions && actions.length > 0 ? { actions } : {}),
     ...(disciplines && disciplines.length > 0 ? { disciplines } : {}),
   });
@@ -58,6 +65,7 @@ export async function createTodoMutation(
         | 'type'
         | 'deadline'
         | 'difficulty'
+        | 'lifeAreaId'
         | 'general';
 
       if (!errors[field]) {
@@ -73,6 +81,7 @@ export async function createTodoMutation(
         type: typeValue,
         deadline,
         difficulty,
+        lifeAreaId,
       },
       success: false,
     };
@@ -87,6 +96,7 @@ export async function createTodoMutation(
       type: typeValue,
       deadline,
       difficulty,
+      lifeAreaId,
       userId,
       actions,
       disciplines,
@@ -101,6 +111,7 @@ export async function createTodoMutation(
       type: typeValue,
       deadline,
       difficulty,
+      lifeAreaId,
     },
   };
 }

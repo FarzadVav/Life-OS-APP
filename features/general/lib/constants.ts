@@ -1,6 +1,9 @@
 import {
-  HomeIcon,
   PenLineIcon,
+  UserIcon,
+  Repeat2Icon,
+  CircleCheckBig,
+  DatabaseIcon,
 } from "lucide-react";
 
 import { FeaturesAreas, LifeArea, NavigationLink } from "./types";
@@ -49,10 +52,28 @@ export const FEATURES_AREAS: FeaturesAreas[] = [
 
 export const NAVIGATION_LINKS: NavigationLink[] = [
   {
-    name: "Home",
-    href: "/",
-    matchPathname: "//",
-    Icon: HomeIcon,
+    href: "/profile",
+    name: "Profile",
+    matchPathname: "/profile",
+    Icon: UserIcon,
+  },
+  {
+    name: "Todos",
+    href: "/todos",
+    matchPathname: "/todos",
+    Icon: CircleCheckBig,
+  },
+  {
+    name: "Habits",
+    href: "/habits",
+    matchPathname: "/habit",
+    Icon: Repeat2Icon,
+  },
+  {
+    name: "Skills",
+    href: "/skills",
+    matchPathname: "/skills",
+    Icon: DatabaseIcon,
   },
   {
     href: "/journals",

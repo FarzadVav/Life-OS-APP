@@ -1,0 +1,89 @@
+import { EntityRepository } from '@mikro-orm/postgresql';
+import { User } from '@/db/entities/User';
+import type { LifeArea } from '@/db/entities/LifeArea';
+import type { CreateLifeAreaData, UpdateLifeAreaData, LifeArea as LifeAreaDto } from '@/features/life-areas/types';
+
+export type { CreateLifeAreaData, UpdateLifeAreaData };
+
+/**
+ * Safely transforms a MikroORM LifeArea entity into a plain LifeArea DTO object.
+ */
+export function serializeLifeArea(lifeArea: LifeArea): LifeAreaDto {
+  return {
+    id: lifeArea.id,
+    title: lifeArea.title,
+    vision: lifeArea.vision,
+    createdAt: lifeArea.createdAt instanceof Date ? lifeArea.createdAt.toISOString() : String(lifeArea.createdAt),
+    updatedAt: lifeArea.updatedAt instanceof Date ? lifeArea.updatedAt.toISOString() : String(lifeArea.updatedAt),
+  };
+}
+
+export class LifeAreaRepository extends EntityRepository<LifeArea> {
+  async findAllLifeAreas(userId?: number): Promise<LifeArea[]> {
+    const where: Record<string, unknown> = {};
+    if (userId) {
+      where.user = userId;
+    }
+
+    return this.find(where, {
+      orderBy: { createdAt: 'ASC' },
+    });
+  }
+
+  async findById(id: number, userId?: number): Promise<LifeArea | null> {
+    const where: Record<string, unknown> = { id };
+    if (userId) {
+      where.user = userId;
+    }
+    return this.findOne(where);
+  }
+
+  async createLifeArea(data: CreateLifeAreaData): Promise<LifeArea> {
+    const user = data.userId ? this.em.getReference(User, data.userId) : undefined;
+    const lifeArea = this.create({
+      title: data.title.trim(),
+      vision: data.vision || '',
+      user,
+    });
+    await this.em.flush();
+    return lifeArea;
+  }
+
+  async updateLifeArea(
+    id: number,
+    data: UpdateLifeAreaData,
+    userId?: number,
+  ): Promise<LifeArea | null> {
+    const where: Record<string, unknown> = { id };
+    if (userId) {
+      where.user = userId;
+    }
+    const lifeArea = await this.findOne(where);
+    if (!lifeArea) {
+      return null;
+    }
+
+    this.assign(lifeArea, {
+      ...(data.title !== undefined ? { title: data.title.trim() } : {}),
+      ...(data.vision !== undefined ? { vision: data.vision } : {}),
+    });
+
+    await this.em.flush();
+    return lifeArea;
+  }
+
+  async deleteLifeArea(id: number, userId?: number): Promise<boolean> {
+    const where: Record<string, unknown> = { id };
+    if (userId) {
+      where.user = userId;
+    }
+    const lifeArea = await this.findOne(where);
+    if (!lifeArea) {
+      return false;
+    }
+
+    this.em.remove(lifeArea);
+    await this.em.flush();
+    return true;
+  }
+}

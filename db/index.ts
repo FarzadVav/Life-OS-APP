@@ -14,6 +14,10 @@ import {
   TodoDiscipline,
   DisciplineHistory,
   Journal,
+  LifeArea,
+  Skill,
+  Habit,
+  HabitHistory,
 } from './entities';
 import { UserRepository } from '@/features/auth/repositories';
 import {
@@ -22,6 +26,9 @@ import {
   TodoDisciplineRepository,
 } from '@/features/todos/repositories';
 import { JournalRepository } from '@/features/journals/repositories';
+import { LifeAreaRepository } from '@/features/life-areas/repositories';
+import { SkillRepository } from '@/features/skills/repositories';
+import { HabitRepository } from '@/features/habits/repositories';
 
 export interface Services {
   orm: MikroORM;
@@ -32,6 +39,10 @@ export interface Services {
   todoDiscipline: TodoDisciplineRepository;
   disciplineHistory: EntityRepository<DisciplineHistory>;
   journal: JournalRepository;
+  lifeArea: LifeAreaRepository;
+  skill: SkillRepository;
+  habit: HabitRepository;
+  habitHistory: EntityRepository<HabitHistory>;
 }
 
 declare global {
@@ -48,6 +59,10 @@ function createServices(orm: MikroORM, em: EntityManager): Services {
     todoDiscipline: new TodoDisciplineRepository(em, TodoDiscipline),
     disciplineHistory: em.getRepository(DisciplineHistory),
     journal: new JournalRepository(em, Journal),
+    lifeArea: new LifeAreaRepository(em, LifeArea),
+    skill: new SkillRepository(em, Skill),
+    habit: new HabitRepository(em, Habit),
+    habitHistory: em.getRepository(HabitHistory),
   };
 }
 
@@ -91,17 +106,8 @@ export async function withRequestContext<T>(
  * Returns a fresh or current EntityManager for queries.
  */
 export async function getEntityManager(): Promise<EntityManager> {
-  const { em } = await initORM();
-  return em.fork();
+  const services = await initORM();
+  return services.em;
 }
 
-/**
- * Returns the underlying MikroORM instance.
- */
-export async function getOrm(): Promise<MikroORM> {
-  const { orm } = await initORM();
-  return orm;
-}
-
-export * from './entities';
-export { config } from './mikro-orm.config';
+export default initORM;

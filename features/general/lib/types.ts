@@ -30,6 +30,7 @@ export type NavigationLink = {
 export const LifeAreaSchema = type({
   id: "number",
   title: "string",
+  "vision?": "string",
 });
 export type LifeArea = typeof LifeAreaSchema.infer;
 

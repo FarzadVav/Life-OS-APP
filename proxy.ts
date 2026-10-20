@@ -15,7 +15,7 @@ export default async function proxy(req: NextRequest) {
   }
 
   if (isPublicRoute && session?.userId && path === "/login") {
-    return NextResponse.redirect(new URL("/", req.nextUrl));
+    return NextResponse.redirect(new URL("/profile", req.nextUrl));
   }
 
   return NextResponse.next();

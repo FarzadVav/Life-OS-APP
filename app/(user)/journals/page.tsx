@@ -15,7 +15,6 @@ async function JournalsPage() {
     <PageWrapper>
       <TopBar>
         <TopBar.Title asTitle>{t("journals.title")}</TopBar.Title>
-        <TopBar.Btn backIcon href="/" position="left" />
         <TopBar.HelpBtn position="right" />
       </TopBar>
 

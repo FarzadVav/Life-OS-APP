@@ -12,6 +12,14 @@ async function dbPush() {
     await orm.em.getConnection().execute('DROP TABLE IF EXISTS "framework_items" CASCADE;');
     console.log('🗑️ Ensured framework_items table is removed from PostgreSQL.');
 
+    // Migrate any legacy Lessons journals to Notes
+    try {
+      await orm.em.getConnection().execute(`UPDATE "journals" SET "type" = 'Notes' WHERE "type"::text = 'Lessons';`);
+      console.log('🔄 Migrated any legacy Lessons journals to Notes.');
+    } catch {
+      // Table may not exist yet on fresh setup
+    }
+
     const generator = orm.schema;
     const updateDump = await generator.getUpdateSchemaSQL({ wrap: false, dropTables: true });
 

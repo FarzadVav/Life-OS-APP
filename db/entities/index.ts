@@ -6,3 +6,7 @@ export * from './TodoAction';
 export * from './TodoDiscipline';
 export * from './DisciplineHistory';
 export * from './Journal';
+export * from './LifeArea';
+export * from './Skill';
+export * from './Habit';
+export * from './HabitHistory';

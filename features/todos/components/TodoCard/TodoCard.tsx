@@ -7,6 +7,7 @@ import {
   ChevronRightIcon,
   CircleIcon,
   ClockIcon,
+  CompassIcon,
   TagIcon,
   Trash2Icon,
 } from "lucide-react";
@@ -56,8 +57,9 @@ function TodoCard({ todo, onToggle, onDelete }: TodoCardProps) {
 
             <div className="min-w-0 flex-1">
               <p
-                className={`font-medium transition-all ${todo.isDone ? "line-through muted-text" : ""
-                  }`}
+                className={`font-medium transition-all ${
+                  todo.isDone ? "line-through muted-text" : ""
+                }`}
               >
                 {todo.title}
               </p>
@@ -73,6 +75,14 @@ function TodoCard({ todo, onToggle, onDelete }: TodoCardProps) {
                 </span>
                 <span>•</span>
                 <span>{todo.type}</span>
+                {todo.lifeArea?.title && (
+                  <>
+                    <span>•</span>
+                    <span className="truncate max-w-[110px] text-foreground font-medium">
+                      {todo.lifeArea.title}
+                    </span>
+                  </>
+                )}
               </div>
             </div>
 
@@ -114,12 +124,23 @@ function TodoCard({ todo, onToggle, onDelete }: TodoCardProps) {
             <span>{t("common.status")}</span>
           </div>
           <p
-            className={`mt-2 font-medium ${todo.isDone ? "text-foreground" : "sub-text"
-              }`}
+            className={`mt-2 font-medium ${
+              todo.isDone ? "text-foreground" : "sub-text"
+            }`}
           >
             {todo.isDone ? t("todos.completed") : t("todos.inProgress")}
           </p>
         </div>
+
+        {todo.lifeArea?.title && (
+          <div className="col-span-3 rounded-container bg-background p-3">
+            <div className="flex items-center gap-2 sub-text">
+              <CompassIcon className="size-4" />
+              <span>{t("lifeAreas.title") || "Life Area"}</span>
+            </div>
+            <p className="mt-2 font-medium">{todo.lifeArea.title}</p>
+          </div>
+        )}
       </div>
 
       <label className="rounded-container bg-background p-3 flex items-center justify-between cursor-pointer select-none">

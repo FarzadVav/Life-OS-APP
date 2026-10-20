@@ -11,6 +11,7 @@ import {
 
 import { useTodos } from "@/features/todos/hooks";
 import { useJournalsStats } from "@/features/journals/hooks";
+import { LifeAreasList } from "@/features/life-areas/components";
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
 import Dialog from "@/features/general/components/ui/Dialog/Dialog";
 import { Button } from "@/features/general/components/ui/Button/Button";
@@ -75,8 +76,8 @@ function UserProfilePage() {
   return (
     <PageWrapper>
       <TopBar>
+        <TopBar.InstallBtn position="left" />
         <TopBar.Title asTitle>{t("profile.title")}</TopBar.Title>
-        <TopBar.Btn backIcon href="/" position="left" />
         <TopBar.HelpBtn position="right" />
       </TopBar>
 
@@ -101,10 +102,14 @@ function UserProfilePage() {
           </div>
         </div>
 
+        {/* Life Areas Section */}
+        <LifeAreasList />
+
+        {/* Stats Grid */}
         {stats.map((stat) => (
           <div
             key={stat.label}
-            className="w-full flex flex-col gap-3 rounded-container bg-card p-3"
+            className="w-full flex flex-col gap-3 rounded-container bg-card p-3 border border-foreground/5 shadow-xs"
           >
             <div className="flex items-center gap-2 font-semibold">
               {stat.icon}
@@ -128,12 +133,12 @@ function UserProfilePage() {
 
         <p className="sub-text w-full text-center">{t("profile.quote")}</p>
 
-        <div className="flex w-full items-center justify-between gap-3 rounded-container bg-card p-3">
+        <div className="flex w-full items-center justify-between gap-3 rounded-container bg-card p-3 border border-foreground/5 shadow-xs">
           <span className="font-bold">{t("profile.language")}</span>
           <LocaleSwitcher />
         </div>
 
-        <div className="flex w-full items-center justify-between gap-3 rounded-container bg-card p-3">
+        <div className="flex w-full items-center justify-between gap-3 rounded-container bg-card p-3 border border-foreground/5 shadow-xs">
           <span className="font-bold">{t("profile.colorScheme")}</span>
           <ThemeSwitcher />
         </div>

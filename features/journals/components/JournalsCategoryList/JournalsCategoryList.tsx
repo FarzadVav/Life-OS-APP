@@ -8,7 +8,6 @@ import {
   Lightbulb,
   PenLine,
   ScrollText,
-  BookMarked,
   type LucideIcon,
 } from "lucide-react";
 
@@ -38,11 +37,6 @@ const CATEGORY_META: Record<
     icon: Heart,
     descriptionKey: "journals.categoryDesc.feelings",
     fallbackDescription: "Emotional awareness, gratitude, and inner state",
-  },
-  Lessons: {
-    icon: BookMarked,
-    descriptionKey: "journals.categoryDesc.lessons",
-    fallbackDescription: "Key insights, life lessons, and wisdom gathered",
   },
   Ideas: {
     icon: Lightbulb,

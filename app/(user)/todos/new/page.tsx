@@ -16,6 +16,7 @@ import {
 import { TODO_TYPES } from "@/features/todos/constants";
 import { TodoType, TodoAction, TodoDiscipline } from "@/features/todos/types";
 import { useTodo } from "@/features/todos/hooks";
+import { useLifeAreas } from "@/features/life-areas/hooks";
 import { createTodoMutation, updateTodoMutation, deleteTodoMutation } from "@/features/todos/mutations";
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
 import { Button } from "@/features/general/components/ui/Button/Button";
@@ -107,6 +108,47 @@ function DifficultySelect({
   );
 }
 
+
+function LifeAreaSelect({
+  value,
+  onChange,
+}: {
+  value: number | null;
+  onChange: (value: number | null) => void;
+}) {
+  const { t } = useLocale();
+  const { lifeAreas = [] } = useLifeAreas();
+
+  const items = [
+    { value: "none", label: t("lifeAreas.none") || "None" },
+    ...lifeAreas.map((la) => ({
+      value: String(la.id),
+      label: la.title,
+    })),
+  ];
+
+  return (
+    <Field.Root name="lifeAreaId">
+      <Field.Label className="mb-1 font-bold">
+        {t("lifeAreas.title") || "Life Area"}
+      </Field.Label>
+
+      <SelectDialog
+        name="lifeAreaSelect"
+        items={items}
+        value={value ? String(value) : "none"}
+        onChange={(next) =>
+          onChange(next === "none" || !next ? null : Number(next))
+        }
+        title={t("lifeAreas.selectLifeArea") || "Select Life Area"}
+        placeholder={t("lifeAreas.selectLifeArea") || "Select Life Area"}
+      />
+
+      <Field.Error className="sub-text mt-0.5 text-foreground text-xs" />
+    </Field.Root>
+  );
+}
+
 function NewTodoPage() {
   const { t, formatDate } = useLocale();
   const router = useRouter();
@@ -135,6 +177,7 @@ function NewTodoPage() {
   const [disciplines, setDisciplines] = useState<TodoDiscipline[]>([]);
   const [isDone, setIsDone] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [lifeAreaId, setLifeAreaId] = useState<number | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   // Dialog state for adding/editing mission action
@@ -155,11 +198,13 @@ function NewTodoPage() {
     id: number | null;
     title: string;
     repeatInterval: string;
+    lifeAreaId?: number | null;
     history?: { date: string; isDone: boolean }[];
   }>({
     id: null,
     title: "",
     repeatInterval: "Every 1 Day",
+    lifeAreaId: null,
     history: [],
   });
 
@@ -172,7 +217,7 @@ function NewTodoPage() {
   // When mutation succeeds, navigate back to home and refresh
   useEffect(() => {
     if (state?.success) {
-      router.push("/");
+      router.push("/todos");
       router.refresh();
     }
   }, [state?.success, router]);
@@ -187,6 +232,7 @@ function NewTodoPage() {
         setDailyTime(getDefaultTime());
         setTargetDate(new Date());
         setDifficulty(3);
+        setLifeAreaId(null);
         setActions([]);
         setDisciplines([]);
         setIsDone(false);
@@ -200,6 +246,7 @@ function NewTodoPage() {
         setType(todo.type);
         setIsDone(todo.isDone);
         setDifficulty(todo.difficulty || 3);
+        setLifeAreaId(todo.lifeAreaId ?? null);
         setActions(todo.actions || []);
         setDisciplines(todo.disciplines || []);
 
@@ -219,7 +266,7 @@ function NewTodoPage() {
       const res = await deleteTodoMutation(Number(editId));
       if (res.success) {
         setDeleteDialogOpen(false);
-        router.push("/");
+        router.push("/todos");
         router.refresh();
       }
     } catch (err) {
@@ -285,6 +332,7 @@ function NewTodoPage() {
       id: null,
       title: "",
       repeatInterval: "Every 1 Day",
+      lifeAreaId: lifeAreaId,
       history: [],
     });
     setDisciplineDialogOpen(true);
@@ -295,6 +343,7 @@ function NewTodoPage() {
       id: discipline.id,
       title: discipline.title,
       repeatInterval: discipline.repeatInterval || "Every 1 Day",
+      lifeAreaId: discipline.lifeAreaId ?? lifeAreaId,
       history: discipline.history,
     });
     setDisciplineDialogOpen(true);
@@ -309,7 +358,7 @@ function NewTodoPage() {
       setDisciplines((prev) =>
         prev.map((d) =>
           d.id === disciplineDraft.id
-            ? { ...d, title: nextTitle, repeatInterval: nextInterval }
+            ? { ...d, title: nextTitle, repeatInterval: nextInterval, lifeAreaId: disciplineDraft.lifeAreaId }
             : d,
         ),
       );
@@ -320,6 +369,7 @@ function NewTodoPage() {
           id: Date.now() + Math.floor(Math.random() * 1000),
           title: nextTitle,
           repeatInterval: nextInterval,
+          lifeAreaId: disciplineDraft.lifeAreaId,
           history: [],
         },
       ]);
@@ -343,7 +393,7 @@ function NewTodoPage() {
               ? t("todos.newMission") || "New Mission"
               : t("todos.new")}
         </TopBar.Title>
-        <TopBar.Btn backIcon href="/" position="left" />
+        <TopBar.Btn backIcon href="/todos" position="left" />
 
         {isEditMode ? (
           <TopBar.Btn
@@ -431,6 +481,8 @@ function NewTodoPage() {
           </Field.Root>
 
           <TypeSelect value={type} onChange={setType} />
+
+          <LifeAreaSelect value={lifeAreaId} onChange={setLifeAreaId} />
 
           <Field.Root name="deadline">
             <Field.Label className="mb-1 font-bold">
@@ -551,6 +603,9 @@ function NewTodoPage() {
                           <p className="sub-text text-xs flex items-center gap-1 mt-0.5">
                             <Repeat2Icon className="size-3" />
                             <span>{d.repeatInterval}</span>
+                            {d.lifeArea?.title && (
+                              <span>• {d.lifeArea.title}</span>
+                            )}
                           </p>
                         </div>
 
@@ -627,6 +682,13 @@ function NewTodoPage() {
                       }
                     />
                   </Field.Root>
+
+                  <LifeAreaSelect
+                    value={disciplineDraft.lifeAreaId ?? null}
+                    onChange={(val) =>
+                      setDisciplineDraft((d) => ({ ...d, lifeAreaId: val }))
+                    }
+                  />
 
                   <div className="flex items-center justify-end gap-2 pt-2">
                     <Dialog.Close

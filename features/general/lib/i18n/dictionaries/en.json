@@ -66,7 +66,9 @@
     "completed": "Completed",
     "pending": "Pending",
     "actions": "Actions",
-    "doneActions": "Done Actions"
+    "doneActions": "Done Actions",
+    "lifeAreas": "Life Areas",
+    "skills": "Skills"
   },
   "language": {
     "title": "Language",
@@ -124,7 +126,6 @@
       "logs": "Logs",
       "thoughts": "Thoughts",
       "feelings": "Feelings",
-      "lessons": "Lessons",
       "ideas": "Ideas",
       "notes": "Notes"
     },
@@ -132,7 +133,6 @@
       "logs": "Daily activity, execution notes, and progress logs",
       "thoughts": "Reflections, mental models, and deep contemplations",
       "feelings": "Emotional awareness, gratitude, and inner state",
-      "lessons": "Key insights, life lessons, and wisdom gathered",
       "ideas": "Sparks of creativity, projects, and future concepts",
       "notes": "Quick references, checklists, and working memos"
     }
@@ -259,7 +259,7 @@
       "tip1Title": "Daily Reflection",
       "tip1Desc": "Writing down observations and daily wins clears cognitive clutter and increases gratitude.",
       "tip2Title": "Structured Categories",
-      "tip2Desc": "Filter entries by Logs, Thoughts, Feelings, Lessons, Ideas, or Notes.",
+      "tip2Desc": "Filter entries by Logs, Thoughts, Feelings, Ideas, or Notes.",
       "tip3Title": "Long-term Wisdom",
       "tip3Desc": "Revisiting past journal notes reveals patterns in your decision-making and emotional states."
     },
@@ -269,7 +269,7 @@
       "tip1Title": "Express Freely",
       "tip1Desc": "Write authentic notes about what worked today, lessons learned, and ideas for tomorrow.",
       "tip2Title": "Select Categories",
-      "tip2Desc": "Choose among Logs, Thoughts, Feelings, Lessons, Ideas, or Notes to categorize your entry.",
+      "tip2Desc": "Choose among Logs, Thoughts, Feelings, Ideas, or Notes to categorize your entry.",
       "tip3Title": "Rich Text Formatting",
       "tip3Desc": "Use the TipTap rich editor to structure your writing with headings, lists, and formatting."
     },
@@ -308,5 +308,54 @@
     "undo": "Undo",
     "redo": "Redo",
     "toolbar": "Rich text toolbar"
+  },
+  "lifeAreas": {
+    "title": "Life Areas",
+    "subtitle": "Define and oversee your personal life domains and long-term visions.",
+    "new": "New Life Area",
+    "edit": "Edit Life Area",
+    "empty": "No life areas defined yet.",
+    "addFirst": "Add your first life area to organize your focus and standards.",
+    "titlePlaceholder": "e.g. Health, Career, Mindset, Social...",
+    "visionLabel": "Vision & Principles",
+    "visionPlaceholder": "Describe your ideal destination, standards, and rules for this area...",
+    "deleteConfirm": "Are you sure you want to delete this life area?",
+    "deleteDesc": "\"{title}\" will be deleted. Any linked todos will no longer be assigned to it.",
+    "selectLifeArea": "Select Life Area",
+    "none": "None"
+  },
+  "skills": {
+    "title": "Skills",
+    "subtitle": "Practical proficiencies, playbooks, and personal capabilities.",
+    "new": "New Skill",
+    "edit": "Edit Skill",
+    "empty": "No skills defined yet.",
+    "addFirst": "Add your first skill to link your capabilities to life areas.",
+    "titlePlaceholder": "e.g. Distributed Systems, Public Speaking, Speed Reading...",
+    "contentLabel": "Playbook & Notes",
+    "contentPlaceholder": "Write detailed guidelines, mental models, steps, and routines...",
+    "deleteConfirm": "Are you sure you want to delete this skill?",
+    "deleteDesc": "\"{title}\" will be permanently deleted.",
+    "selectLifeArea": "Select Life Area",
+    "allLifeAreas": "All Areas",
+    "unassigned": "General"
+  },
+  "habits": {
+    "title": "Habits",
+    "subtitle": "Daily disciplines, recurring behaviors, and routines.",
+    "new": "New Habit",
+    "edit": "Edit Habit",
+    "empty": "No habits defined yet.",
+    "addFirst": "Add your first habit to track consistent daily disciplines.",
+    "titlePlaceholder": "e.g. Morning Hydration, 30m Deep Reading, Gym Workout...",
+    "descPlaceholder": "Optional notes, cue triggers, or execution standards...",
+    "repeatInterval": "Repeat Interval",
+    "selectLifeArea": "Select Life Area",
+    "allLifeAreas": "All Areas",
+    "unassigned": "General",
+    "deleteConfirm": "Are you sure you want to delete this habit?",
+    "deleteDesc": "\"{title}\" will be permanently deleted.",
+    "todayCheckin": "Today's Action",
+    "historyTitle": "Recent Check-ins"
   }
 }
