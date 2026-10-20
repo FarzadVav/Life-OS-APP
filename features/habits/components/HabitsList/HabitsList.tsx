@@ -1,12 +1,12 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { PlusIcon, Repeat2Icon, LoaderIcon } from "lucide-react";
 
 import { useHabits } from "../../hooks/useHabits";
 import type { Habit } from "../../types";
 import { HabitCard } from "../HabitCard/HabitCard";
-import { HabitDialog } from "../HabitDialog/HabitDialog";
 import { useLifeAreas } from "@/features/life-areas/hooks/useLifeAreas";
 import Dialog from "@/features/general/components/ui/Dialog/Dialog";
 import { Button } from "@/features/general/components/ui/Button/Button";
@@ -34,8 +34,7 @@ export function HabitsList({
     useHabits(effectiveLifeAreaId);
   const { lifeAreas } = useLifeAreas();
 
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [editingHabit, setEditingHabit] = useState<Habit | null>(null);
+  const router = useRouter();
 
   const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -53,26 +52,21 @@ export function HabitsList({
   }, [habits, forcedLifeAreaId, activeAreaFilter]);
 
   const handleOpenCreate = () => {
-    setEditingHabit(null);
-    setDialogOpen(true);
+    const area =
+      typeof activeAreaFilter === "number" && activeAreaFilter > 0
+        ? activeAreaFilter
+        : forcedLifeAreaId && forcedLifeAreaId > 0
+          ? forcedLifeAreaId
+          : null;
+    if (area) {
+      router.push(`/habits/new?lifeAreaId=${area}`);
+    } else {
+      router.push("/habits/new");
+    }
   };
 
   const handleOpenEdit = (habit: Habit) => {
-    setEditingHabit(habit);
-    setDialogOpen(true);
-  };
-
-  const handleSave = async (data: {
-    title: string;
-    description: string;
-    repeatInterval: string;
-    lifeAreaId?: number | null;
-  }) => {
-    if (editingHabit) {
-      await updateHabit(editingHabit.id, data);
-    } else {
-      await createHabit(data);
-    }
+    router.push(`/habits/new?editId=${habit.id}`);
   };
 
   const handleRecord = async (habitId: number, isDone: boolean) => {
@@ -101,26 +95,6 @@ export function HabitsList({
 
   return (
     <div className={`w-full flex flex-col gap-3 ${className}`}>
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Repeat2Icon className="size-4 text-foreground/80" />
-          <h3 className="font-bold text-sm text-foreground">
-            {t("habits.title") || "Habits"}
-          </h3>
-          <span className="text-xs sub-text">({filteredHabits.length})</span>
-        </div>
-
-        <Button
-          type="button"
-          variant="outline"
-          onClick={handleOpenCreate}
-          className="h-8 px-3 text-xs gap-1.5 rounded-component"
-        >
-          <PlusIcon className="size-3.5" />
-          <span>{t("habits.new") || "New Habit"}</span>
-        </Button>
-      </div>
 
       {/* Filter Chips Bar */}
       {showFilterBar && (
@@ -205,19 +179,6 @@ export function HabitsList({
           ))}
         </div>
       )}
-
-      {/* Create / Edit Dialog */}
-      <HabitDialog
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
-        initialData={editingHabit}
-        defaultLifeAreaId={
-          typeof activeAreaFilter === "number" && activeAreaFilter > 0
-            ? activeAreaFilter
-            : forcedLifeAreaId ?? null
-        }
-        onSave={handleSave}
-      />
 
       {/* Delete Confirmation Dialog */}
       <Dialog

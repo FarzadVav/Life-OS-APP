@@ -1,12 +1,12 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { PlusIcon, SparklesIcon, LoaderIcon, FilterIcon } from "lucide-react";
 
 import { useSkills } from "../../hooks/useSkills";
 import type { Skill } from "../../types";
 import { SkillCard } from "../SkillCard/SkillCard";
-import { SkillDialog } from "../SkillDialog/SkillDialog";
 import { useLifeAreas } from "@/features/life-areas/hooks/useLifeAreas";
 import Dialog from "@/features/general/components/ui/Dialog/Dialog";
 import { Button } from "@/features/general/components/ui/Button/Button";
@@ -33,8 +33,7 @@ export function SkillsList({
   const { skills, isLoading, createSkill, updateSkill, deleteSkill } = useSkills(effectiveLifeAreaId);
   const { lifeAreas } = useLifeAreas();
 
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [editingSkill, setEditingSkill] = useState<Skill | null>(null);
+  const router = useRouter();
 
   const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -52,25 +51,21 @@ export function SkillsList({
   }, [skills, forcedLifeAreaId, activeAreaFilter]);
 
   const handleOpenCreate = () => {
-    setEditingSkill(null);
-    setDialogOpen(true);
+    const area =
+      typeof activeAreaFilter === "number" && activeAreaFilter > 0
+        ? activeAreaFilter
+        : forcedLifeAreaId && forcedLifeAreaId > 0
+          ? forcedLifeAreaId
+          : null;
+    if (area) {
+      router.push(`/skills/new?lifeAreaId=${area}`);
+    } else {
+      router.push("/skills/new");
+    }
   };
 
   const handleOpenEdit = (skill: Skill) => {
-    setEditingSkill(skill);
-    setDialogOpen(true);
-  };
-
-  const handleSave = async (data: {
-    title: string;
-    content: string;
-    lifeAreaId?: number | null;
-  }) => {
-    if (editingSkill) {
-      await updateSkill(editingSkill.id, data);
-    } else {
-      await createSkill(data);
-    }
+    router.push(`/skills/new?editId=${skill.id}`);
   };
 
   const confirmDelete = async () => {
@@ -90,26 +85,6 @@ export function SkillsList({
 
   return (
     <div className={`w-full flex flex-col gap-3 ${className}`}>
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <SparklesIcon className="size-4 text-foreground/80" />
-          <h3 className="font-bold text-sm text-foreground">
-            {t("skills.title")}
-          </h3>
-          <span className="text-xs sub-text">({filteredSkills.length})</span>
-        </div>
-
-        <Button
-          type="button"
-          variant="outline"
-          onClick={handleOpenCreate}
-          className="h-8 px-3 text-xs gap-1.5 rounded-component"
-        >
-          <PlusIcon className="size-3.5" />
-          <span>{t("skills.new")}</span>
-        </Button>
-      </div>
 
       {/* Filter Chips Bar */}
       {showFilterBar && (
@@ -192,19 +167,6 @@ export function SkillsList({
           ))}
         </div>
       )}
-
-      {/* Create / Edit Dialog */}
-      <SkillDialog
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
-        initialData={editingSkill}
-        defaultLifeAreaId={
-          typeof activeAreaFilter === "number" && activeAreaFilter > 0
-            ? activeAreaFilter
-            : forcedLifeAreaId ?? null
-        }
-        onSave={handleSave}
-      />
 
       {/* Delete Confirmation Dialog */}
       <Dialog

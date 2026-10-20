@@ -5,6 +5,7 @@ import PageWrapper from "@/features/general/components/static/PageWrapper/PageWr
 import PageItemsWrapper from "@/features/general/components/static/PageItemsWrapper/PageItemsWrapper";
 import { SkillsList } from "@/features/skills/components";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
+import PageActionBtn from "@/features/general/components/module/PageActionBtn/PageActionBtn";
 
 export default function SkillsPage() {
   const { t } = useLocale();
@@ -19,6 +20,8 @@ export default function SkillsPage() {
       <PageItemsWrapper>
         <SkillsList />
       </PageItemsWrapper>
+
+      <PageActionBtn href="/skills/new">{t("skills.new")}</PageActionBtn>
     </PageWrapper>
   );
 }

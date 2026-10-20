@@ -5,6 +5,7 @@ import PageWrapper from "@/features/general/components/static/PageWrapper/PageWr
 import PageItemsWrapper from "@/features/general/components/static/PageItemsWrapper/PageItemsWrapper";
 import { HabitsList } from "@/features/habits/components";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
+import PageActionBtn from "@/features/general/components/module/PageActionBtn/PageActionBtn";
 
 export default function HabitsPage() {
   const { t } = useLocale();
@@ -19,6 +20,8 @@ export default function HabitsPage() {
       <PageItemsWrapper>
         <HabitsList />
       </PageItemsWrapper>
+
+      <PageActionBtn href="/habits/new">{t("habits.new") || "New Habit"}</PageActionBtn>
     </PageWrapper>
   );
 }
