@@ -12,4 +12,3 @@ export enum JournalCategory {
   IDEAS = 'Ideas',
   NOTES = 'Notes',
 }
-

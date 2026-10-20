@@ -260,4 +260,3 @@ export const SEED_JOURNALS = [
     createdAt: new Date('2026-10-08T11:20:00Z'),
   },
 ];
-
