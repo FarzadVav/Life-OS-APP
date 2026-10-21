@@ -1,4 +1,5 @@
 # Todos
 
+- Move life-areas to an internal profile page
 - Add tags for journals
-- Add repeat intervals for missions disciplines and habbits, and recoding the stack and history
+- Add stack for missions>disciplines and habits repeat-intervals
