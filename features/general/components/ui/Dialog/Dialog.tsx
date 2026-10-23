@@ -1,8 +1,8 @@
 "use client";
 
+import { cn } from "cn";
 import { PropsWithChildren, ReactElement } from "react";
 import { Dialog as BaseUIDialog } from "@base-ui/react";
-import { cn } from "cn";
 
 type LocalDialogProps = PropsWithChildren & {
   trigger?: ReactElement;
@@ -36,10 +36,9 @@ function LocalDialog({
 
         <BaseUIDialog.Popup
           className={cn(
-            "bg-card fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-max max-w-[calc(100vw-1.5rem)] max-h-[calc(100dvh-2rem)] flex flex-col gap-6 p-3 rounded-container scale-[calc(1-0.1*var(--nested-dialogs,0))] transition-all data-ending-style:translate-y-full data-ending-style:opacity-0 data-starting-style:translate-y-full data-starting-style:opacity-0 z-big-overlay",
+            "bg-card ring-4 ring-card-thick fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-max max-w-[calc(100vw-1.5rem)] max-h-[calc(100dvh-2rem)] flex flex-col gap-6 p-3 rounded-container scale-[calc(1-0.1*var(--nested-dialogs,0))] transition-all data-ending-style:translate-y-full data-ending-style:opacity-0 data-starting-style:translate-y-full data-starting-style:opacity-0 z-big-overlay",
             className,
-          )}
-        >
+          )}>
           {children}
         </BaseUIDialog.Popup>
       </BaseUIDialog.Portal>
@@ -50,12 +49,8 @@ function LocalDialog({
 const Dialog = Object.assign(LocalDialog, {
   Close: BaseUIDialog.Close,
   Title: BaseUIDialog.Title,
-  Description: BaseUIDialog.Description,
   Trigger: BaseUIDialog.Trigger,
-  Root: BaseUIDialog.Root,
-  Portal: BaseUIDialog.Portal,
-  Backdrop: BaseUIDialog.Backdrop,
-  Popup: BaseUIDialog.Popup,
+  Description: BaseUIDialog.Description,
 });
 
 export default Dialog;

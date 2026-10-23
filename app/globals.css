@@ -100,6 +100,10 @@
   @apply backdrop-blur-md;
 }
 
+@utility card {
+  @apply flex gap-3 p-3 rounded-container bg-card
+}
+
 /* Base UI renders a 1px hidden input for form-enabled fields. Its inline
    margin: -1px pulls it outside the viewport, leaking a horizontal scrollbar. */
 input[id^="base-ui"][id$="-hidden-input"] {
