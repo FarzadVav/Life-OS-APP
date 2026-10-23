@@ -1,6 +1,7 @@
 "use client";
 
 import useSWR from 'swr';
+
 import type { LifeArea } from '../types';
 
 const fetcher = async (url: string) => {
