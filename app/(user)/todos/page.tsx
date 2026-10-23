@@ -21,8 +21,7 @@ async function TodosPage() {
 
       <PageItemsWrapper>
         <Suspense
-          fallback={<ConnectivityFallback message={t("todos.loading")} />}
-        >
+          fallback={<ConnectivityFallback message={t("todos.loading")} />}>
           <TodosTabs />
         </Suspense>
 
@@ -33,8 +32,7 @@ async function TodosPage() {
             <PageActionBtn href="/todos/new?type=daily">
               {t("todos.new")}
             </PageActionBtn>
-          }
-        >
+          }>
           <TodosActionBtn />
         </Suspense>
       </PageItemsWrapper>
