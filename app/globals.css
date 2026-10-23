@@ -101,7 +101,15 @@
 }
 
 @utility card {
-  @apply flex gap-3 p-3 rounded-container bg-card
+  @apply w-full flex gap-3 p-3 rounded-container bg-card;
+}
+
+@utility card-action {
+  @apply transition-colors cursor-pointer hover:bg-card/90;
+}
+
+@utility skeleton {
+  @apply card p-0 animate-pulse;
 }
 
 /* Base UI renders a 1px hidden input for form-enabled fields. Its inline

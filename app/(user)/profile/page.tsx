@@ -1,29 +1,20 @@
 "use client";
 
-import {
-  BookOpenIcon,
-  CheckSquareIcon,
-  DotIcon,
-  LogOutIcon,
-  RocketIcon,
-  UserIcon,
-} from "lucide-react";
+import { BookOpenIcon, CheckSquareIcon, RocketIcon } from "lucide-react";
 
 import { useTodos } from "@/features/todos/hooks";
-import { useCurrentUser } from "@/features/auth/hooks";
 import { useJournalsStats } from "@/features/journals/hooks";
-import { LifeAreasList } from "@/features/life-areas/components";
+import { ProfileLifeAreas } from "@/features/life-areas/components";
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
 import ThemeSwitcher from "@/features/general/components/module/ThemeSwitcher/ThemeSwitcher";
+import ProfileAccount from "@/features/auth/components/static/ProfileAccount/ProfileAccount";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 import LocaleSwitcher from "@/features/general/components/module/LocaleSwitcher/LocaleSwitcher";
 import PageItemsWrapper from "@/features/general/components/static/PageItemsWrapper/PageItemsWrapper";
-import LogoutBtn from "@/features/auth/components/LogoutBtn/LogoutBtn";
 
 function UserProfilePage() {
   const { t } = useLocale();
-  const { user: currentUser } = useCurrentUser();
   const { todos = [] } = useTodos();
   const { stats: journalStats } = useJournalsStats();
 
@@ -83,37 +74,10 @@ function UserProfilePage() {
       </TopBar>
 
       <PageItemsWrapper>
-        <div className="w-full card items-center">
-          <div className="size-14 rounded-full bg-card-thick flex items-center justify-center">
-            <span className="title">
-              {currentUser
-                ? (currentUser.name || currentUser.username)[0]
-                : "*"}
-            </span>
-          </div>
+        <ProfileAccount />
 
-          <div>
-            <p className="title">
-              <span>{currentUser?.name || currentUser?.username || "..."}</span>
-              {currentUser?.name ? (
-                <>
-                  {" "}
-                  <span>({currentUser?.username})</span>
-                </>
-              ) : null}
-            </p>
-            <p className="sub-text flex items-center">
-              Joined at {new Date().toLocaleDateString()}
-            </p>
-          </div>
+        <ProfileLifeAreas />
 
-          <LogoutBtn />
-        </div>
-
-        {/* Life Areas Section */}
-        <LifeAreasList />
-
-        {/* Stats Grid */}
         {stats.map((stat) => (
           <div
             key={stat.label}

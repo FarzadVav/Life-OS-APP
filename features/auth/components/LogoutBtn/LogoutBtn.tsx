@@ -16,7 +16,7 @@ function LogoutBtn() {
   return (
     <Dialog
       trigger={
-        <Button square variant={"card"} className={"ms-auto"}>
+        <Button square variant={"ghost"} className={"ms-auto"}>
           <LogOutIcon />
         </Button>
       }>
