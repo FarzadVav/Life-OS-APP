@@ -1,4 +1,6 @@
+import { Field } from "@base-ui/react";
 import { setLocale } from "@/features/general/actions/locale";
+import { Button } from "@/features/general/components/ui/Button/Button";
 import { getTranslations } from "@/features/general/lib/i18n/server";
 
 async function LanguagePage() {
@@ -16,14 +18,18 @@ async function LanguagePage() {
           ] as const
         ).map((option) => (
           <form key={option.value} action={setLocale}>
-            <input type="hidden" name="locale" value={option.value} />
-            <button
+            <Field.Root className="hidden" name="locale">
+              <Field.Control type="hidden" name="locale" value={option.value} />
+            </Field.Root>
+            <Button
               type="submit"
-              className={`w-full rounded-container bg-card p-3 text-left font-bold ${locale === option.value ? "border border-foreground/40" : ""
-                }`}
+              variant="ghost"
+              className={`h-auto w-full justify-start rounded-container bg-card p-3 text-left font-bold hover:bg-card-thick ${
+                locale === option.value ? "border border-foreground/40" : ""
+              }`}
             >
               {option.label}
-            </button>
+            </Button>
           </form>
         ))}
       </div>

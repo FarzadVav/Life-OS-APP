@@ -15,8 +15,8 @@ import { useJournal } from "@/features/journals/hooks";
 import {
   createJournalMutation,
   updateJournalMutation,
-  deleteJournalMutation,
 } from "@/features/journals/mutations";
+import { useDeleteJournalAction } from "@/features/journals/actions";
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
 import PageActionBtn from "@/features/general/components/module/PageActionBtn/PageActionBtn";
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
@@ -87,7 +87,6 @@ function NewJournalPage() {
     resolveCategory(categoryParam),
   );
   const [content, setContent] = useState("");
-  const [isDeleting, setIsDeleting] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   // Native form handling via React 19 useActionState + Base UI Form
@@ -95,6 +94,9 @@ function NewJournalPage() {
     isEditMode ? updateJournalMutation : createJournalMutation,
     null,
   );
+
+  const { state: deleteState, action: deleteAction, isPending: isDeleting } =
+    useDeleteJournalAction(() => setDeleteDialogOpen(false));
 
   // Navigate back to category upon success
   useEffect(() => {
@@ -104,6 +106,14 @@ function NewJournalPage() {
       router.refresh();
     }
   }, [state?.success, type, router]);
+
+  useEffect(() => {
+    if (!deleteState?.success) return;
+
+    const targetCategory = type ?? "Logs";
+    router.push(`/journals/${targetCategory.toLowerCase()}`);
+    router.refresh();
+  }, [deleteState?.success, type, router]);
 
   // Load existing journal details if in edit mode
   useEffect(() => {
@@ -125,24 +135,6 @@ function NewJournalPage() {
       });
     }
   }, [editId, journal, categoryParam, resolveCategory]);
-
-  const handleDelete = async () => {
-    if (!editId) return;
-    setIsDeleting(true);
-    try {
-      const res = await deleteJournalMutation(Number(editId));
-      if (res.success) {
-        setDeleteDialogOpen(false);
-        const targetCategory = type ?? "Logs";
-        router.push(`/journals/${targetCategory.toLowerCase()}`);
-        router.refresh();
-      }
-    } catch (err) {
-      console.error("Delete error:", err);
-    } finally {
-      setIsDeleting(false);
-    }
-  };
 
   return (
     <PageWrapper>
@@ -188,10 +180,18 @@ function NewJournalPage() {
             </div>
           )}
 
-          {/* Hidden inputs to pass data to Server Action */}
-          {isEditMode && <input type="hidden" name="id" value={editId ?? ""} />}
-          <input type="hidden" name="type" value={type ?? "Logs"} />
-          <input type="hidden" name="content" value={content} />
+          {/* Hidden fields to pass data to Server Action */}
+          {isEditMode && (
+            <Field.Root className="hidden" name="id">
+              <Field.Control type="hidden" name="id" value={editId ?? ""} />
+            </Field.Root>
+          )}
+          <Field.Root className="hidden" name="type">
+            <Field.Control type="hidden" name="type" value={type ?? "Logs"} />
+          </Field.Root>
+          <Field.Root className="hidden" name="content">
+            <Field.Control type="hidden" name="content" value={content} />
+          </Field.Root>
 
           <Field.Root name="title">
             <Field.Label className="block font-bold">{t("common.title")}</Field.Label>
@@ -251,15 +251,18 @@ function NewJournalPage() {
                 </Button>
               }
             />
-            <Button
-              type="button"
-              variant="primary"
-              onClick={handleDelete}
-              disabled={isDeleting}
-              className="bg-red-600 text-white hover:bg-red-700"
-            >
-              {isDeleting ? t("common.loading") : t("common.delete")}
-            </Button>
+            <form action={deleteAction}>
+              <Field.Root className="hidden" name="id">
+                <Field.Control type="hidden" name="id" value={editId ?? ""} />
+              </Field.Root>
+              <Button
+                type="submit"
+                variant="primary"
+                disabled={isDeleting || !isEditMode}
+                className="bg-red-600 text-white hover:bg-red-700">
+                {isDeleting ? t("common.loading") : t("common.delete")}
+              </Button>
+            </form>
           </div>
         </div>
       </Dialog>

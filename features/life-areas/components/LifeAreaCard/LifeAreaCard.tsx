@@ -2,10 +2,12 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { Field } from "@base-ui/react";
 import { EditIcon, Trash2Icon, LoaderIcon } from "lucide-react";
 
 import type { LifeArea } from "../../types";
 import { useLifeAreas } from "../../hooks/useLifeAreas";
+import { useDeleteLifeAreaAction } from "../../actions";
 import Drawer from "@/features/general/components/ui/Drawer/Drawer";
 import Dialog from "@/features/general/components/ui/Dialog/Dialog";
 import { Button } from "@/features/general/components/ui/Button/Button";
@@ -17,22 +19,14 @@ export interface LifeAreaCardProps {
 
 export function LifeAreaCard({ lifeArea }: LifeAreaCardProps) {
   const { t } = useLocale();
-  const { deleteLifeArea } = useLifeAreas();
+  const { mutate } = useLifeAreas();
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
-
-  const handleDelete = async () => {
-    setIsDeleting(true);
-    try {
-      await deleteLifeArea(lifeArea.id);
+  const { action: deleteLifeAreaAction, isPending: isDeleting } =
+    useDeleteLifeAreaAction(() => {
       setDeleteDialogOpen(false);
-    } catch (err) {
-      console.error("Delete life area error:", err);
-    } finally {
-      setIsDeleting(false);
-    }
-  };
+      mutate();
+    });
 
   return (
     <>
@@ -46,9 +40,12 @@ export function LifeAreaCard({ lifeArea }: LifeAreaCardProps) {
               square
               type="button"
               variant="ghost"
+              nativeButton={false}
               aria-label={t("common.edit")}
               render={
-                <Link href={`/profile/new-life-area?editId=${lifeArea.id}`}>
+                <Link
+                  onClick={(ev) => ev.stopPropagation()}
+                  href={`/profile/new-life-area?editId=${lifeArea.id}`}>
                   <EditIcon />
                 </Link>
               }
@@ -110,21 +107,25 @@ export function LifeAreaCard({ lifeArea }: LifeAreaCardProps) {
                 </Button>
               }
             />
-            <Button
-              type="button"
-              variant="primary"
-              onClick={handleDelete}
-              disabled={isDeleting}
-              className="bg-red-600 text-white hover:bg-red-700">
-              {isDeleting ? (
-                <span className="flex items-center gap-1.5">
-                  <LoaderIcon className="size-4 animate-spin" />
-                  <span>{t("common.loading")}</span>
-                </span>
-              ) : (
-                <span>{t("common.delete")}</span>
-              )}
-            </Button>
+            <form action={deleteLifeAreaAction}>
+              <Field.Root className="hidden" name="id">
+                <Field.Control type="hidden" name="id" value={lifeArea.id} />
+              </Field.Root>
+              <Button
+                type="submit"
+                variant="primary"
+                disabled={isDeleting}
+                className="bg-red-600 text-white hover:bg-red-700">
+                {isDeleting ? (
+                  <span className="flex items-center gap-1.5">
+                    <LoaderIcon className="size-4 animate-spin" />
+                    <span>{t("common.loading")}</span>
+                  </span>
+                ) : (
+                  <span>{t("common.delete")}</span>
+                )}
+              </Button>
+            </form>
           </div>
         </div>
       </Dialog>

@@ -1,70 +1,66 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Field } from "@base-ui/react";
+import { useEffect, useActionState, useState } from "react";
+import { Field, Form } from "@base-ui/react";
 import { LoaderIcon } from "lucide-react";
 
 import Dialog from "@/features/general/components/ui/Dialog/Dialog";
 import { Button } from "@/features/general/components/ui/Button/Button";
 import { RichTextEditor } from "@/features/general/components/ui/RichTextEditor/RichTextEditor";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
+import {
+  createLifeAreaMutation,
+  updateLifeAreaMutation,
+} from "../../mutations";
 
 export interface LifeAreaDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   initialData?: { id?: number; title: string; vision: string } | null;
-  onSave: (data: { title: string; vision: string }) => Promise<void>;
+  onSaved?: () => void;
 }
 
 export function LifeAreaDialog({
   open,
   onOpenChange,
   initialData,
-  onSave,
+  onSaved,
 }: LifeAreaDialogProps) {
   const { t } = useLocale();
+  const isEdit = Boolean(initialData?.id);
+
   const [title, setTitle] = useState("");
   const [vision, setVision] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+
+  const [state, formAction, isSubmitting] = useActionState(
+    isEdit ? updateLifeAreaMutation : createLifeAreaMutation,
+    null,
+  );
 
   useEffect(() => {
     if (open) {
       setTitle(initialData?.title || "");
       setVision(initialData?.vision || "");
-      setError(null);
     }
   }, [open, initialData]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!title.trim()) {
-      setError(t("common.titleRequired") || "Title is required");
-      return;
-    }
+  useEffect(() => {
+    if (!state?.success) return;
 
-    setIsSubmitting(true);
-    setError(null);
-
-    try {
-      await onSave({
-        title: title.trim(),
-        vision,
-      });
-      onOpenChange(false);
-    } catch (err: unknown) {
-      console.error("Save life area error:", err);
-      setError((err as Error)?.message || "Failed to save life area");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const isEdit = Boolean(initialData?.id);
+    onOpenChange(false);
+    onSaved?.();
+  }, [state?.success, onOpenChange, onSaved]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange} className="w-full max-w-lg">
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <Form action={formAction} errors={state?.errors} className="flex flex-col gap-4">
+        <Field.Root className="hidden" name="id">
+          <Field.Control type="hidden" name="id" value={initialData?.id ?? ""} />
+        </Field.Root>
+        <Field.Root className="hidden" name="vision">
+          <Field.Control type="hidden" name="vision" value={vision} />
+        </Field.Root>
+
         <div>
           <Dialog.Title className="title">
             {isEdit ? t("lifeAreas.edit") : t("lifeAreas.new")}
@@ -74,12 +70,11 @@ export function LifeAreaDialog({
           </Dialog.Description>
         </div>
 
-        {error && (
+        {state?.errors?.general && (
           <div
             role="alert"
-            className="p-3 text-xs rounded-component bg-foreground/5 border border-foreground/15 text-foreground leading-relaxed"
-          >
-            {error}
+            className="p-3 text-xs rounded-component bg-foreground/5 border border-foreground/15 text-foreground leading-relaxed">
+            {state.errors.general.join(", ")}
           </div>
         )}
 
@@ -89,12 +84,14 @@ export function LifeAreaDialog({
           </Field.Label>
           <Field.Control
             required
+            name="title"
             className="input w-full"
             placeholder={t("lifeAreas.titlePlaceholder")}
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             disabled={isSubmitting}
           />
+          <Field.Error className="sub-text mt-0.5 text-foreground text-xs" />
         </Field.Root>
 
         <div>
@@ -114,14 +111,13 @@ export function LifeAreaDialog({
         </div>
 
         <div className="flex items-center justify-end gap-2 pt-2 border-t border-foreground/10">
-          <Button
-            type="button"
-            variant="ghost"
-            onClick={() => onOpenChange(false)}
-            disabled={isSubmitting}
-          >
-            {t("common.cancel")}
-          </Button>
+          <Dialog.Close
+            render={
+              <Button type="button" variant="ghost" disabled={isSubmitting}>
+                {t("common.cancel")}
+              </Button>
+            }
+          />
           <Button type="submit" variant="primary" disabled={isSubmitting}>
             {isSubmitting ? (
               <span className="flex items-center gap-1.5">
@@ -133,7 +129,7 @@ export function LifeAreaDialog({
             )}
           </Button>
         </div>
-      </form>
+      </Form>
     </Dialog>
   );
 }

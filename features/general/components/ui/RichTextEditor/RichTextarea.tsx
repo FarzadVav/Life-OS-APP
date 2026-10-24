@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Field } from "@base-ui/react";
 import { Maximize2Icon, PenLineIcon } from "lucide-react";
 import { cn } from "cn";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
@@ -79,19 +80,21 @@ export function RichTextarea({
           </div>
         )}
 
-        {/* Hidden input for HTML5 / Base UI form validation */}
+        {/* Hidden field for HTML5 / Base UI form validation */}
         {name ? (
-          <input
-            type="text"
-            tabIndex={-1}
-            aria-hidden="true"
-            className="sr-only pointer-events-none"
-            name={name}
-            value={stripHtml(value).trim()}
-            required={required}
-            minLength={minLength}
-            onChange={() => { }}
-          />
+          <Field.Root className="contents" name={name}>
+            <Field.Control
+              type="text"
+              tabIndex={-1}
+              aria-hidden="true"
+              className="sr-only pointer-events-none"
+              name={name}
+              value={stripHtml(value).trim()}
+              required={required}
+              minLength={minLength}
+              onChange={() => { }}
+            />
+          </Field.Root>
         ) : null}
       </div>
 

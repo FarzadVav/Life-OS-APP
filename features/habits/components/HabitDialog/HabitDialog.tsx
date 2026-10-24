@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Field } from "@base-ui/react";
+import { useEffect, useActionState, useState } from "react";
+import { Field, Form } from "@base-ui/react";
 import { LoaderIcon } from "lucide-react";
 
 import Dialog from "@/features/general/components/ui/Dialog/Dialog";
@@ -10,6 +10,7 @@ import { SelectDialog } from "@/features/general/components/ui/SelectDialog/Sele
 import RepeatIntervalInput from "@/features/general/components/ui/RepeatIntervalInput";
 import { useLifeAreas } from "@/features/life-areas/hooks/useLifeAreas";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
+import { createHabitMutation, updateHabitMutation } from "../../mutations";
 
 export interface HabitDialogProps {
   open: boolean;
@@ -22,12 +23,7 @@ export interface HabitDialogProps {
     lifeAreaId?: number | null;
   } | null;
   defaultLifeAreaId?: number | null;
-  onSave: (data: {
-    title: string;
-    description: string;
-    repeatInterval: string;
-    lifeAreaId?: number | null;
-  }) => Promise<void>;
+  onSaved?: () => void;
 }
 
 const UNASSIGNED_ID = 0;
@@ -37,17 +33,21 @@ export function HabitDialog({
   onOpenChange,
   initialData,
   defaultLifeAreaId,
-  onSave,
+  onSaved,
 }: HabitDialogProps) {
   const { t } = useLocale();
+  const isEdit = Boolean(initialData?.id);
   const { lifeAreas, isLoading: isLoadingLifeAreas } = useLifeAreas();
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [repeatInterval, setRepeatInterval] = useState("Every 1 Day");
   const [selectedLifeAreaId, setSelectedLifeAreaId] = useState<number>(UNASSIGNED_ID);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+
+  const [state, formAction, isSubmitting] = useActionState(
+    isEdit ? updateHabitMutation : createHabitMutation,
+    null,
+  );
 
   useEffect(() => {
     if (open) {
@@ -56,37 +56,15 @@ export function HabitDialog({
       setRepeatInterval(initialData?.repeatInterval || "Every 1 Day");
       const areaId = initialData?.lifeAreaId ?? defaultLifeAreaId;
       setSelectedLifeAreaId(areaId && areaId > 0 ? areaId : UNASSIGNED_ID);
-      setError(null);
     }
   }, [open, initialData, defaultLifeAreaId]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!title.trim()) {
-      setError(t("common.titleRequired") || "Title is required");
-      return;
-    }
+  useEffect(() => {
+    if (!state?.success) return;
 
-    setIsSubmitting(true);
-    setError(null);
-
-    try {
-      await onSave({
-        title: title.trim(),
-        description: description.trim(),
-        repeatInterval: repeatInterval.trim() || "Every 1 Day",
-        lifeAreaId: selectedLifeAreaId > 0 ? selectedLifeAreaId : null,
-      });
-      onOpenChange(false);
-    } catch (err: unknown) {
-      console.error("Save habit error:", err);
-      setError((err as Error)?.message || "Failed to save habit");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const isEdit = Boolean(initialData?.id);
+    onOpenChange(false);
+    onSaved?.();
+  }, [state?.success, onOpenChange, onSaved]);
 
   const lifeAreaItems = [
     {
@@ -101,7 +79,25 @@ export function HabitDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange} className="w-full max-w-lg">
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <Form action={formAction} errors={state?.errors} className="flex flex-col gap-4">
+        <Field.Root className="hidden" name="id">
+          <Field.Control type="hidden" name="id" value={initialData?.id ?? ""} />
+        </Field.Root>
+        <Field.Root className="hidden" name="repeatInterval">
+          <Field.Control
+            type="hidden"
+            name="repeatInterval"
+            value={repeatInterval}
+          />
+        </Field.Root>
+        <Field.Root className="hidden" name="lifeAreaId">
+          <Field.Control
+            type="hidden"
+            name="lifeAreaId"
+            value={selectedLifeAreaId > 0 ? String(selectedLifeAreaId) : "none"}
+          />
+        </Field.Root>
+
         <div>
           <Dialog.Title className="title">
             {isEdit ? t("habits.edit") : t("habits.new")}
@@ -111,12 +107,11 @@ export function HabitDialog({
           </Dialog.Description>
         </div>
 
-        {error && (
+        {state?.errors?.general && (
           <div
             role="alert"
-            className="p-3 text-xs rounded-component bg-foreground/5 border border-foreground/15 text-foreground leading-relaxed"
-          >
-            {error}
+            className="p-3 text-xs rounded-component bg-foreground/5 border border-foreground/15 text-foreground leading-relaxed">
+            {state.errors.general.join(", ")}
           </div>
         )}
 
@@ -126,12 +121,14 @@ export function HabitDialog({
           </Field.Label>
           <Field.Control
             required
+            name="title"
             className="input w-full"
             placeholder={t("habits.titlePlaceholder")}
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             disabled={isSubmitting}
           />
+          <Field.Error className="sub-text mt-0.5 text-foreground text-xs" />
         </Field.Root>
 
         <div>
@@ -139,6 +136,7 @@ export function HabitDialog({
             {t("habits.selectLifeArea")}
           </label>
           <SelectDialog<number>
+            name="lifeAreaSelect"
             items={lifeAreaItems}
             value={selectedLifeAreaId}
             onChange={(val) => setSelectedLifeAreaId(val)}
@@ -161,29 +159,34 @@ export function HabitDialog({
           </div>
         </div>
 
-        <div>
-          <label className="block font-bold text-xs mb-1.5">
+        <Field.Root name="description">
+          <Field.Label className="block font-bold text-xs mb-1.5">
             {t("common.description")}
-          </label>
-          <textarea
-            rows={3}
-            className="input w-full min-h-[72px] resize-none"
-            placeholder={t("habits.descPlaceholder")}
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
+          </Field.Label>
+          <Field.Control
+            name="description"
             disabled={isSubmitting}
+            render={
+              <textarea
+                rows={3}
+                className="input w-full min-h-[72px] resize-none"
+                placeholder={t("habits.descPlaceholder")}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+              />
+            }
           />
-        </div>
+          <Field.Error className="sub-text mt-0.5 text-foreground text-xs" />
+        </Field.Root>
 
         <div className="flex items-center justify-end gap-2 pt-2 border-t border-foreground/10">
-          <Button
-            type="button"
-            variant="ghost"
-            onClick={() => onOpenChange(false)}
-            disabled={isSubmitting}
-          >
-            {t("common.cancel")}
-          </Button>
+          <Dialog.Close
+            render={
+              <Button type="button" variant="ghost" disabled={isSubmitting}>
+                {t("common.cancel")}
+              </Button>
+            }
+          />
           <Button type="submit" variant="primary" disabled={isSubmitting}>
             {isSubmitting ? (
               <span className="flex items-center gap-1.5">
@@ -195,7 +198,7 @@ export function HabitDialog({
             )}
           </Button>
         </div>
-      </form>
+      </Form>
     </Dialog>
   );
 }

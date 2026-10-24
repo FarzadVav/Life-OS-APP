@@ -17,7 +17,8 @@ import { TODO_TYPES } from "@/features/todos/constants";
 import { TodoType, TodoAction, TodoDiscipline } from "@/features/todos/types";
 import { useTodo } from "@/features/todos/hooks";
 import { useLifeAreas } from "@/features/life-areas/hooks";
-import { createTodoMutation, updateTodoMutation, deleteTodoMutation } from "@/features/todos/mutations";
+import { createTodoMutation, updateTodoMutation } from "@/features/todos/mutations";
+import { useDeleteTodoAction } from "@/features/todos/actions";
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
 import { Button } from "@/features/general/components/ui/Button/Button";
 import PageActionBtn from "@/features/general/components/module/PageActionBtn/PageActionBtn";
@@ -176,7 +177,6 @@ function NewTodoPage() {
   const [actions, setActions] = useState<TodoAction[]>([]);
   const [disciplines, setDisciplines] = useState<TodoDiscipline[]>([]);
   const [isDone, setIsDone] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
   const [lifeAreaId, setLifeAreaId] = useState<number | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
@@ -214,6 +214,9 @@ function NewTodoPage() {
     null,
   );
 
+  const { state: deleteState, action: removeTodoAction, isPending: isDeleting } =
+    useDeleteTodoAction(() => setDeleteDialogOpen(false));
+
   // When mutation succeeds, navigate back to home and refresh
   useEffect(() => {
     if (state?.success) {
@@ -221,6 +224,13 @@ function NewTodoPage() {
       router.refresh();
     }
   }, [state?.success, router]);
+
+  useEffect(() => {
+    if (!deleteState?.success) return;
+
+    router.push("/todos");
+    router.refresh();
+  }, [deleteState?.success, router]);
 
   // Load existing todo details if in edit mode
   useEffect(() => {
@@ -258,23 +268,6 @@ function NewTodoPage() {
       });
     }
   }, [editId, todo, typeParam]);
-
-  const handleDelete = async () => {
-    if (!editId) return;
-    setIsDeleting(true);
-    try {
-      const res = await deleteTodoMutation(Number(editId));
-      if (res.success) {
-        setDeleteDialogOpen(false);
-        router.push("/todos");
-        router.refresh();
-      }
-    } catch (err) {
-      console.error("Delete error:", err);
-    } finally {
-      setIsDeleting(false);
-    }
-  };
 
   const openNewAction = () => {
     setActionDraft({
@@ -431,28 +424,48 @@ function NewTodoPage() {
             </div>
           )}
 
-          {/* Hidden inputs to pass composite state to Server Action */}
-          {isEditMode && <input type="hidden" name="id" value={editId ?? ""} />}
-          <input type="hidden" name="type" value={type} />
-          <input
-            type="hidden"
-            name="deadline"
-            value={type === "Daily" ? dailyTime : serializeDate(targetDate)}
-          />
-          <input type="hidden" name="isDone" value={String(isDone)} />
+          {/* Hidden fields to pass composite state to Server Action */}
+          {isEditMode && (
+            <Field.Root className="hidden" name="id">
+              <Field.Control type="hidden" name="id" value={editId ?? ""} />
+            </Field.Root>
+          )}
+          <Field.Root className="hidden" name="type">
+            <Field.Control type="hidden" name="type" value={type} />
+          </Field.Root>
+          <Field.Root className="hidden" name="deadline">
+            <Field.Control
+              type="hidden"
+              name="deadline"
+              value={type === "Daily" ? dailyTime : serializeDate(targetDate)}
+            />
+          </Field.Root>
+          <Field.Root className="hidden" name="isDone">
+            <Field.Control type="hidden" name="isDone" value={String(isDone)} />
+          </Field.Root>
           {type === "Mission" && (
             <>
-              <input type="hidden" name="difficulty" value={difficulty} />
-              <input
-                type="hidden"
-                name="actions"
-                value={JSON.stringify(actions)}
-              />
-              <input
-                type="hidden"
-                name="disciplines"
-                value={JSON.stringify(disciplines)}
-              />
+              <Field.Root className="hidden" name="difficulty">
+                <Field.Control
+                  type="hidden"
+                  name="difficulty"
+                  value={difficulty}
+                />
+              </Field.Root>
+              <Field.Root className="hidden" name="actions">
+                <Field.Control
+                  type="hidden"
+                  name="actions"
+                  value={JSON.stringify(actions)}
+                />
+              </Field.Root>
+              <Field.Root className="hidden" name="disciplines">
+                <Field.Control
+                  type="hidden"
+                  name="disciplines"
+                  value={JSON.stringify(disciplines)}
+                />
+              </Field.Root>
             </>
           )}
 
@@ -818,15 +831,18 @@ function NewTodoPage() {
                 </Button>
               }
             />
-            <Button
-              type="button"
-              variant="primary"
-              onClick={handleDelete}
-              disabled={isDeleting}
-              className="bg-red-600 text-white hover:bg-red-700"
-            >
-              {isDeleting ? t("common.loading") : t("common.delete")}
-            </Button>
+            <form action={removeTodoAction}>
+              <Field.Root className="hidden" name="id">
+                <Field.Control type="hidden" name="id" value={editId ?? ""} />
+              </Field.Root>
+              <Button
+                type="submit"
+                variant="primary"
+                disabled={isDeleting || !isEditMode}
+                className="bg-red-600 text-white hover:bg-red-700">
+                {isDeleting ? t("common.loading") : t("common.delete")}
+              </Button>
+            </form>
           </div>
         </div>
       </Dialog>

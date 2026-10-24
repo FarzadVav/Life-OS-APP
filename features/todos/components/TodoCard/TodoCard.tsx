@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useActionState, useRef } from "react";
+import { Field } from "@base-ui/react";
 import {
   CalendarDaysIcon,
   CheckIcon,
@@ -13,6 +15,7 @@ import {
 } from "lucide-react";
 
 import { Todo } from "../../types";
+import { deleteTodoMutation, toggleTodoMutation } from "../../mutations";
 import Drawer from "@/features/general/components/ui/Drawer/Drawer";
 import { Button } from "@/features/general/components/ui/Button/Button";
 import Switch from "@/features/general/components/ui/Switch/Switch";
@@ -20,13 +23,30 @@ import { useLocale } from "@/features/general/components/module/LocaleProvider/L
 
 type TodoCardProps = {
   todo: Todo;
-  onToggle?: (id: number) => void;
-  onDelete?: (id: number) => void;
+  /** Called after a toggle/delete server action succeeds so the list can revalidate. */
+  onMutated?: () => void;
 };
 
-function TodoCard({ todo, onToggle, onDelete }: TodoCardProps) {
+function TodoCard({ todo, onMutated }: TodoCardProps) {
   const isDaily = todo.type === "Daily";
   const { formatDeadline, t } = useLocale();
+
+  const toggleFormRef = useRef<HTMLFormElement>(null);
+
+  const [toggleState, toggleAction, isToggling] = useActionState(
+    toggleTodoMutation,
+    undefined,
+  );
+  const [deleteState, deleteAction, isDeleting] = useActionState(
+    deleteTodoMutation,
+    undefined,
+  );
+
+  useEffect(() => {
+    if (toggleState?.success || deleteState?.success) {
+      onMutated?.();
+    }
+  }, [toggleState, deleteState, onMutated]);
 
   return (
     <Drawer
@@ -37,23 +57,32 @@ function TodoCard({ todo, onToggle, onDelete }: TodoCardProps) {
           className="group w-full rounded-container bg-card p-3 transition-opacity hover:opacity-90 cursor-pointer"
         >
           <div className="flex items-center gap-3">
-            <button
-              type="button"
-              aria-label={todo.isDone ? t("todos.markIncomplete") : t("todos.markComplete")}
-              onClick={(e) => {
-                e.stopPropagation();
-                onToggle?.(todo.id);
-              }}
-              className="shrink-0 transition-transform active:scale-90"
+            <form
+              action={toggleAction}
+              className="shrink-0"
+              onClick={(e) => e.stopPropagation()}
             >
-              {todo.isDone ? (
-                <div className="flex size-5 items-center justify-center rounded-container bg-foreground">
-                  <CheckIcon className="size-3.5 text-background" />
-                </div>
-              ) : (
-                <CircleIcon className="size-5 muted-text group-hover:text-foreground" />
-              )}
-            </button>
+              <Field.Root className="hidden" name="id">
+                <Field.Control type="hidden" name="id" value={todo.id} />
+              </Field.Root>
+              <Button
+                type="submit"
+                variant="ghost"
+                aria-label={
+                  todo.isDone ? t("todos.markIncomplete") : t("todos.markComplete")
+                }
+                disabled={isToggling}
+                className="h-auto w-auto p-0 rounded-none hover:bg-transparent shrink-0 transition-transform active:scale-90 [&_svg]:size-auto"
+              >
+                {todo.isDone ? (
+                  <div className="flex size-5 items-center justify-center rounded-container bg-foreground">
+                    <CheckIcon className="size-3.5 text-background" />
+                  </div>
+                ) : (
+                  <CircleIcon className="size-5 muted-text group-hover:text-foreground" />
+                )}
+              </Button>
+            </form>
 
             <div className="min-w-0 flex-1">
               <p
@@ -143,39 +172,50 @@ function TodoCard({ todo, onToggle, onDelete }: TodoCardProps) {
         )}
       </div>
 
-      <label className="rounded-container bg-background p-3 flex items-center justify-between cursor-pointer select-none">
-        <div className="flex flex-col">
-          <span className="text-sm font-medium text-foreground">
-            {todo.isDone ? t("todos.markAsIncomplete") : t("todos.markAsCompleted")}
-          </span>
-          <span className="sub-text text-xs">
-            {todo.isDone ? t("todos.completed") : t("todos.inProgress")}
-          </span>
-        </div>
-        <Switch
-          checked={todo.isDone}
-          onCheckedChange={() => onToggle?.(todo.id)}
-          aria-label={todo.isDone ? t("todos.markAsIncomplete") : t("todos.markAsCompleted")}
-        />
-      </label>
+      <form ref={toggleFormRef} action={toggleAction}>
+        <Field.Root className="hidden" name="id">
+          <Field.Control type="hidden" name="id" value={todo.id} />
+        </Field.Root>
+        <label className="rounded-container bg-background p-3 flex items-center justify-between cursor-pointer select-none">
+          <div className="flex flex-col">
+            <span className="text-sm font-medium text-foreground">
+              {todo.isDone ? t("todos.markAsIncomplete") : t("todos.markAsCompleted")}
+            </span>
+            <span className="sub-text text-xs">
+              {todo.isDone ? t("todos.completed") : t("todos.inProgress")}
+            </span>
+          </div>
+          <Switch
+            checked={todo.isDone}
+            disabled={isToggling}
+            onCheckedChange={() => toggleFormRef.current?.requestSubmit()}
+            aria-label={
+              todo.isDone ? t("todos.markAsIncomplete") : t("todos.markAsCompleted")
+            }
+          />
+        </label>
+      </form>
 
       <div className="flex gap-2">
-        {onDelete && (
+        <form action={deleteAction}>
+          <Field.Root className="hidden" name="id">
+          <Field.Control type="hidden" name="id" value={todo.id} />
+        </Field.Root>
           <Drawer.Close
             render={
               <Button
-                type="button"
+                type="submit"
                 variant="card"
                 square
+                disabled={isDeleting}
                 className="size-10 justify-center text-foreground/70 hover:text-foreground"
-                onClick={() => onDelete(todo.id)}
                 aria-label={t("common.delete")}
               >
                 <Trash2Icon className="size-4" />
               </Button>
             }
           />
-        )}
+        </form>
 
         <Drawer.Close
           render={

@@ -1,14 +1,14 @@
 "use client";
 
-import { useActionState, useState } from "react";
 import { Field, Form } from "@base-ui/react";
+import { useActionState, useState } from "react";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 
+import { loginMutation } from "@/features/auth/mutations";
 import { Button } from "@/features/general/components/ui/Button/Button";
-import LocaleSwitcher from "@/features/general/components/module/LocaleSwitcher/LocaleSwitcher";
 import ThemeSwitcher from "@/features/general/components/module/ThemeSwitcher/ThemeSwitcher";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
-import { loginMutation } from "@/features/auth/mutations";
+import LocaleSwitcher from "@/features/general/components/module/LocaleSwitcher/LocaleSwitcher";
 
 function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -73,19 +73,20 @@ function LoginPage() {
                 disabled={pending}
               />
 
-              <button
+              <Button
                 type="button"
+                variant="ghost"
                 aria-label={
                   showPassword
                     ? t("login.hidePassword")
                     : t("login.showPassword")
                 }
                 onClick={() => setShowPassword((prev) => !prev)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 muted-text [&_svg]:size-5"
+                className="absolute right-3 top-1/2 -translate-y-1/2 h-auto w-auto p-0 rounded-none hover:bg-transparent muted-text [&_svg]:size-5"
                 tabIndex={-1}
               >
                 {showPassword ? <EyeOffIcon /> : <EyeIcon />}
-              </button>
+              </Button>
             </div>
 
             <Field.Error className="sub-text mt-0.5 text-foreground text-xs" />

@@ -16,14 +16,12 @@ function JournalsTabs() {
   const tab = sp.get("tab");
   const activeTab = tab || "all";
 
-  const { journals: currentJournals, isLoading, deleteJournal } = useJournals(activeTab);
+  const {
+    journals: currentJournals,
+    isLoading,
+    mutate: revalidateJournals,
+  } = useJournals(activeTab);
   const { t } = useLocale();
-
-  const handleDelete = (id: number) => {
-    deleteJournal(id).catch((err) =>
-      console.error("Failed to delete journal:", err),
-    );
-  };
 
   return (
     <>
@@ -87,7 +85,7 @@ function JournalsTabs() {
                 <JournalCard
                   key={journal.id}
                   journal={journal}
-                  onDelete={handleDelete}
+                  onDeleted={revalidateJournals}
                 />
               ))}
 

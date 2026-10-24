@@ -1,9 +1,11 @@
 "use client";
 
-import { changeLocale } from "@/features/general/actions/locale";
-import { useLocale } from "../LocaleProvider/LocaleProvider";
-import { Locale } from "@/features/general/lib/i18n/config";
+import { cn } from "cn";
+
 import SelectDialog from "../../ui/SelectDialog";
+import { Locale } from "@/features/general/lib/i18n/config";
+import { useLocale } from "../LocaleProvider/LocaleProvider";
+import { changeLocale } from "@/features/general/actions/locale";
 
 type LocaleSwitcherProps = {
   className?: string;
@@ -21,14 +23,14 @@ function LocaleSwitcher({ className }: LocaleSwitcherProps) {
     <SelectDialog
       items={items}
       value={locale}
+      title={t("profile.language")}
+      className={cn("w-1/2", className)}
+      placeholder={t("profile.language")}
       onChange={(nextValue) => {
         if (nextValue) {
           changeLocale(nextValue as Locale);
         }
       }}
-      title={t("profile.language")}
-      placeholder={t("profile.language")}
-      triggerClassName={className}
     />
   );
 }

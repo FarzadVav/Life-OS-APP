@@ -3,6 +3,7 @@
 import { cn } from "cn";
 import { type Editor } from "@tiptap/react";
 import { BoldIcon } from "lucide-react";
+import { Button } from "@/features/general/components/ui/Button/Button";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 
 type RichTextToolbarProps = {
@@ -24,6 +25,14 @@ export function RichTextToolbar({ editor, className }: RichTextToolbarProps) {
   const isBulletListActive = editor.isActive("bulletList");
   const isOrderedListActive = editor.isActive("orderedList");
 
+  const chipClasses = (active: boolean) =>
+    cn(
+      "h-auto rounded-component px-2.5 py-1.5 text-xs font-semibold transition-colors cursor-pointer [&_svg]:size-3.5",
+      active
+        ? "bg-foreground text-background"
+        : "bg-card-thick/80 text-foreground/80 hover:bg-card-thick hover:text-foreground",
+    );
+
   return (
     <div
       className={cn(
@@ -34,119 +43,95 @@ export function RichTextToolbar({ editor, className }: RichTextToolbarProps) {
       aria-label={t("editor.toolbar") || "Rich text toolbar"}
     >
       {/* Heading */}
-      <button
+      <Button
         type="button"
+        variant="ghost"
         onMouseDown={(e) => {
           e.preventDefault();
           editor.chain().focus().toggleHeading({ level: 1 }).run();
         }}
-        className={cn(
-          "rounded-component px-2.5 py-1.5 text-xs font-semibold transition-colors cursor-pointer select-none",
-          isH1Active
-            ? "bg-foreground text-background"
-            : "bg-card-thick/80 text-foreground/80 hover:bg-card-thick hover:text-foreground",
-        )}
+        className={chipClasses(isH1Active)}
         title={t("editor.heading") || "Heading"}
         aria-pressed={isH1Active}
       >
         <span>{t("editor.heading") || "Heading"}</span>
-      </button>
+      </Button>
 
       {/* Title */}
-      <button
+      <Button
         type="button"
+        variant="ghost"
         onMouseDown={(e) => {
           e.preventDefault();
           editor.chain().focus().toggleHeading({ level: 3 }).run();
         }}
-        className={cn(
-          "rounded-component px-2.5 py-1.5 text-xs font-semibold transition-colors cursor-pointer select-none",
-          isH3Active
-            ? "bg-foreground text-background"
-            : "bg-card-thick/80 text-foreground/80 hover:bg-card-thick hover:text-foreground",
-        )}
+        className={chipClasses(isH3Active)}
         title={t("editor.title") || "Title"}
         aria-pressed={isH3Active}
       >
         <span>{t("editor.title") || "Title"}</span>
-      </button>
+      </Button>
 
       {/* Paragraph */}
-      <button
+      <Button
         type="button"
+        variant="ghost"
         onMouseDown={(e) => {
           e.preventDefault();
           editor.chain().focus().setParagraph().run();
         }}
-        className={cn(
-          "rounded-component px-2.5 py-1.5 text-xs font-semibold transition-colors cursor-pointer select-none",
-          isParagraphActive
-            ? "bg-foreground text-background"
-            : "bg-card-thick/80 text-foreground/80 hover:bg-card-thick hover:text-foreground",
-        )}
+        className={chipClasses(isParagraphActive)}
         title={t("editor.paragraph") || "Paragraph"}
         aria-pressed={isParagraphActive}
       >
         <span>{t("editor.paragraph") || "Paragraph"}</span>
-      </button>
+      </Button>
 
       {/* Bold */}
-      <button
+      <Button
         type="button"
+        variant="ghost"
         onMouseDown={(e) => {
           e.preventDefault();
           editor.chain().focus().toggleBold().run();
         }}
-        className={cn(
-          "rounded-component px-2.5 py-1.5 text-xs font-semibold transition-colors cursor-pointer select-none inline-flex items-center gap-1",
-          isBoldActive
-            ? "bg-foreground text-background"
-            : "bg-card-thick/80 text-foreground/80 hover:bg-card-thick hover:text-foreground",
-        )}
+        className={cn(chipClasses(isBoldActive), "gap-1")}
         title={t("editor.bold") || "Bold"}
         aria-pressed={isBoldActive}
       >
-        <BoldIcon className="size-3.5" />
+        <BoldIcon />
         <span>{t("editor.bold") || "Bold"}</span>
-      </button>
+      </Button>
 
       {/* Bullet List */}
-      <button
+      <Button
         type="button"
+        variant="ghost"
         onMouseDown={(e) => {
           e.preventDefault();
           editor.chain().focus().toggleBulletList().run();
         }}
-        className={cn(
-          "rounded-component px-2.5 py-1.5 text-xs font-semibold transition-colors cursor-pointer select-none",
-          isBulletListActive
-            ? "bg-foreground text-background"
-            : "bg-card-thick/80 text-foreground/80 hover:bg-card-thick hover:text-foreground",
-        )}
+        className={chipClasses(isBulletListActive)}
         title={t("editor.bulletList") || "Bullet List"}
         aria-pressed={isBulletListActive}
       >
         <span>{t("editor.bulletList") || "Bullet List"}</span>
-      </button>
+      </Button>
 
       {/* Number List */}
-      <button
+      <Button
         type="button"
+        variant="ghost"
         onMouseDown={(e) => {
           e.preventDefault();
           editor.chain().focus().toggleOrderedList().run();
         }}
-        className={cn(
-          "rounded-component px-2.5 py-1.5 text-xs font-semibold transition-colors cursor-pointer select-none",
-          isOrderedListActive
-            ? "bg-foreground text-background"
-            : "bg-card-thick/80 text-foreground/80 hover:bg-card-thick hover:text-foreground",
-        )}
+        className={chipClasses(isOrderedListActive)}
         title={t("editor.numberList") || "Number List"}
         aria-pressed={isOrderedListActive}
       >
         <span>{t("editor.numberList") || "Number List"}</span>
-      </button>
+      </Button>
     </div>
   );
 }

@@ -58,7 +58,7 @@
     "logoutTitle": "خروج",
     "logoutDescription": "آیا مطمئن هستید که می‌خواهید خارج شوید؟",
     "language": "زبان",
-    "colorScheme": "طرح رنگی",
+    "colorScheme": "رنگ",
     "todos": "کارها",
     "journals": "خاطرات",
     "missions": "ماموریت‌ها",
@@ -72,8 +72,8 @@
   },
   "language": {
     "title": "زبان",
-    "english": "انگلیسی",
-    "persian": "فارسی"
+    "english": "En",
+    "persian": "فا"
   },
   "colorScheme": {
     "light": "روشن",

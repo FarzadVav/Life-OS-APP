@@ -8,6 +8,7 @@ import { useEditor, EditorContent } from "@tiptap/react";
 import Placeholder from "@tiptap/extension-placeholder";
 
 import { RichTextToolbar } from "./RichTextToolbar";
+import { Button } from "@/features/general/components/ui/Button/Button";
 import { toEditorHtml } from "@/features/general/lib/richText";
 import { useLocale } from "../../module/LocaleProvider/LocaleProvider";
 
@@ -96,32 +97,34 @@ export function RichTextEditor({
       {editor ? (
         <div className="flex h-14 shrink-0 items-center justify-end gap-3 border-t bg-card/40 px-4 sm:px-6 backdrop-blur-md [&>button]:w-1/2 sticky bottom-14">
           {/* Undo */}
-          <button
+          <Button
             type="button"
+            variant="ghost"
             disabled={!editor.can().undo()}
             onMouseDown={(e) => {
               e.preventDefault();
               editor.chain().focus().undo().run();
             }}
-            className="flex items-center rounded-component p-1.5 text-foreground/70 transition-colors hover:bg-card-thick hover:text-foreground disabled:pointer-events-none disabled:opacity-30 cursor-pointer w-1/2 justify-center border"
+            className="h-auto w-full justify-center rounded-component border p-1.5 text-foreground/70 transition-colors hover:bg-card-thick hover:text-foreground disabled:opacity-30 cursor-pointer"
             title={t("editor.undo") || "Undo"}
           >
             <Undo2Icon className="size-4" />
-          </button>
+          </Button>
 
           {/* Redo */}
-          <button
+          <Button
             type="button"
+            variant="ghost"
             disabled={!editor.can().redo()}
             onMouseDown={(e) => {
               e.preventDefault();
               editor.chain().focus().redo().run();
             }}
-            className="flex items-center rounded-component p-1.5 text-foreground/70 transition-colors hover:bg-card-thick hover:text-foreground disabled:pointer-events-none disabled:opacity-30 cursor-pointer w-1/2 justify-center border"
+            className="h-auto w-full justify-center rounded-component border p-1.5 text-foreground/70 transition-colors hover:bg-card-thick hover:text-foreground disabled:opacity-30 cursor-pointer"
             title={t("editor.redo") || "Redo"}
           >
             <Redo2Icon className="size-4" />
-          </button>
+          </Button>
         </div>
       ) : null}
     </>

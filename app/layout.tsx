@@ -72,7 +72,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
 
         <PwaScript />
       </head>
-      <body className="max-w-3xl mx-auto">
+      <body className="max-w-160 mx-auto">
         <ThemeProvider>
           <LocaleProvider locale={locale} dictionary={dictionary}>
             <PwaManager />

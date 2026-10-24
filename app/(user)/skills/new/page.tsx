@@ -14,8 +14,8 @@ import { useSkill } from "@/features/skills/hooks/useSkill";
 import {
   createSkillMutation,
   updateSkillMutation,
-  deleteSkillMutation,
 } from "@/features/skills/mutations";
+import { useDeleteSkillAction } from "@/features/skills/actions";
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
 import PageActionBtn from "@/features/general/components/module/PageActionBtn/PageActionBtn";
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
@@ -75,7 +75,6 @@ function NewSkillPage() {
   const [lifeAreaId, setLifeAreaId] = useState<number | null>(
     lifeAreaParam && lifeAreaParam !== "none" ? Number(lifeAreaParam) : null,
   );
-  const [isDeleting, setIsDeleting] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   const [state, formAction, pending] = useActionState(
@@ -83,12 +82,22 @@ function NewSkillPage() {
     null,
   );
 
+  const { state: deleteState, action: deleteAction, isPending: isDeleting } =
+    useDeleteSkillAction(() => setDeleteDialogOpen(false));
+
   useEffect(() => {
     if (state?.success) {
       router.push("/skills");
       router.refresh();
     }
   }, [state?.success, router]);
+
+  useEffect(() => {
+    if (!deleteState?.success) return;
+
+    router.push("/skills");
+    router.refresh();
+  }, [deleteState?.success, router]);
 
   useEffect(() => {
     if (!editId) {
@@ -108,23 +117,6 @@ function NewSkillPage() {
       });
     }
   }, [editId, skill, lifeAreaParam]);
-
-  const handleDelete = async () => {
-    if (!editId) return;
-    setIsDeleting(true);
-    try {
-      const res = await deleteSkillMutation(Number(editId));
-      if (res.success) {
-        setDeleteDialogOpen(false);
-        router.push("/skills");
-        router.refresh();
-      }
-    } catch (err) {
-      console.error("Delete error:", err);
-    } finally {
-      setIsDeleting(false);
-    }
-  };
 
   return (
     <PageWrapper>
@@ -170,9 +162,21 @@ function NewSkillPage() {
             </div>
           )}
 
-          {isEditMode && <input type="hidden" name="id" value={editId ?? ""} />}
-          <input type="hidden" name="lifeAreaId" value={lifeAreaId ? String(lifeAreaId) : "none"} />
-          <input type="hidden" name="content" value={content} />
+          {isEditMode && (
+            <Field.Root className="hidden" name="id">
+              <Field.Control type="hidden" name="id" value={editId ?? ""} />
+            </Field.Root>
+          )}
+          <Field.Root className="hidden" name="lifeAreaId">
+            <Field.Control
+              type="hidden"
+              name="lifeAreaId"
+              value={lifeAreaId ? String(lifeAreaId) : "none"}
+            />
+          </Field.Root>
+          <Field.Root className="hidden" name="content">
+            <Field.Control type="hidden" name="content" value={content} />
+          </Field.Root>
 
           <Field.Root name="title">
             <Field.Label className="block font-bold">{t("common.title")}</Field.Label>
@@ -229,15 +233,18 @@ function NewSkillPage() {
                 </Button>
               }
             />
-            <Button
-              type="button"
-              variant="primary"
-              onClick={handleDelete}
-              disabled={isDeleting}
-              className="bg-red-600 text-white hover:bg-red-700"
-            >
-              {isDeleting ? t("common.loading") : t("common.delete")}
-            </Button>
+            <form action={deleteAction}>
+              <Field.Root className="hidden" name="id">
+                <Field.Control type="hidden" name="id" value={editId ?? ""} />
+              </Field.Root>
+              <Button
+                type="submit"
+                variant="primary"
+                disabled={isDeleting || !isEditMode}
+                className="bg-red-600 text-white hover:bg-red-700">
+                {isDeleting ? t("common.loading") : t("common.delete")}
+              </Button>
+            </form>
           </div>
         </div>
       </Dialog>

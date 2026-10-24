@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo } from "react";
+import { useActionState, useEffect, useMemo } from "react";
+import { Field } from "@base-ui/react";
 import {
   EditIcon,
   Trash2Icon,
@@ -12,6 +13,7 @@ import {
 } from "lucide-react";
 
 import type { Habit } from "../../types";
+import { recordHabitMutation } from "../../mutations";
 import Drawer from "@/features/general/components/ui/Drawer/Drawer";
 import { Button } from "@/features/general/components/ui/Button/Button";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
@@ -19,17 +21,22 @@ import { useLocale } from "@/features/general/components/module/LocaleProvider/L
 export interface HabitCardProps {
   habit: Habit;
   onEdit: (habit: Habit) => void;
-  onDelete: (id: number) => void;
-  onRecord: (habitId: number, isDone: boolean) => Promise<void> | void;
+  onRequestDelete: (id: number) => void;
+  onRecorded?: () => void;
 }
 
 export function HabitCard({
   habit,
   onEdit,
-  onDelete,
-  onRecord,
+  onRequestDelete,
+  onRecorded,
 }: HabitCardProps) {
   const { t } = useLocale();
+
+  const [recordState, recordAction, isRecording] = useActionState(
+    recordHabitMutation,
+    undefined,
+  );
 
   const todayStr = useMemo(() => new Date().toISOString().slice(0, 10), []);
 
@@ -42,6 +49,12 @@ export function HabitCard({
   const completedCount = useMemo(() => {
     return (habit.history || []).filter((h) => h.isDone).length;
   }, [habit.history]);
+
+  useEffect(() => {
+    if (recordState?.success) {
+      onRecorded?.();
+    }
+  }, [recordState, onRecorded]);
 
   return (
     <Drawer
@@ -114,7 +127,7 @@ export function HabitCard({
                   square
                   className="size-8 text-foreground/70 hover:text-destructive"
                   aria-label={t("common.delete")}
-                  onClick={() => onDelete(habit.id)}
+                  onClick={() => onRequestDelete(habit.id)}
                 >
                   <Trash2Icon className="size-3.5" />
                 </Button>
@@ -122,38 +135,46 @@ export function HabitCard({
             </div>
 
             {/* Bottom row: I Do / I Don't Do Buttons (exactly like mission discipline) */}
-            <div
+            <form
+              action={recordAction}
               className="flex items-center gap-2 pt-1 border-t border-foreground/5"
               onClick={(e) => e.stopPropagation()}
             >
+              <Field.Root className="hidden" name="id">
+                <Field.Control type="hidden" name="id" value={habit.id} />
+              </Field.Root>
               <Button
-                type="button"
+                type="submit"
+                name="isDone"
+                value="true"
                 variant={todayStatus === true ? "primary" : "outline"}
+                disabled={isRecording}
                 className={`flex-1 justify-center py-1.5 h-8 text-xs font-medium rounded-component transition-all ${
                   todayStatus === true
                     ? "bg-foreground text-background font-semibold"
                     : "bg-card-thick text-foreground hover:bg-card-thick/80 border-foreground/20"
                 }`}
-                onClick={() => onRecord(habit.id, true)}
               >
                 <CheckCircle2Icon className="size-3.5 me-1.5" />
                 <span>{t("missions.iDo") || "I Do"}</span>
               </Button>
 
               <Button
-                type="button"
+                type="submit"
+                name="isDone"
+                value="false"
                 variant={todayStatus === false ? "primary" : "ghost"}
+                disabled={isRecording}
                 className={`flex-1 justify-center py-1.5 h-8 text-xs rounded-component transition-all ${
                   todayStatus === false
                     ? "bg-destructive text-destructive-foreground font-semibold"
                     : "text-foreground/60 hover:text-foreground"
                 }`}
-                onClick={() => onRecord(habit.id, false)}
               >
                 <XCircleIcon className="size-3.5 me-1.5" />
                 <span>{t("missions.iDontDo") || "I Don't Do"}</span>
               </Button>
-            </div>
+            </form>
           </div>
         </div>
       }
@@ -196,7 +217,7 @@ export function HabitCard({
               type="button"
               variant="ghost"
               square
-              onClick={() => onDelete(habit.id)}
+              onClick={() => onRequestDelete(habit.id)}
               className="size-8 text-destructive hover:bg-destructive/10"
             >
               <Trash2Icon className="size-3.5" />
@@ -218,34 +239,41 @@ export function HabitCard({
           <h4 className="text-xs font-bold text-foreground">
             {t("habits.todayCheckin") || "Today's Action"}
           </h4>
-          <div className="flex items-center gap-2">
+          <form action={recordAction} className="flex items-center gap-2">
+            <Field.Root className="hidden" name="id">
+              <Field.Control type="hidden" name="id" value={habit.id} />
+            </Field.Root>
             <Button
-              type="button"
+              type="submit"
+              name="isDone"
+              value="true"
               variant={todayStatus === true ? "primary" : "outline"}
+              disabled={isRecording}
               className={`flex-1 justify-center py-2 h-9 text-xs font-medium rounded-component ${
                 todayStatus === true
                   ? "bg-foreground text-background font-semibold"
                   : "bg-card-thick text-foreground border-foreground/20"
               }`}
-              onClick={() => onRecord(habit.id, true)}
             >
               <CheckCircle2Icon className="size-4 me-1.5" />
               <span>{t("missions.iDo") || "I Do"}</span>
             </Button>
             <Button
-              type="button"
+              type="submit"
+              name="isDone"
+              value="false"
               variant={todayStatus === false ? "primary" : "ghost"}
+              disabled={isRecording}
               className={`flex-1 justify-center py-2 h-9 text-xs rounded-component ${
                 todayStatus === false
                   ? "bg-destructive text-destructive-foreground font-semibold"
                   : "text-foreground/60 hover:text-foreground"
               }`}
-              onClick={() => onRecord(habit.id, false)}
             >
               <XCircleIcon className="size-4 me-1.5" />
               <span>{t("missions.iDontDo") || "I Don't Do"}</span>
             </Button>
-          </div>
+          </form>
         </div>
 
         {/* Recent History summary */}

@@ -120,10 +120,6 @@ const TimePickerDialog = Object.assign(LocalTimePickerDialog, {
   Description: Dialog.Description,
   Close: Dialog.Close,
   Trigger: Dialog.Trigger,
-  Root: Dialog.Root,
-  Portal: Dialog.Portal,
-  Backdrop: Dialog.Backdrop,
-  Popup: Dialog.Popup,
   Picker: TimePicker,
 });
 

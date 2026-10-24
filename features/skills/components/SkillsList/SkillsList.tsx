@@ -1,11 +1,14 @@
 "use client";
 
+import { cn } from "cn";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
-import { PlusIcon, SparklesIcon, LoaderIcon, FilterIcon } from "lucide-react";
+import { PlusIcon, SparklesIcon, LoaderIcon } from "lucide-react";
 
 import { useSkills } from "../../hooks/useSkills";
+import { useDeleteSkillAction } from "../../actions";
 import type { Skill } from "../../types";
+import { Field } from "@base-ui/react";
 import { SkillCard } from "../SkillCard/SkillCard";
 import { useLifeAreas } from "@/features/life-areas/hooks/useLifeAreas";
 import Dialog from "@/features/general/components/ui/Dialog/Dialog";
@@ -30,13 +33,20 @@ export function SkillsList({
   const [activeAreaFilter, setActiveAreaFilter] = useState<number | "ALL">("ALL");
 
   const effectiveLifeAreaId = forcedLifeAreaId !== undefined ? forcedLifeAreaId : null;
-  const { skills, isLoading, createSkill, updateSkill, deleteSkill } = useSkills(effectiveLifeAreaId);
+  const { skills, isLoading, mutate: revalidateSkills } = useSkills(
+    effectiveLifeAreaId,
+  );
   const { lifeAreas } = useLifeAreas();
 
   const router = useRouter();
 
   const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
+  const { action: deleteAction, isPending: isDeleting } = useDeleteSkillAction(
+    () => {
+      setDeleteTargetId(null);
+      revalidateSkills();
+    },
+  );
 
   const targetSkill = skills.find((s) => s.id === deleteTargetId);
 
@@ -68,20 +78,15 @@ export function SkillsList({
     router.push(`/skills/new?editId=${skill.id}`);
   };
 
-  const confirmDelete = async () => {
-    if (!deleteTargetId) return;
-    setIsDeleting(true);
-    try {
-      await deleteSkill(deleteTargetId);
-      setDeleteTargetId(null);
-    } catch (err) {
-      console.error("Delete skill error:", err);
-    } finally {
-      setIsDeleting(false);
-    }
-  };
-
   const showFilterBar = showFilter && forcedLifeAreaId === undefined && lifeAreas.length > 0;
+
+  const chipClasses = (active: boolean) =>
+    cn(
+      "h-auto px-2.5 py-1 text-xs transition-colors cursor-pointer",
+      active
+        ? "bg-foreground text-background font-medium"
+        : "bg-foreground/5 text-foreground/70 hover:bg-foreground/10",
+    );
 
   return (
     <div className={`w-full flex flex-col gap-3 ${className}`}>
@@ -89,42 +94,30 @@ export function SkillsList({
       {/* Filter Chips Bar */}
       {showFilterBar && (
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none text-xs">
-          <button
+          <Button
             type="button"
+            variant="ghost"
             onClick={() => setActiveAreaFilter("ALL")}
-            className={`px-2.5 py-1 rounded-full text-xs transition-colors cursor-pointer shrink-0 ${
-              activeAreaFilter === "ALL"
-                ? "bg-foreground text-background font-medium"
-                : "bg-foreground/5 text-foreground/70 hover:bg-foreground/10"
-            }`}
-          >
+            className={chipClasses(activeAreaFilter === "ALL")}>
             {t("skills.allLifeAreas") || "All"}
-          </button>
+          </Button>
           {lifeAreas.map((area) => (
-            <button
+            <Button
               key={area.id}
               type="button"
+              variant="ghost"
               onClick={() => setActiveAreaFilter(area.id)}
-              className={`px-2.5 py-1 rounded-full text-xs transition-colors cursor-pointer shrink-0 ${
-                activeAreaFilter === area.id
-                  ? "bg-foreground text-background font-medium"
-                  : "bg-foreground/5 text-foreground/70 hover:bg-foreground/10"
-              }`}
-            >
+              className={chipClasses(activeAreaFilter === area.id)}>
               {area.title}
-            </button>
+            </Button>
           ))}
-          <button
+          <Button
             type="button"
+            variant="ghost"
             onClick={() => setActiveAreaFilter(0)}
-            className={`px-2.5 py-1 rounded-full text-xs transition-colors cursor-pointer shrink-0 ${
-              activeAreaFilter === 0
-                ? "bg-foreground text-background font-medium"
-                : "bg-foreground/5 text-foreground/70 hover:bg-foreground/10"
-            }`}
-          >
+            className={chipClasses(activeAreaFilter === 0)}>
             {t("skills.unassigned") || "General"}
-          </button>
+          </Button>
         </div>
       )}
 
@@ -162,7 +155,7 @@ export function SkillsList({
               key={skill.id}
               skill={skill}
               onEdit={handleOpenEdit}
-              onDelete={(id) => setDeleteTargetId(id)}
+              onRequestDelete={(id) => setDeleteTargetId(id)}
             />
           ))}
         </div>
@@ -195,22 +188,30 @@ export function SkillsList({
             >
               {t("common.cancel")}
             </Button>
-            <Button
-              type="button"
-              variant="primary"
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              onClick={confirmDelete}
-              disabled={isDeleting}
-            >
-              {isDeleting ? (
-                <span className="flex items-center gap-1.5">
-                  <LoaderIcon className="size-4 animate-spin" />
-                  <span>{t("common.loading")}</span>
-                </span>
-              ) : (
-                <span>{t("common.delete")}</span>
-              )}
-            </Button>
+            <form action={deleteAction}>
+              <Field.Root className="hidden" name="id">
+                <Field.Control
+                  type="hidden"
+                  name="id"
+                  value={deleteTargetId ?? ""}
+                />
+              </Field.Root>
+              <Button
+                type="submit"
+                variant="primary"
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                disabled={isDeleting || deleteTargetId === null}
+              >
+                {isDeleting ? (
+                  <span className="flex items-center gap-1.5">
+                    <LoaderIcon className="size-4 animate-spin" />
+                    <span>{t("common.loading")}</span>
+                  </span>
+                ) : (
+                  <span>{t("common.delete")}</span>
+                )}
+              </Button>
+            </form>
           </div>
         </div>
       </Dialog>

@@ -9,10 +9,10 @@ import { useLocale } from "@/features/general/components/module/LocaleProvider/L
 export interface SkillCardProps {
   skill: Skill;
   onEdit: (skill: Skill) => void;
-  onDelete: (id: number) => void;
+  onRequestDelete: (id: number) => void;
 }
 
-export function SkillCard({ skill, onEdit, onDelete }: SkillCardProps) {
+export function SkillCard({ skill, onEdit, onRequestDelete }: SkillCardProps) {
   const { t } = useLocale();
 
   // Strip HTML tags for clean card text preview
@@ -74,7 +74,7 @@ export function SkillCard({ skill, onEdit, onDelete }: SkillCardProps) {
                 square
                 className="size-8 text-foreground/70 hover:text-destructive"
                 aria-label={t("common.delete")}
-                onClick={() => onDelete(skill.id)}
+                onClick={() => onRequestDelete(skill.id)}
               >
                 <Trash2Icon className="size-3.5" />
               </Button>
@@ -116,7 +116,7 @@ export function SkillCard({ skill, onEdit, onDelete }: SkillCardProps) {
               type="button"
               variant="ghost"
               square
-              onClick={() => onDelete(skill.id)}
+              onClick={() => onRequestDelete(skill.id)}
               className="size-8 text-destructive hover:bg-destructive/10"
             >
               <Trash2Icon className="size-3.5" />

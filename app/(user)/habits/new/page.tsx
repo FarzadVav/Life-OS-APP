@@ -15,8 +15,8 @@ import { useHabit } from "@/features/habits/hooks/useHabit";
 import {
   createHabitMutation,
   updateHabitMutation,
-  deleteHabitMutation,
 } from "@/features/habits/mutations";
+import { useDeleteHabitAction } from "@/features/habits/actions";
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
 import PageActionBtn from "@/features/general/components/module/PageActionBtn/PageActionBtn";
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
@@ -76,7 +76,6 @@ function NewHabitPage() {
   const [lifeAreaId, setLifeAreaId] = useState<number | null>(
     lifeAreaParam && lifeAreaParam !== "none" ? Number(lifeAreaParam) : null,
   );
-  const [isDeleting, setIsDeleting] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   const [state, formAction, pending] = useActionState(
@@ -84,12 +83,22 @@ function NewHabitPage() {
     null,
   );
 
+  const { state: deleteState, action: deleteAction, isPending: isDeleting } =
+    useDeleteHabitAction(() => setDeleteDialogOpen(false));
+
   useEffect(() => {
     if (state?.success) {
       router.push("/habits");
       router.refresh();
     }
   }, [state?.success, router]);
+
+  useEffect(() => {
+    if (!deleteState?.success) return;
+
+    router.push("/habits");
+    router.refresh();
+  }, [deleteState?.success, router]);
 
   useEffect(() => {
     if (!editId) {
@@ -111,23 +120,6 @@ function NewHabitPage() {
       });
     }
   }, [editId, habit, lifeAreaParam]);
-
-  const handleDelete = async () => {
-    if (!editId) return;
-    setIsDeleting(true);
-    try {
-      const res = await deleteHabitMutation(Number(editId));
-      if (res.success) {
-        setDeleteDialogOpen(false);
-        router.push("/habits");
-        router.refresh();
-      }
-    } catch (err) {
-      console.error("Delete error:", err);
-    } finally {
-      setIsDeleting(false);
-    }
-  };
 
   return (
     <PageWrapper>
@@ -173,9 +165,25 @@ function NewHabitPage() {
             </div>
           )}
 
-          {isEditMode && <input type="hidden" name="id" value={editId ?? ""} />}
-          <input type="hidden" name="lifeAreaId" value={lifeAreaId ? String(lifeAreaId) : "none"} />
-          <input type="hidden" name="repeatInterval" value={repeatInterval} />
+          {isEditMode && (
+            <Field.Root className="hidden" name="id">
+              <Field.Control type="hidden" name="id" value={editId ?? ""} />
+            </Field.Root>
+          )}
+          <Field.Root className="hidden" name="lifeAreaId">
+            <Field.Control
+              type="hidden"
+              name="lifeAreaId"
+              value={lifeAreaId ? String(lifeAreaId) : "none"}
+            />
+          </Field.Root>
+          <Field.Root className="hidden" name="repeatInterval">
+            <Field.Control
+              type="hidden"
+              name="repeatInterval"
+              value={repeatInterval}
+            />
+          </Field.Root>
 
           <Field.Root name="title">
             <Field.Label className="block font-bold">{t("common.title")}</Field.Label>
@@ -244,15 +252,18 @@ function NewHabitPage() {
                 </Button>
               }
             />
-            <Button
-              type="button"
-              variant="primary"
-              onClick={handleDelete}
-              disabled={isDeleting}
-              className="bg-red-600 text-white hover:bg-red-700"
-            >
-              {isDeleting ? t("common.loading") : t("common.delete")}
-            </Button>
+            <form action={deleteAction}>
+              <Field.Root className="hidden" name="id">
+                <Field.Control type="hidden" name="id" value={editId ?? ""} />
+              </Field.Root>
+              <Button
+                type="submit"
+                variant="primary"
+                disabled={isDeleting || !isEditMode}
+                className="bg-red-600 text-white hover:bg-red-700">
+                {isDeleting ? t("common.loading") : t("common.delete")}
+              </Button>
+            </form>
           </div>
         </div>
       </Dialog>

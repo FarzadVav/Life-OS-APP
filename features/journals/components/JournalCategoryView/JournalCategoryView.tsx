@@ -19,14 +19,12 @@ export default function JournalCategoryView({
   category,
   title,
 }: JournalCategoryViewProps) {
-  const { journals, isLoading, deleteJournal } = useJournals(category);
+  const {
+    journals,
+    isLoading,
+    mutate: revalidateJournals,
+  } = useJournals(category);
   const { t } = useLocale();
-
-  const handleDelete = (id: number) => {
-    deleteJournal(id).catch((err) =>
-      console.error("Failed to delete journal:", err),
-    );
-  };
 
   return (
     <PageWrapper>
@@ -55,7 +53,7 @@ export default function JournalCategoryView({
               <JournalCard
                 key={journal.id}
                 journal={journal}
-                onDelete={handleDelete}
+                onDeleted={revalidateJournals}
               />
             ))}
 

@@ -58,7 +58,7 @@
     "logoutTitle": "Logout",
     "logoutDescription": "Are you sure you want to logout?",
     "language": "Language",
-    "colorScheme": "Color Scheme",
+    "colorScheme": "Color",
     "todos": "Todos",
     "journals": "Journals",
     "missions": "Missions",
@@ -72,8 +72,8 @@
   },
   "language": {
     "title": "Language",
-    "english": "English",
-    "persian": "Persian"
+    "english": "En",
+    "persian": "فا"
   },
   "colorScheme": {
     "light": "Light",

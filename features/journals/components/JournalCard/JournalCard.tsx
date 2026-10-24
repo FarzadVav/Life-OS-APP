@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useActionState } from "react";
+import { Field } from "@base-ui/react";
 import {
   CalendarDaysIcon,
   ChevronRightIcon,
@@ -11,6 +13,7 @@ import {
 } from "lucide-react";
 
 import { Journal } from "../../types";
+import { deleteJournalMutation } from "../../mutations";
 import Drawer from "@/features/general/components/ui/Drawer/Drawer";
 import { Button } from "@/features/general/components/ui/Button/Button";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
@@ -19,11 +22,22 @@ import { RichTextViewer } from "@/features/general/components/ui/RichTextEditor"
 
 type JournalCardProps = {
   journal: Journal;
-  onDelete?: (id: number) => void;
+  onDeleted?: () => void;
 };
 
-function JournalCard({ journal, onDelete }: JournalCardProps) {
+function JournalCard({ journal, onDeleted }: JournalCardProps) {
   const { formatDate, formatTime, t } = useLocale();
+
+  const [deleteState, deleteAction, isDeleting] = useActionState(
+    deleteJournalMutation,
+    undefined,
+  );
+
+  useEffect(() => {
+    if (deleteState?.success) {
+      onDeleted?.();
+    }
+  }, [deleteState, onDeleted]);
 
   return (
     <Drawer
@@ -99,22 +113,25 @@ function JournalCard({ journal, onDelete }: JournalCardProps) {
       </section>
 
       <div className="flex gap-2">
-        {onDelete && (
+        <form action={deleteAction}>
+          <Field.Root className="hidden" name="id">
+            <Field.Control type="hidden" name="id" value={journal.id} />
+          </Field.Root>
           <Drawer.Close
             render={
               <Button
-                type="button"
+                type="submit"
                 variant="card"
                 square
+                disabled={isDeleting}
                 className="size-10 justify-center text-foreground/70 hover:text-foreground"
-                onClick={() => onDelete(journal.id)}
                 aria-label={t("common.delete")}
               >
                 <Trash2Icon className="size-4" />
               </Button>
             }
           />
-        )}
+        </form>
 
         <Drawer.Close
           render={

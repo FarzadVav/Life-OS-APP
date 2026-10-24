@@ -6,6 +6,7 @@ import { Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
 import { useLocale } from "../LocaleProvider/LocaleProvider";
+import { Button } from "@/features/general/components/ui/Button/Button";
 
 export default function PwaManager() {
   const { t } = useLocale();
@@ -94,13 +95,14 @@ export default function PwaManager() {
               <p className="text-foreground/70">{t("pwa.freshVersion")}</p>
             </div>
           </div>
-          <button
-            onClick={handleUpdate}
+          <Button
             type="button"
-            className="px-3 py-1.5 rounded-container bg-foreground text-background text-xs font-semibold hover:bg-foreground/90 transition-colors shrink-0"
+            variant="primary"
+            onClick={handleUpdate}
+            className="h-auto w-auto rounded-container px-3 py-1.5 text-xs font-semibold transition-colors"
           >
             {t("pwa.refresh")}
-          </button>
+          </Button>
         </motion.div>
       )}
     </AnimatePresence>

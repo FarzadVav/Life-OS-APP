@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useActionState } from "react";
+import { Field } from "@base-ui/react";
 import { motion } from "motion/react";
 import {
   CalendarDaysIcon,
@@ -14,7 +16,12 @@ import {
   Trash2Icon,
 } from "lucide-react";
 
-import { Todo } from "../../types";
+import { Todo, TodoAction, TodoDiscipline } from "../../types";
+import {
+  deleteTodoMutation,
+  recordDisciplineMutation,
+  toggleActionMutation,
+} from "../../mutations";
 import Drawer from "@/features/general/components/ui/Drawer/Drawer";
 import { Button } from "@/features/general/components/ui/Button/Button";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
@@ -34,24 +41,159 @@ function Difficulty({ value }: { value: number }) {
   );
 }
 
+/**
+ * A single mission action: completing it is a form submission, never an onClick call.
+ */
+function MissionActionRow({
+  action,
+  onMutated,
+}: {
+  action: TodoAction;
+  onMutated?: () => void;
+}) {
+  const { formatDate } = useLocale();
+  const [state, toggleAction, isToggling] = useActionState(
+    toggleActionMutation,
+    undefined,
+  );
+
+  useEffect(() => {
+    if (state?.success) {
+      onMutated?.();
+    }
+  }, [state, onMutated]);
+
+  return (
+    <form action={toggleAction}>
+      <Field.Root className="hidden" name="id">
+        <Field.Control type="hidden" name="id" value={action.id} />
+      </Field.Root>
+      <Button
+        type="submit"
+        variant="ghost"
+        disabled={isToggling}
+        className={`h-auto w-full justify-start rounded-container bg-background p-3 text-left whitespace-normal transition-opacity hover:bg-background cursor-pointer [&_svg]:size-auto ${
+          action.isDone ? "opacity-60" : ""
+        }`}
+      >
+        <div className="shrink-0">
+          {action.isDone ? (
+            <div className="flex size-5 items-center justify-center rounded-container bg-foreground">
+              <CheckIcon className="size-3.5 text-background" />
+            </div>
+          ) : (
+            <CircleIcon className="size-5 sub-text" />
+          )}
+        </div>
+
+        <div className="min-w-0 flex-1">
+          <p
+            className={`font-medium text-sm ${
+              action.isDone ? "line-through sub-text" : ""
+            }`}
+          >
+            {action.title}
+          </p>
+
+          <div className="mt-1 flex items-center gap-1.5 sub-text text-xs">
+            <CalendarIcon className="size-3" />
+            <span>{formatDate(action.deadline)}</span>
+          </div>
+        </div>
+      </Button>
+    </form>
+  );
+}
+
+/**
+ * A mission discipline check-in: "I Do" and "I Don't Do" are two submit buttons
+ * of the same form, distinguished by their `isDone` value.
+ */
+function MissionDisciplineRow({
+  discipline,
+  onMutated,
+}: {
+  discipline: TodoDiscipline;
+  onMutated?: () => void;
+}) {
+  const { t } = useLocale();
+  const [state, recordAction, isRecording] = useActionState(
+    recordDisciplineMutation,
+    undefined,
+  );
+
+  useEffect(() => {
+    if (state?.success) {
+      onMutated?.();
+    }
+  }, [state, onMutated]);
+
+  return (
+    <div className="flex flex-col gap-3 rounded-container bg-background p-3">
+      <div className="flex items-center gap-3">
+        <div className="flex size-10 shrink-0 items-center justify-center rounded-component bg-card">
+          <Repeat2Icon className="size-4" />
+        </div>
+
+        <div className="flex-1 h-10 flex justify-between items-start flex-col">
+          <p className="text-sm font-medium">{discipline.title}</p>
+          <p className="sub-text text-xs flex items-center gap-1.5">
+            <span>{discipline.repeatInterval}</span>
+            {discipline.lifeArea?.title && (
+              <span>• {discipline.lifeArea.title}</span>
+            )}
+          </p>
+        </div>
+      </div>
+
+      <form action={recordAction} className="flex gap-2 w-full mt-1">
+        <Field.Root className="hidden" name="id">
+          <Field.Control type="hidden" name="id" value={discipline.id} />
+        </Field.Root>
+        <Button
+          type="submit"
+          name="isDone"
+          value="true"
+          variant="outline"
+          disabled={isRecording}
+          className="flex-1 justify-center py-1.5 h-auto text-xs bg-card-thick text-foreground hover:bg-card-thick/80 border-foreground/20"
+        >
+          {t("missions.iDo") || "I Do"}
+        </Button>
+        <Button
+          type="submit"
+          name="isDone"
+          value="false"
+          variant="ghost"
+          disabled={isRecording}
+          className="flex-1 justify-center py-1.5 h-auto text-xs text-foreground/60 hover:text-foreground"
+        >
+          {t("missions.iDontDo") || "I Don't Do"}
+        </Button>
+      </form>
+    </div>
+  );
+}
+
 type TodoMissionCardProps = {
   todo: Todo;
-  onToggleAction?: (todoId: number, actionId: number) => void;
-  onToggleDiscipline?: (
-    todoId: number,
-    disciplineId: number,
-    isDone: boolean,
-  ) => void;
-  onDelete?: (id: number) => void;
+  /** Called after any mission action/discipline check-in succeeds so the list can revalidate. */
+  onMutated?: () => void;
 };
 
-function TodoMissionCard({
-  todo,
-  onToggleAction,
-  onToggleDiscipline,
-  onDelete,
-}: TodoMissionCardProps) {
+function TodoMissionCard({ todo, onMutated }: TodoMissionCardProps) {
   const { formatDate, t } = useLocale();
+
+  const [deleteState, deleteAction, isDeleting] = useActionState(
+    deleteTodoMutation,
+    undefined,
+  );
+
+  useEffect(() => {
+    if (deleteState?.success) {
+      onMutated?.();
+    }
+  }, [deleteState, onMutated]);
 
   const actions = todo.actions || [];
   const disciplines = todo.disciplines || [];
@@ -187,46 +329,11 @@ function TodoMissionCard({
 
           <div className="space-y-2">
             {actions.map((action) => (
-              <div
+              <MissionActionRow
                 key={action.id}
-                role="button"
-                tabIndex={0}
-                onClick={() => onToggleAction?.(todo.id, action.id)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault();
-                    onToggleAction?.(todo.id, action.id);
-                  }
-                }}
-                className={`w-full flex items-center gap-3 p-3 rounded-container bg-background transition-opacity cursor-pointer text-left select-none ${
-                  action.isDone ? "opacity-60" : ""
-                }`}
-              >
-                <div className="shrink-0">
-                  {action.isDone ? (
-                    <div className="flex size-5 items-center justify-center rounded-container bg-foreground">
-                      <CheckIcon className="size-3.5 text-background" />
-                    </div>
-                  ) : (
-                    <CircleIcon className="size-5 sub-text" />
-                  )}
-                </div>
-
-                <div className="min-w-0 flex-1">
-                  <p
-                    className={`font-medium text-sm ${
-                      action.isDone ? "line-through sub-text" : ""
-                    }`}
-                  >
-                    {action.title}
-                  </p>
-
-                  <div className="mt-1 flex items-center gap-1.5 sub-text text-xs">
-                    <CalendarIcon className="size-3" />
-                    <span>{formatDate(action.deadline)}</span>
-                  </div>
-                </div>
-              </div>
+                action={action}
+                onMutated={onMutated}
+              />
             ))}
           </div>
         </section>
@@ -249,71 +356,36 @@ function TodoMissionCard({
 
           <div className="space-y-2">
             {disciplines.map((discipline) => (
-              <div
+              <MissionDisciplineRow
                 key={discipline.id}
-                className="flex flex-col gap-3 rounded-container bg-background p-3"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="flex size-10 shrink-0 items-center justify-center rounded-component bg-card">
-                    <Repeat2Icon className="size-4" />
-                  </div>
-
-                  <div className="flex-1 h-10 flex justify-between items-start flex-col">
-                    <p className="text-sm font-medium">{discipline.title}</p>
-                    <p className="sub-text text-xs flex items-center gap-1.5">
-                      <span>{discipline.repeatInterval}</span>
-                      {discipline.lifeArea?.title && (
-                        <span>• {discipline.lifeArea.title}</span>
-                      )}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex gap-2 w-full mt-1">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="flex-1 justify-center py-1.5 h-auto text-xs bg-card-thick text-foreground hover:bg-card-thick/80 border-foreground/20"
-                    onClick={() =>
-                      onToggleDiscipline?.(todo.id, discipline.id, true)
-                    }
-                  >
-                    {t("missions.iDo") || "I Do"}
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    className="flex-1 justify-center py-1.5 h-auto text-xs text-foreground/60 hover:text-foreground"
-                    onClick={() =>
-                      onToggleDiscipline?.(todo.id, discipline.id, false)
-                    }
-                  >
-                    {t("missions.iDontDo") || "I Don't Do"}
-                  </Button>
-                </div>
-              </div>
+                discipline={discipline}
+                onMutated={onMutated}
+              />
             ))}
           </div>
         </section>
       )}
 
       <div className="flex gap-2">
-        {onDelete && (
+        <form action={deleteAction}>
+          <Field.Root className="hidden" name="id">
+            <Field.Control type="hidden" name="id" value={todo.id} />
+          </Field.Root>
           <Drawer.Close
             render={
               <Button
-                type="button"
+                type="submit"
                 variant="card"
                 square
+                disabled={isDeleting}
                 className="size-10 justify-center text-foreground/70 hover:text-foreground"
-                onClick={() => onDelete(todo.id)}
                 aria-label={t("common.delete")}
               >
                 <Trash2Icon className="size-4" />
               </Button>
             }
           />
-        )}
+        </form>
 
         <Drawer.Close
           render={

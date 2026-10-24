@@ -1,9 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { cn } from "cn";
 import { useTheme } from "next-themes";
-import { useLocale } from "../LocaleProvider/LocaleProvider";
+import { useEffect, useState } from "react";
+
 import SelectDialog from "../../ui/SelectDialog";
+import { useLocale } from "../LocaleProvider/LocaleProvider";
 
 type ThemeSwitcherProps = {
   className?: string;
@@ -27,15 +29,15 @@ function ThemeSwitcher({ className }: ThemeSwitcherProps) {
   return (
     <SelectDialog
       items={items}
+      title={t("profile.colorScheme")}
+      className={cn("w-1/2", className)}
       value={mounted ? theme : undefined}
+      placeholder={t("profile.colorScheme")}
       onChange={(nextValue) => {
         if (nextValue) {
           setTheme(nextValue);
         }
       }}
-      title={t("profile.colorScheme")}
-      placeholder={t("profile.colorScheme")}
-      triggerClassName={className}
     />
   );
 }

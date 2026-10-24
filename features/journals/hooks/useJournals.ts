@@ -22,35 +22,11 @@ export function useJournals(category?: JournalCategory | 'all' | string) {
 
   const journals = data ?? [];
 
-  /**
-   * Optimistically deletes a journal entry.
-   */
-  const deleteJournal = async (id: number) => {
-    const previousJournals = journals;
-    const nextJournals = journals.filter((item) => item.id !== id);
-
-    await mutate(nextJournals, false);
-
-    try {
-      const response = await fetch(`/api/journals/${id}`, {
-        method: 'DELETE',
-      });
-      if (!response.ok) {
-        throw new Error('Failed to delete journal');
-      }
-      await mutate();
-    } catch (err) {
-      await mutate(previousJournals, false);
-      throw err;
-    }
-  };
-
   return {
     journals,
     isLoading,
     isValidating,
     error,
     mutate,
-    deleteJournal,
   };
 }

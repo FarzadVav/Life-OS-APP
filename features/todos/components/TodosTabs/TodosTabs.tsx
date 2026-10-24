@@ -14,10 +14,7 @@ function TodosTabs() {
   const {
     todos: todosList,
     isLoading,
-    toggleTodo,
-    toggleMissionAction,
-    recordMissionDiscipline,
-    deleteTodo,
+    mutate: revalidateTodos,
   } = useTodos();
 
   const sp = useSearchParams();
@@ -51,30 +48,6 @@ function TodosTabs() {
 
   const progressPercent =
     totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
-
-  const handleToggle = (id: number) => {
-    toggleTodo(id).catch((err) => console.error("Toggle error:", err));
-  };
-
-  const handleToggleMissionAction = (todoId: number, actionId: number) => {
-    toggleMissionAction(todoId, actionId).catch((err) =>
-      console.error("Toggle mission action error:", err),
-    );
-  };
-
-  const handleToggleMissionDiscipline = (
-    todoId: number,
-    disciplineId: number,
-    isDone: boolean,
-  ) => {
-    recordMissionDiscipline(todoId, disciplineId, isDone).catch((err) =>
-      console.error("Record discipline error:", err),
-    );
-  };
-
-  const handleDelete = (id: number) => {
-    deleteTodo(id).catch((err) => console.error("Delete error:", err));
-  };
 
   const tabs: SlideTabItem[] = [
     {
@@ -142,18 +115,11 @@ function TodosTabs() {
                   <TodoMissionCard
                     key={mission.id}
                     todo={mission}
-                    onToggleAction={handleToggleMissionAction}
-                    onToggleDiscipline={handleToggleMissionDiscipline}
-                    onDelete={handleDelete}
+                    onMutated={revalidateTodos}
                   />
                 ))
               : currentTodos.map((todo) => (
-                  <TodoCard
-                    key={todo.id}
-                    todo={todo}
-                    onToggle={handleToggle}
-                    onDelete={handleDelete}
-                  />
+                  <TodoCard key={todo.id} todo={todo} onMutated={revalidateTodos} />
                 ))}
 
             {currentTodos.length === 0 && (
