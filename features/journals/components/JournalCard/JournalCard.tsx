@@ -18,7 +18,7 @@ import Drawer from "@/features/general/components/ui/Drawer/Drawer";
 import { Button } from "@/features/general/components/ui/Button/Button";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 import { stripHtml } from "@/features/general/lib/richText";
-import { RichTextViewer } from "@/features/general/components/ui/RichTextEditor";
+import { RichTextResult } from "@/features/general/components/ui/RichTextEditor";
 
 type JournalCardProps = {
   journal: Journal;
@@ -107,9 +107,11 @@ function JournalCard({ journal, onDeleted }: JournalCardProps) {
           <span className="font-bold">{t("common.content")}</span>
         </div>
 
-        <div className="rounded-container bg-background p-4 text-sm leading-relaxed">
-          <RichTextViewer content={journal.content} />
-        </div>
+        <RichTextResult
+          content={journal.content}
+          placeholder={t("journals.contentPlaceholder") || "No content"}
+          containerClassName="bg-background p-4"
+        />
       </section>
 
       <div className="flex gap-2">

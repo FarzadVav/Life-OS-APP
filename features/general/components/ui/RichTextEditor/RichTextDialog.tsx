@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { Dialog as BaseUIDialog } from "@base-ui/react";
+import { type Editor } from "@tiptap/react";
+import { Undo2Icon, Redo2Icon } from "lucide-react";
 import { Button } from "@/features/general/components/ui/Button/Button";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 import { RichTextEditor } from "./RichTextEditor";
@@ -26,6 +28,9 @@ export function RichTextDialog({
 }: RichTextDialogProps) {
   const { t } = useLocale();
   const [draft, setDraft] = useState(value);
+  const [editor, setEditor] = useState<Editor | null>(null);
+  const [canUndo, setCanUndo] = useState(false);
+  const [canRedo, setCanRedo] = useState(false);
 
   // Sync draft when opened or when value changes from parent
   useEffect(() => {
@@ -33,6 +38,28 @@ export function RichTextDialog({
       queueMicrotask(() => setDraft(value));
     }
   }, [open, value]);
+
+  // Sync undo/redo availability on editor transactions
+  useEffect(() => {
+    if (!editor) {
+      queueMicrotask(() => {
+        setCanUndo(false);
+        setCanRedo(false);
+      });
+      return;
+    }
+
+    const updateHistory = () => {
+      setCanUndo(editor.can().undo());
+      setCanRedo(editor.can().redo());
+    };
+
+    updateHistory();
+    editor.on("transaction", updateHistory);
+    return () => {
+      editor.off("transaction", updateHistory);
+    };
+  }, [editor]);
 
   const handleSaveAndClose = () => {
     const finalValue = isRichTextEmpty(draft) ? "" : draft;
@@ -57,12 +84,46 @@ export function RichTextDialog({
         <BaseUIDialog.Popup
           className="fixed inset-0 z-big-overlay h-dvh w-screen bg-background text-foreground outline-none transition-all duration-200 data-ending-style:opacity-0 data-ending-style:scale-95 data-starting-style:opacity-0 data-starting-style:scale-95"
         >
-          <div className="mx-auto max-w-3xl flex flex-col h-full">
-            {/* Header */}
+          <div className="mx-auto max-w-3xl flex flex-col h-full overflow-hidden">
+            {/* Header with Title and Undo/Redo in a justify-between flex */}
             <header className="flex h-14 shrink-0 items-center justify-between border-b bg-card/40 px-4 sm:px-6 backdrop-blur-md">
               <BaseUIDialog.Title className="text-base font-bold text-foreground">
                 {title || t("editor.fullscreen") || t("common.content")}
               </BaseUIDialog.Title>
+
+              <div className="flex items-center gap-1.5">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  square
+                  disabled={!canUndo}
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    editor?.chain().focus().undo().run();
+                  }}
+                  className="size-8 rounded-component p-0 flex items-center justify-center transition-colors [&_svg]:size-4 hover:bg-card-thick disabled:opacity-30 cursor-pointer"
+                  title={t("editor.undo") || "Undo"}
+                  aria-label={t("editor.undo") || "Undo"}
+                >
+                  <Undo2Icon />
+                </Button>
+
+                <Button
+                  type="button"
+                  variant="ghost"
+                  square
+                  disabled={!canRedo}
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    editor?.chain().focus().redo().run();
+                  }}
+                  className="size-8 rounded-component p-0 flex items-center justify-center transition-colors [&_svg]:size-4 hover:bg-card-thick disabled:opacity-30 cursor-pointer"
+                  title={t("editor.redo") || "Redo"}
+                  aria-label={t("editor.redo") || "Redo"}
+                >
+                  <Redo2Icon />
+                </Button>
+              </div>
             </header>
 
             {/* Full Screen TipTap Rich Text Editor */}
@@ -71,6 +132,8 @@ export function RichTextDialog({
               value={draft}
               onChange={setDraft}
               placeholder={placeholder}
+              onEditorReady={setEditor}
+              className="flex-1 min-h-0"
             />
 
             {/* Footer with Close and Done actions */}

@@ -6,6 +6,7 @@ import { Maximize2Icon, PenLineIcon } from "lucide-react";
 import { cn } from "cn";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 import { RichTextDialog } from "./RichTextDialog";
+import { RichTextResult } from "./RichTextResult";
 import { isRichTextEmpty, stripHtml } from "@/features/general/lib/richText";
 
 export type RichTextareaProps = {
@@ -68,9 +69,10 @@ export function RichTextarea({
           </div>
         ) : (
           <div>
-            <div
-              className="tiptap-content line-clamp-6 text-sm leading-relaxed overflow-hidden"
-              dangerouslySetInnerHTML={{ __html: value }}
+            <RichTextResult
+              content={value}
+              containerClassName="bg-transparent p-0 rounded-none"
+              className="line-clamp-6 overflow-hidden"
             />
 
             <span className="absolute top-2.5 end-2.5 inline-flex items-center gap-1 rounded-component bg-card-thick px-2 py-0.5 text-xs font-medium text-foreground/70 opacity-70 transition-opacity group-hover:opacity-100">

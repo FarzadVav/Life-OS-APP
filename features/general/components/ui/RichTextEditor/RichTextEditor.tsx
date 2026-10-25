@@ -3,14 +3,11 @@
 import { cn } from "cn";
 import { useEffect } from "react";
 import StarterKit from "@tiptap/starter-kit";
-import { Undo2Icon, Redo2Icon } from "lucide-react";
-import { useEditor, EditorContent } from "@tiptap/react";
+import { useEditor, EditorContent, type Editor } from "@tiptap/react";
 import Placeholder from "@tiptap/extension-placeholder";
 
 import { RichTextToolbar } from "./RichTextToolbar";
-import { Button } from "@/features/general/components/ui/Button/Button";
 import { toEditorHtml } from "@/features/general/lib/richText";
-import { useLocale } from "../../module/LocaleProvider/LocaleProvider";
 
 export type RichTextEditorProps = {
   value: string;
@@ -19,6 +16,7 @@ export type RichTextEditorProps = {
   className?: string;
   autoFocus?: boolean;
   showToolbar?: boolean;
+  onEditorReady?: (editor: Editor | null) => void;
 };
 
 export function RichTextEditor({
@@ -28,12 +26,13 @@ export function RichTextEditor({
   className,
   autoFocus = true,
   showToolbar = true,
+  onEditorReady,
 }: RichTextEditorProps) {
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
         heading: {
-          levels: [1, 3],
+          levels: [1, 2, 3],
         },
         bulletList: {
           keepMarks: true,
@@ -55,7 +54,7 @@ export function RichTextEditor({
     editorProps: {
       attributes: {
         class:
-          "tiptap-content overflow-y-auto flex-1 outline-none select-text cursor-text text-base leading-relaxed py-2",
+          "tiptap-content min-h-full outline-none select-text cursor-text text-base leading-relaxed",
       },
     },
     onUpdate: ({ editor: currentEditor }) => {
@@ -68,8 +67,6 @@ export function RichTextEditor({
     },
   });
 
-  const { t } = useLocale();
-
   // Keep content in sync if value changed from outside
   useEffect(() => {
     if (!editor) return;
@@ -80,54 +77,25 @@ export function RichTextEditor({
     }
   }, [value, editor]);
 
-  return (
-    <>
-      <div className={cn("flex flex-col h-[calc(100%-10.5rem)]", className)}>
-        {showToolbar ? <RichTextToolbar editor={editor} /> : null}
+  useEffect(() => {
+    onEditorReady?.(editor);
+  }, [editor, onEditorReady]);
 
-        <div onClick={() => {
+  return (
+    <div className={cn("flex flex-1 flex-col min-h-0 w-full overflow-hidden", className)}>
+      {showToolbar ? <RichTextToolbar editor={editor} /> : null}
+
+      <div
+        className="flex-1 min-h-0 overflow-y-auto px-4 sm:px-6 py-4 cursor-text"
+        onClick={() => {
           if (editor && !editor.isFocused) {
             editor.commands.focus("end");
           }
-        }}>
-          <EditorContent editor={editor} />
-        </div>
+        }}
+      >
+        <EditorContent editor={editor} className="min-h-full" />
       </div>
-
-      {editor ? (
-        <div className="flex h-14 shrink-0 items-center justify-end gap-3 border-t bg-card/40 px-4 sm:px-6 backdrop-blur-md [&>button]:w-1/2 sticky bottom-14">
-          {/* Undo */}
-          <Button
-            type="button"
-            variant="ghost"
-            disabled={!editor.can().undo()}
-            onMouseDown={(e) => {
-              e.preventDefault();
-              editor.chain().focus().undo().run();
-            }}
-            className="h-auto w-full justify-center rounded-component border p-1.5 text-foreground/70 transition-colors hover:bg-card-thick hover:text-foreground disabled:opacity-30 cursor-pointer"
-            title={t("editor.undo") || "Undo"}
-          >
-            <Undo2Icon className="size-4" />
-          </Button>
-
-          {/* Redo */}
-          <Button
-            type="button"
-            variant="ghost"
-            disabled={!editor.can().redo()}
-            onMouseDown={(e) => {
-              e.preventDefault();
-              editor.chain().focus().redo().run();
-            }}
-            className="h-auto w-full justify-center rounded-component border p-1.5 text-foreground/70 transition-colors hover:bg-card-thick hover:text-foreground disabled:opacity-30 cursor-pointer"
-            title={t("editor.redo") || "Redo"}
-          >
-            <Redo2Icon className="size-4" />
-          </Button>
-        </div>
-      ) : null}
-    </>
+    </div>
   );
 }
 

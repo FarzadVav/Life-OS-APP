@@ -4,6 +4,7 @@ import { EditIcon, Trash2Icon, SparklesIcon, CompassIcon } from "lucide-react";
 import type { Skill } from "../../types";
 import Drawer from "@/features/general/components/ui/Drawer/Drawer";
 import { Button } from "@/features/general/components/ui/Button/Button";
+import { RichTextResult } from "@/features/general/components/ui/RichTextEditor";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 
 export interface SkillCardProps {
@@ -124,18 +125,11 @@ export function SkillCard({ skill, onEdit, onRequestDelete }: SkillCardProps) {
           </div>
         </div>
 
-        <div className="rounded-container bg-background/60 p-4 border border-foreground/10">
-          {skill.content ? (
-            <div
-              className="tiptap-content text-sm leading-relaxed text-foreground select-text"
-              dangerouslySetInnerHTML={{ __html: skill.content }}
-            />
-          ) : (
-            <p className="sub-text text-sm italic">
-              {t("skills.contentPlaceholder")}
-            </p>
-          )}
-        </div>
+        <RichTextResult
+          content={skill.content}
+          placeholder={t("skills.contentPlaceholder")}
+          containerClassName="bg-background/60 p-4 border border-foreground/10"
+        />
       </div>
     </Drawer>
   );

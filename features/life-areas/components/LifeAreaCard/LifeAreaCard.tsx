@@ -11,6 +11,7 @@ import { useDeleteLifeAreaAction } from "../../actions";
 import Drawer from "@/features/general/components/ui/Drawer/Drawer";
 import Dialog from "@/features/general/components/ui/Dialog/Dialog";
 import { Button } from "@/features/general/components/ui/Button/Button";
+import { RichTextResult } from "@/features/general/components/ui/RichTextEditor";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 
 export interface LifeAreaCardProps {
@@ -33,7 +34,7 @@ export function LifeAreaCard({ lifeArea }: LifeAreaCardProps) {
       <Drawer
         nativeButton={false}
         trigger={
-          <div className="group card card-action items-center justify-between">
+          <div className="group card items-center justify-between">
             <p className="title">{lifeArea.title}</p>
 
             <Button
@@ -54,16 +55,10 @@ export function LifeAreaCard({ lifeArea }: LifeAreaCardProps) {
         }>
         <Drawer.Title className="title">{lifeArea.title}</Drawer.Title>
 
-        <div className="rounded-container bg-background p-3">
-          {lifeArea.vision ? (
-            <div
-              className="tiptap-content"
-              dangerouslySetInnerHTML={{ __html: lifeArea.vision }}
-            />
-          ) : (
-            <p>{t("lifeAreas.visionPlaceholder")}</p>
-          )}
-        </div>
+        <RichTextResult
+          content={lifeArea.vision}
+          placeholder={t("lifeAreas.visionPlaceholder")}
+        />
 
         <div className="flex items-center justify-between gap-3 [&_>_*]:w-1/2">
           <Button
