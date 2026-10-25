@@ -28,12 +28,12 @@ function UserProfilePage() {
 
         <ProfileStats />
 
-        <div className="card items-center justify-between">
+        <div className="w-full flex items-center justify-between gap-3 p-3 rounded-container bg-card">
           <span className="font-bold">{t("profile.language")}</span>
           <LocaleSwitcher />
         </div>
 
-        <div className="card items-center justify-between">
+        <div className="w-full flex items-center justify-between gap-3 p-3 rounded-container bg-card">
           <span className="font-bold">{t("profile.colorScheme")}</span>
           <ThemeSwitcher />
         </div>

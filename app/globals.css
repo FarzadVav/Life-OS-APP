@@ -96,12 +96,8 @@
   @apply backdrop-blur-md;
 }
 
-@utility card {
-  @apply w-full flex gap-3 p-3 rounded-container bg-card;
-}
-
 @utility skeleton {
-  @apply card p-0 animate-pulse;
+  @apply w-full flex gap-3 p-0 rounded-container bg-card animate-pulse;
 }
 
 /* Base UI renders a 1px hidden input for form-enabled fields. Its inline

@@ -3,7 +3,6 @@
 import Link from "next/link";
 import {
   Brain,
-  ChevronRight,
   Heart,
   Lightbulb,
   PenLine,
@@ -11,9 +10,9 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
-import { JOURNAL_CATEGORIES, JournalCategory, JournalType } from "../../types";
-import { useJournalsStats } from "../../hooks";
+import { JOURNAL_CATEGORIES, JournalType } from "../../types";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
+import CardView from "@/features/general/components/ui/CardView/CardView";
 
 const CATEGORY_META: Record<
   JournalType,
@@ -51,15 +50,13 @@ const CATEGORY_META: Record<
 };
 
 export default function JournalsCategoryList() {
-  const { stats } = useJournalsStats();
   const { t } = useLocale();
 
   return (
-    <div className="w-full flex flex-col gap-3">
+    <div className="w-full flex flex-col gap-2.5">
       {JOURNAL_CATEGORIES.map((category) => {
         const meta = CATEGORY_META[category];
         const Icon = meta.icon;
-        const count = stats?.counts?.[category as unknown as JournalCategory] ?? 0;
         const label =
           t(`journals.categories.${category.toLowerCase()}`) || category;
         const desc = t(meta.descriptionKey) || meta.fallbackDescription;
@@ -68,28 +65,17 @@ export default function JournalsCategoryList() {
           <Link
             key={category}
             href={`/journals/${category.toLowerCase()}`}
-            className="group flex items-center justify-between gap-4 p-4 rounded-container bg-card border border-foreground/10 hover:border-foreground/30 transition-all active:scale-[0.99] select-none shadow-xs"
+            className="block"
           >
-            <div className="flex items-center gap-3.5 min-w-0">
-              <div className="size-11 rounded-full bg-foreground/5 flex items-center justify-center shrink-0 text-foreground group-hover:bg-foreground group-hover:text-background transition-colors">
-                <Icon className="size-5" />
-              </div>
-              <div className="flex flex-col min-w-0">
-                <span className="font-bold text-foreground text-base tracking-tight truncate">
-                  {label}
-                </span>
-                <span className="sub-text text-xs line-clamp-1 mt-0.5">
-                  {desc}
-                </span>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2 shrink-0">
-              <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-foreground/5 text-foreground/70 group-hover:bg-foreground/10 transition-colors">
-                {count}
-              </span>
-              <ChevronRight className="size-4 text-foreground/40 group-hover:text-foreground transition-transform group-hover:translate-x-0.5 rtl:rotate-180 rtl:group-hover:-translate-x-0.5" />
-            </div>
+            <CardView
+              icon={
+                <div className="size-10 rounded-full bg-foreground/5 flex items-center justify-center shrink-0 text-foreground">
+                  <Icon className="size-5" />
+                </div>
+              }
+              title={label}
+              description={desc}
+            />
           </Link>
         );
       })}

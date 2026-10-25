@@ -1,0 +1,98 @@
+"use client";
+
+import { forwardRef, type HTMLAttributes, type ReactNode } from "react";
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "cn";
+
+const cardViewVariants = cva(
+  "w-full flex gap-3 p-3 rounded-container text-foreground transition-all select-none",
+  {
+    variants: {
+      variant: {
+        card: "bg-card",
+        "card-thick": "bg-card-thick",
+        background: "bg-background",
+      },
+    },
+    defaultVariants: {
+      variant: "card",
+    },
+  },
+);
+
+export interface CardViewProps
+  extends Omit<HTMLAttributes<HTMLDivElement>, "title">,
+    VariantProps<typeof cardViewVariants> {
+  title: ReactNode;
+  icon?: ReactNode;
+  description?: ReactNode;
+  date?: ReactNode;
+  dateTime?: ReactNode;
+}
+
+const CardView = forwardRef<HTMLDivElement, CardViewProps>(
+  (
+    {
+      title,
+      icon,
+      description,
+      date,
+      dateTime,
+      variant = "card",
+      className,
+      ...props
+    },
+    ref,
+  ) => {
+    const cardDate = date ?? dateTime;
+    const isInteractive =
+      Boolean(props.onClick) || className?.includes("cursor-pointer");
+
+    return (
+      <div
+        ref={ref}
+        className={cn(
+          cardViewVariants({ variant }),
+          description || cardDate ? "items-start" : "items-center",
+          isInteractive && "cursor-pointer hover:opacity-90 active:scale-[0.99]",
+          className,
+        )}
+        {...props}
+      >
+        {icon && (
+          <div
+            className={cn(
+              "shrink-0 flex items-center justify-center text-foreground",
+              (description || cardDate) && "mt-0.5",
+            )}
+          >
+            {icon}
+          </div>
+        )}
+
+        <div className="flex-1 min-w-0 flex flex-col justify-center">
+          <div className="font-bold text-sm truncate text-foreground leading-snug">
+            {title}
+          </div>
+
+          {description && (
+            <div className="sub-text text-xs line-clamp-2 mt-0.5 leading-relaxed">
+              {description}
+            </div>
+          )}
+
+          {cardDate && (
+            <div className="sub-text text-xs text-foreground/60 mt-1 flex items-center gap-1.5">
+              {cardDate}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  },
+);
+
+CardView.displayName = "CardView";
+
+export { CardView, cardViewVariants };
+export default CardView;

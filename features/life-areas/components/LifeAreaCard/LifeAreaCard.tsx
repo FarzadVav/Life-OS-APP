@@ -1,14 +1,13 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
 import Field from "@/features/general/components/ui/Field";
-import { EditIcon, Trash2Icon, LoaderIcon } from "lucide-react";
+import { Trash2Icon, LoaderIcon } from "lucide-react";
 
 import type { LifeArea } from "../../types";
 import { useLifeAreas } from "../../hooks/useLifeAreas";
 import { useDeleteLifeAreaAction } from "../../actions";
-import Drawer from "@/features/general/components/ui/Drawer/Drawer";
+import CardDrawer from "@/features/general/components/ui/CardDrawer/CardDrawer";
 import Dialog from "@/features/general/components/ui/Dialog/Dialog";
 import { Button } from "@/features/general/components/ui/Button/Button";
 import { RichTextResult } from "@/features/general/components/ui/RichTextEditor";
@@ -31,57 +30,28 @@ export function LifeAreaCard({ lifeArea }: LifeAreaCardProps) {
 
   return (
     <>
-      <Drawer
-        nativeButton={false}
-        trigger={
-          <div className="group card items-center justify-between">
-            <p className="title">{lifeArea.title}</p>
-
-            <Button
-              square
-              type="button"
-              variant="ghost"
-              nativeButton={false}
-              aria-label={t("common.edit")}
-              render={
-                <Link
-                  onClick={(ev) => ev.stopPropagation()}
-                  href={`/profile/new-life-area?editId=${lifeArea.id}`}>
-                  <EditIcon />
-                </Link>
-              }
-            />
-          </div>
-        }>
-        <Drawer.Title className="title">{lifeArea.title}</Drawer.Title>
-
-        <RichTextResult
-          content={lifeArea.vision}
-          placeholder={t("lifeAreas.visionPlaceholder")}
-        />
-
-        <div className="flex items-center justify-between gap-3 [&_>_*]:w-1/2">
+      <CardDrawer
+        title={lifeArea.title}
+        editHref={`/profile/new-life-area?editId=${lifeArea.id}`}
+        content={
+          <RichTextResult
+            content={lifeArea.vision}
+            placeholder={t("lifeAreas.visionPlaceholder")}
+          />
+        }
+        actions={
           <Button
             type="button"
             variant="card"
+            square
             disabled={isDeleting}
             aria-label={t("common.delete")}
-            onClick={() => setDeleteDialogOpen(true)}>
-            <Trash2Icon />
+            onClick={() => setDeleteDialogOpen(true)}
+          >
+            <Trash2Icon className="size-4" />
           </Button>
-          <Button
-            type="button"
-            nativeButton={false}
-            aria-label={t("common.edit")}
-            render={
-              <Link href={`/profile/new-life-area?editId=${lifeArea.id}`}>
-                <EditIcon />
-                <span>{t("common.edit")}</span>
-              </Link>
-            }
-          />
-        </div>
-      </Drawer>
+        }
+      />
 
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <div className="p-1 space-y-4">

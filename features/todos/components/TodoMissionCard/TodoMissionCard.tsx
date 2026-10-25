@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useActionState } from "react";
 import Field from "@/features/general/components/ui/Field";
 import { motion } from "motion/react";
@@ -8,11 +7,11 @@ import {
   CalendarDaysIcon,
   CalendarIcon,
   CheckIcon,
-  ChevronRightIcon,
   CircleIcon,
   CompassIcon,
   GaugeIcon,
   Repeat2Icon,
+  TargetIcon,
   Trash2Icon,
 } from "lucide-react";
 
@@ -23,6 +22,7 @@ import {
   toggleActionMutation,
 } from "../../mutations";
 import Drawer from "@/features/general/components/ui/Drawer/Drawer";
+import CardDrawer from "@/features/general/components/ui/CardDrawer/CardDrawer";
 import { Button } from "@/features/general/components/ui/Button/Button";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 
@@ -199,170 +199,139 @@ function TodoMissionCard({ todo, onMutated }: TodoMissionCardProps) {
     totalActions > 0 ? Math.round((completedActions / totalActions) * 100) : 0;
 
   return (
-    <Drawer
-      nativeButton={false}
-      trigger={
-        <div
-          key={todo.id}
-          className="w-full rounded-container bg-card p-3 transition-opacity hover:opacity-90 cursor-pointer"
-        >
-          <div className="flex items-start gap-3">
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center justify-between gap-2">
-                <p className="font-bold">{todo.title}</p>
-                <span className="shrink-0 rounded-container bg-card-thick px-2.5 py-0.5 text-xs font-medium">
-                  {t("todos.missions") || "Mission"}
-                </span>
-              </div>
-
-              <div className="mt-1 flex items-center gap-2">
-                <span className="sub-text text-sm">
-                  {t("dates.to")} {formatDate(todo.deadline)}
-                </span>
-                <span className="sub-text">•</span>
-                <span className="sub-text">{progress}%</span>
-                {todo.lifeArea?.title && (
-                  <>
-                    <span className="sub-text">•</span>
-                    <span className="sub-text text-foreground font-medium truncate max-w-[110px]">
-                      {todo.lifeArea.title}
-                    </span>
-                  </>
-                )}
-                {disciplines.length > 0 && (
-                  <>
-                    <span className="sub-text">•</span>
-                    <span className="sub-text flex items-center gap-1">
-                      <Repeat2Icon className="size-3" />
-                      {disciplines.length}
-                    </span>
-                  </>
-                )}
-              </div>
-            </div>
-          </div>
-          <div className="mt-3 h-1.5 overflow-hidden rounded-container bg-card-thick">
-            <motion.div
-              initial={{ width: 6 }}
-              className="h-full rounded-container bg-foreground"
-              transition={{ duration: 0.6, ease: "easeOut" }}
-              animate={{ width: progress ? `${progress}%` : 6 }}
-            />
-          </div>
+    <CardDrawer
+      title={todo.title}
+      description={
+        todo.lifeArea?.title ? `${todo.lifeArea.title} • ${progress}%` : `${progress}%`
+      }
+      date={
+        <span className="flex items-center gap-1">
+          <CalendarDaysIcon className="size-3" />
+          <span>
+            {t("dates.to")} {formatDate(todo.deadline)}
+          </span>
+        </span>
+      }
+      icon={
+        <div className="size-8 rounded-container bg-foreground/10 flex items-center justify-center shrink-0">
+          <TargetIcon className="size-4 text-foreground" />
         </div>
       }
-    >
-      <Drawer.Title className="title">{todo.title}</Drawer.Title>
-
-      <div className="rounded-container bg-background p-3">
-        <div className="flex items-center justify-between">
-          <span className="font-bold">{t("common.progress")}</span>
-          <span className="sub-text text-sm">
-            {completedActions} / {totalActions}
-          </span>
-        </div>
-
-        <div className="h-1.5 overflow-hidden rounded-container bg-card mt-1.5">
-          <motion.div
-            initial={{ width: 0 }}
-            className="h-full rounded-container bg-foreground"
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            animate={{ width: progress ? `${progress}%` : 6 }}
-          />
-        </div>
-
-        <p className="sub-text mt-1.5 text-xs">{progress}% completed</p>
-      </div>
-
-      <div className="grid grid-cols-3 gap-2">
-        <div className="rounded-container bg-background p-3">
-          <div className="flex items-center gap-2 sub-text">
-            <CalendarDaysIcon className="size-4" />
-            <span className="text-xs">{t("common.deadline")}</span>
-          </div>
-          <p className="mt-2 text-xs font-medium">{formatDate(todo.deadline)}</p>
-        </div>
-
-        <div className="rounded-container bg-background p-3">
-          <div className="flex items-center gap-2 sub-text">
-            <GaugeIcon className="size-4" />
-            <span className="text-xs truncate">{t("missions.difficulty") || "Time and Energy Cost"}</span>
-          </div>
-          <div className="mt-3">
-            <Difficulty value={todo.difficulty || 3} />
-          </div>
-        </div>
-
-        <div className="rounded-container bg-background p-3">
-          <div className="flex items-center gap-2 sub-text">
-            <CheckIcon className="size-4" />
-            <span className="text-xs">{t("missions.actionsLabel") || "Actions"}</span>
-          </div>
-          <p className="mt-2 text-xs font-medium">{totalActions}</p>
-        </div>
-
-        {todo.lifeArea?.title && (
-          <div className="col-span-3 rounded-container bg-background p-3">
-            <div className="flex items-center gap-2 sub-text">
-              <CompassIcon className="size-4" />
-              <span className="text-xs">{t("lifeAreas.title") || "Life Area"}</span>
-            </div>
-            <p className="mt-2 text-xs font-medium">{todo.lifeArea.title}</p>
-          </div>
-        )}
-      </div>
-
-      {totalActions > 0 && (
-        <section className="space-y-2">
-          <div className="flex items-center justify-between">
-            <h3 className="font-bold text-sm">
-              {t("missions.actionsLabel") || "Actions"}
-            </h3>
-            <span className="sub-text text-xs">
-              {completedActions}/{totalActions}
-            </span>
-          </div>
-
-          <div className="space-y-2">
-            {actions.map((action) => (
-              <MissionActionRow
-                key={action.id}
-                action={action}
-                onMutated={onMutated}
-              />
-            ))}
-          </div>
-        </section>
-      )}
-
-      {disciplines.length > 0 && (
-        <section className="space-y-3">
-          <div>
+      editHref={`/todos/new?editId=${todo.id}`}
+      content={
+        <div className="space-y-4">
+          <div className="rounded-container bg-background p-3">
             <div className="flex items-center justify-between">
-              <h3 className="font-bold text-sm">
-                {t("missions.disciplines") || "Disciplines"}
-              </h3>
-              <span className="sub-text text-xs">{disciplines.length}</span>
+              <span className="font-bold">{t("common.progress")}</span>
+              <span className="sub-text text-sm">
+                {completedActions} / {totalActions}
+              </span>
             </div>
-            <p className="sub-text mt-0.5 text-xs">
-              {t("missions.disciplinesSubtitle") ||
-                "Repeated behaviors that support the mission"}
-            </p>
-          </div>
 
-          <div className="space-y-2">
-            {disciplines.map((discipline) => (
-              <MissionDisciplineRow
-                key={discipline.id}
-                discipline={discipline}
-                onMutated={onMutated}
+            <div className="h-1.5 overflow-hidden rounded-container bg-card mt-1.5">
+              <motion.div
+                initial={{ width: 0 }}
+                className="h-full rounded-container bg-foreground"
+                transition={{ duration: 0.6, ease: "easeOut" }}
+                animate={{ width: progress ? `${progress}%` : 6 }}
               />
-            ))}
-          </div>
-        </section>
-      )}
+            </div>
 
-      <div className="flex gap-2">
+            <p className="sub-text mt-1.5 text-xs">{progress}% completed</p>
+          </div>
+
+          <div className="grid grid-cols-3 gap-2">
+            <div className="rounded-container bg-background p-3">
+              <div className="flex items-center gap-2 sub-text">
+                <CalendarDaysIcon className="size-4" />
+                <span className="text-xs">{t("common.deadline")}</span>
+              </div>
+              <p className="mt-2 text-xs font-medium">{formatDate(todo.deadline)}</p>
+            </div>
+
+            <div className="rounded-container bg-background p-3">
+              <div className="flex items-center gap-2 sub-text">
+                <GaugeIcon className="size-4" />
+                <span className="text-xs truncate">
+                  {t("missions.difficulty") || "Time and Energy Cost"}
+                </span>
+              </div>
+              <div className="mt-3">
+                <Difficulty value={todo.difficulty || 3} />
+              </div>
+            </div>
+
+            <div className="rounded-container bg-background p-3">
+              <div className="flex items-center gap-2 sub-text">
+                <CheckIcon className="size-4" />
+                <span className="text-xs">{t("missions.actionsLabel") || "Actions"}</span>
+              </div>
+              <p className="mt-2 text-xs font-medium">{totalActions}</p>
+            </div>
+
+            {todo.lifeArea?.title && (
+              <div className="col-span-3 rounded-container bg-background p-3">
+                <div className="flex items-center gap-2 sub-text">
+                  <CompassIcon className="size-4" />
+                  <span className="text-xs">{t("lifeAreas.title") || "Life Area"}</span>
+                </div>
+                <p className="mt-2 text-xs font-medium">{todo.lifeArea.title}</p>
+              </div>
+            )}
+          </div>
+
+          {totalActions > 0 && (
+            <section className="space-y-2">
+              <div className="flex items-center justify-between">
+                <h3 className="font-bold text-sm">
+                  {t("missions.actionsLabel") || "Actions"}
+                </h3>
+                <span className="sub-text text-xs">
+                  {completedActions}/{totalActions}
+                </span>
+              </div>
+
+              <div className="space-y-2">
+                {actions.map((action) => (
+                  <MissionActionRow
+                    key={action.id}
+                    action={action}
+                    onMutated={onMutated}
+                  />
+                ))}
+              </div>
+            </section>
+          )}
+
+          {disciplines.length > 0 && (
+            <section className="space-y-3">
+              <div>
+                <div className="flex items-center justify-between">
+                  <h3 className="font-bold text-sm">
+                    {t("missions.disciplines") || "Disciplines"}
+                  </h3>
+                  <span className="sub-text text-xs">{disciplines.length}</span>
+                </div>
+                <p className="sub-text mt-0.5 text-xs">
+                  {t("missions.disciplinesSubtitle") ||
+                    "Repeated behaviors that support the mission"}
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                {disciplines.map((discipline) => (
+                  <MissionDisciplineRow
+                    key={discipline.id}
+                    discipline={discipline}
+                    onMutated={onMutated}
+                  />
+                ))}
+              </div>
+            </section>
+          )}
+        </div>
+      }
+      actions={
         <form action={deleteAction}>
           <Field type="hidden" name="id" value={todo.id} />
           <Drawer.Close
@@ -380,41 +349,8 @@ function TodoMissionCard({ todo, onMutated }: TodoMissionCardProps) {
             }
           />
         </form>
-
-        <Drawer.Close
-          render={
-            <Button
-              type="button"
-              variant="card"
-              className="flex-1 justify-center"
-            >
-              {t("common.close") || "Close"}
-            </Button>
-          }
-        />
-
-        <Drawer.Close
-          nativeButton={false}
-          render={
-            <Button
-              type="button"
-              variant="primary"
-              nativeButton={false}
-              className="flex-1 justify-center"
-              render={
-                <Link
-                  className="flex flex-1 items-center justify-center gap-1"
-                  href={`/todos/new?editId=${todo.id}`}
-                >
-                  <span>{t("common.edit")}</span>
-                  <ChevronRightIcon className="size-4" />
-                </Link>
-              }
-            />
-          }
-        />
-      </div>
-    </Drawer>
+      }
+    />
   );
 }
 
