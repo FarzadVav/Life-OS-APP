@@ -24,8 +24,11 @@ import {
 } from "@/features/todos/types";
 import { useTodo } from "@/features/todos/hooks";
 import { useLifeAreas } from "@/features/life-areas/hooks";
-import { createTodoMutation, updateTodoMutation } from "@/features/todos/mutations";
-import { useDeleteTodoAction } from "@/features/todos/actions";
+import {
+  createTodoMutation,
+  deleteTodoMutation,
+  updateTodoMutation,
+} from "@/features/todos/mutations";
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
 import { Button } from "@/features/general/components/ui/Button/Button";
 import PageActionBtn from "@/features/general/components/module/PageActionBtn/PageActionBtn";
@@ -221,8 +224,10 @@ function NewTodoPage() {
     null,
   );
 
-  const { state: deleteState, action: removeTodoAction, isPending: isDeleting } =
-    useDeleteTodoAction(() => setDeleteDialogOpen(false));
+  const [deleteState, removeTodoAction, isDeleting] = useActionState(
+    deleteTodoMutation,
+    undefined,
+  );
 
   // When mutation succeeds, navigate back to home and refresh
   useEffect(() => {
@@ -237,7 +242,7 @@ function NewTodoPage() {
 
     router.push("/todos");
     router.refresh();
-  }, [deleteState?.success, router]);
+  }, [deleteState, router]);
 
   // Load existing todo details if in edit mode
   useEffect(() => {
@@ -801,7 +806,9 @@ function NewTodoPage() {
                 </Button>
               }
             />
-            <form action={removeTodoAction}>
+            <form
+              action={removeTodoAction}
+              onSubmit={() => setDeleteDialogOpen(false)}>
               <Field type="hidden" name="id" value={editId ?? ""} />
               <Button
                 type="submit"

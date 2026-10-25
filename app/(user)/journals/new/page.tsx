@@ -20,9 +20,9 @@ import {
 import { useJournal } from "@/features/journals/hooks";
 import {
   createJournalMutation,
+  deleteJournalMutation,
   updateJournalMutation,
 } from "@/features/journals/mutations";
-import { useDeleteJournalAction } from "@/features/journals/actions";
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
 import PageActionBtn from "@/features/general/components/module/PageActionBtn/PageActionBtn";
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
@@ -101,8 +101,10 @@ function NewJournalPage() {
     null,
   );
 
-  const { state: deleteState, action: deleteAction, isPending: isDeleting } =
-    useDeleteJournalAction(() => setDeleteDialogOpen(false));
+  const [deleteState, deleteAction, isDeleting] = useActionState(
+    deleteJournalMutation,
+    undefined,
+  );
 
   // Navigate back to category upon success
   useEffect(() => {
@@ -119,7 +121,7 @@ function NewJournalPage() {
     const targetCategory = type ?? "Logs";
     router.push(`/journals/${targetCategory.toLowerCase()}`);
     router.refresh();
-  }, [deleteState?.success, type, router]);
+  }, [deleteState, type, router]);
 
   // Load existing journal details if in edit mode
   useEffect(() => {
@@ -241,7 +243,9 @@ function NewJournalPage() {
                 </Button>
               }
             />
-            <form action={deleteAction}>
+            <form
+              action={deleteAction}
+              onSubmit={() => setDeleteDialogOpen(false)}>
               <Field type="hidden" name="id" value={editId ?? ""} />
               <Button
                 type="submit"

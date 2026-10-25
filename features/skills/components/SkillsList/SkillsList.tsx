@@ -2,11 +2,11 @@
 
 import { cn } from "cn";
 import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useActionState, useEffect } from "react";
 import { PlusIcon, SparklesIcon, LoaderIcon } from "lucide-react";
 
 import { useSkills } from "../../hooks/useSkills";
-import { useDeleteSkillAction } from "../../actions";
+import { deleteSkillMutation } from "../../mutations";
 import type { Skill } from "../../types";
 import Field from "@/features/general/components/ui/Field";
 import { SkillCard } from "../SkillCard/SkillCard";
@@ -41,12 +41,17 @@ export function SkillsList({
   const router = useRouter();
 
   const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null);
-  const { action: deleteAction, isPending: isDeleting } = useDeleteSkillAction(
-    () => {
-      setDeleteTargetId(null);
-      revalidateSkills();
-    },
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deleteState, deleteAction, isDeleting] = useActionState(
+    deleteSkillMutation,
+    undefined,
   );
+
+  useEffect(() => {
+    if (!deleteState?.success) return;
+
+    revalidateSkills();
+  }, [deleteState, revalidateSkills]);
 
   const targetSkill = skills.find((s) => s.id === deleteTargetId);
 
@@ -155,17 +160,17 @@ export function SkillsList({
               key={skill.id}
               skill={skill}
               onEdit={handleOpenEdit}
-              onRequestDelete={(id) => setDeleteTargetId(id)}
+              onRequestDelete={(id) => {
+                setDeleteTargetId(id);
+                setDeleteDialogOpen(true);
+              }}
             />
           ))}
         </div>
       )}
 
       {/* Delete Confirmation Dialog */}
-      <Dialog
-        open={deleteTargetId !== null}
-        onOpenChange={(open) => !open && setDeleteTargetId(null)}
-      >
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <div className="flex flex-col gap-4 p-1">
           <div>
             <Dialog.Title className="title">
@@ -183,12 +188,12 @@ export function SkillsList({
             <Button
               type="button"
               variant="ghost"
-              onClick={() => setDeleteTargetId(null)}
+              onClick={() => setDeleteDialogOpen(false)}
               disabled={isDeleting}
             >
               {t("common.cancel")}
             </Button>
-            <form action={deleteAction}>
+            <form action={deleteAction} onSubmit={() => setDeleteDialogOpen(false)}>
               <Field type="hidden" name="id" value={deleteTargetId ?? ""} />
               <Button
                 type="submit"

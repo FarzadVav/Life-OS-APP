@@ -2,12 +2,12 @@
 
 import { cn } from "cn";
 import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useActionState, useEffect } from "react";
 import Field from "@/features/general/components/ui/Field";
 import { PlusIcon, Repeat2Icon, LoaderIcon } from "lucide-react";
 
 import { useHabits } from "../../hooks/useHabits";
-import { useDeleteHabitAction } from "../../actions";
+import { deleteHabitMutation } from "../../mutations";
 import type { Habit } from "../../types";
 import { HabitCard } from "../HabitCard/HabitCard";
 import { useLifeAreas } from "@/features/life-areas/hooks/useLifeAreas";
@@ -41,12 +41,17 @@ export function HabitsList({
   const router = useRouter();
 
   const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null);
-  const { action: deleteAction, isPending: isDeleting } = useDeleteHabitAction(
-    () => {
-      setDeleteTargetId(null);
-      revalidateHabits();
-    },
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deleteState, deleteAction, isDeleting] = useActionState(
+    deleteHabitMutation,
+    undefined,
   );
+
+  useEffect(() => {
+    if (!deleteState?.success) return;
+
+    revalidateHabits();
+  }, [deleteState, revalidateHabits]);
 
   const targetHabit = habits.find((h) => h.id === deleteTargetId);
 
@@ -157,7 +162,10 @@ export function HabitsList({
               key={habit.id}
               habit={habit}
               onEdit={handleOpenEdit}
-              onRequestDelete={(id) => setDeleteTargetId(id)}
+              onRequestDelete={(id) => {
+                setDeleteTargetId(id);
+                setDeleteDialogOpen(true);
+              }}
               onRecorded={revalidateHabits}
             />
           ))}
@@ -165,10 +173,7 @@ export function HabitsList({
       )}
 
       {/* Delete Confirmation Dialog */}
-      <Dialog
-        open={deleteTargetId !== null}
-        onOpenChange={(open) => !open && setDeleteTargetId(null)}
-      >
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <div className="flex flex-col gap-4 p-1">
           <div>
             <Dialog.Title className="title">
@@ -186,12 +191,12 @@ export function HabitsList({
             <Button
               type="button"
               variant="ghost"
-              onClick={() => setDeleteTargetId(null)}
+              onClick={() => setDeleteDialogOpen(false)}
               disabled={isDeleting}
             >
               {t("common.cancel")}
             </Button>
-            <form action={deleteAction}>
+            <form action={deleteAction} onSubmit={() => setDeleteDialogOpen(false)}>
               <Field type="hidden" name="id" value={deleteTargetId ?? ""} />
               <Button
                 type="submit"

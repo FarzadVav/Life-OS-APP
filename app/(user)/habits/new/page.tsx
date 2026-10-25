@@ -16,9 +16,9 @@ import RepeatIntervalInput from "@/features/general/components/ui/RepeatInterval
 import { useHabit } from "@/features/habits/hooks/useHabit";
 import {
   createHabitMutation,
+  deleteHabitMutation,
   updateHabitMutation,
 } from "@/features/habits/mutations";
-import { useDeleteHabitAction } from "@/features/habits/actions";
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
 import PageActionBtn from "@/features/general/components/module/PageActionBtn/PageActionBtn";
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
@@ -85,8 +85,10 @@ function NewHabitPage() {
     null,
   );
 
-  const { state: deleteState, action: deleteAction, isPending: isDeleting } =
-    useDeleteHabitAction(() => setDeleteDialogOpen(false));
+  const [deleteState, deleteAction, isDeleting] = useActionState(
+    deleteHabitMutation,
+    undefined,
+  );
 
   useEffect(() => {
     if (state?.success) {
@@ -100,7 +102,7 @@ function NewHabitPage() {
 
     router.push("/habits");
     router.refresh();
-  }, [deleteState?.success, router]);
+  }, [deleteState, router]);
 
   useEffect(() => {
     if (!editId) {
@@ -225,7 +227,9 @@ function NewHabitPage() {
                 </Button>
               }
             />
-            <form action={deleteAction}>
+            <form
+              action={deleteAction}
+              onSubmit={() => setDeleteDialogOpen(false)}>
               <Field type="hidden" name="id" value={editId ?? ""} />
               <Button
                 type="submit"

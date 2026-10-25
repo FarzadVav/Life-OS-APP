@@ -15,9 +15,9 @@ import { Button } from "@/features/general/components/ui/Button/Button";
 import { useSkill } from "@/features/skills/hooks/useSkill";
 import {
   createSkillMutation,
+  deleteSkillMutation,
   updateSkillMutation,
 } from "@/features/skills/mutations";
-import { useDeleteSkillAction } from "@/features/skills/actions";
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
 import PageActionBtn from "@/features/general/components/module/PageActionBtn/PageActionBtn";
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
@@ -84,8 +84,10 @@ function NewSkillPage() {
     null,
   );
 
-  const { state: deleteState, action: deleteAction, isPending: isDeleting } =
-    useDeleteSkillAction(() => setDeleteDialogOpen(false));
+  const [deleteState, deleteAction, isDeleting] = useActionState(
+    deleteSkillMutation,
+    undefined,
+  );
 
   useEffect(() => {
     if (state?.success) {
@@ -99,7 +101,7 @@ function NewSkillPage() {
 
     router.push("/skills");
     router.refresh();
-  }, [deleteState?.success, router]);
+  }, [deleteState, router]);
 
   useEffect(() => {
     if (!editId) {
@@ -219,7 +221,9 @@ function NewSkillPage() {
                 </Button>
               }
             />
-            <form action={deleteAction}>
+            <form
+              action={deleteAction}
+              onSubmit={() => setDeleteDialogOpen(false)}>
               <Field type="hidden" name="id" value={editId ?? ""} />
               <Button
                 type="submit"

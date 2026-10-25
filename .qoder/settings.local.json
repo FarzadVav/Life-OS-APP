@@ -50,7 +50,20 @@
       "Bash(find . -path ./node_modules -prune -o -type f \\\\\\( -name \"*.action.ts\" -o -name \"*action*.ts\" \\\\\\) -print | grep -v node_modules | sort)",
       "Bash(for f in features/habits/components/HabitCard/HabitCard.tsx features/journals/components/JournalCard/JournalCard.tsx features/life-areas/components/LifeAreaCard/LifeAreaCard.tsx features/todos/components/TodoCard/TodoCard.tsx; do echo \"===== $f =====\"; cat \"$f\"; done)",
       "Bash(for f in features/habits/components/HabitsList/HabitsList.tsx features/skills/components/SkillsList/SkillsList.tsx features/todos/components/TodoMissionCard/TodoMissionCard.tsx features/auth/components/LogoutBtn/LogoutBtn.tsx; do echo \"===== $f =====\"; cat -n \"$f\"; done)",
-      "Bash(ls features/general/actions/ 2>/dev/null; echo \"--- indices ---\"; for d in features/habits/actions features/journals/actions features/life-areas/actions features/skills/actions features/todos/actions; do echo \"== $d\"; cat \"$d/index.ts\" 2>/dev/null; done)"
+      "Bash(ls features/general/actions/ 2>/dev/null; echo \"--- indices ---\"; for d in features/habits/actions features/journals/actions features/life-areas/actions features/skills/actions features/todos/actions; do echo \"== $d\"; cat \"$d/index.ts\" 2>/dev/null; done)",
+      "Bash(for f in features/journals/mutations/index.ts features/skills/mutations/index.ts features/life-areas/mutations/index.ts features/habits/mutations/index.ts features/todos/mutations/index.ts; do echo \"== $f\"; cat \"$f\"; done)",
+      "Bash(grep -rn \"useActionState\" node_modules/@types/react/index.d.ts | head -20)",
+      "Bash(git rm -r -q features/habits/actions features/journals/actions features/life-areas/actions features/skills/actions features/todos/actions && git status --short)",
+      "Bash(cat package.json | head -40)",
+      "Bash(npx tsc --noEmit -p tsconfig.json 2>&1 | tail -30)",
+      "Bash(npx eslint \"app/\\(user\\)/habits/new/page.tsx\" \"app/\\(user\\)/journals/new/page.tsx\" \"app/\\(user\\)/profile/new-life-area/page.tsx\" \"app/\\(user\\)/skills/new/page.tsx\" \"app/\\(user\\)/todos/new/page.tsx\" features/habits/components/HabitsList/HabitsList.tsx features/skills/components/SkillsList/SkillsList.tsx features/life-areas/components/LifeAreaCard/LifeAreaCard.tsx 2>&1 | tail -30)",
+      "Bash(npx eslint \"app/\\(user\\)/habits/new/page.tsx\" \"app/\\(user\\)/journals/new/page.tsx\" \"app/\\(user\\)/profile/new-life-area/page.tsx\" \"app/\\(user\\)/skills/new/page.tsx\" \"app/\\(user\\)/todos/new/page.tsx\" features/habits/components/HabitsList/HabitsList.tsx features/skills/components/SkillsList/SkillsList.tsx features/life-areas/components/LifeAreaCard/LifeAreaCard.tsx 2>&1 | grep -E \"^/|error\" | head -30)",
+      "Bash(npx eslint . 2>&1 | tail -25)",
+      "Bash(npx eslint . 2>&1 | grep -E \"problems|error|warning\" | tail -10)",
+      "Bash(npx eslint . 2>&1 | grep -B3 \"useState' is defined\")",
+      "Bash(npx tsc --noEmit -p tsconfig.json 2>&1 | tail -15)",
+      "Bash(timeout 540 npx next build 2>&1 | tail -35)",
+      "Bash(git status --short | head -30; echo \"---\"; ls features/habits features/journals features/life-areas features/skills features/todos)"
     ]
   }
 }

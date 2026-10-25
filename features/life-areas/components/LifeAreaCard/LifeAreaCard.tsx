@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState, useActionState } from "react";
 import Field from "@/features/general/components/ui/Field";
 import { Trash2Icon, LoaderIcon } from "lucide-react";
 
 import type { LifeArea } from "../../types";
 import { useLifeAreas } from "../../hooks/useLifeAreas";
-import { useDeleteLifeAreaAction } from "../../actions";
+import { deleteLifeAreaMutation } from "../../mutations";
 import CardDrawer from "@/features/general/components/ui/CardDrawer/CardDrawer";
 import Dialog from "@/features/general/components/ui/Dialog/Dialog";
 import { Button } from "@/features/general/components/ui/Button/Button";
@@ -22,11 +22,16 @@ export function LifeAreaCard({ lifeArea }: LifeAreaCardProps) {
   const { mutate } = useLifeAreas();
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const { action: deleteLifeAreaAction, isPending: isDeleting } =
-    useDeleteLifeAreaAction(() => {
-      setDeleteDialogOpen(false);
-      mutate();
-    });
+  const [deleteState, deleteLifeAreaAction, isDeleting] = useActionState(
+    deleteLifeAreaMutation,
+    undefined,
+  );
+
+  useEffect(() => {
+    if (!deleteState?.success) return;
+
+    mutate();
+  }, [deleteState, mutate]);
 
   return (
     <>
@@ -72,7 +77,9 @@ export function LifeAreaCard({ lifeArea }: LifeAreaCardProps) {
                 </Button>
               }
             />
-            <form action={deleteLifeAreaAction}>
+            <form
+              action={deleteLifeAreaAction}
+              onSubmit={() => setDeleteDialogOpen(false)}>
               <Field type="hidden" name="id" value={lifeArea.id} />
               <Button
                 type="submit"

@@ -14,9 +14,9 @@ import { Button } from "@/features/general/components/ui/Button/Button";
 import { useLifeAreas } from "@/features/life-areas/hooks";
 import {
   createLifeAreaMutation,
+  deleteLifeAreaMutation,
   updateLifeAreaMutation,
 } from "@/features/life-areas/mutations";
-import { useDeleteLifeAreaAction } from "@/features/life-areas/actions";
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
 import PageActionBtn from "@/features/general/components/module/PageActionBtn/PageActionBtn";
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
@@ -43,8 +43,10 @@ function ProfileNewLifeAreaPage() {
     null,
   );
 
-  const { state: deleteState, action: deleteAction, isPending: isDeleting } =
-    useDeleteLifeAreaAction(() => setDeleteDialogOpen(false));
+  const [deleteState, deleteAction, isDeleting] = useActionState(
+    deleteLifeAreaMutation,
+    undefined,
+  );
 
   useEffect(() => {
     if (state?.success) {
@@ -58,7 +60,7 @@ function ProfileNewLifeAreaPage() {
 
     router.push("/profile");
     router.refresh();
-  }, [deleteState?.success, router]);
+  }, [deleteState, router]);
 
   useEffect(() => {
     if (!editId) {
@@ -169,7 +171,9 @@ function ProfileNewLifeAreaPage() {
                 </Button>
               }
             />
-            <form action={deleteAction}>
+            <form
+              action={deleteAction}
+              onSubmit={() => setDeleteDialogOpen(false)}>
               <Field type="hidden" name="id" value={editId ?? ""} />
               <Button
                 type="submit"
