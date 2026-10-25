@@ -17,6 +17,10 @@
 - Implementation of states, hooks, fetches, actions, forms
 - Implementation of db, orm, repositories, queries, mutations
 
+ Next  1 Rotate the DB password and JWT secret, then remove .env.local from git tracking                                    
+       2 Delete the dead code file features/auth/lib/dal.ts
+       3 Fix .gitignore to exclude .env.local
+
 ---
 
 # Features

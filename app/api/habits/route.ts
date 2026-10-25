@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { type } from 'arktype';
 import { withRequestContext } from '@/db';
-import { getSessionQuery } from '@/features/auth/queries';
 import { serializeHabit } from '@/features/habits/repositories';
 import { CreateHabitSchema } from '@/features/habits/types';
+import { requireUserId } from '@/features/auth/lib/actor';
+import { authzResponse } from '@/features/general/lib/api/respond';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,8 +14,7 @@ export const dynamic = 'force-dynamic';
  */
 export async function GET(request: NextRequest) {
   try {
-    const session = await getSessionQuery();
-    const userId = session?.userId ? Number(session.userId) : undefined;
+    const userId = await requireUserId();
 
     const searchParams = request.nextUrl.searchParams;
     const lifeAreaIdParam = searchParams.get('lifeAreaId');
@@ -38,6 +38,8 @@ export async function GET(request: NextRequest) {
       },
     );
   } catch (error) {
+    const authz = authzResponse(error);
+    if (authz) return authz;
     console.error('Failed to get habits in GET /api/habits:', error);
     return NextResponse.json(
       { habits: [], message: 'Internal Server Error' },
@@ -52,6 +54,7 @@ export async function GET(request: NextRequest) {
  */
 export async function POST(request: NextRequest) {
   try {
+    const userId = await requireUserId();
     const body = await request.json();
     const validation = CreateHabitSchema(body);
 
@@ -62,14 +65,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const session = await getSessionQuery();
-    const userId = session?.userId ? Number(session.userId) : undefined;
-
     const created = await withRequestContext(async ({ habit }) => {
-      return await habit.createHabit({
-        ...validation,
-        userId,
-      });
+      return await habit.createHabit(validation, userId);
     });
 
     return NextResponse.json(
@@ -77,6 +74,8 @@ export async function POST(request: NextRequest) {
       { status: 201 },
     );
   } catch (error) {
+    const authz = authzResponse(error);
+    if (authz) return authz;
     console.error('Failed to create habit in POST /api/habits:', error);
     return NextResponse.json(
       { message: 'Internal Server Error' },

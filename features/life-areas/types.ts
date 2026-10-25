@@ -18,7 +18,6 @@ export type LifeArea = typeof LifeAreaSchema.infer;
 export const CreateLifeAreaSchema = type({
   title: 'string >= 1',
   vision: 'string',
-  'userId?': 'number',
 });
 export type CreateLifeAreaData = typeof CreateLifeAreaSchema.infer;
 

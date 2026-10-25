@@ -1,4 +1,5 @@
 import { EntityRepository } from '@mikro-orm/postgresql';
+import type { FilterQuery } from '@mikro-orm/core';
 import { JournalCategory } from '@/db/entities/enums';
 import { User } from '@/db/entities/User';
 import type { Journal } from '@/db/entities/Journal';
@@ -20,79 +21,61 @@ export function serializeJournal(journal: Journal): JournalDto {
   };
 }
 
+/**
+ * Every method scopes to `userId` unconditionally: a journal that the acting
+ * user does not own is indistinguishable from one that does not exist.
+ */
 export class JournalRepository extends EntityRepository<Journal> {
   async findAllJournals(
-    userId?: number,
+    userId: number,
     options?: { limit?: number; offset?: number },
   ): Promise<Journal[]> {
-    const where: Record<string, unknown> = {};
-    if (userId) {
-      where.user = userId;
-    }
-
-    return this.find(where, {
+    return this.find({ user: userId }, {
       orderBy: { createdAt: 'DESC' },
       limit: options?.limit,
       offset: options?.offset,
     });
   }
 
-  async findByCategory(category: JournalCategory | string, userId?: number): Promise<Journal[]> {
+  async findByCategory(category: JournalCategory | string, userId: number): Promise<Journal[]> {
     const matchedCategory =
       Object.values(JournalCategory).find(
         (c) => c.toLowerCase() === category.toLowerCase(),
       ) ?? JournalCategory.LOGS;
 
-    const where: Record<string, unknown> = { type: matchedCategory };
-    if (userId) {
-      where.user = userId;
-    }
-
-    return this.find(where, { orderBy: { createdAt: 'DESC' } });
+    return this.find({ type: matchedCategory, user: userId }, { orderBy: { createdAt: 'DESC' } });
   }
 
-  async findById(id: number, userId?: number): Promise<Journal | null> {
-    const where: Record<string, unknown> = { id };
-    if (userId) {
-      where.user = userId;
-    }
-    return this.findOne(where);
+  async findById(id: number, userId: number): Promise<Journal | null> {
+    return this.findOne({ id, user: userId });
   }
 
-  async searchJournals(query: string, userId?: number): Promise<Journal[]> {
+  async searchJournals(query: string, userId: number): Promise<Journal[]> {
     const cleanQuery = query.trim().toLowerCase();
-    const where: Record<string, unknown> = {
+    const where: FilterQuery<Journal> = {
       $or: [
         { title: { $like: `%${cleanQuery}%` } },
         { content: { $like: `%${cleanQuery}%` } },
       ],
+      user: userId,
     };
-
-    if (userId) {
-      where.user = userId;
-    }
 
     return this.find(where, { orderBy: { createdAt: 'DESC' } });
   }
 
-  async createJournal(data: CreateJournalData): Promise<Journal> {
-    const user = data.userId ? this.em.getReference(User, data.userId) : undefined;
+  async createJournal(data: CreateJournalData, userId: number): Promise<Journal> {
     const journal = this.create({
       title: data.title.trim(),
       content: data.content,
       type: data.type as unknown as JournalCategory,
-      user,
+      user: this.em.getReference(User, userId),
     });
     await this.em.flush();
     return journal;
   }
 
-  async updateJournal(id: number, data: UpdateJournalData, userId?: number): Promise<Journal | null> {
-    const where: Record<string, unknown> = { id };
-    if (userId) {
-      where.user = userId;
-    }
-    const journal = await this.findOne(where);
+  async updateJournal(id: number, data: UpdateJournalData, userId: number): Promise<Journal | null> {
+    const journal = await this.findOne({ id, user: userId });
     if (!journal) {
       return null;
     }
@@ -107,12 +90,8 @@ export class JournalRepository extends EntityRepository<Journal> {
     return journal;
   }
 
-  async deleteJournal(id: number, userId?: number): Promise<boolean> {
-    const where: Record<string, unknown> = { id };
-    if (userId) {
-      where.user = userId;
-    }
-    const journal = await this.findOne(where);
+  async deleteJournal(id: number, userId: number): Promise<boolean> {
+    const journal = await this.findOne({ id, user: userId });
     if (!journal) {
       return false;
     }
@@ -122,12 +101,10 @@ export class JournalRepository extends EntityRepository<Journal> {
     return true;
   }
 
-  async getCategoryCounts(userId?: number): Promise<Record<JournalCategory, number>> {
-    const baseWhere = userId ? { user: userId } : {};
-
+  async getCategoryCounts(userId: number): Promise<Record<JournalCategory, number>> {
     const categories = Object.values(JournalCategory);
     const counts = await Promise.all(
-      categories.map((cat) => this.count({ ...baseWhere, type: cat })),
+      categories.map((cat) => this.count({ user: userId, type: cat })),
     );
 
     const result = {} as Record<JournalCategory, number>;

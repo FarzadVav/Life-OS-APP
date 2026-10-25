@@ -1,7 +1,7 @@
 'use server';
 
 import { withRequestContext } from '@/db';
-import { getSessionQuery } from '@/features/auth/queries';
+import { tryGetUserId } from '@/features/auth/lib/actor';
 import type { ActionResult } from '@/features/general/lib/types';
 
 /**
@@ -18,14 +18,16 @@ export async function deleteHabitMutation(
     return { success: false, error: 'Invalid habit id' };
   }
 
-  const session = await getSessionQuery();
-  const userId = session?.userId ? Number(session.userId) : undefined;
+  const userId = await tryGetUserId();
+  if (userId === null) {
+    return { success: false, error: 'Your session has expired. Please sign in again.' };
+  }
 
   try {
-    await withRequestContext(async ({ habit }) => {
-      await habit.deleteHabit(id, userId);
+    const success = await withRequestContext(async ({ habit }) => {
+      return await habit.deleteHabit(id, userId);
     });
-    return { success: true };
+    return success ? { success: true } : { success: false, error: 'Habit not found' };
   } catch (error) {
     console.error('Failed to delete habit:', error);
     return { success: false, error: 'Failed to delete habit' };

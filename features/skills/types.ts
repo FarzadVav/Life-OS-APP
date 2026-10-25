@@ -31,7 +31,6 @@ export const CreateSkillSchema = type({
   title: 'string >= 1',
   content: 'string',
   'lifeAreaId?': 'number | null',
-  'userId?': 'number',
 });
 export type CreateSkillData = typeof CreateSkillSchema.infer;
 

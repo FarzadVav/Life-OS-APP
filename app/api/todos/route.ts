@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { type } from 'arktype';
 import { withRequestContext } from '@/db';
-import { getSessionQuery } from '@/features/auth/queries';
 import { getTodosQuery } from '@/features/todos/queries';
 import { serializeTodo } from '@/features/todos/repositories';
 import { CreateTodoSchema, TodoType } from '@/features/todos/types';
+import { requireUserId } from '@/features/auth/lib/actor';
+import { authzResponse } from '@/features/general/lib/api/respond';
 
 export const dynamic = 'force-dynamic';
 
@@ -29,6 +30,8 @@ export async function GET(request: NextRequest) {
       },
     );
   } catch (error) {
+    const authz = authzResponse(error);
+    if (authz) return authz;
     console.error('Failed to get todos in GET /api/todos:', error);
     return NextResponse.json(
       { todos: [], message: 'Internal Server Error' },
@@ -43,6 +46,7 @@ export async function GET(request: NextRequest) {
  */
 export async function POST(request: NextRequest) {
   try {
+    const userId = await requireUserId();
     const body = await request.json();
     const validation = CreateTodoSchema(body);
 
@@ -53,14 +57,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const session = await getSessionQuery();
-    const userId = session?.userId ? Number(session.userId) : undefined;
-
     const created = await withRequestContext(async ({ todo }) => {
-      return await todo.createTodo({
-        ...validation,
-        userId,
-      });
+      return await todo.createTodo(validation, userId);
     });
 
     return NextResponse.json(
@@ -68,6 +66,8 @@ export async function POST(request: NextRequest) {
       { status: 201 },
     );
   } catch (error) {
+    const authz = authzResponse(error);
+    if (authz) return authz;
     console.error('Failed to create todo in POST /api/todos:', error);
     return NextResponse.json(
       { message: 'Internal Server Error' },

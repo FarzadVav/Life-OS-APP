@@ -2,7 +2,8 @@
 
 import { type } from 'arktype';
 import { withRequestContext } from '@/db';
-import { getSessionQuery } from '@/features/auth/queries';
+import { tryGetUserId } from '@/features/auth/lib/actor';
+import { ForbiddenReferenceError } from '@/features/general/lib/errors';
 import { CreateTodoSchema, type TodoFormState, type TodoType, type CreateTodoData } from '../types';
 
 /**
@@ -87,31 +88,43 @@ export async function createTodoMutation(
     };
   }
 
-  const session = await getSessionQuery();
-  const userId = session?.userId ? Number(session.userId) : undefined;
+  const userId = await tryGetUserId();
+  if (userId === null) {
+    return {
+      errors: { general: ['Your session has expired. Please sign in again.'] },
+      inputs: { title, type: typeValue, deadline, difficulty, lifeAreaId },
+      success: false,
+    };
+  }
 
-  const created = await withRequestContext(async ({ todo }) => {
-    return await todo.createTodo({
-      title,
-      type: typeValue,
-      deadline,
-      difficulty,
-      lifeAreaId,
-      userId,
-      actions,
-      disciplines,
+  const inputs = { title, type: typeValue, deadline, difficulty, lifeAreaId };
+
+  let created;
+  try {
+    created = await withRequestContext(async ({ todo }) => {
+      return await todo.createTodo(
+        {
+          title,
+          type: typeValue,
+          deadline,
+          difficulty,
+          lifeAreaId,
+          actions,
+          disciplines,
+        },
+        userId,
+      );
     });
-  });
+  } catch (error) {
+    if (error instanceof ForbiddenReferenceError) {
+      return { errors: { lifeAreaId: ['This value is not available to you.'] }, inputs, success: false };
+    }
+    throw error;
+  }
 
   return {
     success: true,
     todoId: created.id,
-    inputs: {
-      title,
-      type: typeValue,
-      deadline,
-      difficulty,
-      lifeAreaId,
-    },
+    inputs,
   };
 }

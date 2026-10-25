@@ -1,6 +1,7 @@
 'use server';
 
 import { withRequestContext } from '@/db';
+import { tryGetUserId } from '@/features/auth/lib/actor';
 import type { ActionResult } from '@/features/general/lib/types';
 
 /**
@@ -19,12 +20,21 @@ export async function recordDisciplineMutation(
 
   const isDone = formData.get('isDone') !== 'false';
 
+  const userId = await tryGetUserId();
+  if (userId === null) {
+    return { success: false, error: 'Your session has expired. Please sign in again.' };
+  }
+
   return withRequestContext(async ({ todoDiscipline }) => {
-    await todoDiscipline.recordHistory(
+    const history = await todoDiscipline.recordHistory(
       disciplineId,
       new Date().toISOString(),
       isDone,
+      userId,
     );
-    return { success: true };
+
+    return history
+      ? { success: true }
+      : { success: false, error: 'Discipline not found' };
   });
 }

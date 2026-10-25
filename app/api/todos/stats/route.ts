@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getTodosStatsQuery } from '@/features/todos/queries';
+import { authzResponse } from '@/features/general/lib/api/respond';
 
 export const dynamic = 'force-dynamic';
 
@@ -17,6 +18,8 @@ export async function GET() {
       },
     );
   } catch (error) {
+    const authz = authzResponse(error);
+    if (authz) return authz;
     console.error('Failed to get todos stats:', error);
     return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
   }

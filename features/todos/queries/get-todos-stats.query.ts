@@ -1,6 +1,6 @@
 import 'server-only';
 import { withRequestContext } from '@/db';
-import { getSessionQuery } from '@/features/auth/queries';
+import { requireUserId } from '@/features/auth/lib/actor';
 
 export type TodosStats = {
   dailyCompleted: number;
@@ -14,8 +14,7 @@ export type TodosStats = {
  * Uses repository pattern via withRequestContext.
  */
 export async function getTodosStatsQuery(): Promise<TodosStats> {
-  const session = await getSessionQuery();
-  const userId = session?.userId ? Number(session.userId) : undefined;
+  const userId = await requireUserId();
 
   return withRequestContext(async ({ todo }) => {
     return todo.getTodosStats(userId);

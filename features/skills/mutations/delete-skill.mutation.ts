@@ -1,7 +1,7 @@
 'use server';
 
 import { withRequestContext } from '@/db';
-import { getSessionQuery } from '@/features/auth/queries';
+import { tryGetUserId } from '@/features/auth/lib/actor';
 import type { ActionResult } from '@/features/general/lib/types';
 
 /**
@@ -18,14 +18,16 @@ export async function deleteSkillMutation(
     return { success: false, error: 'Invalid skill id' };
   }
 
-  const session = await getSessionQuery();
-  const userId = session?.userId ? Number(session.userId) : undefined;
+  const userId = await tryGetUserId();
+  if (userId === null) {
+    return { success: false, error: 'Your session has expired. Please sign in again.' };
+  }
 
   try {
-    await withRequestContext(async ({ skill }) => {
-      await skill.deleteSkill(id, userId);
+    const success = await withRequestContext(async ({ skill }) => {
+      return await skill.deleteSkill(id, userId);
     });
-    return { success: true };
+    return success ? { success: true } : { success: false, error: 'Skill not found' };
   } catch (error) {
     console.error('Failed to delete skill:', error);
     return { success: false, error: 'Failed to delete skill' };

@@ -2,7 +2,7 @@
 
 import { type } from 'arktype';
 import { withRequestContext } from '@/db';
-import { getSessionQuery } from '@/features/auth/queries';
+import { tryGetUserId } from '@/features/auth/lib/actor';
 import { CreateLifeAreaSchema, type LifeAreaFormState } from '../types';
 
 /**
@@ -39,11 +39,17 @@ export async function createLifeAreaMutation(
     };
   }
 
-  const session = await getSessionQuery();
-  const userId = session?.userId ? Number(session.userId) : undefined;
+  const userId = await tryGetUserId();
+  if (userId === null) {
+    return {
+      errors: { general: ['Your session has expired. Please sign in again.'] },
+      inputs: { title, vision },
+      success: false,
+    };
+  }
 
   const created = await withRequestContext(async ({ lifeArea }) => {
-    return await lifeArea.createLifeArea({ title, vision, userId });
+    return await lifeArea.createLifeArea({ title, vision }, userId);
   });
 
   return {

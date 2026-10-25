@@ -2,21 +2,16 @@ import "server-only";
 import { withRequestContext } from "@/db";
 
 import type { AuthUser } from "../lib/definitions";
-import { getSessionQuery } from "./get-session.query";
+import { getUserId } from "../lib/actor";
 
 export async function getCurrentUserQuery(): Promise<AuthUser | null> {
-  const session = await getSessionQuery();
-  if (!session?.userId) {
-    return null;
-  }
-
-  const userId = Number(session.userId);
-  if (isNaN(userId)) {
+  const userId = await getUserId();
+  if (userId === null) {
     return null;
   }
 
   return withRequestContext(async ({ user }) => {
-    const record = await user.findById(userId);
+    const record = await user.findSelf(userId);
     if (!record) {
       return null;
     }

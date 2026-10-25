@@ -1,6 +1,7 @@
 'use server';
 
 import { withRequestContext } from '@/db';
+import { tryGetUserId } from '@/features/auth/lib/actor';
 import type { ActionResult } from '@/features/general/lib/types';
 
 /**
@@ -20,11 +21,17 @@ export async function recordHabitMutation(
   const isDone = formData.get('isDone') !== 'false';
   const date = new Date().toISOString().slice(0, 10);
 
+  const userId = await tryGetUserId();
+  if (userId === null) {
+    return { success: false, error: 'Your session has expired. Please sign in again.' };
+  }
+
   try {
-    await withRequestContext(async ({ habit }) => {
-      await habit.recordHistory(id, date, isDone);
+    const history = await withRequestContext(async ({ habit }) => {
+      return await habit.recordHistory(id, date, isDone, userId);
     });
-    return { success: true };
+
+    return history ? { success: true } : { success: false, error: 'Habit not found' };
   } catch (error) {
     console.error('Failed to record habit:', error);
     return { success: false, error: 'Failed to record habit' };

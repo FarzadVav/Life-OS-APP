@@ -2,7 +2,8 @@
 
 import { type } from 'arktype';
 import { withRequestContext } from '@/db';
-import { getSessionQuery } from '@/features/auth/queries';
+import { tryGetUserId } from '@/features/auth/lib/actor';
+import { ForbiddenReferenceError } from '@/features/general/lib/errors';
 import { UpdateHabitSchema, type HabitFormState } from '../types';
 
 export async function updateHabitMutation(
@@ -64,21 +65,39 @@ export async function updateHabitMutation(
     };
   }
 
-  const session = await getSessionQuery();
-  const userId = session?.userId ? Number(session.userId) : undefined;
+  const userId = await tryGetUserId();
+  if (userId === null) {
+    return {
+      errors: { general: ['Your session has expired. Please sign in again.'] },
+      inputs: { title, description, repeatInterval, lifeAreaId },
+      success: false,
+    };
+  }
 
-  const updated = await withRequestContext(async ({ habit }) => {
-    return await habit.updateHabit(
-      id,
-      {
-        title: title || undefined,
-        description,
-        repeatInterval,
-        lifeAreaId,
-      },
-      userId,
-    );
-  });
+  let updated;
+  try {
+    updated = await withRequestContext(async ({ habit }) => {
+      return await habit.updateHabit(
+        id,
+        {
+          title: title || undefined,
+          description,
+          repeatInterval,
+          lifeAreaId,
+        },
+        userId,
+      );
+    });
+  } catch (error) {
+    if (error instanceof ForbiddenReferenceError) {
+      return {
+        errors: { lifeAreaId: ['This value is not available to you.'] },
+        inputs: { title, description, repeatInterval, lifeAreaId },
+        success: false,
+      };
+    }
+    throw error;
+  }
 
   if (!updated) {
     return {

@@ -15,12 +15,14 @@ import {
   HabitHistory,
 } from './entities';
 
-// Supabase project xeigermybdqjnruwhcss (ap-northeast-1).
-// Dual-stack IPv4/IPv6 pooler connection string guarantees connectivity across all environments.
-const defaultSupabaseUrl =
-  'postgresql://postgres.xeigermybdqjnruwhcss:UpUpAndAwayIveBeen091@aws-0-ap-northeast-1.pooler.supabase.com:5432/postgres';
+// Connection string lives in .env.local only — it embeds a live database password.
+const connectionString = process.env.DATABASE_URL;
 
-const connectionString = process.env.DATABASE_URL || defaultSupabaseUrl;
+if (!connectionString) {
+  throw new Error(
+    'DATABASE_URL is not set. Next loads .env.local automatically; CLI scripts under db/scripts load it via ./load-env.',
+  );
+}
 
 export const config = defineConfig({
   clientUrl: connectionString,

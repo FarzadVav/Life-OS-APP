@@ -1,6 +1,7 @@
 'use server';
 
 import { withRequestContext } from '@/db';
+import { tryGetUserId } from '@/features/auth/lib/actor';
 import type { ActionResult } from '@/features/general/lib/types';
 
 /**
@@ -17,8 +18,13 @@ export async function toggleActionMutation(
     return { success: false, error: 'Invalid action id' };
   }
 
+  const userId = await tryGetUserId();
+  if (userId === null) {
+    return { success: false, error: 'Your session has expired. Please sign in again.' };
+  }
+
   return withRequestContext(async ({ todoAction }) => {
-    const updated = await todoAction.toggleAction(actionId);
+    const updated = await todoAction.toggleAction(actionId, userId);
 
     return updated
       ? { success: true }

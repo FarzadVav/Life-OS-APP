@@ -43,7 +43,6 @@ export const CreateHabitSchema = type({
   'description?': 'string',
   'repeatInterval?': 'string',
   'lifeAreaId?': 'number | null',
-  'userId?': 'number',
 });
 export type CreateHabitData = typeof CreateHabitSchema.infer;
 

@@ -2,7 +2,8 @@
 
 import { type } from 'arktype';
 import { withRequestContext } from '@/db';
-import { getSessionQuery } from '@/features/auth/queries';
+import { tryGetUserId } from '@/features/auth/lib/actor';
+import { ForbiddenReferenceError } from '@/features/general/lib/errors';
 import { UpdateSkillSchema, type SkillFormState } from '../types';
 
 export async function updateSkillMutation(
@@ -60,20 +61,38 @@ export async function updateSkillMutation(
     };
   }
 
-  const session = await getSessionQuery();
-  const userId = session?.userId ? Number(session.userId) : undefined;
+  const userId = await tryGetUserId();
+  if (userId === null) {
+    return {
+      errors: { general: ['Your session has expired. Please sign in again.'] },
+      inputs: { title, content, lifeAreaId },
+      success: false,
+    };
+  }
 
-  const updated = await withRequestContext(async ({ skill }) => {
-    return await skill.updateSkill(
-      id,
-      {
-        title: title || undefined,
-        content,
-        lifeAreaId,
-      },
-      userId,
-    );
-  });
+  let updated;
+  try {
+    updated = await withRequestContext(async ({ skill }) => {
+      return await skill.updateSkill(
+        id,
+        {
+          title: title || undefined,
+          content,
+          lifeAreaId,
+        },
+        userId,
+      );
+    });
+  } catch (error) {
+    if (error instanceof ForbiddenReferenceError) {
+      return {
+        errors: { lifeAreaId: ['This value is not available to you.'] },
+        inputs: { title, content, lifeAreaId },
+        success: false,
+      };
+    }
+    throw error;
+  }
 
   if (!updated) {
     return {

@@ -5,9 +5,15 @@ import type { CreateUserData, UpdateUserData } from '../lib/definitions';
 
 export type { CreateUserData, UpdateUserData };
 
+/**
+ * The `*Self` methods take the acting user's id as their only identity input,
+ * so there is no separate target id to forge — the row being read or written is
+ * always the caller's own. Pre-session lookups (username/email/credentials) are
+ * the only methods that accept an untrusted identifier.
+ */
 export class UserRepository extends EntityRepository<User> {
-  async findById(id: number): Promise<User | null> {
-    return this.findOne({ id });
+  async findSelf(actorId: number): Promise<User | null> {
+    return this.findOne({ id: actorId });
   }
 
   async findByUsername(username: string): Promise<User | null> {
@@ -95,29 +101,11 @@ export class UserRepository extends EntityRepository<User> {
     return user;
   }
 
-  async updateUser(id: number, data: UpdateUserData): Promise<User | null> {
-    const user = await this.findOne({ id });
-    if (!user) {
-      return null;
-    }
-
-    this.assign(user, {
-      ...(data.name !== undefined ? { name: data.name.trim() } : {}),
-      ...(data.email !== undefined ? { email: data.email.trim().toLowerCase() } : {}),
-      ...(data.locale !== undefined ? { locale: data.locale } : {}),
-      ...(data.colorScheme !== undefined ? { colorScheme: data.colorScheme } : {}),
-      ...(data.password !== undefined ? { password: data.password } : {}),
-    });
-
-    await this.em.flush();
-    return user;
-  }
-
-  async updatePreferences(
-    id: number,
+  async updatePreferencesSelf(
+    actorId: number,
     preferences: { locale?: string; colorScheme?: string },
   ): Promise<User | null> {
-    const user = await this.findOne({ id });
+    const user = await this.findOne({ id: actorId });
     if (!user) {
       return null;
     }
@@ -131,16 +119,5 @@ export class UserRepository extends EntityRepository<User> {
 
     await this.em.flush();
     return user;
-  }
-
-  async deleteUser(id: number): Promise<boolean> {
-    const user = await this.findOne({ id });
-    if (!user) {
-      return false;
-    }
-
-    this.em.remove(user);
-    await this.em.flush();
-    return true;
   }
 }

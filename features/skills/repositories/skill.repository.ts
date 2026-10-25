@@ -1,6 +1,8 @@
 import { EntityRepository } from '@mikro-orm/postgresql';
+import type { FilterQuery } from '@mikro-orm/core';
 import { User } from '@/db/entities/User';
 import { LifeArea } from '@/db/entities/LifeArea';
+import { assertOwnedLifeAreas } from '@/features/general/lib/orm-scope';
 import type { Skill } from '@/db/entities/Skill';
 import type { CreateSkillData, UpdateSkillData, Skill as SkillDto } from '@/features/skills/types';
 
@@ -31,11 +33,8 @@ export function serializeSkill(skill: Skill): SkillDto {
 }
 
 export class SkillRepository extends EntityRepository<Skill> {
-  async findAllSkills(userId?: number, lifeAreaId?: number): Promise<Skill[]> {
-    const where: Record<string, unknown> = {};
-    if (userId) {
-      where.user = userId;
-    }
+  async findAllSkills(userId: number, lifeAreaId?: number): Promise<Skill[]> {
+    const where: FilterQuery<Skill> = { user: userId };
     if (lifeAreaId) {
       where.lifeArea = lifeAreaId;
     }
@@ -46,27 +45,22 @@ export class SkillRepository extends EntityRepository<Skill> {
     });
   }
 
-  async findById(id: number, userId?: number): Promise<Skill | null> {
-    const where: Record<string, unknown> = { id };
-    if (userId) {
-      where.user = userId;
-    }
-    return this.findOne(where, {
+  async findById(id: number, userId: number): Promise<Skill | null> {
+    return this.findOne({ id, user: userId }, {
       populate: ['lifeArea'],
     });
   }
 
-  async createSkill(data: CreateSkillData): Promise<Skill> {
-    const user = data.userId ? this.em.getReference(User, data.userId) : undefined;
-    const lifeArea = data.lifeAreaId
-      ? this.em.getReference(LifeArea, data.lifeAreaId)
-      : undefined;
+  async createSkill(data: CreateSkillData, userId: number): Promise<Skill> {
+    await assertOwnedLifeAreas(this.em, userId, [data.lifeAreaId]);
 
     const skill = this.create({
       title: data.title.trim(),
       content: data.content || '',
-      lifeArea,
-      user,
+      lifeArea: data.lifeAreaId
+        ? this.em.getReference(LifeArea, data.lifeAreaId)
+        : undefined,
+      user: this.em.getReference(User, userId),
     });
 
     await this.em.flush();
@@ -76,18 +70,18 @@ export class SkillRepository extends EntityRepository<Skill> {
   async updateSkill(
     id: number,
     data: UpdateSkillData,
-    userId?: number,
+    userId: number,
   ): Promise<Skill | null> {
-    const where: Record<string, unknown> = { id };
-    if (userId) {
-      where.user = userId;
-    }
-    const skill = await this.findOne(where, {
+    const skill = await this.findOne({ id, user: userId }, {
       populate: ['lifeArea'],
     });
 
     if (!skill) {
       return null;
+    }
+
+    if (data.lifeAreaId !== undefined) {
+      await assertOwnedLifeAreas(this.em, userId, [data.lifeAreaId]);
     }
 
     const lifeArea =
@@ -107,12 +101,8 @@ export class SkillRepository extends EntityRepository<Skill> {
     return skill;
   }
 
-  async deleteSkill(id: number, userId?: number): Promise<boolean> {
-    const where: Record<string, unknown> = { id };
-    if (userId) {
-      where.user = userId;
-    }
-    const skill = await this.findOne(where);
+  async deleteSkill(id: number, userId: number): Promise<boolean> {
+    const skill = await this.findOne({ id, user: userId });
     if (!skill) {
       return false;
     }

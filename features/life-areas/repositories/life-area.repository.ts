@@ -19,31 +19,21 @@ export function serializeLifeArea(lifeArea: LifeArea): LifeAreaDto {
 }
 
 export class LifeAreaRepository extends EntityRepository<LifeArea> {
-  async findAllLifeAreas(userId?: number): Promise<LifeArea[]> {
-    const where: Record<string, unknown> = {};
-    if (userId) {
-      where.user = userId;
-    }
-
-    return this.find(where, {
+  async findAllLifeAreas(userId: number): Promise<LifeArea[]> {
+    return this.find({ user: userId }, {
       orderBy: { createdAt: 'ASC' },
     });
   }
 
-  async findById(id: number, userId?: number): Promise<LifeArea | null> {
-    const where: Record<string, unknown> = { id };
-    if (userId) {
-      where.user = userId;
-    }
-    return this.findOne(where);
+  async findById(id: number, userId: number): Promise<LifeArea | null> {
+    return this.findOne({ id, user: userId });
   }
 
-  async createLifeArea(data: CreateLifeAreaData): Promise<LifeArea> {
-    const user = data.userId ? this.em.getReference(User, data.userId) : undefined;
+  async createLifeArea(data: CreateLifeAreaData, userId: number): Promise<LifeArea> {
     const lifeArea = this.create({
       title: data.title.trim(),
       vision: data.vision || '',
-      user,
+      user: this.em.getReference(User, userId),
     });
     await this.em.flush();
     return lifeArea;
@@ -52,13 +42,9 @@ export class LifeAreaRepository extends EntityRepository<LifeArea> {
   async updateLifeArea(
     id: number,
     data: UpdateLifeAreaData,
-    userId?: number,
+    userId: number,
   ): Promise<LifeArea | null> {
-    const where: Record<string, unknown> = { id };
-    if (userId) {
-      where.user = userId;
-    }
-    const lifeArea = await this.findOne(where);
+    const lifeArea = await this.findOne({ id, user: userId });
     if (!lifeArea) {
       return null;
     }
@@ -72,12 +58,8 @@ export class LifeAreaRepository extends EntityRepository<LifeArea> {
     return lifeArea;
   }
 
-  async deleteLifeArea(id: number, userId?: number): Promise<boolean> {
-    const where: Record<string, unknown> = { id };
-    if (userId) {
-      where.user = userId;
-    }
-    const lifeArea = await this.findOne(where);
+  async deleteLifeArea(id: number, userId: number): Promise<boolean> {
+    const lifeArea = await this.findOne({ id, user: userId });
     if (!lifeArea) {
       return false;
     }

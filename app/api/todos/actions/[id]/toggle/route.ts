@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { withRequestContext } from '@/db';
+import { requireUserId } from '@/features/auth/lib/actor';
+import { authzResponse } from '@/features/general/lib/api/respond';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,6 +15,7 @@ interface RouteContext {
  */
 export async function POST(_request: NextRequest, { params }: RouteContext) {
   try {
+    const userId = await requireUserId();
     const { id } = await params;
     const actionId = Number(id);
 
@@ -21,7 +24,7 @@ export async function POST(_request: NextRequest, { params }: RouteContext) {
     }
 
     const updated = await withRequestContext(async ({ todoAction }) => {
-      return await todoAction.toggleAction(actionId);
+      return await todoAction.toggleAction(actionId, userId);
     });
 
     if (!updated) {
@@ -41,6 +44,8 @@ export async function POST(_request: NextRequest, { params }: RouteContext) {
       { status: 200 },
     );
   } catch (error) {
+    const authz = authzResponse(error);
+    if (authz) return authz;
     console.error('Failed to toggle action:', error);
     return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
   }

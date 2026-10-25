@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import './load-env';
 import { MikroORM } from '@mikro-orm/postgresql';
 import config from '../mikro-orm.config';
 

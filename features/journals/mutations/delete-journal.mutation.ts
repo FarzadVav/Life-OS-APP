@@ -1,7 +1,7 @@
 'use server';
 
 import { withRequestContext } from '@/db';
-import { getSessionQuery } from '@/features/auth/queries';
+import { tryGetUserId } from '@/features/auth/lib/actor';
 import type { ActionResult } from '@/features/general/lib/types';
 
 /**
@@ -18,14 +18,13 @@ export async function deleteJournalMutation(
     return { success: false, error: 'Invalid journal id' };
   }
 
-  const session = await getSessionQuery();
-  const userId = session?.userId ? Number(session.userId) : undefined;
+  const userId = await tryGetUserId();
+  if (userId === null) {
+    return { success: false, error: 'Your session has expired. Please sign in again.' };
+  }
 
   return withRequestContext(async ({ journal }) => {
-    let success = await journal.deleteJournal(id, userId);
-    if (!success && !userId) {
-      success = await journal.deleteJournal(id);
-    }
+    const success = await journal.deleteJournal(id, userId);
     return success ? { success: true } : { success: false, error: 'Journal not found' };
   });
 }

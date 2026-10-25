@@ -1,16 +1,15 @@
 import 'server-only';
 import { withRequestContext } from '@/db';
-import { getSessionQuery } from '@/features/auth/queries';
+import { requireUserId } from '@/features/auth/lib/actor';
 import { serializeTodo } from '../repositories';
 import type { Todo, TodoType } from '../types';
 
 /**
- * Server query for retrieving todos list filtered by optional type.
- * Uses repository pattern via withRequestContext.
+ * Server query for retrieving the acting user's todos, optionally filtered by type.
+ * Authorization is resolved here rather than trusting a caller.
  */
 export async function getTodosQuery(type?: TodoType | 'all' | string): Promise<Todo[]> {
-  const session = await getSessionQuery();
-  const userId = session?.userId ? Number(session.userId) : undefined;
+  const userId = await requireUserId();
 
   return withRequestContext(async ({ todo }) => {
     let entities;

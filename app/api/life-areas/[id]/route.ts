@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { type } from 'arktype';
 import { withRequestContext } from '@/db';
-import { getSessionQuery } from '@/features/auth/queries';
 import { serializeLifeArea } from '@/features/life-areas/repositories';
 import { UpdateLifeAreaSchema } from '@/features/life-areas/types';
+import { requireUserId } from '@/features/auth/lib/actor';
+import { authzResponse } from '@/features/general/lib/api/respond';
 
 export const dynamic = 'force-dynamic';
 
@@ -16,14 +17,12 @@ interface RouteContext {
  */
 export async function GET(request: NextRequest, context: RouteContext) {
   try {
+    const userId = await requireUserId();
     const { id: rawId } = await context.params;
     const id = Number(rawId);
     if (isNaN(id)) {
       return NextResponse.json({ message: 'Invalid ID' }, { status: 400 });
     }
-
-    const session = await getSessionQuery();
-    const userId = session?.userId ? Number(session.userId) : undefined;
 
     const item = await withRequestContext(async ({ lifeArea }) => {
       return await lifeArea.findById(id, userId);
@@ -35,6 +34,8 @@ export async function GET(request: NextRequest, context: RouteContext) {
 
     return NextResponse.json({ lifeArea: serializeLifeArea(item) }, { status: 200 });
   } catch (error) {
+    const authz = authzResponse(error);
+    if (authz) return authz;
     console.error('Failed to get life area by ID:', error);
     return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
   }
@@ -45,6 +46,7 @@ export async function GET(request: NextRequest, context: RouteContext) {
  */
 export async function PUT(request: NextRequest, context: RouteContext) {
   try {
+    const userId = await requireUserId();
     const { id: rawId } = await context.params;
     const id = Number(rawId);
     if (isNaN(id)) {
@@ -61,9 +63,6 @@ export async function PUT(request: NextRequest, context: RouteContext) {
       );
     }
 
-    const session = await getSessionQuery();
-    const userId = session?.userId ? Number(session.userId) : undefined;
-
     const updated = await withRequestContext(async ({ lifeArea }) => {
       return await lifeArea.updateLifeArea(id, validation, userId);
     });
@@ -74,6 +73,8 @@ export async function PUT(request: NextRequest, context: RouteContext) {
 
     return NextResponse.json({ lifeArea: serializeLifeArea(updated) }, { status: 200 });
   } catch (error) {
+    const authz = authzResponse(error);
+    if (authz) return authz;
     console.error('Failed to update life area:', error);
     return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
   }
@@ -84,14 +85,12 @@ export async function PUT(request: NextRequest, context: RouteContext) {
  */
 export async function DELETE(request: NextRequest, context: RouteContext) {
   try {
+    const userId = await requireUserId();
     const { id: rawId } = await context.params;
     const id = Number(rawId);
     if (isNaN(id)) {
       return NextResponse.json({ message: 'Invalid ID' }, { status: 400 });
     }
-
-    const session = await getSessionQuery();
-    const userId = session?.userId ? Number(session.userId) : undefined;
 
     const deleted = await withRequestContext(async ({ lifeArea }) => {
       return await lifeArea.deleteLifeArea(id, userId);
@@ -103,6 +102,8 @@ export async function DELETE(request: NextRequest, context: RouteContext) {
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {
+    const authz = authzResponse(error);
+    if (authz) return authz;
     console.error('Failed to delete life area:', error);
     return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
   }

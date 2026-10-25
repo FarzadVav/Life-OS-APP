@@ -6,13 +6,27 @@ import type { CreateActionData, UpdateActionData } from '@/features/todos/types'
 
 export type { CreateActionData, UpdateActionData };
 
+/**
+ * TodoAction has no `user` column of its own, so ownership is enforced through
+ * the owning mission: `{ mission: { user: userId } }` compiles to an inner join
+ * on todos. Every method requires userId for that reason.
+ */
 export class TodoActionRepository extends EntityRepository<TodoAction> {
-  async findByMission(missionId: number): Promise<TodoAction[]> {
-    return this.find({ mission: missionId }, { orderBy: { deadline: 'ASC' } });
+  async findByMission(missionId: number, userId: number): Promise<TodoAction[]> {
+    return this.find({ mission: { id: missionId, user: userId } }, { orderBy: { deadline: 'ASC' } });
   }
 
-  async createAction(missionId: number, data: CreateActionData): Promise<TodoAction> {
-    const mission = this.em.getReference(Todo, missionId);
+  /** Returns null when the mission does not belong to userId. */
+  async createAction(
+    missionId: number,
+    data: CreateActionData,
+    userId: number,
+  ): Promise<TodoAction | null> {
+    const mission = await this.em.findOne(Todo, { id: missionId, user: userId });
+    if (!mission) {
+      return null;
+    }
+
     const action = this.create({
       title: data.title.trim(),
       deadline: data.deadline.trim(),
@@ -23,8 +37,8 @@ export class TodoActionRepository extends EntityRepository<TodoAction> {
     return action;
   }
 
-  async toggleAction(id: number): Promise<TodoAction | null> {
-    const action = await this.findOne({ id });
+  async toggleAction(id: number, userId: number): Promise<TodoAction | null> {
+    const action = await this.findOne({ id, mission: { user: userId } });
     if (!action) {
       return null;
     }
@@ -34,8 +48,8 @@ export class TodoActionRepository extends EntityRepository<TodoAction> {
     return action;
   }
 
-  async updateAction(id: number, data: UpdateActionData): Promise<TodoAction | null> {
-    const action = await this.findOne({ id });
+  async updateAction(id: number, data: UpdateActionData, userId: number): Promise<TodoAction | null> {
+    const action = await this.findOne({ id, mission: { user: userId } });
     if (!action) {
       return null;
     }
@@ -50,8 +64,8 @@ export class TodoActionRepository extends EntityRepository<TodoAction> {
     return action;
   }
 
-  async deleteAction(id: number): Promise<boolean> {
-    const action = await this.findOne({ id });
+  async deleteAction(id: number, userId: number): Promise<boolean> {
+    const action = await this.findOne({ id, mission: { user: userId } });
     if (!action) {
       return false;
     }

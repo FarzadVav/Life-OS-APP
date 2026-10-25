@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { withRequestContext } from '@/db';
-import { getSessionQuery } from '@/features/auth/queries';
 import { serializeTodo } from '@/features/todos/repositories';
+import { requireUserId } from '@/features/auth/lib/actor';
+import { authzResponse } from '@/features/general/lib/api/respond';
 
 export const dynamic = 'force-dynamic';
 
@@ -15,6 +16,7 @@ interface RouteContext {
  */
 export async function POST(_request: NextRequest, { params }: RouteContext) {
   try {
+    const userId = await requireUserId();
     const { id } = await params;
     const todoId = Number(id);
 
@@ -22,15 +24,8 @@ export async function POST(_request: NextRequest, { params }: RouteContext) {
       return NextResponse.json({ message: 'Invalid ID' }, { status: 400 });
     }
 
-    const session = await getSessionQuery();
-    const userId = session?.userId ? Number(session.userId) : undefined;
-
     const updated = await withRequestContext(async ({ todo }) => {
-      let result = await todo.toggleDone(todoId, userId);
-      if (!result && !userId) {
-        result = await todo.toggleDone(todoId);
-      }
-      return result;
+      return await todo.toggleDone(todoId, userId);
     });
 
     if (!updated) {
@@ -39,6 +34,8 @@ export async function POST(_request: NextRequest, { params }: RouteContext) {
 
     return NextResponse.json({ success: true, todo: serializeTodo(updated) }, { status: 200 });
   } catch (error) {
+    const authz = authzResponse(error);
+    if (authz) return authz;
     console.error('Failed to toggle todo in /api/todos/[id]/toggle:', error);
     return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
   }

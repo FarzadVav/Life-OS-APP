@@ -39,7 +39,6 @@ export const CreateJournalSchema = type({
   title: 'string >= 1',
   content: 'string >= 1',
   type: JournalCategorySchema,
-  'userId?': 'number',
 });
 export type CreateJournalData = typeof CreateJournalSchema.infer;
 

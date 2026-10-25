@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import './load-env';
 import fs from 'node:fs';
 import path from 'node:path';
 import { spawn } from 'node:child_process';
@@ -7,36 +8,6 @@ import config from '../mikro-orm.config';
 // 1. Resolve project directories
 const projectRoot = process.cwd();
 const backupsDir = path.resolve(projectRoot, 'backups');
-
-// 2. Helper to load environment variables from .env files if not already exported
-function loadEnvFile(envPath: string): void {
-  if (!fs.existsSync(envPath)) return;
-  try {
-    const content = fs.readFileSync(envPath, 'utf8');
-    for (const line of content.split('\n')) {
-      const trimmed = line.trim();
-      if (!trimmed || trimmed.startsWith('#')) continue;
-      const eqIdx = trimmed.indexOf('=');
-      if (eqIdx === -1) continue;
-      const key = trimmed.slice(0, eqIdx).trim();
-      let val = trimmed.slice(eqIdx + 1).trim();
-      if (
-        (val.startsWith('"') && val.endsWith('"')) ||
-        (val.startsWith("'") && val.endsWith("'"))
-      ) {
-        val = val.slice(1, -1);
-      }
-      if (!process.env[key]) {
-        process.env[key] = val;
-      }
-    }
-  } catch (err) {
-    console.warn(`⚠️ Warning: Could not read env file at ${envPath}:`, (err as Error).message);
-  }
-}
-
-loadEnvFile(path.resolve(projectRoot, '.env'));
-loadEnvFile(path.resolve(projectRoot, '.env.local'));
 
 // Resolve DATABASE_URL from environment or fallback to config clientUrl
 const databaseUrl =

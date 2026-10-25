@@ -5,9 +5,12 @@ import { SignJWT, jwtVerify } from "jose";
 
 import { SessionPayload } from "./definitions";
 
-const secretKey =
-  process.env.SESSION_SECRET ||
-  "life-os-default-super-secret-key-32-chars-minimum-token-auth!";
+const secretKey = process.env.SESSION_SECRET;
+if (!secretKey) {
+  throw new Error(
+    "SESSION_SECRET is not set. A committed default would let anyone forge a session cookie for any user.",
+  );
+}
 const encodedKey = new TextEncoder().encode(secretKey);
 
 export async function encrypt(payload: SessionPayload) {

@@ -1,8 +1,10 @@
 import { EntityRepository } from '@mikro-orm/postgresql';
+import type { FilterQuery } from '@mikro-orm/core';
 import { User } from '@/db/entities/User';
 import { LifeArea } from '@/db/entities/LifeArea';
 import { Habit } from '@/db/entities/Habit';
 import { HabitHistory } from '@/db/entities/HabitHistory';
+import { assertOwnedLifeAreas } from '@/features/general/lib/orm-scope';
 
 import type {
   CreateHabitData,
@@ -45,19 +47,12 @@ export function serializeHabit(habit: Habit): HabitDto {
 
 export class HabitRepository extends EntityRepository<Habit> {
   async findAllHabits(
-    userId?: number,
+    userId: number,
     options?: { lifeAreaId?: number | null },
   ): Promise<Habit[]> {
-    const where: Record<string, unknown> = {};
-    if (userId) {
-      where.user = userId;
-    }
+    const where: FilterQuery<Habit> = { user: userId };
     if (options?.lifeAreaId !== undefined) {
-      if (options.lifeAreaId === null) {
-        where.lifeArea = null;
-      } else {
-        where.lifeArea = options.lifeAreaId;
-      }
+      where.lifeArea = options.lifeAreaId;
     }
 
     return this.find(where, {
@@ -66,27 +61,22 @@ export class HabitRepository extends EntityRepository<Habit> {
     });
   }
 
-  async findById(id: number, userId?: number): Promise<Habit | null> {
-    const where: Record<string, unknown> = { id };
-    if (userId) {
-      where.user = userId;
-    }
-    return this.findOne(where, { populate: ['lifeArea', 'history'] });
+  async findById(id: number, userId: number): Promise<Habit | null> {
+    return this.findOne({ id, user: userId }, { populate: ['lifeArea', 'history'] });
   }
 
-  async createHabit(data: CreateHabitData): Promise<Habit> {
-    const user = data.userId ? this.em.getReference(User, data.userId) : undefined;
-    const lifeArea =
-      data.lifeAreaId && data.lifeAreaId > 0
-        ? this.em.getReference(LifeArea, data.lifeAreaId)
-        : undefined;
+  async createHabit(data: CreateHabitData, userId: number): Promise<Habit> {
+    await assertOwnedLifeAreas(this.em, userId, [data.lifeAreaId]);
 
     const habit = this.create({
       title: data.title.trim(),
       description: data.description?.trim() || '',
       repeatInterval: data.repeatInterval?.trim() || 'Every 1 Day',
-      lifeArea,
-      user,
+      lifeArea:
+        data.lifeAreaId && data.lifeAreaId > 0
+          ? this.em.getReference(LifeArea, data.lifeAreaId)
+          : undefined,
+      user: this.em.getReference(User, userId),
     });
 
     await this.em.flush();
@@ -97,15 +87,15 @@ export class HabitRepository extends EntityRepository<Habit> {
   async updateHabit(
     id: number,
     data: UpdateHabitData,
-    userId?: number,
+    userId: number,
   ): Promise<Habit | null> {
-    const where: Record<string, unknown> = { id };
-    if (userId) {
-      where.user = userId;
-    }
-    const habit = await this.findOne(where, { populate: ['lifeArea', 'history'] });
+    const habit = await this.findOne({ id, user: userId }, { populate: ['lifeArea', 'history'] });
     if (!habit) {
       return null;
+    }
+
+    if (data.lifeAreaId !== undefined) {
+      await assertOwnedLifeAreas(this.em, userId, [data.lifeAreaId]);
     }
 
     if (data.title !== undefined) {
@@ -128,12 +118,8 @@ export class HabitRepository extends EntityRepository<Habit> {
     return habit;
   }
 
-  async deleteHabit(id: number, userId?: number): Promise<boolean> {
-    const where: Record<string, unknown> = { id };
-    if (userId) {
-      where.user = userId;
-    }
-    const habit = await this.findOne(where);
+  async deleteHabit(id: number, userId: number): Promise<boolean> {
+    const habit = await this.findOne({ id, user: userId });
     if (!habit) {
       return false;
     }
@@ -143,16 +129,24 @@ export class HabitRepository extends EntityRepository<Habit> {
     return true;
   }
 
+  /**
+   * Returns null when the habit is missing or not owned by userId, so callers
+   * treat "not yours" the same as "not found".
+   */
   async recordHistory(
     habitId: number,
     date: string,
-    isDone = true,
-  ): Promise<HabitHistory> {
-    const habit = await this.findOneOrFail({ id: habitId });
+    isDone: boolean,
+    userId: number,
+  ): Promise<HabitHistory | null> {
+    const habit = await this.findOne({ id: habitId, user: userId });
+    if (!habit) {
+      return null;
+    }
 
     // Check if a record already exists for this date to avoid duplicate entries
     const existing = await this.em.findOne(HabitHistory, {
-      habit: habitId,
+      habit: habit.id,
       date,
     });
 

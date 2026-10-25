@@ -4,6 +4,7 @@ import { User } from '@/db/entities/User';
 import { TodoAction } from '@/db/entities/TodoAction';
 import { TodoDiscipline } from '@/db/entities/TodoDiscipline';
 import { LifeArea } from '@/db/entities/LifeArea';
+import { assertOwnedLifeAreas } from '@/features/general/lib/orm-scope';
 import type { Todo } from '@/db/entities/Todo';
 
 import type { CreateTodoData, UpdateTodoData, Todo as TodoDto } from '@/features/todos/types';
@@ -71,37 +72,25 @@ export function serializeTodo(todo: Todo): TodoDto {
 }
 
 export class TodoRepository extends EntityRepository<Todo> {
-  async findDaily(userId?: number): Promise<Todo[]> {
-    const where: Record<string, unknown> = { type: TodoType.DAILY };
-    if (userId) {
-      where.user = userId;
-    }
-    return this.find(where, {
+  async findDaily(userId: number): Promise<Todo[]> {
+    return this.find({ type: TodoType.DAILY, user: userId }, {
       populate: ['lifeArea'],
       orderBy: { deadline: 'ASC' },
     });
   }
 
-  async findUpcoming(userId?: number): Promise<Todo[]> {
-    const where: Record<string, unknown> = { type: TodoType.UPCOMING };
-    if (userId) {
-      where.user = userId;
-    }
-    return this.find(where, {
+  async findUpcoming(userId: number): Promise<Todo[]> {
+    return this.find({ type: TodoType.UPCOMING, user: userId }, {
       populate: ['lifeArea'],
       orderBy: { deadline: 'ASC' },
     });
   }
 
   async findMissions(
-    userId?: number,
+    userId: number,
     options?: { populateRelations?: boolean },
   ): Promise<Todo[]> {
-    const where: Record<string, unknown> = { type: TodoType.MISSION };
-    if (userId) {
-      where.user = userId;
-    }
-    return this.find(where, {
+    return this.find({ type: TodoType.MISSION, user: userId }, {
       populate: options?.populateRelations
         ? ['actions', 'disciplines.history', 'disciplines.lifeArea', 'lifeArea']
         : ['lifeArea'],
@@ -110,14 +99,10 @@ export class TodoRepository extends EntityRepository<Todo> {
   }
 
   async findAllTodos(
-    userId?: number,
+    userId: number,
     options?: { populateRelations?: boolean },
   ): Promise<Todo[]> {
-    const where: Record<string, unknown> = {};
-    if (userId) {
-      where.user = userId;
-    }
-    return this.find(where, {
+    return this.find({ user: userId }, {
       populate:
         options?.populateRelations !== false
           ? ['actions', 'disciplines.history', 'disciplines.lifeArea', 'lifeArea']
@@ -126,28 +111,24 @@ export class TodoRepository extends EntityRepository<Todo> {
     });
   }
 
-  async findById(id: number, userId?: number): Promise<Todo | null> {
-    const where: Record<string, unknown> = { id };
-    if (userId) {
-      where.user = userId;
-    }
-    return this.findOne(where, {
+  async findById(id: number, userId: number): Promise<Todo | null> {
+    return this.findOne({ id, user: userId }, {
       populate: ['actions', 'disciplines.history', 'disciplines.lifeArea', 'lifeArea'],
     });
   }
 
-  async findMissionById(id: number, userId?: number): Promise<Todo | null> {
-    const where: Record<string, unknown> = { id, type: TodoType.MISSION };
-    if (userId) {
-      where.user = userId;
-    }
-    return this.findOne(where, {
+  async findMissionById(id: number, userId: number): Promise<Todo | null> {
+    return this.findOne({ id, type: TodoType.MISSION, user: userId }, {
       populate: ['actions', 'disciplines.history', 'disciplines.lifeArea', 'lifeArea'],
     });
   }
 
-  async createTodo(data: CreateTodoData): Promise<Todo> {
-    const user = data.userId ? this.em.getReference(User, data.userId) : undefined;
+  async createTodo(data: CreateTodoData, userId: number): Promise<Todo> {
+    await assertOwnedLifeAreas(this.em, userId, [
+      data.lifeAreaId,
+      ...(data.disciplines?.map((disc) => disc.lifeAreaId) ?? []),
+    ]);
+
     const lifeArea = data.lifeAreaId
       ? this.em.getReference(LifeArea, data.lifeAreaId)
       : undefined;
@@ -158,7 +139,7 @@ export class TodoRepository extends EntityRepository<Todo> {
       deadline: data.deadline.trim(),
       difficulty: data.difficulty,
       isDone: data.isDone ?? false,
-      user,
+      user: this.em.getReference(User, userId),
       lifeArea,
     });
 
@@ -196,17 +177,20 @@ export class TodoRepository extends EntityRepository<Todo> {
     return todo;
   }
 
-  async updateTodo(id: number, data: UpdateTodoData, userId?: number): Promise<Todo | null> {
-    const where: Record<string, unknown> = { id };
-    if (userId) {
-      where.user = userId;
-    }
-    const todo = await this.findOne(where, {
+  async updateTodo(id: number, data: UpdateTodoData, userId: number): Promise<Todo | null> {
+    const todo = await this.findOne({ id, user: userId }, {
       populate: ['actions', 'disciplines.history', 'disciplines.lifeArea', 'lifeArea'],
     });
 
     if (!todo) {
       return null;
+    }
+
+    if (data.lifeAreaId !== undefined || data.disciplines !== undefined) {
+      await assertOwnedLifeAreas(this.em, userId, [
+        data.lifeAreaId,
+        ...(data.disciplines?.map((disc) => disc.lifeAreaId) ?? []),
+      ]);
     }
 
     const lifeArea =
@@ -300,12 +284,8 @@ export class TodoRepository extends EntityRepository<Todo> {
     return todo;
   }
 
-  async toggleDone(id: number, userId?: number): Promise<Todo | null> {
-    const where: Record<string, unknown> = { id };
-    if (userId) {
-      where.user = userId;
-    }
-    const todo = await this.findOne(where);
+  async toggleDone(id: number, userId: number): Promise<Todo | null> {
+    const todo = await this.findOne({ id, user: userId });
     if (!todo) {
       return null;
     }
@@ -315,12 +295,8 @@ export class TodoRepository extends EntityRepository<Todo> {
     return todo;
   }
 
-  async deleteTodo(id: number, userId?: number): Promise<boolean> {
-    const where: Record<string, unknown> = { id };
-    if (userId) {
-      where.user = userId;
-    }
-    const todo = await this.findOne(where);
+  async deleteTodo(id: number, userId: number): Promise<boolean> {
+    const todo = await this.findOne({ id, user: userId });
     if (!todo) {
       return false;
     }
@@ -330,19 +306,17 @@ export class TodoRepository extends EntityRepository<Todo> {
     return true;
   }
 
-  async getTodosStats(userId?: number): Promise<{
+  async getTodosStats(userId: number): Promise<{
     dailyCompleted: number;
     dailyTotal: number;
     upcomingTotal: number;
     missionsTotal: number;
   }> {
-    const baseWhere = userId ? { user: userId } : {};
-
     const [dailyCompleted, dailyTotal, upcomingTotal, missionsTotal] = await Promise.all([
-      this.count({ ...baseWhere, type: TodoType.DAILY, isDone: true }),
-      this.count({ ...baseWhere, type: TodoType.DAILY }),
-      this.count({ ...baseWhere, type: TodoType.UPCOMING }),
-      this.count({ ...baseWhere, type: TodoType.MISSION }),
+      this.count({ user: userId, type: TodoType.DAILY, isDone: true }),
+      this.count({ user: userId, type: TodoType.DAILY }),
+      this.count({ user: userId, type: TodoType.UPCOMING }),
+      this.count({ user: userId, type: TodoType.MISSION }),
     ]);
 
     return {

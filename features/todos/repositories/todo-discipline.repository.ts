@@ -7,13 +7,29 @@ import type { CreateDisciplineData } from '@/features/todos/types';
 
 export type { CreateDisciplineData };
 
+/**
+ * Ownership is enforced through the mission (`{ mission: { user: userId } }`),
+ * since todo_disciplines carries no user column.
+ */
 export class TodoDisciplineRepository extends EntityRepository<TodoDiscipline> {
-  async findByMission(missionId: number): Promise<TodoDiscipline[]> {
-    return this.find({ mission: missionId }, { populate: ['history'], orderBy: { id: 'ASC' } });
+  async findByMission(missionId: number, userId: number): Promise<TodoDiscipline[]> {
+    return this.find(
+      { mission: { id: missionId, user: userId } },
+      { populate: ['history'], orderBy: { id: 'ASC' } },
+    );
   }
 
-  async createDiscipline(missionId: number, data: CreateDisciplineData): Promise<TodoDiscipline> {
-    const mission = this.em.getReference(Todo, missionId);
+  /** Returns null when the mission does not belong to userId. */
+  async createDiscipline(
+    missionId: number,
+    data: CreateDisciplineData,
+    userId: number,
+  ): Promise<TodoDiscipline | null> {
+    const mission = await this.em.findOne(Todo, { id: missionId, user: userId });
+    if (!mission) {
+      return null;
+    }
+
     const discipline = this.create({
       title: data.title.trim(),
       repeatInterval: data.repeatInterval.trim(),
@@ -23,12 +39,18 @@ export class TodoDisciplineRepository extends EntityRepository<TodoDiscipline> {
     return discipline;
   }
 
+  /** Returns null when the discipline is missing or not owned by userId. */
   async recordHistory(
     disciplineId: number,
     date: string,
-    isDone = true,
-  ): Promise<DisciplineHistory> {
-    const discipline = await this.findOneOrFail({ id: disciplineId });
+    isDone: boolean,
+    userId: number,
+  ): Promise<DisciplineHistory | null> {
+    const discipline = await this.findOne({ id: disciplineId, mission: { user: userId } });
+    if (!discipline) {
+      return null;
+    }
+
     const history = this.em.create(DisciplineHistory, {
       date,
       isDone,
@@ -38,8 +60,8 @@ export class TodoDisciplineRepository extends EntityRepository<TodoDiscipline> {
     return history;
   }
 
-  async deleteDiscipline(id: number): Promise<boolean> {
-    const discipline = await this.findOne({ id });
+  async deleteDiscipline(id: number, userId: number): Promise<boolean> {
+    const discipline = await this.findOne({ id, mission: { user: userId } });
     if (!discipline) {
       return false;
     }

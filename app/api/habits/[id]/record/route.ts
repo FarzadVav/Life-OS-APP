@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { withRequestContext } from '@/db';
+import { requireUserId } from '@/features/auth/lib/actor';
+import { authzResponse } from '@/features/general/lib/api/respond';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,6 +15,7 @@ interface RouteContext {
  */
 export async function POST(request: NextRequest, { params }: RouteContext) {
   try {
+    const userId = await requireUserId();
     const { id } = await params;
     const habitId = Number(id);
 
@@ -25,8 +28,12 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
     const date = body.date || new Date().toISOString().slice(0, 10);
 
     const history = await withRequestContext(async ({ habit }) => {
-      return await habit.recordHistory(habitId, date, isDone);
+      return await habit.recordHistory(habitId, date, isDone, userId);
     });
+
+    if (!history) {
+      return NextResponse.json({ message: 'Habit not found' }, { status: 404 });
+    }
 
     return NextResponse.json(
       {
@@ -40,6 +47,8 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
       { status: 200 },
     );
   } catch (error) {
+    const authz = authzResponse(error);
+    if (authz) return authz;
     console.error('Failed to record habit history in POST /api/habits/[id]/record:', error);
     return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
   }

@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { type } from 'arktype';
 import { withRequestContext } from '@/db';
-import { getSessionQuery } from '@/features/auth/queries';
 import { serializeHabit } from '@/features/habits/repositories';
 import { UpdateHabitSchema } from '@/features/habits/types';
+import { requireUserId } from '@/features/auth/lib/actor';
+import { authzResponse } from '@/features/general/lib/api/respond';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,6 +14,7 @@ interface RouteContext {
 
 export async function GET(_request: NextRequest, { params }: RouteContext) {
   try {
+    const userId = await requireUserId();
     const { id } = await params;
     const habitId = Number(id);
 
@@ -20,19 +22,18 @@ export async function GET(_request: NextRequest, { params }: RouteContext) {
       return NextResponse.json({ message: 'Invalid ID' }, { status: 400 });
     }
 
-    const session = await getSessionQuery();
-    const userId = session?.userId ? Number(session.userId) : undefined;
-
-    const habit = await withRequestContext(async ({ habit }) => {
+    const found = await withRequestContext(async ({ habit }) => {
       return await habit.findById(habitId, userId);
     });
 
-    if (!habit) {
+    if (!found) {
       return NextResponse.json({ message: 'Habit not found' }, { status: 404 });
     }
 
-    return NextResponse.json({ habit: serializeHabit(habit) }, { status: 200 });
+    return NextResponse.json({ habit: serializeHabit(found) }, { status: 200 });
   } catch (error) {
+    const authz = authzResponse(error);
+    if (authz) return authz;
     console.error('Failed to get habit in GET /api/habits/[id]:', error);
     return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
   }
@@ -40,6 +41,7 @@ export async function GET(_request: NextRequest, { params }: RouteContext) {
 
 export async function PUT(request: NextRequest, { params }: RouteContext) {
   try {
+    const userId = await requireUserId();
     const { id } = await params;
     const habitId = Number(id);
 
@@ -57,9 +59,6 @@ export async function PUT(request: NextRequest, { params }: RouteContext) {
       );
     }
 
-    const session = await getSessionQuery();
-    const userId = session?.userId ? Number(session.userId) : undefined;
-
     const updated = await withRequestContext(async ({ habit }) => {
       return await habit.updateHabit(habitId, validation, userId);
     });
@@ -70,6 +69,8 @@ export async function PUT(request: NextRequest, { params }: RouteContext) {
 
     return NextResponse.json({ habit: serializeHabit(updated) }, { status: 200 });
   } catch (error) {
+    const authz = authzResponse(error);
+    if (authz) return authz;
     console.error('Failed to update habit in PUT /api/habits/[id]:', error);
     return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
   }
@@ -77,15 +78,13 @@ export async function PUT(request: NextRequest, { params }: RouteContext) {
 
 export async function DELETE(_request: NextRequest, { params }: RouteContext) {
   try {
+    const userId = await requireUserId();
     const { id } = await params;
     const habitId = Number(id);
 
     if (isNaN(habitId)) {
       return NextResponse.json({ message: 'Invalid ID' }, { status: 400 });
     }
-
-    const session = await getSessionQuery();
-    const userId = session?.userId ? Number(session.userId) : undefined;
 
     const success = await withRequestContext(async ({ habit }) => {
       return await habit.deleteHabit(habitId, userId);
@@ -97,6 +96,8 @@ export async function DELETE(_request: NextRequest, { params }: RouteContext) {
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {
+    const authz = authzResponse(error);
+    if (authz) return authz;
     console.error('Failed to delete habit in DELETE /api/habits/[id]:', error);
     return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
   }

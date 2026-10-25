@@ -74,7 +74,6 @@ export const CreateTodoSchema = type({
   type: TodoTypeSchema,
   deadline: 'string >= 1',
   'difficulty?': 'number',
-  'userId?': 'number',
   'lifeAreaId?': 'number | null',
   'isDone?': 'boolean',
   'actions?': type({

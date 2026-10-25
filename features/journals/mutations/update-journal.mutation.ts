@@ -2,7 +2,7 @@
 
 import { type } from 'arktype';
 import { withRequestContext } from '@/db';
-import { getSessionQuery } from '@/features/auth/queries';
+import { tryGetUserId } from '@/features/auth/lib/actor';
 import { UpdateJournalSchema, type JournalFormState, type JournalCategory } from '../types';
 
 /**
@@ -65,8 +65,19 @@ export async function updateJournalMutation(
     };
   }
 
-  const session = await getSessionQuery();
-  const userId = session?.userId ? Number(session.userId) : undefined;
+  const userId = await tryGetUserId();
+  if (userId === null) {
+    return {
+      errors: { general: ['Your session has expired. Please sign in again.'] },
+      inputs: {
+        id,
+        title,
+        content,
+        type: category,
+      },
+      success: false,
+    };
+  }
 
   const updated = await withRequestContext(async ({ journal }) => {
     return await journal.updateJournal(

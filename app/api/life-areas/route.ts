@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { type } from 'arktype';
 import { withRequestContext } from '@/db';
-import { getSessionQuery } from '@/features/auth/queries';
 import { serializeLifeArea } from '@/features/life-areas/repositories';
 import { CreateLifeAreaSchema } from '@/features/life-areas/types';
+import { requireUserId } from '@/features/auth/lib/actor';
+import { authzResponse } from '@/features/general/lib/api/respond';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,8 +14,7 @@ export const dynamic = 'force-dynamic';
  */
 export async function GET() {
   try {
-    const session = await getSessionQuery();
-    const userId = session?.userId ? Number(session.userId) : undefined;
+    const userId = await requireUserId();
 
     const lifeAreas = await withRequestContext(async ({ lifeArea }) => {
       const entities = await lifeArea.findAllLifeAreas(userId);
@@ -31,6 +31,8 @@ export async function GET() {
       },
     );
   } catch (error) {
+    const authz = authzResponse(error);
+    if (authz) return authz;
     console.error('Failed to get life areas in GET /api/life-areas:', error);
     return NextResponse.json(
       { lifeAreas: [], message: 'Internal Server Error' },
@@ -45,6 +47,7 @@ export async function GET() {
  */
 export async function POST(request: NextRequest) {
   try {
+    const userId = await requireUserId();
     const body = await request.json();
     const validation = CreateLifeAreaSchema(body);
 
@@ -55,14 +58,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const session = await getSessionQuery();
-    const userId = session?.userId ? Number(session.userId) : undefined;
-
     const created = await withRequestContext(async ({ lifeArea }) => {
-      return await lifeArea.createLifeArea({
-        ...validation,
-        userId,
-      });
+      return await lifeArea.createLifeArea(validation, userId);
     });
 
     return NextResponse.json(
@@ -70,6 +67,8 @@ export async function POST(request: NextRequest) {
       { status: 201 },
     );
   } catch (error) {
+    const authz = authzResponse(error);
+    if (authz) return authz;
     console.error('Failed to create life area in POST /api/life-areas:', error);
     return NextResponse.json(
       { message: 'Internal Server Error' },

@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { type } from 'arktype';
 import { withRequestContext } from '@/db';
-import { getSessionQuery } from '@/features/auth/queries';
 import { getTodoByIdQuery } from '@/features/todos/queries';
 import { serializeTodo } from '@/features/todos/repositories';
 import { UpdateTodoSchema } from '@/features/todos/types';
+import { requireUserId } from '@/features/auth/lib/actor';
+import { authzResponse } from '@/features/general/lib/api/respond';
 
 export const dynamic = 'force-dynamic';
 
@@ -37,6 +38,8 @@ export async function GET(_request: NextRequest, { params }: RouteContext) {
       },
     );
   } catch (error) {
+    const authz = authzResponse(error);
+    if (authz) return authz;
     console.error('Failed to get todo by ID:', error);
     return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
   }
@@ -47,6 +50,7 @@ export async function GET(_request: NextRequest, { params }: RouteContext) {
  */
 export async function PATCH(request: NextRequest, { params }: RouteContext) {
   try {
+    const userId = await requireUserId();
     const { id } = await params;
     const todoId = Number(id);
 
@@ -64,9 +68,6 @@ export async function PATCH(request: NextRequest, { params }: RouteContext) {
       );
     }
 
-    const session = await getSessionQuery();
-    const userId = session?.userId ? Number(session.userId) : undefined;
-
     const updated = await withRequestContext(async ({ todo }) => {
       return await todo.updateTodo(todoId, validation, userId);
     });
@@ -77,6 +78,8 @@ export async function PATCH(request: NextRequest, { params }: RouteContext) {
 
     return NextResponse.json({ todo: serializeTodo(updated) }, { status: 200 });
   } catch (error) {
+    const authz = authzResponse(error);
+    if (authz) return authz;
     console.error('Failed to update todo:', error);
     return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
   }
@@ -87,15 +90,13 @@ export async function PATCH(request: NextRequest, { params }: RouteContext) {
  */
 export async function DELETE(_request: NextRequest, { params }: RouteContext) {
   try {
+    const userId = await requireUserId();
     const { id } = await params;
     const todoId = Number(id);
 
     if (isNaN(todoId)) {
       return NextResponse.json({ message: 'Invalid ID' }, { status: 400 });
     }
-
-    const session = await getSessionQuery();
-    const userId = session?.userId ? Number(session.userId) : undefined;
 
     const success = await withRequestContext(async ({ todo }) => {
       return await todo.deleteTodo(todoId, userId);
@@ -107,6 +108,8 @@ export async function DELETE(_request: NextRequest, { params }: RouteContext) {
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {
+    const authz = authzResponse(error);
+    if (authz) return authz;
     console.error('Failed to delete todo:', error);
     return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
   }
