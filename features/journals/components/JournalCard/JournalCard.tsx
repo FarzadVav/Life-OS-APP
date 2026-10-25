@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useActionState } from "react";
-import { Field } from "@base-ui/react";
+import Field from "@/features/general/components/ui/Field";
 import {
   CalendarDaysIcon,
   ChevronRightIcon,
@@ -114,9 +114,7 @@ function JournalCard({ journal, onDeleted }: JournalCardProps) {
 
       <div className="flex gap-2">
         <form action={deleteAction}>
-          <Field.Root className="hidden" name="id">
-            <Field.Control type="hidden" name="id" value={journal.id} />
-          </Field.Root>
+          <Field type="hidden" name="id" value={journal.id} />
           <Drawer.Close
             render={
               <Button

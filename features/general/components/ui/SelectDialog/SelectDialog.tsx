@@ -3,7 +3,7 @@
 import { cn } from "cn";
 import { ReactNode, useMemo, useState } from "react";
 import { CheckIcon, Maximize2Icon, SearchIcon, XIcon } from "lucide-react";
-import { Field } from "@base-ui/react";
+import Field from "../Field";
 
 import Dialog from "@/features/general/components/ui/Dialog/Dialog";
 import { Button } from "@/features/general/components/ui/Button/Button";
@@ -232,28 +232,26 @@ export function SelectDialog<T = string | number>(props: SelectDialogProps<T>) {
         ) : null}
 
         {showSearch && (
-          <div className="relative">
-            <SearchIcon className="size-4 opacity-50 absolute inset-s-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-            <Field.Root>
-              <Field.Control
-                type="text"
-                value={searchQuery}
-                className="input ps-9 pe-8 text-sm"
-                placeholder={t("common.search") || "Search..."}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </Field.Root>
-            {searchQuery ? (
-              <Button
-                type="button"
-                variant="ghost"
-                onClick={() => setSearchQuery("")}
-                aria-label={t("common.clear") || "Clear search"}
-                className="absolute inset-e-2.5 top-1/2 -translate-y-1/2 h-auto w-auto p-0.5 rounded-none opacity-50 hover:opacity-100 hover:bg-transparent cursor-pointer [&_svg]:size-3.5">
-                <XIcon />
-              </Button>
-            ) : null}
-          </div>
+          <Field
+            type="text"
+            value={searchQuery}
+            inputClassName="ps-9 pe-8 text-sm"
+            placeholder={t("common.search") || "Search..."}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            startAdornment={<SearchIcon className="size-4" />}
+            endAdornment={
+              searchQuery ? (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => setSearchQuery("")}
+                  aria-label={t("common.clear") || "Clear search"}
+                  className="h-auto w-auto p-0.5 rounded-none opacity-50 hover:opacity-100 hover:bg-transparent cursor-pointer [&_svg]:size-3.5">
+                  <XIcon />
+                </Button>
+              ) : null
+            }
+          />
         )}
 
         {multiple && items.length > 2 && (

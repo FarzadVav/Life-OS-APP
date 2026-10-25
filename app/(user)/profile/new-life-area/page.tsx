@@ -4,7 +4,9 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useActionState, useState } from "react";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 
-import { Field, Form } from "@base-ui/react";
+import { Form } from "@base-ui/react";
+import Field from "@/features/general/components/ui/Field";
+import { CreateLifeAreaSchema, UpdateLifeAreaSchema } from "@/features/life-areas/types";
 import { LoaderIcon, Trash2Icon } from "lucide-react";
 import Dialog from "@/features/general/components/ui/Dialog/Dialog";
 import { Button } from "@/features/general/components/ui/Button/Button";
@@ -107,56 +109,40 @@ function ProfileNewLifeAreaPage() {
           className="w-full space-y-6"
           aria-label={isEditMode ? t("lifeAreas.edit") : t("lifeAreas.new")}
           action={formAction}
-          errors={state?.errors}>
-          {state?.errors?.general && (
-            <div
-              role="alert"
-              className="p-3 text-xs rounded-component bg-foreground/5 border border-foreground/15 text-foreground leading-relaxed">
-              {state.errors.general.join(", ")}
-            </div>
-          )}
+          errors={state?.errors}
+        >
+          {isEditMode && <Field type="hidden" name="id" value={editId ?? ""} />}
+          <Field type="hidden" name="vision" value={vision} />
 
-          {isEditMode && (
-            <Field.Root className="hidden" name="id">
-              <Field.Control type="hidden" name="id" value={editId ?? ""} />
-            </Field.Root>
-          )}
-          <Field.Root className="hidden" name="vision">
-            <Field.Control type="hidden" name="vision" value={vision} />
-          </Field.Root>
+          <Field
+            name="title"
+            label={t("common.title")}
+            required
+            value={title}
+            disabled={pending}
+            placeholder={t("lifeAreas.titlePlaceholder")}
+            onChange={(e) => setTitle(e.target.value)}
+            schema={isEditMode ? UpdateLifeAreaSchema : CreateLifeAreaSchema}
+          />
 
-          <Field.Root name="title">
-            <Field.Label className="block font-bold">
-              {t("common.title")}
-            </Field.Label>
-
-            <Field.Control
-              required
-              name="title"
-              value={title}
-              disabled={pending}
-              className="input w-full"
-              placeholder={t("lifeAreas.titlePlaceholder")}
-              onChange={(e) => setTitle(e.target.value)}
-            />
-
-            <Field.Error className="sub-text mt-0.5 text-foreground text-xs" />
-          </Field.Root>
-
-          <Field.Root name="vision">
-            <Field.Label className="block font-bold">
-              {t("lifeAreas.visionLabel")}
-            </Field.Label>
+          <Field.Root name="vision" schema={isEditMode ? UpdateLifeAreaSchema : CreateLifeAreaSchema}>
+            <Field.Label>{t("lifeAreas.visionLabel")}</Field.Label>
 
             <RichTextarea
+              name="vision"
               value={vision}
               onChange={setVision}
               placeholder={t("lifeAreas.visionPlaceholder")}
               title={t("lifeAreas.visionLabel")}
             />
 
-            <Field.Error className="sub-text mt-0.5 text-foreground text-xs" />
+            <Field.Error />
           </Field.Root>
+
+          <Field.FormError
+            errors={state?.errors}
+            knownFields={["title", "vision"]}
+          />
 
           <PageActionBtn submit disabled={pending} form="life-area-form">
             {t("common.save")}
@@ -184,9 +170,7 @@ function ProfileNewLifeAreaPage() {
               }
             />
             <form action={deleteAction}>
-              <Field.Root className="hidden" name="id">
-                <Field.Control type="hidden" name="id" value={editId ?? ""} />
-              </Field.Root>
+              <Field type="hidden" name="id" value={editId ?? ""} />
               <Button
                 type="submit"
                 variant="primary"

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Field } from "@base-ui/react";
+import Field from "@/features/general/components/ui/Field";
 import { EditIcon, Trash2Icon, LoaderIcon } from "lucide-react";
 
 import type { LifeArea } from "../../types";
@@ -108,9 +108,7 @@ export function LifeAreaCard({ lifeArea }: LifeAreaCardProps) {
               }
             />
             <form action={deleteLifeAreaAction}>
-              <Field.Root className="hidden" name="id">
-                <Field.Control type="hidden" name="id" value={lifeArea.id} />
-              </Field.Root>
+              <Field type="hidden" name="id" value={lifeArea.id} />
               <Button
                 type="submit"
                 variant="primary"

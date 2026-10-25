@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useActionState } from "react";
-import { Field } from "@base-ui/react";
+import Field from "@/features/general/components/ui/Field";
 import { motion } from "motion/react";
 import {
   CalendarDaysIcon,
@@ -65,9 +65,7 @@ function MissionActionRow({
 
   return (
     <form action={toggleAction}>
-      <Field.Root className="hidden" name="id">
-        <Field.Control type="hidden" name="id" value={action.id} />
-      </Field.Root>
+      <Field type="hidden" name="id" value={action.id} />
       <Button
         type="submit"
         variant="ghost"
@@ -147,9 +145,7 @@ function MissionDisciplineRow({
       </div>
 
       <form action={recordAction} className="flex gap-2 w-full mt-1">
-        <Field.Root className="hidden" name="id">
-          <Field.Control type="hidden" name="id" value={discipline.id} />
-        </Field.Root>
+        <Field type="hidden" name="id" value={discipline.id} />
         <Button
           type="submit"
           name="isDone"
@@ -368,9 +364,7 @@ function TodoMissionCard({ todo, onMutated }: TodoMissionCardProps) {
 
       <div className="flex gap-2">
         <form action={deleteAction}>
-          <Field.Root className="hidden" name="id">
-            <Field.Control type="hidden" name="id" value={todo.id} />
-          </Field.Root>
+          <Field type="hidden" name="id" value={todo.id} />
           <Drawer.Close
             render={
               <Button

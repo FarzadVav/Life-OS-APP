@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useActionState, useState } from "react";
-import { Field, Form } from "@base-ui/react";
+import { Form } from "@base-ui/react";
+import Field from "@/features/general/components/ui/Field";
+import { CreateSkillSchema, UpdateSkillSchema } from "../../types";
 import { LoaderIcon } from "lucide-react";
 
 import Dialog from "@/features/general/components/ui/Dialog/Dialog";
@@ -49,10 +51,12 @@ export function SkillDialog({
 
   useEffect(() => {
     if (open) {
-      setTitle(initialData?.title || "");
-      setContent(initialData?.content || "");
-      const areaId = initialData?.lifeAreaId ?? defaultLifeAreaId;
-      setSelectedLifeAreaId(areaId && areaId > 0 ? areaId : UNASSIGNED_ID);
+      queueMicrotask(() => {
+        setTitle(initialData?.title || "");
+        setContent(initialData?.content || "");
+        const areaId = initialData?.lifeAreaId ?? defaultLifeAreaId;
+        setSelectedLifeAreaId(areaId && areaId > 0 ? areaId : UNASSIGNED_ID);
+      });
     }
   }, [open, initialData, defaultLifeAreaId]);
 
@@ -77,19 +81,13 @@ export function SkillDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange} className="w-full max-w-lg">
       <Form action={formAction} errors={state?.errors} className="flex flex-col gap-4">
-        <Field.Root className="hidden" name="id">
-          <Field.Control type="hidden" name="id" value={initialData?.id ?? ""} />
-        </Field.Root>
-        <Field.Root className="hidden" name="content">
-          <Field.Control type="hidden" name="content" value={content} />
-        </Field.Root>
-        <Field.Root className="hidden" name="lifeAreaId">
-          <Field.Control
-            type="hidden"
-            name="lifeAreaId"
-            value={selectedLifeAreaId > 0 ? String(selectedLifeAreaId) : "none"}
-          />
-        </Field.Root>
+        <Field type="hidden" name="id" value={initialData?.id ?? ""} />
+        <Field type="hidden" name="content" value={content} />
+        <Field
+          type="hidden"
+          name="lifeAreaId"
+          value={selectedLifeAreaId > 0 ? String(selectedLifeAreaId) : "none"}
+        />
 
         <div>
           <Dialog.Title className="title">
@@ -100,29 +98,17 @@ export function SkillDialog({
           </Dialog.Description>
         </div>
 
-        {state?.errors?.general && (
-          <div
-            role="alert"
-            className="p-3 text-xs rounded-component bg-foreground/5 border border-foreground/15 text-foreground leading-relaxed">
-            {state.errors.general.join(", ")}
-          </div>
-        )}
-
-        <Field.Root name="title">
-          <Field.Label className="block font-bold text-xs mb-1.5">
-            {t("common.title")}
-          </Field.Label>
-          <Field.Control
-            required
-            name="title"
-            className="input w-full"
-            placeholder={t("skills.titlePlaceholder")}
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            disabled={isSubmitting}
-          />
-          <Field.Error className="sub-text mt-0.5 text-foreground text-xs" />
-        </Field.Root>
+        <Field
+          name="title"
+          label={t("common.title")}
+          labelSize="sm"
+          required
+          placeholder={t("skills.titlePlaceholder")}
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          disabled={isSubmitting}
+          schema={isEdit ? UpdateSkillSchema : CreateSkillSchema}
+        />
 
         <div>
           <label className="block font-bold text-xs mb-1.5">
@@ -154,6 +140,11 @@ export function SkillDialog({
             />
           </div>
         </div>
+
+        <Field.FormError
+          errors={state?.errors}
+          knownFields={["title", "content", "lifeAreaId"]}
+        />
 
         <div className="flex items-center justify-end gap-2 pt-2 border-t border-foreground/10">
           <Dialog.Close

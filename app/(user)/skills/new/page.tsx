@@ -4,7 +4,9 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState, useActionState } from "react";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 
-import { Field, Form } from "@base-ui/react";
+import { Form } from "@base-ui/react";
+import Field from "@/features/general/components/ui/Field";
+import { CreateSkillSchema, UpdateSkillSchema } from "@/features/skills/types";
 import { LoaderIcon, Trash2Icon } from "lucide-react";
 import SelectDialog from "@/features/general/components/ui/SelectDialog";
 import Dialog from "@/features/general/components/ui/Dialog/Dialog";
@@ -153,54 +155,33 @@ function NewSkillPage() {
           action={formAction}
           errors={state?.errors}
         >
-          {state?.errors?.general && (
-            <div
-              role="alert"
-              className="p-3 text-xs rounded-component bg-foreground/5 border border-foreground/15 text-foreground leading-relaxed"
-            >
-              {state.errors.general.join(", ")}
-            </div>
-          )}
+          {isEditMode && <Field type="hidden" name="id" value={editId ?? ""} />}
+          <Field
+            type="hidden"
+            name="lifeAreaId"
+            value={lifeAreaId ? String(lifeAreaId) : "none"}
+          />
+          <Field type="hidden" name="content" value={content} />
 
-          {isEditMode && (
-            <Field.Root className="hidden" name="id">
-              <Field.Control type="hidden" name="id" value={editId ?? ""} />
-            </Field.Root>
-          )}
-          <Field.Root className="hidden" name="lifeAreaId">
-            <Field.Control
-              type="hidden"
-              name="lifeAreaId"
-              value={lifeAreaId ? String(lifeAreaId) : "none"}
-            />
-          </Field.Root>
-          <Field.Root className="hidden" name="content">
-            <Field.Control type="hidden" name="content" value={content} />
-          </Field.Root>
-
-          <Field.Root name="title">
-            <Field.Label className="block font-bold">{t("common.title")}</Field.Label>
-
-            <Field.Control
-              required
-              minLength={1}
-              name="title"
-              value={title}
-              disabled={pending}
-              className="input"
-              placeholder={t("skills.titlePlaceholder")}
-              onChange={(event) => setTitle(event.target.value)}
-            />
-
-            <Field.Error className="sub-text mt-0.5 text-foreground text-xs" />
-          </Field.Root>
+          <Field
+            name="title"
+            label={t("common.title")}
+            required
+            minLength={1}
+            value={title}
+            disabled={pending}
+            placeholder={t("skills.titlePlaceholder")}
+            onChange={(event) => setTitle(event.target.value)}
+            schema={isEditMode ? UpdateSkillSchema : CreateSkillSchema}
+          />
 
           <LifeAreaSelect value={lifeAreaId} onChange={setLifeAreaId} />
 
-          <Field.Root name="content">
-            <Field.Label className="block font-bold">{t("skills.contentLabel") || t("common.content")}</Field.Label>
+          <Field.Root name="content" schema={isEditMode ? UpdateSkillSchema : CreateSkillSchema}>
+            <Field.Label>{t("skills.contentLabel") || t("common.content")}</Field.Label>
 
             <RichTextarea
+              name="content"
               value={content}
               onChange={setContent}
               placeholder={t("skills.contentPlaceholder")}
@@ -209,8 +190,13 @@ function NewSkillPage() {
               minLength={1}
             />
 
-            <Field.Error className="sub-text mt-0.5 text-foreground text-xs" />
+            <Field.Error />
           </Field.Root>
+
+          <Field.FormError
+            errors={state?.errors}
+            knownFields={["title", "content", "lifeAreaId"]}
+          />
 
           <PageActionBtn submit disabled={pending} form="skill-form" />
         </Form>
@@ -234,9 +220,7 @@ function NewSkillPage() {
               }
             />
             <form action={deleteAction}>
-              <Field.Root className="hidden" name="id">
-                <Field.Control type="hidden" name="id" value={editId ?? ""} />
-              </Field.Root>
+              <Field type="hidden" name="id" value={editId ?? ""} />
               <Button
                 type="submit"
                 variant="primary"

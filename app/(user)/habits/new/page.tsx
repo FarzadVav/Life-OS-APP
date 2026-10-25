@@ -4,7 +4,9 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState, useActionState } from "react";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 
-import { Field, Form } from "@base-ui/react";
+import { Form } from "@base-ui/react";
+import Field from "@/features/general/components/ui/Field";
+import { CreateHabitSchema, UpdateHabitSchema } from "@/features/habits/types";
 import { LoaderIcon, Trash2Icon } from "lucide-react";
 import SelectDialog from "@/features/general/components/ui/SelectDialog";
 import Dialog from "@/features/general/components/ui/Dialog/Dialog";
@@ -156,80 +158,51 @@ function NewHabitPage() {
           action={formAction}
           errors={state?.errors}
         >
-          {state?.errors?.general && (
-            <div
-              role="alert"
-              className="p-3 text-xs rounded-component bg-foreground/5 border border-foreground/15 text-foreground leading-relaxed"
-            >
-              {state.errors.general.join(", ")}
-            </div>
-          )}
+          {isEditMode && <Field type="hidden" name="id" value={editId ?? ""} />}
+          <Field
+            type="hidden"
+            name="lifeAreaId"
+            value={lifeAreaId ? String(lifeAreaId) : "none"}
+          />
 
-          {isEditMode && (
-            <Field.Root className="hidden" name="id">
-              <Field.Control type="hidden" name="id" value={editId ?? ""} />
-            </Field.Root>
-          )}
-          <Field.Root className="hidden" name="lifeAreaId">
-            <Field.Control
-              type="hidden"
-              name="lifeAreaId"
-              value={lifeAreaId ? String(lifeAreaId) : "none"}
-            />
-          </Field.Root>
-          <Field.Root className="hidden" name="repeatInterval">
-            <Field.Control
-              type="hidden"
-              name="repeatInterval"
-              value={repeatInterval}
-            />
-          </Field.Root>
-
-          <Field.Root name="title">
-            <Field.Label className="block font-bold">{t("common.title")}</Field.Label>
-
-            <Field.Control
-              required
-              minLength={1}
-              name="title"
-              value={title}
-              disabled={pending}
-              className="input"
-              placeholder={t("habits.titlePlaceholder")}
-              onChange={(event) => setTitle(event.target.value)}
-            />
-
-            <Field.Error className="sub-text mt-0.5 text-foreground text-xs" />
-          </Field.Root>
+          <Field
+            name="title"
+            label={t("common.title")}
+            required
+            minLength={1}
+            value={title}
+            disabled={pending}
+            placeholder={t("habits.titlePlaceholder")}
+            onChange={(event) => setTitle(event.target.value)}
+            schema={isEditMode ? UpdateHabitSchema : CreateHabitSchema}
+          />
 
           <LifeAreaSelect value={lifeAreaId} onChange={setLifeAreaId} />
 
-          <Field.Root name="repeatInterval">
-            <Field.Label className="block font-bold">{t("habits.repeatInterval")}</Field.Label>
+          <Field.Root name="repeatInterval" schema={isEditMode ? UpdateHabitSchema : CreateHabitSchema}>
+            <Field.Label>{t("habits.repeatInterval")}</Field.Label>
             <div className="rounded-container border border-foreground/15 p-3 bg-card/40">
-              <RepeatIntervalInput value={repeatInterval} onChange={setRepeatInterval} disabled={pending} />
+              <RepeatIntervalInput name="repeatInterval" value={repeatInterval} onChange={setRepeatInterval} disabled={pending} />
             </div>
-            <Field.Error className="sub-text mt-0.5 text-foreground text-xs" />
+            <Field.Error />
           </Field.Root>
 
-          <Field.Root name="description">
-            <Field.Label className="block font-bold">{t("common.description")}</Field.Label>
+          <Field
+            multiline
+            rows={3}
+            name="description"
+            label={t("common.description")}
+            placeholder={t("habits.descPlaceholder")}
+            value={description}
+            disabled={pending}
+            onChange={(event) => setDescription(event.target.value)}
+            schema={isEditMode ? UpdateHabitSchema : CreateHabitSchema}
+          />
 
-            <Field.Control
-              render={
-                <textarea
-                  rows={3}
-                  className="input w-full min-h-[72px] resize-none"
-                  placeholder={t("habits.descPlaceholder")}
-                  value={description}
-                  disabled={pending}
-                  onChange={(event) => setDescription(event.target.value)}
-                />
-              }
-            />
-
-            <Field.Error className="sub-text mt-0.5 text-foreground text-xs" />
-          </Field.Root>
+          <Field.FormError
+            errors={state?.errors}
+            knownFields={["title", "description", "repeatInterval", "lifeAreaId"]}
+          />
 
           <PageActionBtn submit disabled={pending} form="habit-form" />
         </Form>
@@ -253,9 +226,7 @@ function NewHabitPage() {
               }
             />
             <form action={deleteAction}>
-              <Field.Root className="hidden" name="id">
-                <Field.Control type="hidden" name="id" value={editId ?? ""} />
-              </Field.Root>
+              <Field type="hidden" name="id" value={editId ?? ""} />
               <Button
                 type="submit"
                 variant="primary"

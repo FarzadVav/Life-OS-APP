@@ -8,7 +8,7 @@ import { PlusIcon, SparklesIcon, LoaderIcon } from "lucide-react";
 import { useSkills } from "../../hooks/useSkills";
 import { useDeleteSkillAction } from "../../actions";
 import type { Skill } from "../../types";
-import { Field } from "@base-ui/react";
+import Field from "@/features/general/components/ui/Field";
 import { SkillCard } from "../SkillCard/SkillCard";
 import { useLifeAreas } from "@/features/life-areas/hooks/useLifeAreas";
 import Dialog from "@/features/general/components/ui/Dialog/Dialog";
@@ -189,13 +189,7 @@ export function SkillsList({
               {t("common.cancel")}
             </Button>
             <form action={deleteAction}>
-              <Field.Root className="hidden" name="id">
-                <Field.Control
-                  type="hidden"
-                  name="id"
-                  value={deleteTargetId ?? ""}
-                />
-              </Field.Root>
+              <Field type="hidden" name="id" value={deleteTargetId ?? ""} />
               <Button
                 type="submit"
                 variant="primary"

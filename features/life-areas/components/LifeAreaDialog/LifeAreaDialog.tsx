@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useActionState, useState } from "react";
-import { Field, Form } from "@base-ui/react";
+import { Form } from "@base-ui/react";
+import Field from "@/features/general/components/ui/Field";
+import { CreateLifeAreaSchema, UpdateLifeAreaSchema } from "../../types";
 import { LoaderIcon } from "lucide-react";
 
 import Dialog from "@/features/general/components/ui/Dialog/Dialog";
@@ -39,8 +41,10 @@ export function LifeAreaDialog({
 
   useEffect(() => {
     if (open) {
-      setTitle(initialData?.title || "");
-      setVision(initialData?.vision || "");
+      queueMicrotask(() => {
+        setTitle(initialData?.title || "");
+        setVision(initialData?.vision || "");
+      });
     }
   }, [open, initialData]);
 
@@ -54,12 +58,8 @@ export function LifeAreaDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange} className="w-full max-w-lg">
       <Form action={formAction} errors={state?.errors} className="flex flex-col gap-4">
-        <Field.Root className="hidden" name="id">
-          <Field.Control type="hidden" name="id" value={initialData?.id ?? ""} />
-        </Field.Root>
-        <Field.Root className="hidden" name="vision">
-          <Field.Control type="hidden" name="vision" value={vision} />
-        </Field.Root>
+        <Field type="hidden" name="id" value={initialData?.id ?? ""} />
+        <Field type="hidden" name="vision" value={vision} />
 
         <div>
           <Dialog.Title className="title">
@@ -70,29 +70,17 @@ export function LifeAreaDialog({
           </Dialog.Description>
         </div>
 
-        {state?.errors?.general && (
-          <div
-            role="alert"
-            className="p-3 text-xs rounded-component bg-foreground/5 border border-foreground/15 text-foreground leading-relaxed">
-            {state.errors.general.join(", ")}
-          </div>
-        )}
-
-        <Field.Root name="title">
-          <Field.Label className="block font-bold text-xs mb-1.5">
-            {t("common.title")}
-          </Field.Label>
-          <Field.Control
-            required
-            name="title"
-            className="input w-full"
-            placeholder={t("lifeAreas.titlePlaceholder")}
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            disabled={isSubmitting}
-          />
-          <Field.Error className="sub-text mt-0.5 text-foreground text-xs" />
-        </Field.Root>
+        <Field
+          name="title"
+          label={t("common.title")}
+          labelSize="sm"
+          required
+          placeholder={t("lifeAreas.titlePlaceholder")}
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          disabled={isSubmitting}
+          schema={isEdit ? UpdateLifeAreaSchema : CreateLifeAreaSchema}
+        />
 
         <div>
           <label className="block font-bold text-xs mb-1.5">
@@ -109,6 +97,11 @@ export function LifeAreaDialog({
             />
           </div>
         </div>
+
+        <Field.FormError
+          errors={state?.errors}
+          knownFields={["title", "vision"]}
+        />
 
         <div className="flex items-center justify-end gap-2 pt-2 border-t border-foreground/10">
           <Dialog.Close

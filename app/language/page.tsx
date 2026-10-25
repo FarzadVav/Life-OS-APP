@@ -1,4 +1,4 @@
-import { Field } from "@base-ui/react";
+import Field from "@/features/general/components/ui/Field";
 import { setLocale } from "@/features/general/actions/locale";
 import { Button } from "@/features/general/components/ui/Button/Button";
 import { getTranslations } from "@/features/general/lib/i18n/server";
@@ -18,9 +18,7 @@ async function LanguagePage() {
           ] as const
         ).map((option) => (
           <form key={option.value} action={setLocale}>
-            <Field.Root className="hidden" name="locale">
-              <Field.Control type="hidden" name="locale" value={option.value} />
-            </Field.Root>
+            <Field type="hidden" name="locale" value={option.value} />
             <Button
               type="submit"
               variant="ghost"

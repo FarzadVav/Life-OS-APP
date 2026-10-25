@@ -3,7 +3,7 @@
 import { cn } from "cn";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
-import { Field } from "@base-ui/react";
+import Field from "@/features/general/components/ui/Field";
 import { PlusIcon, Repeat2Icon, LoaderIcon } from "lucide-react";
 
 import { useHabits } from "../../hooks/useHabits";
@@ -192,13 +192,7 @@ export function HabitsList({
               {t("common.cancel")}
             </Button>
             <form action={deleteAction}>
-              <Field.Root className="hidden" name="id">
-                <Field.Control
-                  type="hidden"
-                  name="id"
-                  value={deleteTargetId ?? ""}
-                />
-              </Field.Root>
+              <Field type="hidden" name="id" value={deleteTargetId ?? ""} />
               <Button
                 type="submit"
                 variant="primary"

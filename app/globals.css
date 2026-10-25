@@ -3,7 +3,6 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --color-*: initial;
   --color-card: var(--card);
   --color-foreground: var(--foreground);
   --color-background: var(--background);
@@ -80,9 +79,6 @@
   isolation: isolate;
 }
 
-@utility input {
-  @apply h-10 w-full rounded-full border px-3;
-}
 
 @utility title {
   @apply text-lg font-bold;

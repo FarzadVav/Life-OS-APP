@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useEffect, useMemo } from "react";
-import { Field } from "@base-ui/react";
+import Field from "@/features/general/components/ui/Field";
 import {
   EditIcon,
   Trash2Icon,
@@ -140,9 +140,7 @@ export function HabitCard({
               className="flex items-center gap-2 pt-1 border-t border-foreground/5"
               onClick={(e) => e.stopPropagation()}
             >
-              <Field.Root className="hidden" name="id">
-                <Field.Control type="hidden" name="id" value={habit.id} />
-              </Field.Root>
+              <Field type="hidden" name="id" value={habit.id} />
               <Button
                 type="submit"
                 name="isDone"
@@ -240,9 +238,7 @@ export function HabitCard({
             {t("habits.todayCheckin") || "Today's Action"}
           </h4>
           <form action={recordAction} className="flex items-center gap-2">
-            <Field.Root className="hidden" name="id">
-              <Field.Control type="hidden" name="id" value={habit.id} />
-            </Field.Root>
+            <Field type="hidden" name="id" value={habit.id} />
             <Button
               type="submit"
               name="isDone"

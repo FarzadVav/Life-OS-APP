@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useActionState, useState } from "react";
-import { Field, Form } from "@base-ui/react";
+import { Form } from "@base-ui/react";
+import Field from "@/features/general/components/ui/Field";
+import { CreateHabitSchema, UpdateHabitSchema } from "../../types";
 import { LoaderIcon } from "lucide-react";
 
 import Dialog from "@/features/general/components/ui/Dialog/Dialog";
@@ -51,11 +53,13 @@ export function HabitDialog({
 
   useEffect(() => {
     if (open) {
-      setTitle(initialData?.title || "");
-      setDescription(initialData?.description || "");
-      setRepeatInterval(initialData?.repeatInterval || "Every 1 Day");
-      const areaId = initialData?.lifeAreaId ?? defaultLifeAreaId;
-      setSelectedLifeAreaId(areaId && areaId > 0 ? areaId : UNASSIGNED_ID);
+      queueMicrotask(() => {
+        setTitle(initialData?.title || "");
+        setDescription(initialData?.description || "");
+        setRepeatInterval(initialData?.repeatInterval || "Every 1 Day");
+        const areaId = initialData?.lifeAreaId ?? defaultLifeAreaId;
+        setSelectedLifeAreaId(areaId && areaId > 0 ? areaId : UNASSIGNED_ID);
+      });
     }
   }, [open, initialData, defaultLifeAreaId]);
 
@@ -80,23 +84,17 @@ export function HabitDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange} className="w-full max-w-lg">
       <Form action={formAction} errors={state?.errors} className="flex flex-col gap-4">
-        <Field.Root className="hidden" name="id">
-          <Field.Control type="hidden" name="id" value={initialData?.id ?? ""} />
-        </Field.Root>
-        <Field.Root className="hidden" name="repeatInterval">
-          <Field.Control
-            type="hidden"
-            name="repeatInterval"
-            value={repeatInterval}
-          />
-        </Field.Root>
-        <Field.Root className="hidden" name="lifeAreaId">
-          <Field.Control
-            type="hidden"
-            name="lifeAreaId"
-            value={selectedLifeAreaId > 0 ? String(selectedLifeAreaId) : "none"}
-          />
-        </Field.Root>
+        <Field type="hidden" name="id" value={initialData?.id ?? ""} />
+        <Field
+          type="hidden"
+          name="repeatInterval"
+          value={repeatInterval}
+        />
+        <Field
+          type="hidden"
+          name="lifeAreaId"
+          value={selectedLifeAreaId > 0 ? String(selectedLifeAreaId) : "none"}
+        />
 
         <div>
           <Dialog.Title className="title">
@@ -107,29 +105,17 @@ export function HabitDialog({
           </Dialog.Description>
         </div>
 
-        {state?.errors?.general && (
-          <div
-            role="alert"
-            className="p-3 text-xs rounded-component bg-foreground/5 border border-foreground/15 text-foreground leading-relaxed">
-            {state.errors.general.join(", ")}
-          </div>
-        )}
-
-        <Field.Root name="title">
-          <Field.Label className="block font-bold text-xs mb-1.5">
-            {t("common.title")}
-          </Field.Label>
-          <Field.Control
-            required
-            name="title"
-            className="input w-full"
-            placeholder={t("habits.titlePlaceholder")}
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            disabled={isSubmitting}
-          />
-          <Field.Error className="sub-text mt-0.5 text-foreground text-xs" />
-        </Field.Root>
+        <Field
+          name="title"
+          label={t("common.title")}
+          labelSize="sm"
+          required
+          placeholder={t("habits.titlePlaceholder")}
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          disabled={isSubmitting}
+          schema={isEdit ? UpdateHabitSchema : CreateHabitSchema}
+        />
 
         <div>
           <label className="block font-bold text-xs mb-1.5">
@@ -159,25 +145,23 @@ export function HabitDialog({
           </div>
         </div>
 
-        <Field.Root name="description">
-          <Field.Label className="block font-bold text-xs mb-1.5">
-            {t("common.description")}
-          </Field.Label>
-          <Field.Control
-            name="description"
-            disabled={isSubmitting}
-            render={
-              <textarea
-                rows={3}
-                className="input w-full min-h-[72px] resize-none"
-                placeholder={t("habits.descPlaceholder")}
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-              />
-            }
-          />
-          <Field.Error className="sub-text mt-0.5 text-foreground text-xs" />
-        </Field.Root>
+        <Field
+          multiline
+          rows={3}
+          name="description"
+          label={t("common.description")}
+          labelSize="sm"
+          placeholder={t("habits.descPlaceholder")}
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          disabled={isSubmitting}
+          schema={isEdit ? UpdateHabitSchema : CreateHabitSchema}
+        />
+
+        <Field.FormError
+          errors={state?.errors}
+          knownFields={["title", "description", "repeatInterval", "lifeAreaId"]}
+        />
 
         <div className="flex items-center justify-end gap-2 pt-2 border-t border-foreground/10">
           <Dialog.Close

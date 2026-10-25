@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useActionState, useRef } from "react";
-import { Field } from "@base-ui/react";
+import Field from "@/features/general/components/ui/Field";
 import {
   CalendarDaysIcon,
   CheckIcon,
@@ -62,9 +62,7 @@ function TodoCard({ todo, onMutated }: TodoCardProps) {
               className="shrink-0"
               onClick={(e) => e.stopPropagation()}
             >
-              <Field.Root className="hidden" name="id">
-                <Field.Control type="hidden" name="id" value={todo.id} />
-              </Field.Root>
+              <Field type="hidden" name="id" value={todo.id} />
               <Button
                 type="submit"
                 variant="ghost"
@@ -173,9 +171,7 @@ function TodoCard({ todo, onMutated }: TodoCardProps) {
       </div>
 
       <form ref={toggleFormRef} action={toggleAction}>
-        <Field.Root className="hidden" name="id">
-          <Field.Control type="hidden" name="id" value={todo.id} />
-        </Field.Root>
+        <Field type="hidden" name="id" value={todo.id} />
         <label className="rounded-container bg-background p-3 flex items-center justify-between cursor-pointer select-none">
           <div className="flex flex-col">
             <span className="text-sm font-medium text-foreground">
@@ -198,9 +194,7 @@ function TodoCard({ todo, onMutated }: TodoCardProps) {
 
       <div className="flex gap-2">
         <form action={deleteAction}>
-          <Field.Root className="hidden" name="id">
-          <Field.Control type="hidden" name="id" value={todo.id} />
-        </Field.Root>
+          <Field type="hidden" name="id" value={todo.id} />
           <Drawer.Close
             render={
               <Button

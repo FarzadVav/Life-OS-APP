@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { cn } from "cn";
-import { Field } from "@base-ui/react";
+import Field from "../Field";
 import { NumberField } from "../NumberField";
 import SelectDialog from "../SelectDialog";
 
@@ -146,13 +146,11 @@ export default function RepeatIntervalInput({
       />
 
       {name && (
-        <Field.Root className="hidden" name={name}>
-          <Field.Control
-            type="hidden"
-            name={name}
-            value={formatRepeatInterval(count, unit)}
-          />
-        </Field.Root>
+        <Field.Control
+          type="hidden"
+          name={name}
+          value={formatRepeatInterval(count, unit)}
+        />
       )}
     </div>
   );

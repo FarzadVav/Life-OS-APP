@@ -4,7 +4,8 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useActionState, useEffect, useState } from "react";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 
-import { Field, Form } from "@base-ui/react";
+import { Form } from "@base-ui/react";
+import Field from "@/features/general/components/ui/Field";
 import {
   EditIcon,
   LoaderIcon,
@@ -14,7 +15,13 @@ import {
 } from "lucide-react";
 
 import { TODO_TYPES } from "@/features/todos/constants";
-import { TodoType, TodoAction, TodoDiscipline } from "@/features/todos/types";
+import {
+  TodoType,
+  TodoAction,
+  TodoDiscipline,
+  CreateTodoSchema,
+  UpdateTodoSchema,
+} from "@/features/todos/types";
 import { useTodo } from "@/features/todos/hooks";
 import { useLifeAreas } from "@/features/life-areas/hooks";
 import { createTodoMutation, updateTodoMutation } from "@/features/todos/mutations";
@@ -415,90 +422,54 @@ function NewTodoPage() {
           action={formAction}
           errors={state?.errors}
         >
-          {state?.errors?.general && (
-            <div
-              role="alert"
-              className="p-3 text-xs rounded-component bg-foreground/5 border border-foreground/15 text-foreground leading-relaxed"
-            >
-              {state.errors.general.join(", ")}
-            </div>
-          )}
-
           {/* Hidden fields to pass composite state to Server Action */}
-          {isEditMode && (
-            <Field.Root className="hidden" name="id">
-              <Field.Control type="hidden" name="id" value={editId ?? ""} />
-            </Field.Root>
-          )}
-          <Field.Root className="hidden" name="type">
-            <Field.Control type="hidden" name="type" value={type} />
-          </Field.Root>
-          <Field.Root className="hidden" name="deadline">
-            <Field.Control
-              type="hidden"
-              name="deadline"
-              value={type === "Daily" ? dailyTime : serializeDate(targetDate)}
-            />
-          </Field.Root>
-          <Field.Root className="hidden" name="isDone">
-            <Field.Control type="hidden" name="isDone" value={String(isDone)} />
-          </Field.Root>
+          {isEditMode && <Field type="hidden" name="id" value={editId ?? ""} />}
+          <Field type="hidden" name="type" value={type} />
+          <Field
+            type="hidden"
+            name="deadline"
+            value={type === "Daily" ? dailyTime : serializeDate(targetDate)}
+          />
+          <Field type="hidden" name="isDone" value={String(isDone)} />
           {type === "Mission" && (
             <>
-              <Field.Root className="hidden" name="difficulty">
-                <Field.Control
-                  type="hidden"
-                  name="difficulty"
-                  value={difficulty}
-                />
-              </Field.Root>
-              <Field.Root className="hidden" name="actions">
-                <Field.Control
-                  type="hidden"
-                  name="actions"
-                  value={JSON.stringify(actions)}
-                />
-              </Field.Root>
-              <Field.Root className="hidden" name="disciplines">
-                <Field.Control
-                  type="hidden"
-                  name="disciplines"
-                  value={JSON.stringify(disciplines)}
-                />
-              </Field.Root>
+              <Field type="hidden" name="difficulty" value={difficulty} />
+              <Field
+                type="hidden"
+                name="actions"
+                value={JSON.stringify(actions)}
+              />
+              <Field
+                type="hidden"
+                name="disciplines"
+                value={JSON.stringify(disciplines)}
+              />
             </>
           )}
 
-          <Field.Root name="title">
-            <Field.Label className="block font-bold">
-              {t("common.title")}
-            </Field.Label>
-
-            <Field.Control
-              required
-              minLength={3}
-              name="title"
-              value={title}
-              disabled={pending}
-              className="input"
-              placeholder={
-                type === "Mission"
-                  ? t("missions.titlePlaceholder") ||
-                    "What is your main mission objective?"
-                  : t("todos.titlePlaceholder")
-              }
-              onChange={(event) => setTitle(event.target.value)}
-            />
-
-            <Field.Error className="sub-text mt-0.5 text-foreground text-xs" />
-          </Field.Root>
+          <Field
+            name="title"
+            label={t("common.title")}
+            required
+            minLength={3}
+            value={title}
+            disabled={pending}
+            placeholder={
+              type === "Mission"
+                ? t("missions.titlePlaceholder") ||
+                  "What is your main mission objective?"
+                : t("todos.titlePlaceholder")
+            }
+            onChange={(event) => setTitle(event.target.value)}
+            schema={isEditMode ? UpdateTodoSchema : CreateTodoSchema}
+          />
 
           <TypeSelect value={type} onChange={setType} />
 
           <LifeAreaSelect value={lifeAreaId} onChange={setLifeAreaId} />
 
           <Field.Root name="deadline">
-            <Field.Label className="mb-1 font-bold">
+            <Field.Label className="mb-1">
               {t("common.deadline")}
             </Field.Label>
 
@@ -508,7 +479,7 @@ function NewTodoPage() {
               <DayPickerDialog value={targetDate} onChange={setTargetDate} />
             )}
 
-            <Field.Error className="sub-text mt-0.5 text-foreground text-xs" />
+            <Field.Error />
           </Field.Root>
 
           {type === "Mission" && (
@@ -665,27 +636,24 @@ function NewTodoPage() {
                     </Dialog.Description>
                   </div>
 
-                  <Field.Root name="actionTitle">
-                    <Field.Label className="mb-1 font-bold text-xs">
-                      {t("common.title")}
-                    </Field.Label>
-                    <Field.Control
-                      required
-                      minLength={2}
-                      className="input"
-                      value={actionDraft.title}
-                      placeholder={
-                        t("missions.actionTitlePlaceholder") ||
-                        "e.g. Complete architecture design"
-                      }
-                      onChange={(e) =>
-                        setActionDraft((d) => ({ ...d, title: e.target.value }))
-                      }
-                    />
-                  </Field.Root>
+                  <Field
+                    name="actionTitle"
+                    label={t("common.title")}
+                    labelSize="sm"
+                    required
+                    minLength={2}
+                    value={actionDraft.title}
+                    placeholder={
+                      t("missions.actionTitlePlaceholder") ||
+                      "e.g. Complete architecture design"
+                    }
+                    onChange={(e) =>
+                      setActionDraft((d) => ({ ...d, title: e.target.value }))
+                    }
+                  />
 
                   <Field.Root name="actionDeadline">
-                    <Field.Label className="mb-1 font-bold text-xs">
+                    <Field.Label size="sm">
                       {t("common.deadline")}
                     </Field.Label>
                     <DayPickerDialog
@@ -746,27 +714,24 @@ function NewTodoPage() {
                     </Dialog.Description>
                   </div>
 
-                  <Field.Root name="disciplineTitle">
-                    <Field.Label className="mb-1 font-bold text-xs">
-                      {t("common.title")}
-                    </Field.Label>
-                    <Field.Control
-                      required
-                      minLength={3}
-                      className="input"
-                      value={disciplineDraft.title}
-                      placeholder={
-                        t("missions.disciplineTitlePlaceholder") ||
-                        "e.g. Work on core product daily"
-                      }
-                      onChange={(e) =>
-                        setDisciplineDraft((d) => ({
-                          ...d,
-                          title: e.target.value,
-                        }))
-                      }
-                    />
-                  </Field.Root>
+                  <Field
+                    name="disciplineTitle"
+                    label={t("common.title")}
+                    labelSize="sm"
+                    required
+                    minLength={3}
+                    value={disciplineDraft.title}
+                    placeholder={
+                      t("missions.disciplineTitlePlaceholder") ||
+                      "e.g. Work on core product daily"
+                    }
+                    onChange={(e) =>
+                      setDisciplineDraft((d) => ({
+                        ...d,
+                        title: e.target.value,
+                      }))
+                    }
+                  />
 
                   <Field.Root name="disciplineRepeatInterval">
                     <Field.Label className="mb-1 font-bold text-xs">
@@ -807,6 +772,11 @@ function NewTodoPage() {
             </>
           )}
 
+          <Field.FormError
+            errors={state?.errors}
+            knownFields={["title", "type", "deadline", "lifeAreaId", "difficulty", "actions", "disciplines"]}
+          />
+
           <PageActionBtn submit disabled={pending} form="todo-form" />
         </Form>
       )}
@@ -832,9 +802,7 @@ function NewTodoPage() {
               }
             />
             <form action={removeTodoAction}>
-              <Field.Root className="hidden" name="id">
-                <Field.Control type="hidden" name="id" value={editId ?? ""} />
-              </Field.Root>
+              <Field type="hidden" name="id" value={editId ?? ""} />
               <Button
                 type="submit"
                 variant="primary"

@@ -1,6 +1,8 @@
 "use client";
 
-import { Field, Form } from "@base-ui/react";
+import { Form } from "@base-ui/react";
+import Field from "@/features/general/components/ui/Field";
+import { LoginInputSchema } from "@/features/auth/lib/definitions";
 import { useActionState, useState } from "react";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 
@@ -30,49 +32,27 @@ function LoginPage() {
           action={formAction}
           errors={state?.errors}
         >
-          {state?.message && (
-            <div
-              role="alert"
-              className="p-3 text-xs rounded-component bg-foreground/5 border border-foreground/15 text-foreground leading-relaxed"
-            >
-              {state.message}
-            </div>
-          )}
+          <Field
+            name="username"
+            label={t("login.username")}
+            required
+            minLength={3}
+            defaultValue={state?.inputs?.username ?? ""}
+            placeholder={t("login.usernamePlaceholder")}
+            disabled={pending}
+            schema={LoginInputSchema}
+          />
 
-          <Field.Root name="username">
-            <Field.Label className="block font-bold">
-              {t("login.username")}
-            </Field.Label>
-
-            <Field.Control
-              required
-              minLength={3}
-              name="username"
-              className="input"
-              defaultValue={state?.inputs?.username ?? ""}
-              placeholder={t("login.usernamePlaceholder")}
-              disabled={pending}
-            />
-
-            <Field.Error className="sub-text mt-0.5 text-foreground text-xs" />
-          </Field.Root>
-
-          <Field.Root name="password">
-            <Field.Label className="block font-bold">
-              {t("login.password")}
-            </Field.Label>
-
-            <div className="relative">
-              <Field.Control
-                required
-                minLength={6}
-                name="password"
-                type={showPassword ? "text" : "password"}
-                className="input pr-10"
-                placeholder={t("login.passwordPlaceholder")}
-                disabled={pending}
-              />
-
+          <Field
+            name="password"
+            label={t("login.password")}
+            required
+            minLength={6}
+            type={showPassword ? "text" : "password"}
+            placeholder={t("login.passwordPlaceholder")}
+            disabled={pending}
+            schema={LoginInputSchema}
+            endAdornment={
               <Button
                 type="button"
                 variant="ghost"
@@ -82,15 +62,19 @@ function LoginPage() {
                     : t("login.showPassword")
                 }
                 onClick={() => setShowPassword((prev) => !prev)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 h-auto w-auto p-0 rounded-none hover:bg-transparent muted-text [&_svg]:size-5"
+                className="h-auto w-auto p-0 rounded-none hover:bg-transparent muted-text [&_svg]:size-5"
                 tabIndex={-1}
               >
                 {showPassword ? <EyeOffIcon /> : <EyeIcon />}
               </Button>
-            </div>
+            }
+          />
 
-            <Field.Error className="sub-text mt-0.5 text-foreground text-xs" />
-          </Field.Root>
+          <Field.FormError
+            message={state?.message}
+            errors={state?.errors}
+            knownFields={["username", "password"]}
+          />
 
           <Button type="submit" className="w-full" disabled={pending}>
             {pending ? t("login.pending") : t("login.submit")}
