@@ -1,11 +1,9 @@
-import 'server-only';
-import { withRequestContext } from '@/db';
-import { getSessionQuery } from './get-session.query';
-import type { AuthUser } from '../lib/definitions';
+import "server-only";
+import { withRequestContext } from "@/db";
 
-/**
- * Retrieves the currently authenticated user from the database via UserRepository.
- */
+import type { AuthUser } from "../lib/definitions";
+import { getSessionQuery } from "./get-session.query";
+
 export async function getCurrentUserQuery(): Promise<AuthUser | null> {
   const session = await getSessionQuery();
   if (!session?.userId) {

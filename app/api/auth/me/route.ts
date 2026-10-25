@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server';
-import { getCurrentUserQuery } from '@/features/auth/queries';
+import { NextResponse } from "next/server";
+import { getCurrentUserQuery } from "@/features/auth/queries";
 
 export async function GET() {
   try {
@@ -7,11 +7,11 @@ export async function GET() {
 
     if (!user) {
       return NextResponse.json(
-        { user: null, message: 'Unauthenticated' },
+        { user: null, message: "Unauthenticated" },
         {
           status: 401,
           headers: {
-            'Cache-Control': 'no-store, max-age=0',
+            "Cache-Control": "no-store, max-age=0",
           },
         },
       );
@@ -22,14 +22,14 @@ export async function GET() {
       {
         status: 200,
         headers: {
-          'Cache-Control': 'no-store, max-age=0',
+          "Cache-Control": "no-store, max-age=0",
         },
       },
     );
   } catch (error) {
-    console.error('Failed to get current user in /api/auth/me:', error);
+    console.error("Failed to get current user in /api/auth/me:", error);
     return NextResponse.json(
-      { user: null, message: 'Internal Server Error' },
+      { user: null, message: "Internal Server Error" },
       { status: 500 },
     );
   }

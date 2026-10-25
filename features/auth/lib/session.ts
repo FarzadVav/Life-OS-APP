@@ -1,7 +1,7 @@
 import "server-only";
 
-import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
+import { SignJWT, jwtVerify } from "jose";
 
 import { SessionPayload } from "./definitions";
 
@@ -29,7 +29,7 @@ export async function decrypt(session: string | undefined = "") {
   }
 }
 
-export async function createSession(payload: Omit<SessionPayload, "expiresAt">) {
+export async function setSession(payload: Omit<SessionPayload, "expiresAt">) {
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
   const session = await encrypt({ ...payload, expiresAt });
   const cookieStore = await cookies();
@@ -43,7 +43,7 @@ export async function createSession(payload: Omit<SessionPayload, "expiresAt">) 
   });
 }
 
-export async function updateSession() {
+export async function expandSession() {
   const cookieStore = await cookies();
   const session = cookieStore.get("session")?.value;
   const payload = await decrypt(session);

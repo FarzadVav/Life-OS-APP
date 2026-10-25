@@ -575,8 +575,7 @@ const LocalField = forwardRef<
         disabled={disabled}
         dirty={dirty}
         touched={touched}
-        className={cn("w-full", className)}
-      >
+        className={cn("w-full", className)}>
         {label ? (
           <FieldLabel size={labelSize} className={labelClassName}>
             {label}
@@ -593,8 +592,7 @@ const LocalField = forwardRef<
           className={cn(
             "relative w-full",
             (startAdornment || endAdornment) && "flex items-center",
-          )}
-        >
+          )}>
           {startAdornment ? (
             <div className="absolute inset-s-3 top-1/2 -translate-y-1/2 flex items-center pointer-events-none z-10 text-foreground/50">
               {startAdornment}
@@ -635,7 +633,7 @@ const LocalField = forwardRef<
           )}
 
           {endAdornment ? (
-            <div className="absolute inset-e-3 top-1/2 -translate-y-1/2 flex items-center z-10">
+            <div className="h-[calc(100%-(--spacing(3)))] absolute inset-e-1.5 top-1/2 -translate-y-1/2 flex items-center z-10">
               {endAdornment}
             </div>
           ) : null}

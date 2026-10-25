@@ -46,7 +46,11 @@
       "Bash(npx tsc --noEmit 2>&1 | grep \"error TS\" | sort > /tmp/after.txt; wc -l < /tmp/after.txt; cat /tmp/after.txt)",
       "Bash(npx tsc --noEmit 2>&1 | grep \"error TS\" | head; echo \"exit: done\"; grep -rn \"triggerClassName\" --include=\"*.tsx\" app features | head)",
       "Bash(npm run lint 2>&1 | tail -30)",
-      "Bash(npm run lint 2>&1 | grep -B2 \"error\\\\|warning\" | grep -v \"^--\" | head -30)"
+      "Bash(npm run lint 2>&1 | grep -B2 \"error\\\\|warning\" | grep -v \"^--\" | head -30)",
+      "Bash(find . -path ./node_modules -prune -o -type f \\\\\\( -name \"*.action.ts\" -o -name \"*action*.ts\" \\\\\\) -print | grep -v node_modules | sort)",
+      "Bash(for f in features/habits/components/HabitCard/HabitCard.tsx features/journals/components/JournalCard/JournalCard.tsx features/life-areas/components/LifeAreaCard/LifeAreaCard.tsx features/todos/components/TodoCard/TodoCard.tsx; do echo \"===== $f =====\"; cat \"$f\"; done)",
+      "Bash(for f in features/habits/components/HabitsList/HabitsList.tsx features/skills/components/SkillsList/SkillsList.tsx features/todos/components/TodoMissionCard/TodoMissionCard.tsx features/auth/components/LogoutBtn/LogoutBtn.tsx; do echo \"===== $f =====\"; cat -n \"$f\"; done)",
+      "Bash(ls features/general/actions/ 2>/dev/null; echo \"--- indices ---\"; for d in features/habits/actions features/journals/actions features/life-areas/actions features/skills/actions features/todos/actions; do echo \"== $d\"; cat \"$d/index.ts\" 2>/dev/null; done)"
     ]
   }
 }
