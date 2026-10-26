@@ -9,6 +9,8 @@ import PageActionBtn from "@/features/general/components/module/PageActionBtn/Pa
 import PageItemsWrapper from "@/features/general/components/static/PageItemsWrapper/PageItemsWrapper";
 import ConnectivityFallback from "@/features/general/components/module/ConnectivityFallback/ConnectivityFallback";
 
+import HelpDialog from "@/features/general/components/module/HelpDialog/HelpDialog";
+
 async function TodosPage() {
   const { t } = await getTranslations();
 
@@ -16,7 +18,7 @@ async function TodosPage() {
     <PageWrapper>
       <TopBar>
         <TopBar.Title asTitle>{t("todos.title")}</TopBar.Title>
-        <TopBar.HelpBtn position="right" />
+        <HelpDialog position="right" />
       </TopBar>
 
       <PageItemsWrapper>

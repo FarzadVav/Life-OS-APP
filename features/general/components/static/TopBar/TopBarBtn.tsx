@@ -1,28 +1,18 @@
 "use client";
 
 import { cn } from "cn";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ChevronLeftIcon } from "lucide-react";
 
 import { Button, ButtonProps } from "../../ui/Button/Button";
 
-type WithGoBack = {
+export type TopBarBackBtnProps = ButtonProps & {
   goBack?: boolean;
-  href?: never;
-};
-
-type WithHref = {
-  goBack?: never;
   href?: string;
+  position?: "left" | "right";
+  backIcon?: boolean;
 };
-
-type MergedType = WithGoBack | WithHref;
-
-type TopBarBackBtnProps = ButtonProps &
-  MergedType & {
-    position: "left" | "right";
-    backIcon?: boolean;
-  };
 
 function TopBarBtn({
   href,
@@ -32,6 +22,8 @@ function TopBarBtn({
   backIcon,
   position,
   className,
+  render,
+  nativeButton,
   ...p
 }: TopBarBackBtnProps) {
   const router = useRouter();
@@ -39,27 +31,28 @@ function TopBarBtn({
   const handleClick: ButtonProps["onClick"] = (ev) => {
     if (goBack) {
       router.back();
-
-      return;
-    }
-
-    if (href?.trim()) {
-      router.push(href);
-
       return;
     }
 
     onClick?.(ev);
   };
 
+  const computedRender =
+    render ?? (href ? <Link href={href} /> : undefined);
+  const computedNativeButton =
+    nativeButton ?? (href ? false : undefined);
+
   return (
     <Button
       square
       variant={"ghost"}
-      onClick={handleClick}
+      render={computedRender}
+      nativeButton={computedNativeButton}
+      onClick={goBack ? handleClick : onClick}
       className={cn(
-        "absolute",
-        position === "left" ? "left-0" : "right-0",
+        position && "absolute",
+        position === "left" && "left-0",
+        position === "right" && "right-0",
         className,
       )}
       {...p}

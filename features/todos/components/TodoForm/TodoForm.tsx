@@ -30,6 +30,7 @@ import {
   updateTodoMutation,
 } from "@/features/todos/mutations";
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
+import HelpDialog from "@/features/general/components/module/HelpDialog/HelpDialog";
 import { Button } from "@/features/general/components/ui/Button/Button";
 import PageActionBtn from "@/features/general/components/module/PageActionBtn/PageActionBtn";
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
@@ -410,7 +411,7 @@ export function TodoForm() {
             <Trash2Icon className="size-5" />
           </TopBar.Btn>
         ) : (
-          <TopBar.HelpBtn position="right" />
+          <HelpDialog position="right" />
         )}
       </TopBar>
 

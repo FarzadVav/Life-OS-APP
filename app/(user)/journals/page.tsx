@@ -8,6 +8,8 @@ import ConnectivityFallback from "@/features/general/components/module/Connectiv
 import JournalsCategoryList from "@/features/journals/components/JournalsCategoryList/JournalsCategoryList";
 import { getTranslations } from "@/features/general/lib/i18n/server";
 
+import HelpDialog from "@/features/general/components/module/HelpDialog/HelpDialog";
+
 async function JournalsPage() {
   const { t } = await getTranslations();
 
@@ -15,7 +17,7 @@ async function JournalsPage() {
     <PageWrapper>
       <TopBar>
         <TopBar.Title asTitle>{t("journals.title")}</TopBar.Title>
-        <TopBar.HelpBtn position="right" />
+        <HelpDialog position="right" />
       </TopBar>
 
       <PageItemsWrapper>

@@ -6,13 +6,11 @@ import { CircleHelp, Lightbulb, CheckCircle2, Sparkles } from "lucide-react";
 
 import TopBarBtn from "@/features/general/components/static/TopBar/TopBarBtn";
 import Dialog from "@/features/general/components/ui/Dialog/Dialog";
-import { Button } from "@/features/general/components/ui/Button/Button";
+import { Button, ButtonProps } from "@/features/general/components/ui/Button/Button";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 import { cn } from "cn";
 
-interface HelpDialogProps {
-  position?: "left" | "right";
-  className?: string;
+type HelpDialogProps = ButtonProps & {
   topic?: string;
 }
 
@@ -39,9 +37,10 @@ function resolveTopic(pathname: string | null): string {
 }
 
 export default function HelpDialog({
-  position = "right",
-  className,
+  onClick,
+  children,
   topic,
+  ...p
 }: HelpDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
   const { t } = useLocale();
@@ -63,15 +62,17 @@ export default function HelpDialog({
 
   return (
     <>
-      <TopBarBtn
-        position={position}
-        onClick={() => setIsOpen(true)}
-        className={cn("text-foreground/80 hover:text-foreground", className)}
-        aria-label={t("help.label")}
+      <Button
         title={t("help.label")}
+        aria-label={t("help.label")}
+        onClick={(ev) => {
+          setIsOpen(true);
+          onClick?.(ev);
+        }}
+        {...p}
       >
-        <CircleHelp className="size-5" />
-      </TopBarBtn>
+        {children || <CircleHelp />}
+      </Button>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <div className="flex flex-col gap-5 max-w-sm w-full p-1">

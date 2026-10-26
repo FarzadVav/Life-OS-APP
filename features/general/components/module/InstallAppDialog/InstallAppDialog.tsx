@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
+import { useState } from "react";
 import {
   Download,
   Share,
@@ -13,21 +13,18 @@ import {
   MoreVertical,
   Layers,
 } from "lucide-react";
-import TopBar from "@/features/general/components/static/TopBar/TopBar";
+
 import Dialog from "@/features/general/components/ui/Dialog/Dialog";
-import { Button } from "@/features/general/components/ui/Button/Button";
+import TopBar from "@/features/general/components/static/TopBar/TopBar";
 import { usePwaInstall } from "@/features/general/hooks/usePwaInstall";
+import { Button, ButtonProps } from "@/features/general/components/ui/Button/Button";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 
-interface InstallAppDialogProps {
-  position?: "left" | "right";
-  className?: string;
-}
-
 export default function InstallAppDialog({
-  position = "right",
-  className,
-}: InstallAppDialogProps) {
+  children,
+  onClick,
+  ...p
+}: ButtonProps) {
   const {
     isStandalone,
     isInstallable,
@@ -63,15 +60,17 @@ export default function InstallAppDialog({
 
   return (
     <>
-      <TopBar.Btn
-        position={position}
-        onClick={() => setIsOpen(true)}
-        className={className}
-        aria-label={t("install.aria")}
+      <Button
         title={t("install.label")}
+        aria-label={t("install.aria")}
+        onClick={(ev) => {
+          setIsOpen(true);
+          onClick?.(ev);
+        }}
+        {...p}
       >
-        <Download className="size-5" />
-      </TopBar.Btn>
+        {children || <Download />}
+      </Button>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <div className="flex flex-col gap-4 max-w-sm w-full p-1 sm:p-2">

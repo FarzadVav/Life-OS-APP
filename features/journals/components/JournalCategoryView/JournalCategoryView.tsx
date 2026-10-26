@@ -4,6 +4,7 @@ import { useJournals } from "../../hooks";
 import { JournalType } from "../../types";
 import JournalCard from "../JournalCard/JournalCard";
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
+import HelpDialog from "@/features/general/components/module/HelpDialog/HelpDialog";
 import PageActionBtn from "@/features/general/components/module/PageActionBtn/PageActionBtn";
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
 import PageItemsWrapper from "@/features/general/components/static/PageItemsWrapper/PageItemsWrapper";
@@ -32,7 +33,7 @@ export default function JournalCategoryView({
       <TopBar>
         <TopBar.Title asTitle>{title}</TopBar.Title>
         <TopBar.Btn backIcon href="/journals" position="left" />
-        <TopBar.HelpBtn position="right" />
+        <HelpDialog position="right" />
       </TopBar>
 
       <PageItemsWrapper>

@@ -21,6 +21,7 @@ import {
   updateHabitMutation,
 } from "@/features/habits/mutations";
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
+import HelpDialog from "@/features/general/components/module/HelpDialog/HelpDialog";
 import PageActionBtn from "@/features/general/components/module/PageActionBtn/PageActionBtn";
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
 import { useLifeAreas } from "@/features/life-areas/hooks";
@@ -144,7 +145,7 @@ export function HabitForm() {
             <Trash2Icon className="size-5" />
           </TopBar.Btn>
         ) : (
-          <TopBar.HelpBtn position="right" />
+          <HelpDialog position="right" />
         )}
       </TopBar>
 

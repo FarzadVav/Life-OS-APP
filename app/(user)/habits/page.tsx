@@ -5,6 +5,8 @@ import { HabitsList } from "@/features/habits/components";
 import PageActionBtn from "@/features/general/components/module/PageActionBtn/PageActionBtn";
 import { getTranslations } from "@/features/general/lib/i18n/server";
 
+import HelpDialog from "@/features/general/components/module/HelpDialog/HelpDialog";
+
 export default async function HabitsPage() {
   const { t } = await getTranslations();
 
@@ -12,7 +14,7 @@ export default async function HabitsPage() {
     <PageWrapper>
       <TopBar>
         <TopBar.Title asTitle>{t("habits.title")}</TopBar.Title>
-        <TopBar.HelpBtn position="right" />
+        <HelpDialog position="right" />
       </TopBar>
 
       <PageItemsWrapper>
