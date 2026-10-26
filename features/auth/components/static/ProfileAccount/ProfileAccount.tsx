@@ -1,3 +1,5 @@
+"use client";
+
 import LogoutBtn from "../../LogoutBtn/LogoutBtn";
 import { useCurrentUser } from "@/features/auth/hooks";
 import CardView from "@/features/general/components/ui/CardView/CardView";

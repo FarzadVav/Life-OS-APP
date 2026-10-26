@@ -1,5 +1,5 @@
 import { LogOutIcon } from "lucide-react";
-import { useActionState, useState } from "react";
+import { useActionState } from "react";
 
 import { logoutMutation } from "@/features/auth/mutations";
 import Dialog from "@/features/general/components/ui/Dialog/Dialog";

@@ -1,14 +1,12 @@
-"use client";
-
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
 import PageItemsWrapper from "@/features/general/components/static/PageItemsWrapper/PageItemsWrapper";
 import { SkillsList } from "@/features/skills/components";
-import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 import PageActionBtn from "@/features/general/components/module/PageActionBtn/PageActionBtn";
+import { getTranslations } from "@/features/general/lib/i18n/server";
 
-export default function SkillsPage() {
-  const { t } = useLocale();
+export default async function SkillsPage() {
+  const { t } = await getTranslations();
 
   return (
     <PageWrapper>
