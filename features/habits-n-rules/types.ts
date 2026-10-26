@@ -7,7 +7,6 @@ export const HabitLifeAreaSummarySchema = type({
   id: 'number',
   title: 'string',
 });
-export type HabitLifeAreaSummary = typeof HabitLifeAreaSummarySchema.infer;
 
 /**
  * Schema for habit check-in completion history.
@@ -17,7 +16,6 @@ export const HabitHistoryItemSchema = type({
   date: 'string',
   isDone: 'boolean',
 });
-export type HabitHistoryItem = typeof HabitHistoryItemSchema.infer;
 
 /**
  * ArkType schema and inferred type for Habit entity.

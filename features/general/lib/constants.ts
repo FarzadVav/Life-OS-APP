@@ -6,7 +6,7 @@ import {
   DatabaseIcon,
 } from "lucide-react";
 
-import { FeaturesAreas, LifeArea, NavigationLink } from "./types";
+import { NavigationLink } from "./types";
 
 export const APP_PROFILE = {
   name: "Arrow Up",
@@ -37,47 +37,29 @@ export const APP_PROFILE = {
   },
 };
 
-export const LIFE_AREAS_DATA: LifeArea[] = [
-  { id: 1, title: "Work" },
-  { id: 2, title: "Sport" },
-  { id: 3, title: "Connections" },
-];
-
-export const FEATURES_AREAS: FeaturesAreas[] = [
-  "notes",
-  "journals",
-  "habits",
-  "todos",
-];
-
 export const NAVIGATION_LINKS: NavigationLink[] = [
   {
     href: "/profile",
-    name: "Profile",
     matchPathname: "/profile",
     Icon: UserIcon,
   },
   {
-    name: "Todos",
     href: "/todos",
     matchPathname: "/todos",
     Icon: CircleCheckBig,
   },
   {
-    name: "Habits and Rules",
     href: "/habits-n-rules",
     matchPathname: "/habits-n-rules",
     Icon: Repeat2Icon,
   },
   {
-    name: "Skills",
     href: "/skills",
     matchPathname: "/skills",
     Icon: DatabaseIcon,
   },
   {
     href: "/journals",
-    name: "Journals",
     matchPathname: "/journals",
     Icon: PenLineIcon,
   },

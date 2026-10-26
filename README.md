@@ -23,3 +23,9 @@
 
 - Add repeat-interval with a stack for missions disciplines (Stack should handle with cron jobs)
 - Add pending state for missions (With a start date)
+
+---
+
+# Ideas
+
+---

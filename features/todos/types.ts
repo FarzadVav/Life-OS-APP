@@ -14,7 +14,6 @@ export const TodoLifeAreaSummarySchema = type({
   title: 'string',
   'vision?': 'string',
 });
-export type TodoLifeAreaSummary = typeof TodoLifeAreaSummarySchema.infer;
 
 /**
  * ArkType schema and inferred type for sub-action items in missions.
@@ -34,7 +33,6 @@ export const TodoDisciplineHistorySchema = type({
   date: 'string',
   isDone: 'boolean',
 });
-export type TodoDisciplineHistory = typeof TodoDisciplineHistorySchema.infer;
 
 /**
  * ArkType schema and inferred type for recurring mission disciplines.

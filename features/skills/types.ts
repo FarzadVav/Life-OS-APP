@@ -8,7 +8,6 @@ export const SkillLifeAreaSummarySchema = type({
   title: 'string',
   'vision?': 'string',
 });
-export type SkillLifeAreaSummary = typeof SkillLifeAreaSummarySchema.infer;
 
 /**
  * ArkType schema and inferred type for a complete Skill entity.
