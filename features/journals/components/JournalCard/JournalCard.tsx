@@ -97,7 +97,7 @@ function JournalCard({ journal, onDeleted }: JournalCardProps) {
 
             <RichTextResult
               content={journal.content}
-              placeholder={t("journals.contentPlaceholder") || "No content"}
+              placeholder={t("journals.contentPlaceholder")}
               containerClassName="bg-background p-4"
             />
           </section>

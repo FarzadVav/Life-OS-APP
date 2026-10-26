@@ -34,6 +34,7 @@ import { Button } from "@/features/general/components/ui/Button/Button";
 import PageActionBtn from "@/features/general/components/module/PageActionBtn/PageActionBtn";
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
 import Dialog from "@/features/general/components/ui/Dialog/Dialog";
+import Skeleton from "@/features/general/components/ui/Skeleton";
 import TimePickerDialog from "@/features/general/components/ui/TimePickerDialog";
 import DayPickerDialog from "@/features/general/components/ui/DayPickerDialog";
 import RepeatIntervalInput from "@/features/general/components/ui/RepeatIntervalInput";
@@ -57,10 +58,10 @@ function TypeSelect({
     value: item.value,
     label:
       item.value === "Daily"
-        ? t("todos.today") || "Daily"
+        ? t("todos.today")
         : item.value === "Upcoming"
-          ? t("todos.upcoming") || "Upcoming"
-          : t("todos.missions") || "Mission",
+          ? t("todos.upcoming")
+          : t("missions.title"),
   }));
 
   return (
@@ -91,17 +92,17 @@ function DifficultySelect({
 }) {
   const { t } = useLocale();
   const items = [
-    { value: 1, label: "1 · " + (t("missions.level1") || "Easy") },
-    { value: 2, label: "2 · " + (t("missions.level2") || "Moderate") },
-    { value: 3, label: "3 · " + (t("missions.level3") || "Challenging") },
-    { value: 4, label: "4 · " + (t("missions.level4") || "Hard") },
-    { value: 5, label: "5 · " + (t("missions.level5") || "Epic") },
+    { value: 1, label: "1 · " + t("missions.level1") },
+    { value: 2, label: "2 · " + t("missions.level2") },
+    { value: 3, label: "3 · " + t("missions.level3") },
+    { value: 4, label: "4 · " + t("missions.level4") },
+    { value: 5, label: "5 · " + t("missions.level5") },
   ];
 
   return (
     <Field.Root name="difficulty">
       <Field.Label className="mb-1 font-bold">
-        {t("missions.difficulty") || "Time and Energy Cost"}
+        {t("missions.difficulty")}
       </Field.Label>
 
       <SelectDialog
@@ -109,8 +110,8 @@ function DifficultySelect({
         items={items}
         value={value}
         onChange={(next) => onChange(Number(next))}
-        title={t("missions.difficulty") || "Time and Energy Cost"}
-        placeholder={t("missions.selectDifficulty") || "Select Time and Energy Cost"}
+        title={t("missions.difficulty")}
+        placeholder={t("missions.selectDifficulty")}
         required
       />
 
@@ -130,7 +131,7 @@ function LifeAreaSelect({
   const { lifeAreas = [] } = useLifeAreas();
 
   const items = [
-    { value: "none", label: t("lifeAreas.none") || "None" },
+    { value: "none", label: t("lifeAreas.none") },
     ...lifeAreas.map((la) => ({
       value: String(la.id),
       label: la.title,
@@ -140,7 +141,7 @@ function LifeAreaSelect({
   return (
     <Field.Root name="lifeAreaId">
       <Field.Label className="mb-1 font-bold">
-        {t("lifeAreas.title") || "Life Area"}
+        {t("lifeAreas.title")}
       </Field.Label>
 
       <SelectDialog
@@ -150,8 +151,8 @@ function LifeAreaSelect({
         onChange={(next) =>
           onChange(next === "none" || !next ? null : Number(next))
         }
-        title={t("lifeAreas.selectLifeArea") || "Select Life Area"}
-        placeholder={t("lifeAreas.selectLifeArea") || "Select Life Area"}
+        title={t("lifeAreas.selectLifeArea")}
+        placeholder={t("lifeAreas.selectLifeArea")}
       />
 
       <Field.Error className="sub-text mt-0.5 text-foreground text-xs" />
@@ -391,10 +392,10 @@ export function TodoForm() {
         <TopBar.Title asTitle>
           {isEditMode
             ? type === "Mission"
-              ? t("missions.edit") || "Edit Mission"
+              ? t("missions.edit")
               : t("todos.edit")
             : type === "Mission"
-              ? t("todos.newMission") || "New Mission"
+              ? t("missions.new")
               : t("todos.new")}
         </TopBar.Title>
         <TopBar.Btn backIcon href="/todos" position="left" />
@@ -414,15 +415,16 @@ export function TodoForm() {
       </TopBar>
 
       {isEditMode && isTodoLoading && !todo ? (
-        <div className="flex w-full items-center justify-center p-12 text-foreground/40 gap-2">
-          <LoaderIcon className="size-5 animate-spin" />
-          <span className="text-xs sub-text">{t("common.loading")}</span>
+        <div className="w-full space-y-4">
+          <Skeleton className="h-12" />
+          <Skeleton className="h-32" />
+          <Skeleton className="h-12" />
         </div>
       ) : (
         <Form
           id="todo-form"
           className="w-full space-y-6"
-          aria-label={isEditMode ? t("todos.editAria") : t("todos.createAria")}
+          aria-label={isEditMode ? t("todos.edit") : t("todos.new")}
           action={formAction}
           errors={state?.errors}
         >
@@ -460,8 +462,7 @@ export function TodoForm() {
             disabled={pending}
             placeholder={
               type === "Mission"
-                ? t("missions.titlePlaceholder") ||
-                  "What is your main mission objective?"
+                ? t("missions.titlePlaceholder")
                 : t("todos.titlePlaceholder")
             }
             onChange={(event) => setTitle(event.target.value)}
@@ -494,10 +495,10 @@ export function TodoForm() {
               <Field.Root name="actions">
                 <div className="flex items-center justify-between mb-2">
                   <Field.Label className="font-bold">
-                    {t("missions.actionsLabel") || "Actions"}
+                    {t("missions.actionsLabel")}
                   </Field.Label>
                   <span className="sub-text text-xs">
-                    {actions.length} {t("missions.actionsLabel") || "actions"}
+                    {actions.length} {t("missions.actionsLabel")}
                   </span>
                 </div>
 
@@ -509,7 +510,7 @@ export function TodoForm() {
                   className="w-full justify-center gap-1.5 rounded-component"
                 >
                   <PlusIcon className="size-4" />
-                  <span>{t("missions.newAction") || "Add Action"}</span>
+                  <span>{t("missions.newAction")}</span>
                 </Button>
 
                 {actions.length > 0 && (
@@ -560,11 +561,10 @@ export function TodoForm() {
               <Field.Root name="disciplines">
                 <div className="flex items-center justify-between mb-2">
                   <Field.Label className="font-bold">
-                    {t("missions.disciplines") || "Disciplines"}
+                    {t("missions.disciplines")}
                   </Field.Label>
                   <span className="sub-text text-xs">
-                    {disciplines.length}{" "}
-                    {t("missions.disciplines") || "disciplines"}
+                    {disciplines.length} {t("missions.disciplines")}
                   </span>
                 </div>
 
@@ -576,7 +576,7 @@ export function TodoForm() {
                   className="w-full justify-center gap-1.5 rounded-component"
                 >
                   <PlusIcon className="size-4" />
-                  <span>{t("missions.newDiscipline") || "Add Discipline"}</span>
+                  <span>{t("missions.newDiscipline")}</span>
                 </Button>
 
                 {disciplines.length > 0 && (
@@ -631,12 +631,11 @@ export function TodoForm() {
                   <div>
                     <Dialog.Title className="font-bold">
                       {actionDraft.id !== null
-                        ? t("missions.editAction") || "Edit Action"
-                        : t("missions.newAction") || "Add Action"}
+                        ? t("missions.editAction")
+                        : t("missions.newAction")}
                     </Dialog.Title>
                     <Dialog.Description className="sub-text text-xs mt-1">
-                      {t("missions.createActionDesc") ||
-                        "Define a concrete, actionable milestone."}
+                      {t("missions.createActionDesc")}
                     </Dialog.Description>
                   </div>
 
@@ -647,10 +646,7 @@ export function TodoForm() {
                     required
                     minLength={2}
                     value={actionDraft.title}
-                    placeholder={
-                      t("missions.actionTitlePlaceholder") ||
-                      "e.g. Complete architecture design"
-                    }
+                    placeholder={t("missions.actionTitlePlaceholder")}
                     onChange={(e) =>
                       setActionDraft((d) => ({ ...d, title: e.target.value }))
                     }
@@ -706,15 +702,13 @@ export function TodoForm() {
                   <div>
                     <Dialog.Title className="font-bold">
                       {disciplineDraft.id !== null
-                        ? t("missions.editDiscipline") || "Edit Discipline"
-                        : t("missions.newDiscipline") || "New Discipline"}
+                        ? t("missions.editDiscipline")
+                        : t("missions.newDiscipline")}
                     </Dialog.Title>
                     <Dialog.Description className="sub-text text-xs mt-1">
                       {disciplineDraft.id !== null
-                        ? t("missions.editDisciplineDesc") ||
-                          "Edit the discipline title and interval."
-                        : t("missions.createDisciplineDesc") ||
-                          "Define a repeated behavior supporting this mission."}
+                        ? t("missions.editDisciplineDesc")
+                        : t("missions.createDisciplineDesc")}
                     </Dialog.Description>
                   </div>
 
@@ -725,10 +719,7 @@ export function TodoForm() {
                     required
                     minLength={3}
                     value={disciplineDraft.title}
-                    placeholder={
-                      t("missions.disciplineTitlePlaceholder") ||
-                      "e.g. Work on core product daily"
-                    }
+                    placeholder={t("missions.disciplineTitlePlaceholder")}
                     onChange={(e) =>
                       setDisciplineDraft((d) => ({
                         ...d,
@@ -793,7 +784,7 @@ export function TodoForm() {
               {t("common.delete")}
             </Dialog.Title>
             <Dialog.Description className="sub-text text-xs mt-1">
-              {t("common.confirm") || "Are you sure you want to delete this item?"}
+              {t("common.deleteConfirm")}
             </Dialog.Description>
           </div>
 

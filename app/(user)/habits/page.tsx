@@ -11,7 +11,7 @@ export default async function HabitsPage() {
   return (
     <PageWrapper>
       <TopBar>
-        <TopBar.Title asTitle>{t("habits.title") || "Habits"}</TopBar.Title>
+        <TopBar.Title asTitle>{t("habits.title")}</TopBar.Title>
         <TopBar.HelpBtn position="right" />
       </TopBar>
 
@@ -19,7 +19,7 @@ export default async function HabitsPage() {
         <HabitsList />
       </PageItemsWrapper>
 
-      <PageActionBtn href="/habits/new">{t("habits.new") || "New Habit"}</PageActionBtn>
+      <PageActionBtn href="/habits/new">{t("habits.new")}</PageActionBtn>
     </PageWrapper>
   );
 }

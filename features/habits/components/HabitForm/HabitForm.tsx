@@ -11,6 +11,7 @@ import { LoaderIcon, Trash2Icon } from "lucide-react";
 import SelectDialog from "@/features/general/components/ui/SelectDialog";
 import Dialog from "@/features/general/components/ui/Dialog/Dialog";
 import { Button } from "@/features/general/components/ui/Button/Button";
+import Skeleton from "@/features/general/components/ui/Skeleton";
 import RepeatIntervalInput from "@/features/general/components/ui/RepeatIntervalInput";
 
 import { useHabit } from "@/features/habits/hooks/useHabit";
@@ -35,7 +36,7 @@ function LifeAreaSelect({
   const { lifeAreas = [] } = useLifeAreas();
 
   const items = [
-    { value: "none", label: t("habits.unassigned") || t("lifeAreas.none") || "General" },
+    { value: "none", label: t("common.general") },
     ...lifeAreas.map((la) => ({
       value: String(la.id),
       label: la.title,
@@ -45,7 +46,7 @@ function LifeAreaSelect({
   return (
     <Field.Root name="lifeAreaId">
       <Field.Label className="mb-1 font-bold">
-        {t("habits.selectLifeArea") || t("lifeAreas.title") || "Life Area"}
+        {t("lifeAreas.selectLifeArea")}
       </Field.Label>
 
       <SelectDialog
@@ -53,8 +54,8 @@ function LifeAreaSelect({
         items={items}
         value={value ? String(value) : "none"}
         onChange={(next) => onChange(next === "none" || !next ? null : Number(next))}
-        title={t("habits.selectLifeArea") || "Select Life Area"}
-        placeholder={t("habits.selectLifeArea") || "Select Life Area"}
+        title={t("lifeAreas.selectLifeArea")}
+        placeholder={t("lifeAreas.selectLifeArea")}
       />
 
       <Field.Error className="sub-text mt-0.5 text-foreground text-xs" />
@@ -129,7 +130,7 @@ export function HabitForm() {
     <PageWrapper>
       <TopBar>
         <TopBar.Title asTitle>
-          {isEditMode ? t("habits.edit") || "Edit Habit" : t("habits.new") || "New Habit"}
+          {isEditMode ? t("habits.edit") : t("habits.new")}
         </TopBar.Title>
         <TopBar.Btn backIcon href="/habits" position="left" />
 
@@ -148,9 +149,10 @@ export function HabitForm() {
       </TopBar>
 
       {isEditMode && isHabitLoading && !habit ? (
-        <div className="flex w-full items-center justify-center p-12 text-foreground/40 gap-2">
-          <LoaderIcon className="size-5 animate-spin" />
-          <span className="text-xs sub-text">{t("common.loading")}</span>
+        <div className="w-full space-y-4">
+          <Skeleton className="h-12" />
+          <Skeleton className="h-24" />
+          <Skeleton className="h-12" />
         </div>
       ) : (
         <Form
@@ -215,7 +217,7 @@ export function HabitForm() {
           <div>
             <Dialog.Title className="font-bold">{t("common.delete")}</Dialog.Title>
             <Dialog.Description className="sub-text text-xs mt-1">
-              {t("habits.deleteConfirm") || "Are you sure you want to delete this habit?"}
+              {t("habits.deleteConfirm")}
             </Dialog.Description>
           </div>
 

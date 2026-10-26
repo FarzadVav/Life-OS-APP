@@ -11,7 +11,7 @@ import { formatPersianDate as formatPersianDateUtil } from "@/features/general/l
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 
 export function formatPersianDate(date: Date | null): string {
-  return formatPersianDateUtil(date, "Not set");
+  return formatPersianDateUtil(date);
 }
 
 export type DayPickerDialogProps = {
@@ -51,7 +51,7 @@ function LocalDayPickerDialog({
   const resolvedLabel = label ?? t("common.deadline");
   const formatDateValue =
     formatDate ??
-    ((date: Date | null) => localeFormatDate(date, t("dates.notSet")));
+    ((date: Date | null) => localeFormatDate(date, t("common.notSet")));
   const [internalOpen, setInternalOpen] = useState(false);
   const isControlled = open !== undefined;
   const isOpen = isControlled ? open : internalOpen;

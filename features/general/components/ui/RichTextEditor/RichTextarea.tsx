@@ -36,7 +36,7 @@ export function RichTextarea({
   const [open, setOpen] = useState(false);
 
   const isEmpty = isRichTextEmpty(value);
-  const resolvedPlaceholder = placeholder || t("editor.clickToWrite") || "Write your content here...";
+  const resolvedPlaceholder = placeholder || t("editor.clickToWrite");
 
   return (
     <>
@@ -64,7 +64,7 @@ export function RichTextarea({
             <p className="sub-text text-sm">{resolvedPlaceholder}</p>
             <span className="mt-3 inline-flex items-center gap-1.5 rounded-container bg-card-thick px-3 py-1 text-xs font-medium text-foreground/80 transition-colors group-hover:bg-foreground group-hover:text-background">
               <PenLineIcon className="size-3.5" />
-              <span>{t("editor.fullscreen") || "Open Editor"}</span>
+              <span>{t("editor.fullscreen")}</span>
             </span>
           </div>
         ) : (
@@ -77,7 +77,7 @@ export function RichTextarea({
 
             <span className="absolute top-2.5 end-2.5 inline-flex items-center gap-1 rounded-component bg-card-thick px-2 py-0.5 text-xs font-medium text-foreground/70 opacity-70 transition-opacity group-hover:opacity-100">
               <Maximize2Icon className="size-3" />
-              <span>{t("common.edit") || "Edit"}</span>
+              <span>{t("common.edit")}</span>
             </span>
           </div>
         )}

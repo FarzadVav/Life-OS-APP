@@ -28,32 +28,32 @@ function ProfileStats() {
 
   const stats = [
     {
-      label: t("profile.todos"),
+      label: t("todos.title"),
       icon: <CheckSquareIcon className="size-5 text-foreground" />,
       details: [
         {
-          label: t("todos.today") || "Daily",
+          label: t("todos.today"),
           value: `${completedDaily}/${dailyTodos.length}`,
         },
         {
-          label: t("todos.upcoming") || "Upcoming",
+          label: t("todos.upcoming"),
           value: upcomingTodos.length,
         },
       ],
     },
     {
-      label: t("todos.missions") || "Missions",
+      label: t("missions.title"),
       icon: <RocketIcon className="size-5 text-foreground" />,
       details: [
         { label: t("profile.total"), value: missionTodos.length },
         {
-          label: t("missions.actionsLabel") || "Actions",
+          label: t("missions.actionsLabel"),
           value: `${doneMissionActions}/${totalMissionActions}`,
         },
       ],
     },
     {
-      label: t("profile.journals"),
+      label: t("journals.title"),
       icon: <BookOpenIcon className="size-5 text-foreground" />,
       details: [{ label: t("profile.total"), value: totalJournals }],
     },

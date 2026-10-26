@@ -10,6 +10,7 @@ import { LoaderIcon, Trash2Icon } from "lucide-react";
 import SelectDialog from "@/features/general/components/ui/SelectDialog";
 import Dialog from "@/features/general/components/ui/Dialog/Dialog";
 import { Button } from "@/features/general/components/ui/Button/Button";
+import Skeleton from "@/features/general/components/ui/Skeleton";
 
 import {
   JournalType,
@@ -167,15 +168,16 @@ export function JournalForm() {
       </TopBar>
 
       {isEditMode && isJournalLoading && !journal ? (
-        <div className="flex w-full items-center justify-center p-12 text-foreground/40 gap-2">
-          <LoaderIcon className="size-5 animate-spin" />
-          <span className="text-xs sub-text">{t("common.loading")}</span>
+        <div className="w-full space-y-4">
+          <Skeleton className="h-12" />
+          <Skeleton className="h-36" />
+          <Skeleton className="h-12" />
         </div>
       ) : (
         <Form
           id="journal-form"
           className="w-full space-y-6"
-          aria-label={isEditMode ? t("journals.editAria") : t("journals.createAria")}
+          aria-label={isEditMode ? t("journals.edit") : t("journals.new")}
           action={formAction}
           errors={state?.errors}
         >
@@ -231,7 +233,7 @@ export function JournalForm() {
               {t("common.delete")}
             </Dialog.Title>
             <Dialog.Description className="sub-text text-xs mt-1">
-              {t("common.confirm") || "Are you sure you want to delete this item?"}
+              {t("common.deleteConfirm")}
             </Dialog.Description>
           </div>
 

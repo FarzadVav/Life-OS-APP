@@ -19,33 +19,27 @@ const CATEGORY_META: Record<
   {
     icon: LucideIcon;
     descriptionKey: string;
-    fallbackDescription: string;
   }
 > = {
   Logs: {
     icon: ScrollText,
     descriptionKey: "journals.categoryDesc.logs",
-    fallbackDescription: "Daily activity, execution notes, and progress logs",
   },
   Thoughts: {
     icon: Brain,
     descriptionKey: "journals.categoryDesc.thoughts",
-    fallbackDescription: "Reflections, mental models, and deep contemplations",
   },
   Feelings: {
     icon: Heart,
     descriptionKey: "journals.categoryDesc.feelings",
-    fallbackDescription: "Emotional awareness, gratitude, and inner state",
   },
   Ideas: {
     icon: Lightbulb,
     descriptionKey: "journals.categoryDesc.ideas",
-    fallbackDescription: "Sparks of creativity, projects, and future concepts",
   },
   Notes: {
     icon: PenLine,
     descriptionKey: "journals.categoryDesc.notes",
-    fallbackDescription: "Quick references, checklists, and working memos",
   },
 };
 
@@ -57,9 +51,8 @@ export default function JournalsCategoryList() {
       {JOURNAL_CATEGORIES.map((category) => {
         const meta = CATEGORY_META[category];
         const Icon = meta.icon;
-        const label =
-          t(`journals.categories.${category.toLowerCase()}`) || category;
-        const desc = t(meta.descriptionKey) || meta.fallbackDescription;
+        const label = t(`journals.categories.${category.toLowerCase()}`);
+        const desc = t(meta.descriptionKey);
 
         return (
           <Link

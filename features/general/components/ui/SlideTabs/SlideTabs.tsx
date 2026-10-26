@@ -21,6 +21,7 @@ export type SlideTabItem = {
   disabled?: boolean;
   content?: ReactNode;
   onClick?: () => void;
+  className?: string;
 };
 
 export type SlideTabsProps = {
@@ -33,6 +34,7 @@ export type SlideTabsProps = {
   children?: ReactNode | ((activeTab: SlideTabItem, index: number) => ReactNode);
   className?: string;
   headerClassName?: string;
+  tabClassName?: string;
   panelClassName?: string;
   isRtl?: boolean;
   offset?: string;
@@ -70,6 +72,7 @@ export function SlideTabs({
   children,
   className,
   headerClassName,
+  tabClassName,
   panelClassName,
   isRtl: isRtlProp,
   offset = "100%",
@@ -181,7 +184,11 @@ export function SlideTabs({
               <Button
                 key={tab.id}
                 nativeButton={false}
-                className="flex-1 justify-center rounded-container text-xs sm:text-sm font-semibold transition-all py-2 gap-1.5"
+                className={cn(
+                  "flex-1 justify-center rounded-container text-xs sm:text-sm font-semibold transition-all py-2 gap-1.5",
+                  tabClassName,
+                  tab.className,
+                )}
                 render={<Link href={tab.href} scroll={false} />}
                 variant={isActive ? "primary" : "card"}
                 disabled={tab.disabled}
@@ -196,7 +203,11 @@ export function SlideTabs({
             <Button
               key={tab.id}
               type="button"
-              className="flex-1 justify-center rounded-container text-xs sm:text-sm font-semibold transition-all py-2 gap-1.5"
+              className={cn(
+                "flex-1 justify-center rounded-container text-xs sm:text-sm font-semibold transition-all py-2 gap-1.5",
+                tabClassName,
+                tab.className,
+              )}
               variant={isActive ? "primary" : "card"}
               disabled={tab.disabled}
               onClick={() => {

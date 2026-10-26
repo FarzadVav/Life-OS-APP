@@ -73,7 +73,7 @@ export function HabitDialog({
   const lifeAreaItems = [
     {
       value: UNASSIGNED_ID,
-      label: t("habits.unassigned") || t("lifeAreas.none") || "General",
+      label: t("common.general"),
     },
     ...lifeAreas.map((area) => ({
       value: area.id,
@@ -119,15 +119,15 @@ export function HabitDialog({
 
         <div>
           <label className="block font-bold text-xs mb-1.5">
-            {t("habits.selectLifeArea")}
+            {t("lifeAreas.selectLifeArea")}
           </label>
           <SelectDialog<number>
             name="lifeAreaSelect"
             items={lifeAreaItems}
             value={selectedLifeAreaId}
             onChange={(val) => setSelectedLifeAreaId(val)}
-            title={t("habits.selectLifeArea")}
-            placeholder={t("habits.selectLifeArea")}
+            title={t("lifeAreas.selectLifeArea")}
+            placeholder={t("lifeAreas.selectLifeArea")}
             disabled={isSubmitting || isLoadingLifeAreas}
           />
         </div>

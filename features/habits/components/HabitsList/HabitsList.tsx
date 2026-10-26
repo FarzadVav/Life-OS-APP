@@ -1,6 +1,5 @@
 "use client";
 
-import { cn } from "cn";
 import { useRouter } from "next/navigation";
 import { useMemo, useState, useActionState, useEffect } from "react";
 import Field from "@/features/general/components/ui/Field";
@@ -13,6 +12,9 @@ import { HabitCard } from "../HabitCard/HabitCard";
 import { useLifeAreas } from "@/features/life-areas/hooks/useLifeAreas";
 import Dialog from "@/features/general/components/ui/Dialog/Dialog";
 import { Button } from "@/features/general/components/ui/Button/Button";
+import EmptyAlert from "@/features/general/components/static/EmptyAlert";
+import Skeleton from "@/features/general/components/ui/Skeleton";
+import SlideTabs, { SlideTabItem } from "@/features/general/components/ui/SlideTabs";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 
 export interface HabitsListProps {
@@ -86,65 +88,36 @@ export function HabitsList({
   const showFilterBar =
     showFilter && forcedLifeAreaId === undefined && lifeAreas.length > 0;
 
-  const chipClasses = (active: boolean) =>
-    cn(
-      "h-auto px-2.5 py-1 text-xs transition-colors cursor-pointer",
-      active
-        ? "bg-foreground text-background font-medium"
-        : "bg-foreground/5 text-foreground/70 hover:bg-foreground/10",
-    );
+  const filterTabs: SlideTabItem[] = useMemo(
+    () => [
+      {
+        id: "ALL",
+        label: t("lifeAreas.allAreas"),
+      },
+      ...lifeAreas.map((area) => ({
+        id: String(area.id),
+        label: area.title,
+      })),
+      {
+        id: "0",
+        label: t("common.general"),
+      },
+    ],
+    [lifeAreas, t],
+  );
 
-  return (
-    <div className={`w-full flex flex-col gap-3 ${className}`}>
-
-      {/* Filter Chips Bar */}
-      {showFilterBar && (
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none text-xs">
-          <Button
-            type="button"
-            variant="ghost"
-            onClick={() => setActiveAreaFilter("ALL")}
-            className={chipClasses(activeAreaFilter === "ALL")}>
-            {t("habits.allLifeAreas") || t("skills.allLifeAreas") || "All"}
-          </Button>
-          {lifeAreas.map((area) => (
-            <Button
-              key={area.id}
-              type="button"
-              variant="ghost"
-              onClick={() => setActiveAreaFilter(area.id)}
-              className={chipClasses(activeAreaFilter === area.id)}>
-              {area.title}
-            </Button>
-          ))}
-          <Button
-            type="button"
-            variant="ghost"
-            onClick={() => setActiveAreaFilter(0)}
-            className={chipClasses(activeAreaFilter === 0)}>
-            {t("habits.unassigned") || t("skills.unassigned") || "General"}
-          </Button>
-        </div>
-      )}
-
-      {/* Content */}
-      {isLoading && habits.length === 0 ? (
-        <div className="flex w-full items-center justify-center p-8 text-foreground/40 gap-2">
-          <LoaderIcon className="size-5 animate-spin" />
-          <span className="text-xs sub-text">{t("common.loading")}</span>
-        </div>
-      ) : filteredHabits.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-container border-2 border-dashed border-foreground/15 p-6 text-center gap-2 bg-card/40">
-          <div className="size-10 rounded-full bg-foreground/5 flex items-center justify-center mb-1">
-            <Repeat2Icon className="size-5 text-foreground/40" />
-          </div>
-          <p className="text-sm font-medium text-foreground/80">
-            {t("habits.empty") || "No habits defined yet."}
-          </p>
-          <p className="text-xs sub-text max-w-xs leading-relaxed">
-            {t("habits.addFirst") ||
-              "Add your first habit with recurrence intervals and track your momentum."}
-          </p>
+  const content =
+    isLoading && habits.length === 0 ? (
+      <div className="space-y-2.5">
+        <Skeleton count={3} />
+      </div>
+    ) : filteredHabits.length === 0 ? (
+      <EmptyAlert
+        className="bg-card/40"
+        icon={<Repeat2Icon className="size-5 text-foreground/40" />}
+        alert={t("habits.empty")}
+        description={t("habits.addFirst")}
+        action={
           <Button
             type="button"
             variant="card"
@@ -152,24 +125,43 @@ export function HabitsList({
             className="h-8 px-3 text-xs mt-2 gap-1.5"
           >
             <PlusIcon className="size-3.5" />
-            <span>{t("habits.new") || "New Habit"}</span>
+            <span>{t("habits.new")}</span>
           </Button>
-        </div>
+        }
+      />
+    ) : (
+      <div className="space-y-2.5">
+        {filteredHabits.map((habit) => (
+          <HabitCard
+            key={habit.id}
+            habit={habit}
+            onEdit={handleOpenEdit}
+            onRequestDelete={(id) => {
+              setDeleteTargetId(id);
+              setDeleteDialogOpen(true);
+            }}
+            onRecorded={revalidateHabits}
+          />
+        ))}
+      </div>
+    );
+
+  return (
+    <div className={`w-full flex flex-col gap-3 ${className}`}>
+      {showFilterBar ? (
+        <SlideTabs
+          tabs={filterTabs}
+          activeId={String(activeAreaFilter)}
+          onTabChange={(id) => {
+            setActiveAreaFilter(id === "ALL" ? "ALL" : Number(id));
+          }}
+          headerClassName="overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden py-0.5 gap-1.5"
+          tabClassName="shrink-0 flex-none"
+        >
+          {content}
+        </SlideTabs>
       ) : (
-        <div className="space-y-2.5">
-          {filteredHabits.map((habit) => (
-            <HabitCard
-              key={habit.id}
-              habit={habit}
-              onEdit={handleOpenEdit}
-              onRequestDelete={(id) => {
-                setDeleteTargetId(id);
-                setDeleteDialogOpen(true);
-              }}
-              onRecorded={revalidateHabits}
-            />
-          ))}
-        </div>
+        content
       )}
 
       {/* Delete Confirmation Dialog */}
@@ -177,13 +169,12 @@ export function HabitsList({
         <div className="flex flex-col gap-4 p-1">
           <div>
             <Dialog.Title className="title">
-              {t("habits.deleteConfirm") || "Are you sure you want to delete this habit?"}
+              {t("habits.deleteConfirm")}
             </Dialog.Title>
             <Dialog.Description className="sub-text text-xs mt-1">
-              {t("habits.deleteDesc")?.replace(
-                "{title}",
-                targetHabit?.title || "",
-              ) || `"${targetHabit?.title || ""}" will be permanently deleted.`}
+              {t("habits.deleteDesc", {
+                title: targetHabit?.title || "",
+              })}
             </Dialog.Description>
           </div>
 

@@ -5,7 +5,8 @@ import { PlusIcon } from "lucide-react";
 
 import { Button } from "@/features/general/components/ui/Button/Button";
 import { useLifeAreas } from "../../../../life-areas/hooks/useLifeAreas";
-import EmptyAlert from "@/features/general/components/static/EmptyAlert/EmptyAlert";
+import EmptyAlert from "@/features/general/components/static/EmptyAlert";
+import Skeleton from "@/features/general/components/ui/Skeleton";
 import { LifeAreaCard } from "../../../../life-areas/components/LifeAreaCard/LifeAreaCard";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 
@@ -32,7 +33,7 @@ export function ProfileLifeAreas() {
       </div>
 
       {isLoading ? (
-        <div className="skeleton h-[64px]" />
+        <Skeleton />
       ) : lifeAreas.length === 0 ? (
         <EmptyAlert
           alert={t("lifeAreas.empty")}

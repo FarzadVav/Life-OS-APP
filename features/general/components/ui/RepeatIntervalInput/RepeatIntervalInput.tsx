@@ -58,6 +58,8 @@ export function formatRepeatInterval(
   return `Every ${safeCount} ${unitLabel}`;
 }
 
+import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
+
 export type RepeatIntervalInputProps = {
   value?: string;
   onChange?: (value: string) => void;
@@ -66,12 +68,6 @@ export type RepeatIntervalInputProps = {
   name?: string;
 };
 
-const UNITS: { value: RepeatIntervalUnit; label: string; pluralLabel: string }[] = [
-  { value: "Day", label: "Day", pluralLabel: "Days" },
-  { value: "Week", label: "Week", pluralLabel: "Weeks" },
-  { value: "Month", label: "Month", pluralLabel: "Months" },
-];
-
 export default function RepeatIntervalInput({
   value,
   onChange,
@@ -79,6 +75,7 @@ export default function RepeatIntervalInput({
   className,
   name,
 }: RepeatIntervalInputProps) {
+  const { t } = useLocale();
   const parsed = parseRepeatInterval(value);
   const [count, setCount] = useState<number>(parsed.count);
   const [unit, setUnit] = useState<RepeatIntervalUnit>(parsed.unit);
@@ -106,10 +103,20 @@ export default function RepeatIntervalInput({
     onChange?.(formatRepeatInterval(count, nextUnit));
   }
 
-  const unitItems = UNITS.map((u) => ({
-    value: u.value,
-    label: count > 1 ? u.pluralLabel : u.label,
-  }));
+  const unitItems = [
+    {
+      value: "Day",
+      label: count > 1 ? t("dates.days") : t("dates.day"),
+    },
+    {
+      value: "Week",
+      label: count > 1 ? t("dates.weeks") : t("dates.week"),
+    },
+    {
+      value: "Month",
+      label: count > 1 ? t("dates.months") : t("dates.month"),
+    },
+  ];
 
   return (
     <div
@@ -119,7 +126,7 @@ export default function RepeatIntervalInput({
       )}
     >
       <span className="text-sm font-semibold text-foreground/80 select-none shrink-0">
-        Every
+        {t("dates.every")}
       </span>
 
       <NumberField
@@ -141,7 +148,7 @@ export default function RepeatIntervalInput({
           }
         }}
         disabled={disabled}
-        title="Interval Unit"
+        title={t("dates.intervalUnit")}
         className="min-w-[120px] flex-1 sm:flex-initial"
       />
 

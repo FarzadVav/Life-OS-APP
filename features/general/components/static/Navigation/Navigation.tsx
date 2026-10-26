@@ -5,9 +5,19 @@ import Link from "next/link";
 import { Button } from "../../ui/Button/Button";
 import { NAVIGATION_LINKS } from "@/features/general/lib/constants";
 import useMatchPathname from "@/features/general/hooks/useMatchPathname";
+import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 
 function Navigation() {
   const checkIsPathnameMatch = useMatchPathname();
+  const { t } = useLocale();
+
+  const navLabels: Record<string, string> = {
+    "/profile": t("profile.title"),
+    "/todos": t("todos.title"),
+    "/habits": t("habits.title"),
+    "/journals": t("journals.title"),
+    "/skills": t("skills.title"),
+  };
 
   return (
     <div
@@ -22,7 +32,7 @@ function Navigation() {
             <Button
               key={item.href}
               nativeButton={false}
-              aria-label={item.name}
+              aria-label={navLabels[item.href] || item.name}
               render={<Link href={item.href} />}
               className="h-full flex-1 flex-col px-0"
               variant={isPathnameMatch ? "card" : "ghost"}

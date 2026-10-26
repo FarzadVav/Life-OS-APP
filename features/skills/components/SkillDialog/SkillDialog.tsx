@@ -70,7 +70,7 @@ export function SkillDialog({
   const lifeAreaItems = [
     {
       value: UNASSIGNED_ID,
-      label: t("skills.unassigned") || t("lifeAreas.none") || "General",
+      label: t("common.general"),
     },
     ...lifeAreas.map((area) => ({
       value: area.id,
@@ -112,15 +112,15 @@ export function SkillDialog({
 
         <div>
           <label className="block font-bold text-xs mb-1.5">
-            {t("skills.selectLifeArea")}
+            {t("lifeAreas.selectLifeArea")}
           </label>
           <SelectDialog<number>
             name="lifeAreaSelect"
             items={lifeAreaItems}
             value={selectedLifeAreaId}
             onChange={(val) => setSelectedLifeAreaId(val)}
-            title={t("skills.selectLifeArea")}
-            placeholder={t("skills.selectLifeArea")}
+            title={t("lifeAreas.selectLifeArea")}
+            placeholder={t("lifeAreas.selectLifeArea")}
             disabled={isSubmitting || isLoadingLifeAreas}
           />
         </div>

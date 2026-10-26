@@ -4,8 +4,11 @@ import LogoutBtn from "../../LogoutBtn/LogoutBtn";
 import { useCurrentUser } from "@/features/auth/hooks";
 import CardView from "@/features/general/components/ui/CardView/CardView";
 
+import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
+
 function ProfileAccount() {
   const { user: currentUser } = useCurrentUser();
+  const { t, formatDate } = useLocale();
 
   return (
     <div className="w-full flex items-center gap-2">
@@ -23,7 +26,9 @@ function ProfileAccount() {
             {currentUser?.name ? ` (${currentUser.username})` : null}
           </span>
         }
-        description={`Joined at ${new Date().toLocaleDateString()}`}
+        description={t("profile.joinedAt", {
+          date: formatDate(new Date()),
+        })}
       />
       <LogoutBtn />
     </div>

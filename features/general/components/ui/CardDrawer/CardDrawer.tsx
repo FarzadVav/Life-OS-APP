@@ -70,7 +70,7 @@ export function CardDrawer({
               variant="card"
               className="flex-1 justify-center"
             >
-              {t("common.close") || "Close"}
+              {t("common.close")}
             </Button>
           }
         />
@@ -89,7 +89,7 @@ export function CardDrawer({
                     className="flex flex-1 items-center justify-center gap-1.5"
                     href={editHref}
                   >
-                    <span>{t("common.edit") || "Edit"}</span>
+                    <span>{t("common.edit")}</span>
                   </Link>
                 }
               />

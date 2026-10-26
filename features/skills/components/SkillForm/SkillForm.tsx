@@ -11,6 +11,7 @@ import { LoaderIcon, Trash2Icon } from "lucide-react";
 import SelectDialog from "@/features/general/components/ui/SelectDialog";
 import Dialog from "@/features/general/components/ui/Dialog/Dialog";
 import { Button } from "@/features/general/components/ui/Button/Button";
+import Skeleton from "@/features/general/components/ui/Skeleton";
 
 import { useSkill } from "@/features/skills/hooks/useSkill";
 import {
@@ -35,7 +36,7 @@ function LifeAreaSelect({
   const { lifeAreas = [] } = useLifeAreas();
 
   const items = [
-    { value: "none", label: t("skills.unassigned") || t("lifeAreas.none") || "General" },
+    { value: "none", label: t("common.general") },
     ...lifeAreas.map((la) => ({
       value: String(la.id),
       label: la.title,
@@ -45,7 +46,7 @@ function LifeAreaSelect({
   return (
     <Field.Root name="lifeAreaId">
       <Field.Label className="mb-1 font-bold">
-        {t("skills.selectLifeArea") || t("lifeAreas.title") || "Life Area"}
+        {t("lifeAreas.selectLifeArea")}
       </Field.Label>
 
       <SelectDialog
@@ -53,8 +54,8 @@ function LifeAreaSelect({
         items={items}
         value={value ? String(value) : "none"}
         onChange={(next) => onChange(next === "none" || !next ? null : Number(next))}
-        title={t("skills.selectLifeArea") || "Select Life Area"}
-        placeholder={t("skills.selectLifeArea") || "Select Life Area"}
+        title={t("lifeAreas.selectLifeArea")}
+        placeholder={t("lifeAreas.selectLifeArea")}
       />
 
       <Field.Error className="sub-text mt-0.5 text-foreground text-xs" />
@@ -126,7 +127,7 @@ export function SkillForm() {
     <PageWrapper>
       <TopBar>
         <TopBar.Title asTitle>
-          {isEditMode ? t("skills.edit") || "Edit Skill" : t("skills.new") || "New Skill"}
+          {isEditMode ? t("skills.edit") : t("skills.new")}
         </TopBar.Title>
         <TopBar.Btn backIcon href="/skills" position="left" />
 
@@ -145,9 +146,10 @@ export function SkillForm() {
       </TopBar>
 
       {isEditMode && isSkillLoading && !skill ? (
-        <div className="flex w-full items-center justify-center p-12 text-foreground/40 gap-2">
-          <LoaderIcon className="size-5 animate-spin" />
-          <span className="text-xs sub-text">{t("common.loading")}</span>
+        <div className="w-full space-y-4">
+          <Skeleton className="h-12" />
+          <Skeleton className="h-28" />
+          <Skeleton className="h-12" />
         </div>
       ) : (
         <Form
@@ -180,14 +182,14 @@ export function SkillForm() {
           <LifeAreaSelect value={lifeAreaId} onChange={setLifeAreaId} />
 
           <Field.Root name="content" schema={isEditMode ? UpdateSkillSchema : CreateSkillSchema}>
-            <Field.Label>{t("skills.contentLabel") || t("common.content")}</Field.Label>
+            <Field.Label>{t("skills.contentLabel")}</Field.Label>
 
             <RichTextarea
               name="content"
               value={content}
               onChange={setContent}
               placeholder={t("skills.contentPlaceholder")}
-              title={t("skills.contentLabel") || t("common.content")}
+              title={t("skills.contentLabel")}
               required
               minLength={1}
             />
@@ -209,7 +211,7 @@ export function SkillForm() {
           <div>
             <Dialog.Title className="font-bold">{t("common.delete")}</Dialog.Title>
             <Dialog.Description className="sub-text text-xs mt-1">
-              {t("skills.deleteConfirm") || "Are you sure you want to delete this skill?"}
+              {t("skills.deleteConfirm")}
             </Dialog.Description>
           </div>
 

@@ -15,7 +15,7 @@ function TodosActionBtn() {
     isMission ? "mission" : isUpcoming ? "upcoming" : "daily"
   }`;
 
-  const label = isMission ? t("todos.newMission") || "New Mission" : t("todos.new");
+  const label = isMission ? t("missions.new") : t("todos.new");
 
   return <PageActionBtn href={href}>{label}</PageActionBtn>;
 }

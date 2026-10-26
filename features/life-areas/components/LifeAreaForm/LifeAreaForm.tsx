@@ -10,6 +10,7 @@ import { CreateLifeAreaSchema, UpdateLifeAreaSchema } from "@/features/life-area
 import { LoaderIcon, Trash2Icon } from "lucide-react";
 import Dialog from "@/features/general/components/ui/Dialog/Dialog";
 import { Button } from "@/features/general/components/ui/Button/Button";
+import Skeleton from "@/features/general/components/ui/Skeleton";
 
 import { useLifeAreas } from "@/features/life-areas/hooks";
 import {
@@ -101,9 +102,10 @@ export function LifeAreaForm() {
       </TopBar>
 
       {isLoadingDetail ? (
-        <div className="flex w-full items-center justify-center p-12 text-foreground/40 gap-2">
-          <LoaderIcon className="size-5 animate-spin" />
-          <span className="text-xs sub-text">{t("common.loading")}</span>
+        <div className="w-full space-y-4">
+          <Skeleton className="h-12" />
+          <Skeleton className="h-24" />
+          <Skeleton className="h-12" />
         </div>
       ) : (
         <Form
@@ -159,7 +161,7 @@ export function LifeAreaForm() {
               {t("lifeAreas.deleteConfirm")}
             </Dialog.Title>
             <Dialog.Description className="sub-text text-xs mt-1">
-              {t("lifeAreas.deleteDesc")?.replace("{title}", area?.title || "")}
+              {t("lifeAreas.deleteDesc", { title: area?.title || "" })}
             </Dialog.Description>
           </div>
 

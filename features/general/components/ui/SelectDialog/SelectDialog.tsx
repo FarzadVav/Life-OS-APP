@@ -162,7 +162,7 @@ export function SelectDialog<T = string | number>(props: SelectDialogProps<T>) {
         checkSelected(item.value, value as T[] | null | undefined, true),
       );
       if (selected.length === 0) {
-        return placeholder || t("common.select") || "Select...";
+        return placeholder || t("common.select");
       }
       return selected
         .map((item) =>
@@ -175,7 +175,7 @@ export function SelectDialog<T = string | number>(props: SelectDialogProps<T>) {
       checkSelected(item.value, value as T | null | undefined, false),
     );
     if (!selected) {
-      return placeholder || t("common.select") || "Select...";
+      return placeholder || t("common.select");
     }
     return selected.label;
   }, [items, value, multiple, renderValue, placeholder, t]);
@@ -209,7 +209,7 @@ export function SelectDialog<T = string | number>(props: SelectDialogProps<T>) {
         }>
         <div className="flex items-center justify-between">
           <Dialog.Title className="text-sm sm:text-base font-bold text-foreground truncate">
-            {title || placeholder || t("common.select") || "Select"}
+            {title || placeholder || t("common.select")}
           </Dialog.Title>
 
           <Dialog.Close
@@ -236,7 +236,7 @@ export function SelectDialog<T = string | number>(props: SelectDialogProps<T>) {
             type="text"
             value={searchQuery}
             inputClassName="ps-9 pe-8 text-sm"
-            placeholder={t("common.search") || "Search..."}
+            placeholder={t("common.search")}
             onChange={(e) => setSearchQuery(e.target.value)}
             startAdornment={<SearchIcon className="size-4" />}
             endAdornment={
@@ -245,7 +245,7 @@ export function SelectDialog<T = string | number>(props: SelectDialogProps<T>) {
                   type="button"
                   variant="ghost"
                   onClick={() => setSearchQuery("")}
-                  aria-label={t("common.clear") || "Clear search"}
+                  aria-label={t("common.clear")}
                   className="h-auto w-auto p-0.5 rounded-none opacity-50 hover:opacity-100 hover:bg-transparent cursor-pointer [&_svg]:size-3.5">
                   <XIcon />
                 </Button>
@@ -258,7 +258,7 @@ export function SelectDialog<T = string | number>(props: SelectDialogProps<T>) {
           <div className="flex items-center justify-between text-xs px-1 text-foreground/70">
             <span>
               {stagedValues.length} / {items.length}{" "}
-              {t("common.selected") || "selected"}
+              {t("common.selected")}
             </span>
             <div className="flex items-center gap-2">
               <Button
@@ -270,7 +270,7 @@ export function SelectDialog<T = string | number>(props: SelectDialogProps<T>) {
                   )
                 }
                 className="h-auto w-auto p-0 rounded-none underline hover:bg-transparent cursor-pointer">
-                {t("common.all") || "All"}
+                {t("common.all")}
               </Button>
               <span>·</span>
               <Button
@@ -278,7 +278,7 @@ export function SelectDialog<T = string | number>(props: SelectDialogProps<T>) {
                 variant="ghost"
                 onClick={() => setStagedValues([])}
                 className="h-auto w-auto p-0 rounded-none underline hover:bg-transparent cursor-pointer">
-                {t("common.clear") || "Clear"}
+                {t("common.clear")}
               </Button>
             </div>
           </div>
@@ -327,12 +327,12 @@ export function SelectDialog<T = string | number>(props: SelectDialogProps<T>) {
                   type="button"
                   variant="card"
                   onClick={() => handleOpenChange(false)}>
-                  {t("common.cancel") || "Cancel"}
+                  {t("common.cancel")}
                 </Button>
               }
             />
             <Button type="button" onClick={handleConfirmMultiple}>
-              {t("common.confirm") || t("common.save") || "Confirm"}
+              {t("common.confirm")}
             </Button>
           </div>
         )}

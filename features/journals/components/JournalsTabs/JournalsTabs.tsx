@@ -1,20 +1,18 @@
 "use client";
 
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { AnimatePresence, motion } from "motion/react";
-import { LoaderIcon } from "lucide-react";
-
 import { JOURNAL_CATEGORIES } from "../../types";
 import { useJournals } from "../../hooks";
 import JournalCard from "../JournalCard/JournalCard";
-import { Button } from "@/features/general/components/ui/Button/Button";
+import SlideTabs, { SlideTabItem } from "@/features/general/components/ui/SlideTabs";
+import EmptyAlert from "@/features/general/components/static/EmptyAlert";
+import Skeleton from "@/features/general/components/ui/Skeleton";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 
 function JournalsTabs() {
   const sp = useSearchParams();
   const tab = sp.get("tab");
-  const activeTab = tab || "all";
+  const activeTab = (tab || "all").toLowerCase();
 
   const {
     journals: currentJournals,
@@ -23,94 +21,53 @@ function JournalsTabs() {
   } = useJournals(activeTab);
   const { t } = useLocale();
 
+  const tabs: SlideTabItem[] = [
+    {
+      id: "all",
+      label: t("common.all"),
+      href: "?tab=all",
+    },
+    ...JOURNAL_CATEGORIES.map((category) => ({
+      id: category.toLowerCase(),
+      label: t(`journals.categories.${category.toLowerCase()}`),
+      href: `?tab=${encodeURIComponent(category.toLowerCase())}`,
+    })),
+  ];
+
   return (
-    <>
-      <div className="w-full flex items-center gap-1.5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden py-0.5">
-        <Button
-          nativeButton={false}
-          render={<Link href="?tab=all" scroll={false} />}
-          variant={activeTab === "all" ? "primary" : "card"}
-          className="shrink-0"
-        >
-          {t("common.all") || "All"}
-        </Button>
-
-        {JOURNAL_CATEGORIES.map((category) => (
-          <Button
-            key={category}
-            nativeButton={false}
-            render={
-              <Link
-                href={`?tab=${encodeURIComponent(category.toLowerCase())}`}
-                scroll={false}
-              />
-            }
-            variant={
-              activeTab.toLowerCase() === category.toLowerCase()
-                ? "primary"
-                : "card"
-            }
-            className="shrink-0"
-          >
-            {t(`journals.categories.${category.toLowerCase()}`) || category}
-          </Button>
-        ))}
-      </div>
-
-      <div className="w-full overflow-hidden rounded-container">
+    <SlideTabs
+      tabs={tabs}
+      activeId={activeTab}
+      headerClassName="overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden py-0.5 gap-1.5"
+      tabClassName="shrink-0 flex-none"
+    >
+      <div className="w-full space-y-3">
         {isLoading && currentJournals.length === 0 ? (
-          <div className="flex w-full items-center justify-center p-12 text-foreground/40 gap-2">
-            <LoaderIcon className="size-5 animate-spin" />
-            <span className="text-xs sub-text">{t("common.loading")}</span>
-          </div>
+          <Skeleton count={3} />
         ) : (
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.div
-              key={activeTab}
-              className="w-full space-y-3"
-              transition={{ ease: "linear", duration: 0.15 }}
-              initial={{
-                translateX: "-10%",
-                opacity: 0,
-                filter: "blur(4px)",
-              }}
-              animate={{ translateX: 0, opacity: 1, filter: "none" }}
-              exit={{
-                translateX: "10%",
-                opacity: 0,
-                filter: "blur(4px)",
-              }}
-            >
-              {currentJournals.map((journal) => (
-                <JournalCard
-                  key={journal.id}
-                  journal={journal}
-                  onDeleted={revalidateJournals}
-                />
-              ))}
+          <>
+            {currentJournals.map((journal) => (
+              <JournalCard
+                key={journal.id}
+                journal={journal}
+                onDeleted={revalidateJournals}
+              />
+            ))}
 
-              {currentJournals.length === 0 && (
-                <div
-                  className="
-                    flex w-full flex-1
-                    items-center justify-center
-                    rounded-container
-                    border-2 border-dashed
-                    p-6
-                  "
-                >
-                  <p className="sub-text">
-                    {activeTab !== "all"
-                      ? t("journals.noJournalsInCategory")
-                      : t("journals.noJournals")}
-                  </p>
-                </div>
-              )}
-            </motion.div>
-          </AnimatePresence>
+            {currentJournals.length === 0 && (
+              <EmptyAlert
+                alert={
+                  activeTab !== "all"
+                    ? t("journals.noJournalsInCategory")
+                    : t("journals.noJournals")
+                }
+                alertClassName="sub-text font-normal"
+              />
+            )}
+          </>
         )}
       </div>
-    </>
+    </SlideTabs>
   );
 }
 

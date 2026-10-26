@@ -102,8 +102,8 @@ export function RichTextDialog({
                     editor?.chain().focus().undo().run();
                   }}
                   className="size-8 rounded-component p-0 flex items-center justify-center transition-colors [&_svg]:size-4 hover:bg-card-thick disabled:opacity-30 cursor-pointer"
-                  title={t("editor.undo") || "Undo"}
-                  aria-label={t("editor.undo") || "Undo"}
+                  title={t("editor.undo")}
+                  aria-label={t("editor.undo")}
                 >
                   <Undo2Icon />
                 </Button>
@@ -118,8 +118,8 @@ export function RichTextDialog({
                     editor?.chain().focus().redo().run();
                   }}
                   className="size-8 rounded-component p-0 flex items-center justify-center transition-colors [&_svg]:size-4 hover:bg-card-thick disabled:opacity-30 cursor-pointer"
-                  title={t("editor.redo") || "Redo"}
-                  aria-label={t("editor.redo") || "Redo"}
+                  title={t("editor.redo")}
+                  aria-label={t("editor.redo")}
                 >
                   <Redo2Icon />
                 </Button>
@@ -144,7 +144,7 @@ export function RichTextDialog({
                 onClick={handleCancelAndClose}
                 className="h-9 px-4 text-sm font-medium"
               >
-                <span>{t("editor.close") || "Close"}</span>
+                <span>{t("common.close")}</span>
               </Button>
 
               <Button
@@ -153,7 +153,7 @@ export function RichTextDialog({
                 onClick={handleSaveAndClose}
                 className="h-9 px-5 text-sm font-semibold"
               >
-                <span>{t("editor.done") || "Done"}</span>
+                <span>{t("common.done")}</span>
               </Button>
             </footer>
           </div>

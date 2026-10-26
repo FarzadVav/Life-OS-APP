@@ -91,7 +91,7 @@ export function HabitCard({
           {/* Today's Check-in Action inside Drawer */}
           <div className="rounded-container bg-card p-4 border border-foreground/10 space-y-2.5">
             <h4 className="text-xs font-bold text-foreground">
-              {t("habits.todayCheckin") || "Today's Action"}
+              {t("habits.todayCheckin")}
             </h4>
             <form action={recordAction} className="flex items-center gap-2">
               <Field type="hidden" name="id" value={habit.id} />
@@ -108,7 +108,7 @@ export function HabitCard({
                 }`}
               >
                 <CheckCircle2Icon className="size-4 me-1.5" />
-                <span>{t("missions.iDo") || "I Do"}</span>
+                <span>{t("missions.iDo")}</span>
               </Button>
               <Button
                 type="submit"
@@ -123,7 +123,7 @@ export function HabitCard({
                 }`}
               >
                 <XCircleIcon className="size-4 me-1.5" />
-                <span>{t("missions.iDontDo") || "I Don't Do"}</span>
+                <span>{t("missions.iDontDo")}</span>
               </Button>
             </form>
           </div>
@@ -133,10 +133,10 @@ export function HabitCard({
             <div className="rounded-container bg-card p-4 border border-foreground/10 space-y-2.5">
               <div className="flex items-center justify-between">
                 <h4 className="text-xs font-bold text-foreground">
-                  {t("habits.historyTitle") || "Recent Check-ins"}
+                  {t("habits.historyTitle")}
                 </h4>
                 <span className="text-xs sub-text">
-                  {completedCount} / {habit.history.length} {t("common.done") || "Done"}
+                  {completedCount} / {habit.history.length} {t("common.done")}
                 </span>
               </div>
 

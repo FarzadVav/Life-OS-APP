@@ -26,19 +26,8 @@ type TodoCardProps = {
   onMutated?: () => void;
 };
 
-function formatDeadline(dateStr: string, isDaily: boolean): string {
-  if (!dateStr) return "";
-  if (isDaily) {
-    const parts = dateStr.split("T");
-    if (parts[1]) {
-      return parts[1].substring(0, 5);
-    }
-  }
-  return dateStr.substring(0, 10);
-}
-
 function TodoCard({ todo, onMutated }: TodoCardProps) {
-  const { t } = useLocale();
+  const { t, formatDeadline } = useLocale();
   const toggleFormRef = useRef<HTMLFormElement>(null);
 
   const [toggleState, toggleAction, isToggling] = useActionState<
@@ -126,7 +115,7 @@ function TodoCard({ todo, onMutated }: TodoCardProps) {
               <div className="col-span-3 rounded-container bg-background p-3">
                 <div className="flex items-center gap-2 sub-text">
                   <CompassIcon className="size-4" />
-                  <span>{t("lifeAreas.title") || "Life Area"}</span>
+                  <span>{t("lifeAreas.title")}</span>
                 </div>
                 <p className="mt-2 font-medium">{todo.lifeArea.title}</p>
               </div>

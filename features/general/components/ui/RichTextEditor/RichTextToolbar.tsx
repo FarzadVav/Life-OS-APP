@@ -49,7 +49,7 @@ export function RichTextToolbar({ editor, className }: RichTextToolbarProps) {
         className,
       )}
       role="toolbar"
-      aria-label={t("editor.toolbar") || "Rich text toolbar"}
+      aria-label={t("editor.toolbar")}
     >
       {/* H1 */}
       <Button
@@ -61,8 +61,8 @@ export function RichTextToolbar({ editor, className }: RichTextToolbarProps) {
           editor.chain().focus().toggleHeading({ level: 1 }).run();
         }}
         className={chipClasses(isH1Active)}
-        title={t("editor.h1") || "Heading 1"}
-        aria-label={t("editor.h1") || "Heading 1"}
+        title={t("editor.h1")}
+        aria-label={t("editor.h1")}
         aria-pressed={isH1Active}
       >
         <Heading1Icon />
@@ -78,8 +78,8 @@ export function RichTextToolbar({ editor, className }: RichTextToolbarProps) {
           editor.chain().focus().toggleHeading({ level: 2 }).run();
         }}
         className={chipClasses(isH2Active)}
-        title={t("editor.h2") || "Heading 2"}
-        aria-label={t("editor.h2") || "Heading 2"}
+        title={t("editor.h2")}
+        aria-label={t("editor.h2")}
         aria-pressed={isH2Active}
       >
         <Heading2Icon />
@@ -95,8 +95,8 @@ export function RichTextToolbar({ editor, className }: RichTextToolbarProps) {
           editor.chain().focus().toggleHeading({ level: 3 }).run();
         }}
         className={chipClasses(isH3Active)}
-        title={t("editor.h3") || "Heading 3"}
-        aria-label={t("editor.h3") || "Heading 3"}
+        title={t("editor.h3")}
+        aria-label={t("editor.h3")}
         aria-pressed={isH3Active}
       >
         <Heading3Icon />
@@ -112,8 +112,8 @@ export function RichTextToolbar({ editor, className }: RichTextToolbarProps) {
           editor.chain().focus().setParagraph().run();
         }}
         className={chipClasses(isParagraphActive)}
-        title={t("editor.paragraph") || "Paragraph"}
-        aria-label={t("editor.paragraph") || "Paragraph"}
+        title={t("editor.paragraph")}
+        aria-label={t("editor.paragraph")}
         aria-pressed={isParagraphActive}
       >
         <PilcrowIcon />
@@ -129,8 +129,8 @@ export function RichTextToolbar({ editor, className }: RichTextToolbarProps) {
           editor.chain().focus().toggleBold().run();
         }}
         className={chipClasses(isBoldActive)}
-        title={t("editor.bold") || "Bold"}
-        aria-label={t("editor.bold") || "Bold"}
+        title={t("editor.bold")}
+        aria-label={t("editor.bold")}
         aria-pressed={isBoldActive}
       >
         <BoldIcon />
@@ -146,8 +146,8 @@ export function RichTextToolbar({ editor, className }: RichTextToolbarProps) {
           editor.chain().focus().toggleBulletList().run();
         }}
         className={chipClasses(isBulletListActive)}
-        title={t("editor.bulletList") || "Bullet List"}
-        aria-label={t("editor.bulletList") || "Bullet List"}
+        title={t("editor.bulletList")}
+        aria-label={t("editor.bulletList")}
         aria-pressed={isBulletListActive}
       >
         <ListIcon />
@@ -163,8 +163,8 @@ export function RichTextToolbar({ editor, className }: RichTextToolbarProps) {
           editor.chain().focus().toggleOrderedList().run();
         }}
         className={chipClasses(isOrderedListActive)}
-        title={t("editor.numberList") || "Number List"}
-        aria-label={t("editor.numberList") || "Number List"}
+        title={t("editor.numberList")}
+        aria-label={t("editor.numberList")}
         aria-pressed={isOrderedListActive}
       >
         <ListOrderedIcon />

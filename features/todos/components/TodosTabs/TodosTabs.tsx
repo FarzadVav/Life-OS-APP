@@ -2,12 +2,12 @@
 
 import { useSearchParams } from "next/navigation";
 import { motion } from "motion/react";
-import { LoaderIcon } from "lucide-react";
-
 import { useTodos } from "../../hooks";
 import TodoCard from "../TodoCard/TodoCard";
 import TodoMissionCard from "../TodoMissionCard/TodoMissionCard";
 import SlideTabs, { SlideTabItem } from "@/features/general/components/ui/SlideTabs";
+import EmptyAlert from "@/features/general/components/static/EmptyAlert";
+import Skeleton from "@/features/general/components/ui/Skeleton";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 
 function TodosTabs() {
@@ -62,7 +62,7 @@ function TodosTabs() {
     },
     {
       id: "missions",
-      label: t("todos.missions") || "Missions",
+      label: t("missions.title"),
       href: "?tab=missions",
     },
   ];
@@ -80,7 +80,7 @@ function TodosTabs() {
                   ? t("todos.dailyMomentum")
                   : activeTab === "upcoming"
                     ? t("todos.upcomingTargets")
-                    : t("todos.activeMissions") || "Mission Progress"}
+                    : t("todos.activeMissions")}
               </span>
               <span className="sub-text">
                 {t("todos.completedOf", {
@@ -104,10 +104,7 @@ function TodosTabs() {
     >
       <div className="w-full space-y-3">
         {isLoading && todosList.length === 0 ? (
-          <div className="flex w-full items-center justify-center p-8 text-foreground/40 gap-2">
-            <LoaderIcon className="size-5 animate-spin" />
-            <span className="text-xs sub-text">{t("common.loading")}</span>
-          </div>
+          <Skeleton count={3} />
         ) : (
           <>
             {activeTab === "missions"
@@ -123,21 +120,14 @@ function TodosTabs() {
                 ))}
 
             {currentTodos.length === 0 && (
-              <div
-                className="
-                  flex w-full flex-1
-                  items-center justify-center
-                  rounded-container
-                  border-2 border-dashed
-                  p-6
-                "
-              >
-                <p className="sub-text">
-                  {activeTab === "missions"
-                    ? t("todos.noMissions") || "You haven't any missions"
-                    : t("todos.noTodos") || "You haven't any todos in this section"}
-                </p>
-              </div>
+              <EmptyAlert
+                alert={
+                  activeTab === "missions"
+                    ? t("todos.noMissions")
+                    : t("todos.noTodos")
+                }
+                alertClassName="sub-text font-normal"
+              />
             )}
           </>
         )}

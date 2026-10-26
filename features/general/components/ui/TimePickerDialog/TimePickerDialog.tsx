@@ -35,7 +35,7 @@ function LocalTimePickerDialog({
   className = "w-full justify-start rounded-component",
 }: TimePickerDialogProps) {
   const { t } = useLocale();
-  const resolvedLabel = label ?? t("timePicker.label");
+  const resolvedLabel = label ?? t("common.deadline");
   const resolvedTitle = title ?? t("timePicker.title");
   const resolvedDescription = description ?? t("timePicker.description");
   const [internalOpen, setInternalOpen] = useState(false);
@@ -59,7 +59,7 @@ function LocalTimePickerDialog({
     handleOpenChange(false);
   };
 
-  const displayTime = value ? value : t("timePicker.notSet");
+  const displayTime = value ? value : t("common.notSet");
 
   const computedTrigger = trigger || (
     <Button
@@ -101,13 +101,13 @@ function LocalTimePickerDialog({
                 variant="ghost"
                 onClick={() => handleOpenChange(false)}
               >
-                Cancel
+                {t("common.cancel")}
               </Button>
             }
           />
 
           <Button type="button" variant="primary" onClick={handleConfirm}>
-            Confirm
+            {t("common.confirm")}
           </Button>
         </div>
       </div>

@@ -154,7 +154,7 @@ function MissionDisciplineRow({
           disabled={isRecording}
           className="flex-1 justify-center py-1.5 h-auto text-xs bg-card-thick text-foreground hover:bg-card-thick/80 border-foreground/20"
         >
-          {t("missions.iDo") || "I Do"}
+          {t("missions.iDo")}
         </Button>
         <Button
           type="submit"
@@ -164,7 +164,7 @@ function MissionDisciplineRow({
           disabled={isRecording}
           className="flex-1 justify-center py-1.5 h-auto text-xs text-foreground/60 hover:text-foreground"
         >
-          {t("missions.iDontDo") || "I Don't Do"}
+          {t("missions.iDontDo")}
         </Button>
       </form>
     </div>
@@ -253,7 +253,7 @@ function TodoMissionCard({ todo, onMutated }: TodoMissionCardProps) {
               <div className="flex items-center gap-2 sub-text">
                 <GaugeIcon className="size-4" />
                 <span className="text-xs truncate">
-                  {t("missions.difficulty") || "Time and Energy Cost"}
+                  {t("missions.difficulty")}
                 </span>
               </div>
               <div className="mt-3">
@@ -264,7 +264,7 @@ function TodoMissionCard({ todo, onMutated }: TodoMissionCardProps) {
             <div className="rounded-container bg-background p-3">
               <div className="flex items-center gap-2 sub-text">
                 <CheckIcon className="size-4" />
-                <span className="text-xs">{t("missions.actionsLabel") || "Actions"}</span>
+                <span className="text-xs">{t("missions.actionsLabel")}</span>
               </div>
               <p className="mt-2 text-xs font-medium">{totalActions}</p>
             </div>
@@ -273,7 +273,7 @@ function TodoMissionCard({ todo, onMutated }: TodoMissionCardProps) {
               <div className="col-span-3 rounded-container bg-background p-3">
                 <div className="flex items-center gap-2 sub-text">
                   <CompassIcon className="size-4" />
-                  <span className="text-xs">{t("lifeAreas.title") || "Life Area"}</span>
+                  <span className="text-xs">{t("lifeAreas.title")}</span>
                 </div>
                 <p className="mt-2 text-xs font-medium">{todo.lifeArea.title}</p>
               </div>
@@ -284,7 +284,7 @@ function TodoMissionCard({ todo, onMutated }: TodoMissionCardProps) {
             <section className="space-y-2">
               <div className="flex items-center justify-between">
                 <h3 className="font-bold text-sm">
-                  {t("missions.actionsLabel") || "Actions"}
+                  {t("missions.actionsLabel")}
                 </h3>
                 <span className="sub-text text-xs">
                   {completedActions}/{totalActions}
@@ -308,13 +308,12 @@ function TodoMissionCard({ todo, onMutated }: TodoMissionCardProps) {
               <div>
                 <div className="flex items-center justify-between">
                   <h3 className="font-bold text-sm">
-                    {t("missions.disciplines") || "Disciplines"}
+                    {t("missions.disciplines")}
                   </h3>
                   <span className="sub-text text-xs">{disciplines.length}</span>
                 </div>
                 <p className="sub-text mt-0.5 text-xs">
-                  {t("missions.disciplinesSubtitle") ||
-                    "Repeated behaviors that support the mission"}
+                  {t("missions.disciplinesSubtitle")}
                 </p>
               </div>
 

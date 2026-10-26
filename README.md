@@ -1,13 +1,5 @@
 # Clean Code & Refactor
 
-- Fix RichTextEditor tools and the UI bugs, And check the all usages
-- Create the CardView component (Direct styles, card and card-thick Colors, Static structure with icon, title and description)
-- Create the CardDrawer component above on CardView (No internal buttons or links, Open the drawer on click, Static drawer structure with title, content and editHref)
-- Replace the all raw tabs with SlideTabs component
-- Replace the all raw alerts with EmptyAlert component
-- Create Skeleton component and replace the all raw loading with that
-- Auth (Deep authentication in the (user) layout, Deep authorization in the repositories, mutations and queries (Maybe DAL))
-- I18N (Check that everything be in the translation, Remove the default values)
 - Helps (Remove the uselesses and optimize the requires)
 - Store the dates and times with the UTC timestamp format and show them with localization
 - Remove repeat-interval from missions disciplines and habits
@@ -16,10 +8,6 @@
 - Implementation of folders, files, code-splitting, tsx/html, styles
 - Implementation of states, hooks, fetches, actions, forms
 - Implementation of db, orm, repositories, queries, mutations
-
- Next  1 Rotate the DB password and JWT secret, then remove .env.local from git tracking                                    
-       2 Delete the dead code file features/auth/lib/dal.ts
-       3 Fix .gitignore to exclude .env.local
 
 ---
 
