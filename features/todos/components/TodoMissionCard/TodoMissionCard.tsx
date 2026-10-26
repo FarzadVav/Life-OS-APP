@@ -9,6 +9,7 @@ import {
   CheckIcon,
   CircleIcon,
   CompassIcon,
+  FileTextIcon,
   GaugeIcon,
   Repeat2Icon,
   TargetIcon,
@@ -22,6 +23,7 @@ import {
 } from "../../mutations";
 import Drawer from "@/features/general/components/ui/Drawer/Drawer";
 import CardDrawer from "@/features/general/components/ui/CardDrawer/CardDrawer";
+import { RichTextResult } from "@/features/general/components/ui/RichTextEditor";
 import { Button } from "@/features/general/components/ui/Button/Button";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 
@@ -233,6 +235,20 @@ function TodoMissionCard({ todo, onMutated }: TodoMissionCardProps) {
               </div>
             )}
           </div>
+
+          {todo.description && (
+            <section className="space-y-2">
+              <div className="flex items-center gap-2 sub-text">
+                <FileTextIcon className="size-4" />
+                <span className="font-bold">{t("common.description")}</span>
+              </div>
+
+              <RichTextResult
+                content={todo.description}
+                containerClassName="bg-background p-4"
+              />
+            </section>
+          )}
 
           {totalActions > 0 && (
             <section className="space-y-2">

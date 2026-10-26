@@ -9,6 +9,8 @@ import {
 } from "lucide-react";
 import type { Framework } from "../../types";
 import CardDrawer from "@/features/general/components/ui/CardDrawer/CardDrawer";
+import { RichTextResult } from "@/features/general/components/ui/RichTextEditor";
+import { stripHtml } from "@/features/general/lib/richText";
 import { Button } from "@/features/general/components/ui/Button/Button";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 
@@ -32,7 +34,7 @@ export function FrameworkCard({
   return (
     <CardDrawer
       title={framework.title}
-      description={framework.description}
+      description={stripHtml(framework.description)}
       icon={
         <div className="size-8 rounded-container bg-foreground/10 flex items-center justify-center shrink-0">
           <Repeat2Icon className="size-4 text-foreground" />
@@ -49,11 +51,10 @@ export function FrameworkCard({
           )}
 
           {framework.description && (
-            <div className="rounded-container bg-background/60 p-4 border border-foreground/10">
-              <p className="text-sm leading-relaxed text-foreground select-text whitespace-pre-wrap">
-                {framework.description}
-              </p>
-            </div>
+            <RichTextResult
+              content={framework.description}
+              containerClassName="rounded-container bg-background/60 p-4 border border-foreground/10"
+            />
           )}
 
 

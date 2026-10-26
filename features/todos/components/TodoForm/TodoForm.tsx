@@ -38,6 +38,7 @@ import Skeleton from "@/features/general/components/ui/Skeleton";
 import TimePickerDialog from "@/features/general/components/ui/TimePickerDialog";
 import DayPickerDialog from "@/features/general/components/ui/DayPickerDialog";
 import SelectDialog from "@/features/general/components/ui/SelectDialog";
+import { RichTextarea } from "@/features/general/components/ui/RichTextEditor";
 import {
   getDefaultTime,
   parseDate,
@@ -177,6 +178,7 @@ export function TodoForm() {
   };
 
   const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
   const [type, setType] = useState<TodoType>(() =>
     resolveDefaultType(typeParam),
   );
@@ -246,6 +248,7 @@ export function TodoForm() {
       const resolved = resolveDefaultType(typeParam);
       queueMicrotask(() => {
         setTitle("");
+        setDescription("");
         setType(resolved);
         setDailyTime(getDefaultTime());
         setTargetDate(new Date());
@@ -261,6 +264,7 @@ export function TodoForm() {
     if (todo) {
       queueMicrotask(() => {
         setTitle(todo.title);
+        setDescription(todo.description || "");
         setType(todo.type);
         setIsDone(todo.isDone);
         setDifficulty(todo.difficulty || 3);
@@ -423,6 +427,7 @@ export function TodoForm() {
           {/* Hidden fields to pass composite state to Server Action */}
           {isEditMode && <Field type="hidden" name="id" value={editId ?? ""} />}
           <Field type="hidden" name="type" value={type} />
+          <Field type="hidden" name="description" value={description} />
           <Field
             type="hidden"
             name="deadline"
@@ -460,6 +465,25 @@ export function TodoForm() {
             onChange={(event) => setTitle(event.target.value)}
             schema={isEditMode ? UpdateTodoSchema : CreateTodoSchema}
           />
+
+          <Field.Root
+            name="description"
+            schema={isEditMode ? UpdateTodoSchema : CreateTodoSchema}
+          >
+            <Field.Label className="mb-1 font-bold">
+              {t("common.description")}
+            </Field.Label>
+
+            <RichTextarea
+              name="description"
+              value={description}
+              onChange={setDescription}
+              placeholder={t("todos.descPlaceholder")}
+              title={t("common.description")}
+            />
+
+            <Field.Error className="sub-text mt-0.5 text-foreground text-xs" />
+          </Field.Root>
 
           <TypeSelect value={type} onChange={setType} />
 
@@ -654,13 +678,6 @@ export function TodoForm() {
                     />
                   </Field.Root>
 
-                  <LifeAreaSelect
-                    value={disciplineDraft.lifeAreaId ?? null}
-                    onChange={(val) =>
-                      setDisciplineDraft((d) => ({ ...d, lifeAreaId: val }))
-                    }
-                  />
-
                   <div className="flex items-center justify-end gap-2 pt-2">
                     <Dialog.Close
                       render={
@@ -718,6 +735,12 @@ export function TodoForm() {
                     }
                   />
 
+                  <LifeAreaSelect
+                    value={disciplineDraft.lifeAreaId ?? null}
+                    onChange={(val) =>
+                      setDisciplineDraft((d) => ({ ...d, lifeAreaId: val }))
+                    }
+                  />
 
                   <div className="flex items-center justify-end gap-2 pt-2">
                     <Dialog.Close
@@ -745,7 +768,7 @@ export function TodoForm() {
 
           <Field.FormError
             errors={state?.errors}
-            knownFields={["title", "type", "deadline", "lifeAreaId", "difficulty", "actions", "disciplines"]}
+            knownFields={["title", "description", "type", "deadline", "lifeAreaId", "difficulty", "actions", "disciplines"]}
           />
 
           <PageActionBtn submit disabled={pending} form="todo-form" />

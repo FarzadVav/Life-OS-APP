@@ -28,6 +28,7 @@ export function serializeTodo(todo: Todo): TodoDto {
   return {
     id: todo.id,
     title: todo.title,
+    description: todo.description ?? '',
     type: todo.type as unknown as TodoDto['type'],
     deadline: todo.deadline,
     isDone: todo.isDone,
@@ -134,6 +135,7 @@ export class TodoRepository extends EntityRepository<Todo> {
 
     const todo = this.create({
       title: data.title.trim(),
+      description: data.description?.trim() || '',
       type: data.type as unknown as TodoType,
       deadline: data.deadline.trim(),
       difficulty: data.difficulty,
@@ -200,6 +202,9 @@ export class TodoRepository extends EntityRepository<Todo> {
 
     this.assign(todo, {
       ...(data.title !== undefined ? { title: data.title.trim() } : {}),
+      ...(data.description !== undefined
+        ? { description: data.description.trim() }
+        : {}),
       ...(data.type !== undefined ? { type: data.type as unknown as TodoType } : {}),
       ...(data.deadline !== undefined ? { deadline: data.deadline.trim() } : {}),
       ...(data.isDone !== undefined ? { isDone: data.isDone } : {}),

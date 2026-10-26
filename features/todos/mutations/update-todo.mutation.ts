@@ -27,6 +27,9 @@ export async function updateTodoMutation(
   }
 
   const title = formData.has('title') ? String(formData.get('title') ?? '').trim() : undefined;
+  const description = formData.has('description')
+    ? String(formData.get('description') ?? '').trim()
+    : undefined;
   const typeValue = formData.has('type') ? (String(formData.get('type')) as TodoType) : undefined;
   const deadline = formData.has('deadline') ? String(formData.get('deadline') ?? '').trim() : undefined;
   const difficultyRaw = formData.get('difficulty');
@@ -69,6 +72,7 @@ export async function updateTodoMutation(
   const updatePayload = {
     id,
     ...(title !== undefined ? { title } : {}),
+    ...(description !== undefined ? { description } : {}),
     ...(typeValue !== undefined ? { type: typeValue } : {}),
     ...(deadline !== undefined ? { deadline } : {}),
     ...(difficulty !== undefined ? { difficulty } : {}),
@@ -85,6 +89,7 @@ export async function updateTodoMutation(
     for (const problem of validation) {
       const field = String(problem.path[0] ?? 'general') as
         | 'title'
+        | 'description'
         | 'type'
         | 'deadline'
         | 'difficulty'
@@ -102,6 +107,7 @@ export async function updateTodoMutation(
       inputs: {
         id,
         title,
+        description,
         type: typeValue,
         deadline,
         difficulty,
@@ -115,7 +121,7 @@ export async function updateTodoMutation(
   if (userId === null) {
     return {
       errors: { general: ['Your session has expired. Please sign in again.'] },
-      inputs: { id, title, type: typeValue, deadline, difficulty, lifeAreaId },
+      inputs: { id, title, description, type: typeValue, deadline, difficulty, lifeAreaId },
       success: false,
     };
   }
@@ -125,6 +131,7 @@ export async function updateTodoMutation(
     updated = await withRequestContext(async ({ todo }) => {
       return await todo.updateTodo(id, {
         title,
+        description,
         type: typeValue,
         deadline,
         difficulty,
@@ -138,7 +145,7 @@ export async function updateTodoMutation(
     if (error instanceof ForbiddenReferenceError) {
       return {
         errors: { lifeAreaId: ['This value is not available to you.'] },
-        inputs: { id, title, type: typeValue, deadline, difficulty, lifeAreaId },
+        inputs: { id, title, description, type: typeValue, deadline, difficulty, lifeAreaId },
         success: false,
       };
     }
@@ -160,6 +167,7 @@ export async function updateTodoMutation(
     inputs: {
       id: updated.id,
       title: updated.title,
+      description: updated.description,
       type: updated.type,
       deadline: updated.deadline,
       difficulty: updated.difficulty,

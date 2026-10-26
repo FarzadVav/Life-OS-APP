@@ -8,6 +8,7 @@ import {
   CircleIcon,
   ClockIcon,
   CompassIcon,
+  FileTextIcon,
   TagIcon,
   Trash2Icon,
 } from "lucide-react";
@@ -16,6 +17,7 @@ import { Todo } from "../../types";
 import { toggleTodoMutation, deleteTodoMutation } from "../../mutations";
 import Drawer from "@/features/general/components/ui/Drawer/Drawer";
 import CardDrawer from "@/features/general/components/ui/CardDrawer/CardDrawer";
+import { RichTextResult } from "@/features/general/components/ui/RichTextEditor";
 import { Button } from "@/features/general/components/ui/Button/Button";
 import { Switch } from "@/features/general/components/ui/Switch/Switch";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
@@ -121,6 +123,20 @@ function TodoCard({ todo, onMutated }: TodoCardProps) {
               </div>
             )}
           </div>
+
+          {todo.description && (
+            <section className="space-y-2">
+              <div className="flex items-center gap-2 sub-text">
+                <FileTextIcon className="size-4" />
+                <span className="font-bold">{t("common.description")}</span>
+              </div>
+
+              <RichTextResult
+                content={todo.description}
+                containerClassName="bg-background p-4"
+              />
+            </section>
+          )}
 
           <form ref={toggleFormRef} action={toggleAction}>
             <Field type="hidden" name="id" value={todo.id} />

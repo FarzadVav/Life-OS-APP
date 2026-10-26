@@ -15,6 +15,7 @@ export async function createTodoMutation(
   formData: FormData,
 ): Promise<TodoFormState> {
   const title = String(formData.get('title') ?? '').trim();
+  const description = String(formData.get('description') ?? '').trim();
   const typeValue = String(formData.get('type') ?? 'Daily') as TodoType;
   const deadline = String(formData.get('deadline') ?? '').trim();
   const difficultyRaw = formData.get('difficulty');
@@ -49,6 +50,7 @@ export async function createTodoMutation(
   // Validate form inputs using ArkType CreateTodoSchema
   const validation = CreateTodoSchema({
     title,
+    ...(description ? { description } : {}),
     type: typeValue,
     deadline,
     ...(difficulty !== undefined ? { difficulty } : {}),
@@ -63,6 +65,7 @@ export async function createTodoMutation(
     for (const problem of validation) {
       const field = String(problem.path[0] ?? 'general') as
         | 'title'
+        | 'description'
         | 'type'
         | 'deadline'
         | 'difficulty'
@@ -79,6 +82,7 @@ export async function createTodoMutation(
       errors,
       inputs: {
         title,
+        description,
         type: typeValue,
         deadline,
         difficulty,
@@ -92,12 +96,12 @@ export async function createTodoMutation(
   if (userId === null) {
     return {
       errors: { general: ['Your session has expired. Please sign in again.'] },
-      inputs: { title, type: typeValue, deadline, difficulty, lifeAreaId },
+      inputs: { title, description, type: typeValue, deadline, difficulty, lifeAreaId },
       success: false,
     };
   }
 
-  const inputs = { title, type: typeValue, deadline, difficulty, lifeAreaId };
+  const inputs = { title, description, type: typeValue, deadline, difficulty, lifeAreaId };
 
   let created;
   try {
@@ -105,6 +109,7 @@ export async function createTodoMutation(
       return await todo.createTodo(
         {
           title,
+          description,
           type: typeValue,
           deadline,
           difficulty,

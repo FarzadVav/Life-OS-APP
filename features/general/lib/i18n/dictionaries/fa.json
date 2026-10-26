@@ -91,6 +91,7 @@
     "noTodos": "هیچ کاری در این بخش ندارید",
     "noMissions": "هیچ ماموریتی ندارید",
     "titlePlaceholder": "عنوان کار...",
+    "descPlaceholder": "توضیحات اختیاری، زمینه یا دلیل این کار...",
     "selectType": "انتخاب نوع",
     "completed": "تکمیل شده",
     "inProgress": "در حال انجام",

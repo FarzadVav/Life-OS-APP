@@ -11,10 +11,16 @@ export { TodoType };
 
 @Entity({ tableName: 'todos' })
 export class Todo extends BaseEntity {
-  [OptionalProps]?: 'createdAt' | 'updatedAt' | 'isDone' | 'type';
+  [OptionalProps]?: 'createdAt' | 'updatedAt' | 'isDone' | 'type' | 'description';
 
   @Property({ type: 'string' })
   title!: string;
+
+  /**
+   * Rich text (TipTap HTML) notes about the todo or mission
+   */
+  @Property({ type: 'text', default: '' })
+  description: string = '';
 
   @Enum({ items: () => TodoType, default: TodoType.DAILY })
   type: TodoType = TodoType.DAILY;

@@ -52,6 +52,7 @@ export type TodoDiscipline = typeof TodoDisciplineSchema.infer;
 export const TodoSchema = type({
   id: 'number',
   title: 'string',
+  description: 'string',
   deadline: 'string',
   type: TodoTypeSchema,
   isDone: 'boolean',
@@ -68,6 +69,7 @@ export type Todo = typeof TodoSchema.infer;
  */
 export const CreateTodoSchema = type({
   title: 'string >= 1',
+  'description?': 'string',
   type: TodoTypeSchema,
   deadline: 'string >= 1',
   'difficulty?': 'number',
@@ -90,6 +92,7 @@ export type CreateTodoData = typeof CreateTodoSchema.infer;
 export const UpdateTodoSchema = type({
   'id?': 'number',
   'title?': 'string >= 1',
+  'description?': 'string',
   'type?': TodoTypeSchema,
   'deadline?': 'string >= 1',
   'isDone?': 'boolean',
@@ -135,6 +138,7 @@ export type CreateDisciplineData = typeof CreateDisciplineSchema.infer;
 export type TodoFormState = {
   errors?: {
     title?: string[];
+    description?: string[];
     type?: string[];
     deadline?: string[];
     difficulty?: string[];
@@ -145,6 +149,7 @@ export type TodoFormState = {
   inputs?: {
     id?: number;
     title?: string;
+    description?: string;
     type?: TodoType;
     deadline?: string;
     difficulty?: number;

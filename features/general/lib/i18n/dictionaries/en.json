@@ -91,6 +91,7 @@
     "noTodos": "You haven't any todos in this section",
     "noMissions": "You haven't any missions",
     "titlePlaceholder": "Todo title...",
+    "descPlaceholder": "Optional notes, context, or the reason behind this todo...",
     "selectType": "Select type",
     "completed": "Completed",
     "inProgress": "In Progress",

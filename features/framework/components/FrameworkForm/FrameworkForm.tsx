@@ -12,6 +12,7 @@ import SelectDialog from "@/features/general/components/ui/SelectDialog";
 import Dialog from "@/features/general/components/ui/Dialog/Dialog";
 import { Button } from "@/features/general/components/ui/Button/Button";
 import Skeleton from "@/features/general/components/ui/Skeleton";
+import { RichTextarea } from "@/features/general/components/ui/RichTextEditor";
 
 import { useFramework } from "@/features/framework/hooks/useFramework";
 import {
@@ -165,6 +166,7 @@ export function FrameworkForm() {
             name="lifeAreaId"
             value={lifeAreaId ? String(lifeAreaId) : "none"}
           />
+          <Field type="hidden" name="description" value={description} />
 
           <Field
             name="title"
@@ -181,17 +183,24 @@ export function FrameworkForm() {
           <LifeAreaSelect value={lifeAreaId} onChange={setLifeAreaId} />
 
 
-          <Field
-            multiline
-            rows={3}
+          <Field.Root
             name="description"
-            label={t("common.description")}
-            placeholder={t("framework.descPlaceholder")}
-            value={description}
-            disabled={pending}
-            onChange={(event) => setDescription(event.target.value)}
             schema={isEditMode ? UpdateFrameworkSchema : CreateFrameworkSchema}
-          />
+          >
+            <Field.Label className="mb-1 font-bold">
+              {t("common.description")}
+            </Field.Label>
+
+            <RichTextarea
+              name="description"
+              value={description}
+              onChange={setDescription}
+              placeholder={t("framework.descPlaceholder")}
+              title={t("common.description")}
+            />
+
+            <Field.Error className="sub-text mt-0.5 text-foreground text-xs" />
+          </Field.Root>
 
           <Field.FormError
             errors={state?.errors}
