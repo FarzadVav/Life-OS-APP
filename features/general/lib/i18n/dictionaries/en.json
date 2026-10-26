@@ -310,13 +310,13 @@
   "habits": {
     "title": "Habits and Rules",
     "subtitle": "Daily disciplines, recurring behaviors, rules, and routines.",
-    "new": "New Habit or Rule",
-    "edit": "Edit Habit or Rule",
+    "new": "New Habit / Rule",
+    "edit": "Edit Habit / Rule",
     "empty": "No habits or rules defined yet.",
-    "addFirst": "Add your first habit or rule to track consistent daily disciplines.",
+    "addFirst": "Add your first habit / rule to track consistent daily disciplines.",
     "titlePlaceholder": "e.g. Morning Hydration, 30m Deep Reading, Gym Workout...",
     "descPlaceholder": "Optional notes, cue triggers, or execution standards...",
-    "deleteConfirm": "Are you sure you want to delete this habit or rule?",
+    "deleteConfirm": "Are you sure you want to delete this habit / rule?",
     "deleteDesc": "\"{title}\" will be permanently deleted.",
     "historyTitle": "Recent Check-ins"
   }
