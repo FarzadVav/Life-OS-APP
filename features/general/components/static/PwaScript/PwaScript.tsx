@@ -1,5 +1,3 @@
-import Script from "next/script";
-
 const script = `
   (function() {
     window.__pwaPrompt = null;
@@ -17,10 +15,8 @@ const script = `
 
 function PwaScript() {
   return (
-    // eslint-disable-next-line @next/next/no-before-interactive-script-outside-document
-    <Script
+    <script
       id="pwa-prompt-init"
-      strategy="beforeInteractive"
       dangerouslySetInnerHTML={{
         __html: script,
       }}

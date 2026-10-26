@@ -4,6 +4,7 @@ import { BookOpenIcon, CheckSquareIcon, RocketIcon } from "lucide-react";
 
 import { useTodos } from "@/features/todos/hooks";
 import { useJournalsStats } from "@/features/journals/hooks";
+import CardView from "@/features/general/components/ui/CardView";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 
 function ProfileStats() {
@@ -59,26 +60,18 @@ function ProfileStats() {
     },
   ];
 
-  return stats.map((stat) => (
-    <div
-      key={stat.label}
-      className="w-full flex flex-col gap-3 rounded-container bg-card p-3 border border-foreground/5 shadow-xs">
-      <div className="flex items-center gap-2 font-semibold">
-        {stat.icon}
-        <span>{stat.label}</span>
-      </div>
-      <div className="flex flex-col gap-1 text-sm sub-text">
-        {stat.details.map((detail) => (
-          <div
-            key={detail.label}
-            className="flex w-full items-center justify-between">
-            <span>{detail.label}</span>
-            <span className="font-medium text-foreground">{detail.value}</span>
-          </div>
-        ))}
-      </div>
+  return (
+    <div className="w-full space-y-3">
+      {stats.map((stat) => (
+        <CardView
+          key={stat.label}
+          icon={stat.icon}
+          title={stat.label}
+          description={stat.details.map((detail, i) => `${detail.label} ${detail.value}${stat.details.length - 1 === i ? "" : " — "}`)}
+        />
+      ))}
     </div>
-  ));
+  );
 }
 
 export default ProfileStats;
