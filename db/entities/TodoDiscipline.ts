@@ -12,11 +12,6 @@ export class TodoDiscipline extends BaseEntity {
   @Property({ type: 'string' })
   title!: string;
 
-  /**
-   * Recurrence interval string, e.g. "Every 1 Day", "Every 2 Days", "Every 1 Week"
-   */
-  @Property({ type: 'string' })
-  repeatInterval!: string;
 
   @ManyToOne(() => Todo, { nullable: false, deleteRule: 'cascade' })
   mission!: Rel<Todo>;

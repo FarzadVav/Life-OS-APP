@@ -10,7 +10,6 @@ import {
   EditIcon,
   LoaderIcon,
   PlusIcon,
-  Repeat2Icon,
   Trash2Icon,
 } from "lucide-react";
 
@@ -38,7 +37,6 @@ import Dialog from "@/features/general/components/ui/Dialog/Dialog";
 import Skeleton from "@/features/general/components/ui/Skeleton";
 import TimePickerDialog from "@/features/general/components/ui/TimePickerDialog";
 import DayPickerDialog from "@/features/general/components/ui/DayPickerDialog";
-import RepeatIntervalInput from "@/features/general/components/ui/RepeatIntervalInput";
 import SelectDialog from "@/features/general/components/ui/SelectDialog";
 import {
   getDefaultTime,
@@ -203,18 +201,15 @@ export function TodoForm() {
     deadline: new Date(),
   });
 
-  // Dialog state for adding/editing mission discipline
   const [disciplineDialogOpen, setDisciplineDialogOpen] = useState(false);
   const [disciplineDraft, setDisciplineDraft] = useState<{
     id: number | null;
     title: string;
-    repeatInterval: string;
     lifeAreaId?: number | null;
     history?: { date: string; isDone: boolean }[];
   }>({
     id: null,
     title: "",
-    repeatInterval: "Every 1 Day",
     lifeAreaId: null,
     history: [],
   });
@@ -337,7 +332,6 @@ export function TodoForm() {
     setDisciplineDraft({
       id: null,
       title: "",
-      repeatInterval: "Every 1 Day",
       lifeAreaId: lifeAreaId,
       history: [],
     });
@@ -348,7 +342,6 @@ export function TodoForm() {
     setDisciplineDraft({
       id: discipline.id,
       title: discipline.title,
-      repeatInterval: discipline.repeatInterval || "Every 1 Day",
       lifeAreaId: discipline.lifeAreaId ?? lifeAreaId,
       history: discipline.history,
     });
@@ -357,14 +350,13 @@ export function TodoForm() {
 
   const saveDiscipline = () => {
     const nextTitle = disciplineDraft.title.trim();
-    const nextInterval = disciplineDraft.repeatInterval.trim() || "Every 1 Day";
     if (!nextTitle) return;
 
     if (disciplineDraft.id !== null) {
       setDisciplines((prev) =>
         prev.map((d) =>
           d.id === disciplineDraft.id
-            ? { ...d, title: nextTitle, repeatInterval: nextInterval, lifeAreaId: disciplineDraft.lifeAreaId }
+            ? { ...d, title: nextTitle, lifeAreaId: disciplineDraft.lifeAreaId }
             : d,
         ),
       );
@@ -374,7 +366,6 @@ export function TodoForm() {
         {
           id: Date.now() + Math.floor(Math.random() * 1000),
           title: nextTitle,
-          repeatInterval: nextInterval,
           lifeAreaId: disciplineDraft.lifeAreaId,
           history: [],
         },
@@ -589,13 +580,11 @@ export function TodoForm() {
                       >
                         <div className="min-w-0 flex-1">
                           <p className="truncate text-sm font-medium">{d.title}</p>
-                          <p className="sub-text text-xs flex items-center gap-1 mt-0.5">
-                            <Repeat2Icon className="size-3" />
-                            <span>{d.repeatInterval}</span>
-                            {d.lifeArea?.title && (
-                              <span>• {d.lifeArea.title}</span>
-                            )}
-                          </p>
+                          {d.lifeArea?.title && (
+                            <p className="sub-text text-xs flex items-center gap-1 mt-0.5">
+                              <span>{d.lifeArea.title}</span>
+                            </p>
+                          )}
                         </div>
 
                         <div className="flex shrink-0 items-center gap-1">
@@ -729,20 +718,6 @@ export function TodoForm() {
                     }
                   />
 
-                  <Field.Root name="disciplineRepeatInterval">
-                    <Field.Label className="mb-1 font-bold text-xs">
-                      Repeat Interval
-                    </Field.Label>
-                    <RepeatIntervalInput
-                      value={disciplineDraft.repeatInterval}
-                      onChange={(val) =>
-                        setDisciplineDraft((d) => ({
-                          ...d,
-                          repeatInterval: val,
-                        }))
-                      }
-                    />
-                  </Field.Root>
 
                   <div className="flex items-center justify-end gap-2 pt-2">
                     <Dialog.Close

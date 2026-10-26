@@ -75,14 +75,14 @@ export function HabitsList({
           ? forcedLifeAreaId
           : null;
     if (area) {
-      router.push(`/habits/new?lifeAreaId=${area}`);
+      router.push(`/habits-n-rules/new?lifeAreaId=${area}`);
     } else {
-      router.push("/habits/new");
+      router.push("/habits-n-rules/new");
     }
   };
 
   const handleOpenEdit = (habit: Habit) => {
-    router.push(`/habits/new?editId=${habit.id}`);
+    router.push(`/habits-n-rules/new?editId=${habit.id}`);
   };
 
   const showFilterBar =

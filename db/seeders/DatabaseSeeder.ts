@@ -77,7 +77,6 @@ export class DatabaseSeeder extends Seeder {
         for (const disc of disciplines) {
           const discipline = em.create(TodoDiscipline, {
             title: disc.title,
-            repeatInterval: disc.repeatInterval,
             mission: todo,
           });
           todo.disciplines.add(discipline);

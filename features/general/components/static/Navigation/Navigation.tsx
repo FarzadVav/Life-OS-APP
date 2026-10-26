@@ -14,7 +14,7 @@ function Navigation() {
   const navLabels: Record<string, string> = {
     "/profile": t("profile.title"),
     "/todos": t("todos.title"),
-    "/habits": t("habits.title"),
+    "/habits-n-rules": t("habits.title"),
     "/journals": t("journals.title"),
     "/skills": t("skills.title"),
   };

@@ -142,8 +142,6 @@
     "editDisciplineDesc": "Edit the discipline title and interval",
     "createDisciplineDesc": "Define a repeated behavior supporting this mission",
     "disciplineTitlePlaceholder": "Discipline title...",
-    "iDo": "I Do",
-    "iDontDo": "I Don't Do",
     "level1": "Very easy",
     "level2": "Easy",
     "level3": "Moderate",
@@ -310,18 +308,16 @@
     "deleteDesc": "\"{title}\" will be permanently deleted."
   },
   "habits": {
-    "title": "Habits",
-    "subtitle": "Daily disciplines, recurring behaviors, and routines.",
-    "new": "New Habit",
-    "edit": "Edit Habit",
-    "empty": "No habits defined yet.",
-    "addFirst": "Add your first habit to track consistent daily disciplines.",
+    "title": "Habits and Rules",
+    "subtitle": "Daily disciplines, recurring behaviors, rules, and routines.",
+    "new": "New Habit or Rule",
+    "edit": "Edit Habit or Rule",
+    "empty": "No habits or rules defined yet.",
+    "addFirst": "Add your first habit or rule to track consistent daily disciplines.",
     "titlePlaceholder": "e.g. Morning Hydration, 30m Deep Reading, Gym Workout...",
     "descPlaceholder": "Optional notes, cue triggers, or execution standards...",
-    "repeatInterval": "Repeat Interval",
-    "deleteConfirm": "Are you sure you want to delete this habit?",
+    "deleteConfirm": "Are you sure you want to delete this habit or rule?",
     "deleteDesc": "\"{title}\" will be permanently deleted.",
-    "todayCheckin": "Today's Action",
     "historyTitle": "Recent Check-ins"
   }
 }

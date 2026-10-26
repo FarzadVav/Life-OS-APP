@@ -40,6 +40,20 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  async redirects() {
+    return [
+      {
+        source: "/habits",
+        destination: "/habits-n-rules",
+        permanent: true,
+      },
+      {
+        source: "/habits/:path*",
+        destination: "/habits-n-rules/:path*",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

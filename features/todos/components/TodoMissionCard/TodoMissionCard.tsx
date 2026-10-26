@@ -18,7 +18,6 @@ import {
 import { Todo, TodoAction, TodoDiscipline } from "../../types";
 import {
   deleteTodoMutation,
-  recordDisciplineMutation,
   toggleActionMutation,
 } from "../../mutations";
 import Drawer from "@/features/general/components/ui/Drawer/Drawer";
@@ -103,70 +102,25 @@ function MissionActionRow({
   );
 }
 
-/**
- * A mission discipline check-in: "I Do" and "I Don't Do" are two submit buttons
- * of the same form, distinguished by their `isDone` value.
- */
 function MissionDisciplineRow({
   discipline,
-  onMutated,
 }: {
   discipline: TodoDiscipline;
-  onMutated?: () => void;
 }) {
-  const { t } = useLocale();
-  const [state, recordAction, isRecording] = useActionState(
-    recordDisciplineMutation,
-    undefined,
-  );
-
-  useEffect(() => {
-    if (state?.success) {
-      onMutated?.();
-    }
-  }, [state, onMutated]);
-
   return (
-    <div className="flex flex-col gap-3 rounded-container bg-background p-3">
-      <div className="flex items-center gap-3">
-        <div className="flex size-10 shrink-0 items-center justify-center rounded-component bg-card">
-          <Repeat2Icon className="size-4" />
-        </div>
-
-        <div className="flex-1 h-10 flex justify-between items-start flex-col">
-          <p className="text-sm font-medium">{discipline.title}</p>
-          <p className="sub-text text-xs flex items-center gap-1.5">
-            <span>{discipline.repeatInterval}</span>
-            {discipline.lifeArea?.title && (
-              <span>• {discipline.lifeArea.title}</span>
-            )}
-          </p>
-        </div>
+    <div className="flex items-center gap-3 rounded-container bg-background p-3">
+      <div className="flex size-10 shrink-0 items-center justify-center rounded-component bg-card">
+        <Repeat2Icon className="size-4" />
       </div>
 
-      <form action={recordAction} className="flex gap-2 w-full mt-1">
-        <Field type="hidden" name="id" value={discipline.id} />
-        <Button
-          type="submit"
-          name="isDone"
-          value="true"
-          variant="outline"
-          disabled={isRecording}
-          className="flex-1 justify-center py-1.5 h-auto text-xs bg-card-thick text-foreground hover:bg-card-thick/80 border-foreground/20"
-        >
-          {t("missions.iDo")}
-        </Button>
-        <Button
-          type="submit"
-          name="isDone"
-          value="false"
-          variant="ghost"
-          disabled={isRecording}
-          className="flex-1 justify-center py-1.5 h-auto text-xs text-foreground/60 hover:text-foreground"
-        >
-          {t("missions.iDontDo")}
-        </Button>
-      </form>
+      <div className="flex-1 min-h-10 flex justify-center items-start flex-col">
+        <p className="text-sm font-medium">{discipline.title}</p>
+        {discipline.lifeArea?.title && (
+          <p className="sub-text text-xs flex items-center gap-1.5 mt-0.5">
+            <span>{discipline.lifeArea.title}</span>
+          </p>
+        )}
+      </div>
     </div>
   );
 }
@@ -322,7 +276,6 @@ function TodoMissionCard({ todo, onMutated }: TodoMissionCardProps) {
                   <MissionDisciplineRow
                     key={discipline.id}
                     discipline={discipline}
-                    onMutated={onMutated}
                   />
                 ))}
               </div>

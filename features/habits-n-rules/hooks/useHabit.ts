@@ -14,7 +14,7 @@ const fetcher = async (url: string) => {
 
 export function useHabit(id: number | null) {
   const { data: habit = null, error, isLoading, mutate } = useSWR<Habit | null>(
-    id ? `/api/habits/${id}` : null,
+    id ? `/api/habits-n-rules/${id}` : null,
     fetcher,
     {
       revalidateOnFocus: true,

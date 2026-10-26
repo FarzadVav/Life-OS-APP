@@ -12,7 +12,8 @@ import { cn } from "cn";
 
 type HelpDialogProps = ButtonProps & {
   topic?: string;
-}
+  position?: "left" | "right";
+};
 
 function resolveTopic(pathname: string | null): string {
   if (!pathname || pathname === "/" || pathname === "/todos") {
@@ -40,6 +41,8 @@ export default function HelpDialog({
   onClick,
   children,
   topic,
+  position,
+  className,
   ...p
 }: HelpDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -62,17 +65,19 @@ export default function HelpDialog({
 
   return (
     <>
-      <Button
+      <TopBarBtn
+        position={position}
         title={t("help.label")}
         aria-label={t("help.label")}
         onClick={(ev) => {
           setIsOpen(true);
           onClick?.(ev);
         }}
+        className={className}
         {...p}
       >
         {children || <CircleHelp />}
-      </Button>
+      </TopBarBtn>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <div className="flex flex-col gap-5 max-w-sm w-full p-1">

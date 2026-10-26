@@ -4,7 +4,7 @@
 - Store the dates and times with the UTC timestamp format and show them with localization
 - Remove repeat-interval from missions disciplines and habits
 - Rename habits to habits-n-rules (Habits and Rules)
-- PWA (the offline page, the occasional script error)
+- PWA (and the offline page)
 - Implementation of folders, files, code-splitting, tsx/html, styles
 - Implementation of states, hooks, fetches, actions, forms
 - Implementation of db, orm, repositories, queries, mutations

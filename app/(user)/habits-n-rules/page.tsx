@@ -1,7 +1,7 @@
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
 import PageItemsWrapper from "@/features/general/components/static/PageItemsWrapper/PageItemsWrapper";
-import { HabitsList } from "@/features/habits/components";
+import { HabitsList } from "@/features/habits-n-rules/components";
 import PageActionBtn from "@/features/general/components/module/PageActionBtn/PageActionBtn";
 import { getTranslations } from "@/features/general/lib/i18n/server";
 
@@ -21,7 +21,7 @@ export default async function HabitsPage() {
         <HabitsList />
       </PageItemsWrapper>
 
-      <PageActionBtn href="/habits/new">{t("habits.new")}</PageActionBtn>
+      <PageActionBtn href="/habits-n-rules/new">{t("habits.new")}</PageActionBtn>
     </PageWrapper>
   );
 }

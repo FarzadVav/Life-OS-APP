@@ -25,7 +25,6 @@ export function serializeHabit(habit: Habit): HabitDto {
     id: habit.id,
     title: habit.title,
     description: habit.description || '',
-    repeatInterval: habit.repeatInterval || 'Every 1 Day',
     lifeAreaId: habit.lifeArea?.id ?? null,
     lifeArea: habit.lifeArea
       ? {
@@ -71,7 +70,6 @@ export class HabitRepository extends EntityRepository<Habit> {
     const habit = this.create({
       title: data.title.trim(),
       description: data.description?.trim() || '',
-      repeatInterval: data.repeatInterval?.trim() || 'Every 1 Day',
       lifeArea:
         data.lifeAreaId && data.lifeAreaId > 0
           ? this.em.getReference(LifeArea, data.lifeAreaId)
@@ -103,9 +101,6 @@ export class HabitRepository extends EntityRepository<Habit> {
     }
     if (data.description !== undefined) {
       habit.description = data.description.trim();
-    }
-    if (data.repeatInterval !== undefined) {
-      habit.repeatInterval = data.repeatInterval.trim() || 'Every 1 Day';
     }
     if (data.lifeAreaId !== undefined) {
       habit.lifeArea =

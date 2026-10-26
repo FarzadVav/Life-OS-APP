@@ -26,7 +26,6 @@ export const HabitSchema = type({
   id: 'number',
   title: 'string',
   description: 'string',
-  repeatInterval: 'string',
   'lifeAreaId?': 'number | null',
   'lifeArea?': HabitLifeAreaSummarySchema,
   'history?': HabitHistoryItemSchema.array(),
@@ -41,7 +40,6 @@ export type Habit = typeof HabitSchema.infer;
 export const CreateHabitSchema = type({
   title: 'string >= 1',
   'description?': 'string',
-  'repeatInterval?': 'string',
   'lifeAreaId?': 'number | null',
 });
 export type CreateHabitData = typeof CreateHabitSchema.infer;
@@ -53,7 +51,6 @@ export const UpdateHabitSchema = type({
   'id?': 'number',
   'title?': 'string >= 1',
   'description?': 'string',
-  'repeatInterval?': 'string',
   'lifeAreaId?': 'number | null',
 });
 export type UpdateHabitData = typeof UpdateHabitSchema.infer;
@@ -62,14 +59,12 @@ export type HabitFormState = {
   errors?: {
     title?: string[];
     description?: string[];
-    repeatInterval?: string[];
     lifeAreaId?: string[];
     general?: string[];
   };
   inputs?: {
     title?: string;
     description?: string;
-    repeatInterval?: string;
     lifeAreaId?: number | null;
   };
   success?: boolean;

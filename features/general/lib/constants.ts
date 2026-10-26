@@ -64,9 +64,9 @@ export const NAVIGATION_LINKS: NavigationLink[] = [
     Icon: CircleCheckBig,
   },
   {
-    name: "Habits",
-    href: "/habits",
-    matchPathname: "/habit",
+    name: "Habits and Rules",
+    href: "/habits-n-rules",
+    matchPathname: "/habits-n-rules",
     Icon: Repeat2Icon,
   },
   {

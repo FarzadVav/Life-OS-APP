@@ -107,7 +107,6 @@ export const SEED_TODOS = [
     disciplines: [
       {
         title: 'Work on core product architecture daily',
-        repeatInterval: 'Every 1 Day',
         history: [
           { date: '2026-10-15T10:00:00Z', isDone: true },
           { date: '2026-10-16T10:00:00Z', isDone: true },
@@ -116,7 +115,6 @@ export const SEED_TODOS = [
       },
       {
         title: 'Collect feedback from potential early adopters',
-        repeatInterval: 'Every 2 Days',
         history: [
           { date: '2026-10-15T14:00:00Z', isDone: true },
           { date: '2026-10-17T14:00:00Z', isDone: true },
@@ -150,7 +148,6 @@ export const SEED_TODOS = [
     disciplines: [
       {
         title: 'Track discretionary expenses before sleep',
-        repeatInterval: 'Every 1 Day',
         history: [
           { date: '2026-10-16T21:00:00Z', isDone: true },
           { date: '2026-10-17T21:00:00Z', isDone: true },
@@ -184,7 +181,6 @@ export const SEED_TODOS = [
     disciplines: [
       {
         title: 'Morning mobility, calf stretches, and foam rolling',
-        repeatInterval: 'Every 1 Day',
         history: [
           { date: '2026-10-16T07:00:00Z', isDone: true },
           { date: '2026-10-17T07:00:00Z', isDone: true },
@@ -192,7 +188,6 @@ export const SEED_TODOS = [
       },
       {
         title: 'Zone 2 heart rate aerobic endurance run (60 mins)',
-        repeatInterval: 'Every 2 Days',
         history: [
           { date: '2026-10-15T06:30:00Z', isDone: true },
           { date: '2026-10-17T06:30:00Z', isDone: true },

@@ -4,36 +4,24 @@ import { type } from 'arktype';
 import { withRequestContext } from '@/db';
 import { tryGetUserId } from '@/features/auth/lib/actor';
 import { ForbiddenReferenceError } from '@/features/general/lib/errors';
-import { UpdateHabitSchema, type HabitFormState } from '../types';
+import { CreateHabitSchema, type HabitFormState } from '../types';
 
-export async function updateHabitMutation(
+export async function createHabitMutation(
   prevState: HabitFormState,
   formData: FormData,
 ): Promise<HabitFormState> {
-  const idRaw = formData.get('id');
-  const id = idRaw ? Number(idRaw) : NaN;
   const title = String(formData.get('title') ?? '').trim();
   const description = String(formData.get('description') ?? '').trim();
-  const repeatInterval = String(formData.get('repeatInterval') ?? '').trim();
   const lifeAreaIdRaw = formData.get('lifeAreaId');
   const lifeAreaId =
     lifeAreaIdRaw && lifeAreaIdRaw !== '' && lifeAreaIdRaw !== '0' && lifeAreaIdRaw !== 'none'
       ? Number(lifeAreaIdRaw)
       : null;
 
-  if (!id || Number.isNaN(id)) {
-    return {
-      errors: { general: ['Invalid habit id'] },
-      success: false,
-    };
-  }
-
-  const validation = UpdateHabitSchema({
-    id,
-    title: title || undefined,
+  const validation = CreateHabitSchema({
+    title,
     ...(description ? { description } : {}),
-    ...(repeatInterval ? { repeatInterval } : {}),
-    lifeAreaId,
+    ...(lifeAreaId !== undefined ? { lifeAreaId } : {}),
   });
 
   if (validation instanceof type.errors) {
@@ -43,7 +31,6 @@ export async function updateHabitMutation(
       const field = String(problem.path[0] ?? 'general') as
         | 'title'
         | 'description'
-        | 'repeatInterval'
         | 'lifeAreaId'
         | 'general';
 
@@ -58,7 +45,6 @@ export async function updateHabitMutation(
       inputs: {
         title,
         description,
-        repeatInterval,
         lifeAreaId,
       },
       success: false,
@@ -69,20 +55,20 @@ export async function updateHabitMutation(
   if (userId === null) {
     return {
       errors: { general: ['Your session has expired. Please sign in again.'] },
-      inputs: { title, description, repeatInterval, lifeAreaId },
+      inputs: { title, description, lifeAreaId },
       success: false,
     };
   }
 
-  let updated;
+  const inputs = { title, description, lifeAreaId };
+
+  let created;
   try {
-    updated = await withRequestContext(async ({ habit }) => {
-      return await habit.updateHabit(
-        id,
+    created = await withRequestContext(async ({ habit }) => {
+      return await habit.createHabit(
         {
-          title: title || undefined,
+          title,
           description,
-          repeatInterval,
           lifeAreaId,
         },
         userId,
@@ -90,30 +76,14 @@ export async function updateHabitMutation(
     });
   } catch (error) {
     if (error instanceof ForbiddenReferenceError) {
-      return {
-        errors: { lifeAreaId: ['This value is not available to you.'] },
-        inputs: { title, description, repeatInterval, lifeAreaId },
-        success: false,
-      };
+      return { errors: { lifeAreaId: ['This value is not available to you.'] }, inputs, success: false };
     }
     throw error;
   }
 
-  if (!updated) {
-    return {
-      errors: { general: ['Habit not found'] },
-      success: false,
-    };
-  }
-
   return {
     success: true,
-    habitId: updated.id,
-    inputs: {
-      title: updated.title,
-      description: updated.description,
-      repeatInterval: updated.repeatInterval,
-      lifeAreaId: updated.lifeArea?.id ?? null,
-    },
+    habitId: created.id,
+    inputs,
   };
 }

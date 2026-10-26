@@ -56,7 +56,6 @@ export function serializeTodo(todo: Todo): TodoDto {
           return {
             id: d.id,
             title: d.title,
-            repeatInterval: d.repeatInterval,
             lifeAreaId: d.lifeArea?.id ?? null,
             lifeArea: discLifeAreaDto,
             history: d.history?.isInitialized()
@@ -165,7 +164,6 @@ export class TodoRepository extends EntityRepository<Todo> {
         todo.disciplines.add(
           this.em.create(TodoDiscipline, {
             title: disc.title.trim(),
-            repeatInterval: disc.repeatInterval.trim(),
             lifeArea: discLifeArea,
             mission: todo,
           }),
@@ -258,14 +256,12 @@ export class TodoRepository extends EntityRepository<Todo> {
           const existing = existingDiscMap.get(discData.id)!;
           this.em.assign(existing, {
             title: discData.title.trim(),
-            repeatInterval: discData.repeatInterval.trim(),
             ...(discData.lifeAreaId !== undefined ? { lifeArea: itemLifeArea } : {}),
           });
           newDiscIds.add(existing.id);
         } else {
           const newDisc = this.em.create(TodoDiscipline, {
             title: discData.title.trim(),
-            repeatInterval: discData.repeatInterval.trim(),
             lifeArea: itemLifeArea,
             mission: todo,
           });

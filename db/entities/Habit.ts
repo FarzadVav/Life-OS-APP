@@ -15,12 +15,6 @@ export class Habit extends BaseEntity {
   @Property({ type: 'text', default: '' })
   description: string = '';
 
-  /**
-   * Recurrence interval string, e.g. "Every 1 Day", "Every 2 Days", "Every 1 Week"
-   * Implemented consistently with mission > discipline repeat-interval.
-   */
-  @Property({ type: 'string', default: 'Every 1 Day' })
-  repeatInterval: string = 'Every 1 Day';
 
   @ManyToOne(() => LifeArea, { nullable: true, deleteRule: 'set null' })
   lifeArea?: Rel<LifeArea>;

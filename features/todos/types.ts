@@ -42,7 +42,6 @@ export type TodoDisciplineHistory = typeof TodoDisciplineHistorySchema.infer;
 export const TodoDisciplineSchema = type({
   id: 'number',
   title: 'string',
-  repeatInterval: 'string',
   'lifeAreaId?': 'number | null',
   'lifeArea?': TodoLifeAreaSummarySchema,
   'history?': TodoDisciplineHistorySchema.array(),
@@ -85,7 +84,6 @@ export const CreateTodoSchema = type({
   'disciplines?': type({
     'id?': 'number',
     title: 'string >= 1',
-    repeatInterval: 'string >= 1',
     'lifeAreaId?': 'number | null',
   }).array(),
 });
@@ -108,7 +106,6 @@ export const UpdateTodoSchema = type({
   'disciplines?': type({
     'id?': 'number',
     title: 'string >= 1',
-    repeatInterval: 'string >= 1',
     'lifeAreaId?': 'number | null',
   }).array(),
 });
@@ -130,7 +127,6 @@ export type UpdateActionData = typeof UpdateActionSchema.infer;
 
 export const CreateDisciplineSchema = type({
   title: 'string >= 1',
-  repeatInterval: 'string >= 1',
   'lifeAreaId?': 'number | null',
 });
 export type CreateDisciplineData = typeof CreateDisciplineSchema.infer;

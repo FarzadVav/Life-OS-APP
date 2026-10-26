@@ -9,7 +9,6 @@ import { LoaderIcon } from "lucide-react";
 import Dialog from "@/features/general/components/ui/Dialog/Dialog";
 import { Button } from "@/features/general/components/ui/Button/Button";
 import { SelectDialog } from "@/features/general/components/ui/SelectDialog/SelectDialog";
-import RepeatIntervalInput from "@/features/general/components/ui/RepeatIntervalInput";
 import { useLifeAreas } from "@/features/life-areas/hooks/useLifeAreas";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 import { createHabitMutation, updateHabitMutation } from "../../mutations";
@@ -21,7 +20,6 @@ export interface HabitDialogProps {
     id?: number;
     title: string;
     description: string;
-    repeatInterval: string;
     lifeAreaId?: number | null;
   } | null;
   defaultLifeAreaId?: number | null;
@@ -43,7 +41,6 @@ export function HabitDialog({
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [repeatInterval, setRepeatInterval] = useState("Every 1 Day");
   const [selectedLifeAreaId, setSelectedLifeAreaId] = useState<number>(UNASSIGNED_ID);
 
   const [state, formAction, isSubmitting] = useActionState(
@@ -56,7 +53,6 @@ export function HabitDialog({
       queueMicrotask(() => {
         setTitle(initialData?.title || "");
         setDescription(initialData?.description || "");
-        setRepeatInterval(initialData?.repeatInterval || "Every 1 Day");
         const areaId = initialData?.lifeAreaId ?? defaultLifeAreaId;
         setSelectedLifeAreaId(areaId && areaId > 0 ? areaId : UNASSIGNED_ID);
       });
@@ -85,11 +81,6 @@ export function HabitDialog({
     <Dialog open={open} onOpenChange={onOpenChange} className="w-full max-w-lg">
       <Form action={formAction} errors={state?.errors} className="flex flex-col gap-4">
         <Field type="hidden" name="id" value={initialData?.id ?? ""} />
-        <Field
-          type="hidden"
-          name="repeatInterval"
-          value={repeatInterval}
-        />
         <Field
           type="hidden"
           name="lifeAreaId"
@@ -132,18 +123,6 @@ export function HabitDialog({
           />
         </div>
 
-        <div>
-          <label className="block font-bold text-xs mb-1.5">
-            {t("habits.repeatInterval")}
-          </label>
-          <div className="rounded-container border border-foreground/15 p-3 bg-card/40">
-            <RepeatIntervalInput
-              value={repeatInterval}
-              onChange={setRepeatInterval}
-              disabled={isSubmitting}
-            />
-          </div>
-        </div>
 
         <Field
           multiline
@@ -160,7 +139,7 @@ export function HabitDialog({
 
         <Field.FormError
           errors={state?.errors}
-          knownFields={["title", "description", "repeatInterval", "lifeAreaId"]}
+          knownFields={["title", "description", "lifeAreaId"]}
         />
 
         <div className="flex items-center justify-end gap-2 pt-2 border-t border-foreground/10">

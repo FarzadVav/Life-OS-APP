@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { type } from 'arktype';
 import { withRequestContext } from '@/db';
-import { serializeHabit } from '@/features/habits/repositories';
-import { UpdateHabitSchema } from '@/features/habits/types';
+import { serializeHabit } from '@/features/habits-n-rules/repositories';
+import { UpdateHabitSchema } from '@/features/habits-n-rules/types';
 import { requireUserId } from '@/features/auth/lib/actor';
 import { authzResponse } from '@/features/general/lib/api/respond';
 

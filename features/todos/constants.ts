@@ -114,7 +114,6 @@ export const todos: Todo[] = [
       {
         id: 2001,
         title: "Work on core product architecture daily",
-        repeatInterval: "Every 1 Day",
         history: [
           { date: "2026-10-16T10:00:00Z", isDone: true },
           { date: "2026-10-17T10:00:00Z", isDone: true },
@@ -123,7 +122,6 @@ export const todos: Todo[] = [
       {
         id: 2002,
         title: "Collect feedback from potential early adopters",
-        repeatInterval: "Every 2 Days",
         history: [{ date: "2026-10-16T10:00:00Z", isDone: true }],
       },
     ],
@@ -159,7 +157,6 @@ export const todos: Todo[] = [
       {
         id: 2003,
         title: "Track discretionary expenses before sleep",
-        repeatInterval: "Every 1 Day",
         history: [{ date: "2026-10-16T10:00:00Z", isDone: true }],
       },
     ],
@@ -195,7 +192,6 @@ export const todos: Todo[] = [
       {
         id: 2004,
         title: "Morning mobility and foam rolling routine",
-        repeatInterval: "Every 1 Day",
         history: [{ date: "2026-10-17T07:00:00Z", isDone: true }],
       },
     ],

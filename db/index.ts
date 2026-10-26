@@ -28,7 +28,7 @@ import {
 import { JournalRepository } from '@/features/journals/repositories';
 import { LifeAreaRepository } from '@/features/life-areas/repositories';
 import { SkillRepository } from '@/features/skills/repositories';
-import { HabitRepository } from '@/features/habits/repositories';
+import { HabitRepository } from '@/features/habits-n-rules/repositories';
 
 export interface Services {
   orm: MikroORM;

@@ -15,8 +15,8 @@ const fetcher = async (url: string) => {
 export function useHabits(lifeAreaId?: number | null) {
   const endpoint =
     lifeAreaId !== undefined && lifeAreaId !== null
-      ? `/api/habits?lifeAreaId=${lifeAreaId}`
-      : '/api/habits';
+      ? `/api/habits-n-rules?lifeAreaId=${lifeAreaId}`
+      : '/api/habits-n-rules';
 
   const { data: habits = [], error, isLoading, mutate } = useSWR<Habit[]>(
     endpoint,

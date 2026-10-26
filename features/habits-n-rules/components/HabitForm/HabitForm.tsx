@@ -6,20 +6,19 @@ import { useLocale } from "@/features/general/components/module/LocaleProvider/L
 
 import { Form } from "@base-ui/react";
 import Field from "@/features/general/components/ui/Field";
-import { CreateHabitSchema, UpdateHabitSchema } from "@/features/habits/types";
+import { CreateHabitSchema, UpdateHabitSchema } from "@/features/habits-n-rules/types";
 import { LoaderIcon, Trash2Icon } from "lucide-react";
 import SelectDialog from "@/features/general/components/ui/SelectDialog";
 import Dialog from "@/features/general/components/ui/Dialog/Dialog";
 import { Button } from "@/features/general/components/ui/Button/Button";
 import Skeleton from "@/features/general/components/ui/Skeleton";
-import RepeatIntervalInput from "@/features/general/components/ui/RepeatIntervalInput";
 
-import { useHabit } from "@/features/habits/hooks/useHabit";
+import { useHabit } from "@/features/habits-n-rules/hooks/useHabit";
 import {
   createHabitMutation,
   deleteHabitMutation,
   updateHabitMutation,
-} from "@/features/habits/mutations";
+} from "@/features/habits-n-rules/mutations";
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
 import HelpDialog from "@/features/general/components/module/HelpDialog/HelpDialog";
 import PageActionBtn from "@/features/general/components/module/PageActionBtn/PageActionBtn";
@@ -76,7 +75,6 @@ export function HabitForm() {
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [repeatInterval, setRepeatInterval] = useState("Every 1 Day");
   const [lifeAreaId, setLifeAreaId] = useState<number | null>(
     lifeAreaParam && lifeAreaParam !== "none" ? Number(lifeAreaParam) : null,
   );
@@ -94,7 +92,7 @@ export function HabitForm() {
 
   useEffect(() => {
     if (state?.success) {
-      router.push("/habits");
+      router.push("/habits-n-rules");
       router.refresh();
     }
   }, [state?.success, router]);
@@ -102,7 +100,7 @@ export function HabitForm() {
   useEffect(() => {
     if (!deleteState?.success) return;
 
-    router.push("/habits");
+    router.push("/habits-n-rules");
     router.refresh();
   }, [deleteState, router]);
 
@@ -111,7 +109,6 @@ export function HabitForm() {
       queueMicrotask(() => {
         setTitle("");
         setDescription("");
-        setRepeatInterval("Every 1 Day");
         setLifeAreaId(lifeAreaParam && lifeAreaParam !== "none" ? Number(lifeAreaParam) : null);
       });
       return;
@@ -121,7 +118,6 @@ export function HabitForm() {
       queueMicrotask(() => {
         setTitle(habit.title);
         setDescription(habit.description || "");
-        setRepeatInterval(habit.repeatInterval || "Every 1 Day");
         setLifeAreaId(habit.lifeAreaId ?? null);
       });
     }
@@ -133,7 +129,7 @@ export function HabitForm() {
         <TopBar.Title asTitle>
           {isEditMode ? t("habits.edit") : t("habits.new")}
         </TopBar.Title>
-        <TopBar.Btn backIcon href="/habits" position="left" />
+        <TopBar.Btn backIcon href="/habits-n-rules" position="left" />
 
         {isEditMode ? (
           <TopBar.Btn
@@ -184,13 +180,6 @@ export function HabitForm() {
 
           <LifeAreaSelect value={lifeAreaId} onChange={setLifeAreaId} />
 
-          <Field.Root name="repeatInterval" schema={isEditMode ? UpdateHabitSchema : CreateHabitSchema}>
-            <Field.Label>{t("habits.repeatInterval")}</Field.Label>
-            <div className="rounded-container border border-foreground/15 p-3 bg-card/40">
-              <RepeatIntervalInput name="repeatInterval" value={repeatInterval} onChange={setRepeatInterval} disabled={pending} />
-            </div>
-            <Field.Error />
-          </Field.Root>
 
           <Field
             multiline
@@ -206,7 +195,7 @@ export function HabitForm() {
 
           <Field.FormError
             errors={state?.errors}
-            knownFields={["title", "description", "repeatInterval", "lifeAreaId"]}
+            knownFields={["title", "description", "lifeAreaId"]}
           />
 
           <PageActionBtn submit disabled={pending} form="habit-form" />

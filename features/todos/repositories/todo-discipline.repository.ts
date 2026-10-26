@@ -32,7 +32,6 @@ export class TodoDisciplineRepository extends EntityRepository<TodoDiscipline> {
 
     const discipline = this.create({
       title: data.title.trim(),
-      repeatInterval: data.repeatInterval.trim(),
       mission,
     });
     await this.em.flush();
