@@ -1,7 +1,7 @@
 import {
   PenLineIcon,
   UserIcon,
-  Repeat2Icon,
+  FrameIcon,
   CircleCheckBig,
   DatabaseIcon,
 } from "lucide-react";
@@ -49,9 +49,9 @@ export const NAVIGATION_LINKS: NavigationLink[] = [
     Icon: CircleCheckBig,
   },
   {
-    href: "/habits-n-rules",
-    matchPathname: "/habits-n-rules",
-    Icon: Repeat2Icon,
+    href: "/framework",
+    matchPathname: "/framework",
+    Icon: FrameIcon,
   },
   {
     href: "/skills",

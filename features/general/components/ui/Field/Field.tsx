@@ -26,7 +26,7 @@ type ArkTypeSchemaLike = {
 
 /**
  * Creates an ArkType validation function compatible with Base UI Field.Root's `validate` prop.
- * Supports both standalone ArkType types (e.g. `type('string >= 3')`) and object schemas (e.g. `CreateHabitSchema`).
+ * Supports both standalone ArkType types (e.g. `type('string >= 3')`) and object schemas (e.g. `CreateFrameworkSchema`).
  */
 export function createArkTypeValidator(schema: unknown, name?: string) {
   if (!schema) return undefined;

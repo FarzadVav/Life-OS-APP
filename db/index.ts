@@ -28,7 +28,7 @@ import {
 import { JournalRepository } from '@/features/journals/repositories';
 import { LifeAreaRepository } from '@/features/life-areas/repositories';
 import { SkillRepository } from '@/features/skills/repositories';
-import { HabitRepository } from '@/features/habits-n-rules/repositories';
+import { FrameworkRepository } from '@/features/framework/repositories';
 
 export interface Services {
   orm: MikroORM;
@@ -41,8 +41,8 @@ export interface Services {
   journal: JournalRepository;
   lifeArea: LifeAreaRepository;
   skill: SkillRepository;
-  habit: HabitRepository;
-  habitHistory: EntityRepository<HabitHistory>;
+  framework: FrameworkRepository;
+  frameworkHistory: EntityRepository<HabitHistory>;
 }
 
 declare global {
@@ -61,8 +61,8 @@ function createServices(orm: MikroORM, em: EntityManager): Services {
     journal: new JournalRepository(em, Journal),
     lifeArea: new LifeAreaRepository(em, LifeArea),
     skill: new SkillRepository(em, Skill),
-    habit: new HabitRepository(em, Habit),
-    habitHistory: em.getRepository(HabitHistory),
+    framework: new FrameworkRepository(em, Habit),
+    frameworkHistory: em.getRepository(HabitHistory),
   };
 }
 

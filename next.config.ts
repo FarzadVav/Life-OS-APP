@@ -44,12 +44,12 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/habits",
-        destination: "/habits-n-rules",
+        destination: "/framework",
         permanent: true,
       },
       {
         source: "/habits/:path*",
-        destination: "/habits-n-rules/:path*",
+        destination: "/framework/:path*",
         permanent: true,
       },
     ];
