@@ -1,9 +1,7 @@
 # Clean Code & Refactor
 
 - Helps (Remove the uselesses and optimize the requires)
-- Store the dates and times with the UTC timestamp format and show them with localization
-- Remove repeat-interval from missions disciplines and habits
-- Rename habits to habits-n-rules (Habits and Rules)
+- Check all dates and time and make sure that they store with the UTC timestamp format and show with the right localization based on active language (En or Fa)
 - PWA (and the offline page)
 - Implementation of folders, files, code-splitting, tsx/html, styles
 - Implementation of states, hooks, fetches, actions, forms
