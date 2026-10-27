@@ -41,6 +41,8 @@ export function serializeTodo(todo: Todo): TodoDto {
           title: a.title,
           deadline: a.deadline,
           isDone: a.isDone,
+          createdAt: a.createdAt instanceof Date ? a.createdAt.toISOString() : String(a.createdAt),
+          updatedAt: a.updatedAt instanceof Date ? a.updatedAt.toISOString() : String(a.updatedAt),
         }))
       : undefined,
     disciplines: todo.disciplines?.isInitialized()
@@ -68,6 +70,8 @@ export function serializeTodo(todo: Todo): TodoDto {
           };
         })
       : undefined,
+    createdAt: todo.createdAt instanceof Date ? todo.createdAt.toISOString() : String(todo.createdAt),
+    updatedAt: todo.updatedAt instanceof Date ? todo.updatedAt.toISOString() : String(todo.updatedAt),
   };
 }
 

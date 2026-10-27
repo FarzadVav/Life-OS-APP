@@ -98,6 +98,14 @@ export function formatDateTimeForLocale(
   return `${date}${separator}${time}`;
 }
 
+export function formatTimeForLocale(
+  _locale: Locale,
+  value: Date | string | number | null | undefined,
+  fallback = "",
+): string {
+  return formatTime(value, fallback);
+}
+
 export function formatDeadlineForLocale(
   locale: Locale,
   deadline: string | null | undefined,
@@ -108,11 +116,16 @@ export function formatDeadlineForLocale(
     return "";
   }
 
-  if (isDaily || (deadline.includes(":") && !deadline.includes("-"))) {
-    return `${toLabel} ${deadline}`;
+  const trimmed = deadline.trim();
+  if (
+    isDaily ||
+    /^\d{1,2}:\d{2}$/.test(trimmed) ||
+    (trimmed.includes(":") && !trimmed.includes("-"))
+  ) {
+    return `${toLabel} ${formatTime(trimmed)}`;
   }
 
-  return formatDateForLocale(locale, deadline);
+  return formatDateForLocale(locale, trimmed);
 }
 
 export { formatTime };

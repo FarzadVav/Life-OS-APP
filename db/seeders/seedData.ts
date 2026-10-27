@@ -47,31 +47,31 @@ export const SEED_TODOS = [
   {
     title: 'Prepare presentation for Q4 product roadmap',
     type: TodoType.UPCOMING,
-    deadline: '2026-10-22',
+    deadline: '2026-10-22T00:00:00.000Z',
     isDone: false,
   },
   {
     title: 'Finalize Stripe & ZarinPal payment gateway integration',
     type: TodoType.UPCOMING,
-    deadline: '2026-10-25',
+    deadline: '2026-10-25T00:00:00.000Z',
     isDone: false,
   },
   {
     title: 'Schedule quarterly team sync and performance reviews',
     type: TodoType.UPCOMING,
-    deadline: '2026-10-28',
+    deadline: '2026-10-28T00:00:00.000Z',
     isDone: false,
   },
   {
     title: 'Renew developer server & cloud certificates',
     type: TodoType.UPCOMING,
-    deadline: '2026-11-02',
+    deadline: '2026-11-02T00:00:00.000Z',
     isDone: true,
   },
   {
     title: 'Deploy public marketing landing page v2',
     type: TodoType.UPCOMING,
-    deadline: '2026-11-10',
+    deadline: '2026-11-10T00:00:00.000Z',
     isDone: false,
   },
 
@@ -79,28 +79,28 @@ export const SEED_TODOS = [
   {
     title: 'Launch LifeOS v1 MVP to initial beta users',
     type: TodoType.MISSION,
-    deadline: '2026-10-30',
+    deadline: '2026-10-30T00:00:00.000Z',
     difficulty: 4,
     isDone: false,
     actions: [
       {
         title: 'Finalize offline sync and cache invalidation',
-        deadline: '2026-10-18',
+        deadline: '2026-10-18T00:00:00.000Z',
         isDone: true,
       },
       {
         title: 'Draft documentation and interactive help guides',
-        deadline: '2026-10-22',
+        deadline: '2026-10-22T00:00:00.000Z',
         isDone: true,
       },
       {
         title: 'Deploy to staging and run smoke tests',
-        deadline: '2026-10-25',
+        deadline: '2026-10-25T00:00:00.000Z',
         isDone: false,
       },
       {
         title: 'Send beta invites to 50 curated high-performers',
-        deadline: '2026-10-30',
+        deadline: '2026-10-30T00:00:00.000Z',
         isDone: false,
       },
     ],
@@ -125,23 +125,23 @@ export const SEED_TODOS = [
   {
     title: 'Build automated wealth compounding engine',
     type: TodoType.MISSION,
-    deadline: '2026-12-15',
+    deadline: '2026-12-15T00:00:00.000Z',
     difficulty: 5,
     isDone: false,
     actions: [
       {
         title: 'Audit recurring monthly expenses & unnecessary subscriptions',
-        deadline: '2026-10-20',
+        deadline: '2026-10-20T00:00:00.000Z',
         isDone: true,
       },
       {
         title: 'Automate monthly DCA into global index funds and gold reserve',
-        deadline: '2026-11-01',
+        deadline: '2026-11-01T00:00:00.000Z',
         isDone: false,
       },
       {
         title: 'Establish 6-month liquid emergency buffer in high-yield account',
-        deadline: '2026-12-15',
+        deadline: '2026-12-15T00:00:00.000Z',
         isDone: false,
       },
     ],
@@ -158,23 +158,23 @@ export const SEED_TODOS = [
   {
     title: 'Run a sub-4 hour marathon',
     type: TodoType.MISSION,
-    deadline: '2026-11-20',
+    deadline: '2026-11-20T00:00:00.000Z',
     difficulty: 3,
     isDone: false,
     actions: [
       {
         title: 'Complete 28km Sunday long run with negative splits',
-        deadline: '2026-10-24',
+        deadline: '2026-10-24T00:00:00.000Z',
         isDone: true,
       },
       {
         title: 'Optimize race day carb loading & hydration protocol',
-        deadline: '2026-11-10',
+        deadline: '2026-11-10T00:00:00.000Z',
         isDone: false,
       },
       {
         title: 'Taper volume by 40% two weeks prior to race day',
-        deadline: '2026-11-15',
+        deadline: '2026-11-15T00:00:00.000Z',
         isDone: false,
       },
     ],

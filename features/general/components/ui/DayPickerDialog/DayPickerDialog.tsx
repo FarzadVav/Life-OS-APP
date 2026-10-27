@@ -43,11 +43,12 @@ function LocalDayPickerDialog({
   description,
   showIcon = false,
   className = "w-full justify-start rounded-component",
-  dir = "ltr",
+  dir,
   locale = enUS,
   formatDate,
 }: DayPickerDialogProps) {
-  const { formatDate: localeFormatDate, t } = useLocale();
+  const { formatDate: localeFormatDate, t, locale: activeLocale } = useLocale();
+  const effectiveDir = dir ?? (activeLocale === "fa" ? "rtl" : "ltr");
   const resolvedLabel = label ?? t("common.deadline");
   const formatDateValue =
     formatDate ??
@@ -103,7 +104,7 @@ function LocalDayPickerDialog({
         )}
 
         <DayPicker
-          dir={dir}
+          dir={effectiveDir}
           locale={locale}
           value={value}
           onChange={handleSelectDate}

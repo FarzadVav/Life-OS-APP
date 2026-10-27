@@ -8,7 +8,7 @@ import {
   formatDateForLocale,
   formatDateTimeForLocale,
   formatDeadlineForLocale,
-  formatTime,
+  formatTimeForLocale,
 } from "@/features/general/lib/i18n/dates";
 
 type LocaleContextValue = {
@@ -19,7 +19,10 @@ type LocaleContextValue = {
     value: Date | string | number | null | undefined,
     fallback?: string,
   ) => string;
-  formatTime: typeof formatTime;
+  formatTime: (
+    value: Date | string | number | null | undefined,
+    fallback?: string,
+  ) => string;
   formatDateTime: (
     value: Date | string | number | null | undefined,
     separator?: string,
@@ -48,7 +51,8 @@ function LocaleProvider({
       t,
       formatDate: (dateValue, fallback = "") =>
         formatDateForLocale(locale, dateValue, fallback),
-      formatTime,
+      formatTime: (timeValue, fallback = "") =>
+        formatTimeForLocale(locale, timeValue, fallback),
       formatDateTime: (dateValue, separator = " ", fallback = "") =>
         formatDateTimeForLocale(locale, dateValue, separator, fallback),
       formatDeadline: (deadline, isDaily = false) =>

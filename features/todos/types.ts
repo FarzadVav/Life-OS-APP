@@ -23,6 +23,8 @@ export const TodoActionSchema = type({
   title: 'string',
   deadline: 'string',
   isDone: 'boolean',
+  'createdAt?': 'string',
+  'updatedAt?': 'string',
 });
 export type TodoAction = typeof TodoActionSchema.infer;
 
@@ -61,6 +63,8 @@ export const TodoSchema = type({
   'lifeArea?': TodoLifeAreaSummarySchema,
   'actions?': TodoActionSchema.array(),
   'disciplines?': TodoDisciplineSchema.array(),
+  'createdAt?': 'string',
+  'updatedAt?': 'string',
 });
 export type Todo = typeof TodoSchema.infer;
 

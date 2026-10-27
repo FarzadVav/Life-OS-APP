@@ -140,13 +140,15 @@ export class FrameworkRepository extends EntityRepository<Habit> {
     }
 
     // Check if a record already exists for this date to avoid duplicate entries
+    const dayPrefix = date.slice(0, 10);
     const existing = await this.em.findOne(HabitHistory, {
       habit: habit.id,
-      date,
+      date: { $like: `${dayPrefix}%` },
     });
 
     if (existing) {
       existing.isDone = isDone;
+      existing.date = date;
       await this.em.flush();
       return existing;
     }

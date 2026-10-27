@@ -25,7 +25,7 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
 
     const body = await request.json().catch(() => ({}));
     const isDone = body.isDone !== undefined ? Boolean(body.isDone) : true;
-    const date = body.date || new Date().toISOString().slice(0, 10);
+    const date = body.date || new Date().toISOString();
 
     const history = await withRequestContext(async ({ framework }) => {
       return await framework.recordHistory(frameworkId, date, isDone, userId);

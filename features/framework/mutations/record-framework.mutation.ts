@@ -19,7 +19,7 @@ export async function recordFrameworkMutation(
   }
 
   const isDone = formData.get('isDone') !== 'false';
-  const date = new Date().toISOString().slice(0, 10);
+  const date = new Date().toISOString();
 
   const userId = await tryGetUserId();
   if (userId === null) {

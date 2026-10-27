@@ -50,6 +50,19 @@ export class TodoDisciplineRepository extends EntityRepository<TodoDiscipline> {
       return null;
     }
 
+    const dayPrefix = date.slice(0, 10);
+    const existing = await this.em.findOne(DisciplineHistory, {
+      discipline: discipline.id,
+      date: { $like: `${dayPrefix}%` },
+    });
+
+    if (existing) {
+      existing.isDone = isDone;
+      existing.date = date;
+      await this.em.flush();
+      return existing;
+    }
+
     const history = this.em.create(DisciplineHistory, {
       date,
       isDone,

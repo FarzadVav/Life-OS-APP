@@ -273,7 +273,9 @@ export function TodoForm() {
         setDisciplines(todo.disciplines || []);
 
         if (todo.type === "Daily") {
-          setDailyTime(todo.deadline.includes(":") ? todo.deadline : "12:00");
+          const isTimeOnly =
+            todo.deadline.includes(":") && !todo.deadline.includes("-");
+          setDailyTime(isTimeOnly ? todo.deadline : "12:00");
         } else {
           setTargetDate(parseDate(todo.deadline) ?? new Date());
         }

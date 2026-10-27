@@ -161,29 +161,84 @@ export function formatDateTime(
 }
 
 /**
- * Parses deadline / form date string to Date object. Returns null if invalid or time string.
+ * Parses deadline / form date string to Date object. Returns null if invalid or pure daily time string.
+ * Supports UTC ISO timestamps (e.g. 2026-10-30T00:00:00.000Z) and calendar date strings (YYYY-MM-DD).
  */
 export function parseDate(date: string | null | undefined): Date | null {
-  if (!date || date.includes(":")) {
+  if (!date) {
     return null;
   }
 
-  return new Date(`${date}T00:00:00`);
+  const trimmed = date.trim();
+  if (!trimmed) {
+    return null;
+  }
+
+  // Pure daily time string "HH:mm" (e.g. "10:30")
+  if (
+    /^\d{1,2}:\d{2}$/.test(trimmed) ||
+    (!trimmed.includes("-") && trimmed.includes(":"))
+  ) {
+    return null;
+  }
+
+  const parsed = parseToDate(trimmed);
+  if (!parsed) {
+    return null;
+  }
+
+  // If it was stored as UTC ISO timestamp (e.g. "2026-10-30T00:00:00.000Z")
+  if (trimmed.includes("T") || trimmed.endsWith("Z")) {
+    return new Date(
+      parsed.getUTCFullYear(),
+      parsed.getUTCMonth(),
+      parsed.getUTCDate(),
+    );
+  }
+
+  return new Date(
+    parsed.getFullYear(),
+    parsed.getMonth(),
+    parsed.getDate(),
+  );
 }
 
 /**
- * Serializes a Date object to YYYY-MM-DD string for form inputs and storage.
+ * Serializes a Date object or date string to ISO 8601 UTC timestamp format for storage.
+ * Encodes the calendar date chosen by user at midnight UTC (e.g. 2026-10-30T00:00:00.000Z).
  */
-export function serializeDate(date: Date | null | undefined): string {
+export function serializeDate(date: Date | string | null | undefined): string {
   if (!date) {
     return "";
   }
 
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
+  if (typeof date === "string") {
+    const trimmed = date.trim();
+    if (!trimmed) {
+      return "";
+    }
+    // Already in full ISO UTC timestamp format: YYYY-MM-DDTHH:mm:ss...Z
+    if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(trimmed)) {
+      const d = new Date(trimmed);
+      return isNaN(d.getTime()) ? trimmed : d.toISOString();
+    }
+    // Pure calendar date YYYY-MM-DD -> convert to UTC ISO timestamp at 00:00:00.000Z
+    if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) {
+      return `${trimmed}T00:00:00.000Z`;
+    }
+  }
 
-  return `${year}-${month}-${day}`;
+  const d = date instanceof Date ? date : parseToDate(date);
+  if (!d || isNaN(d.getTime())) {
+    return "";
+  }
+
+  // Use the local calendar year, month, date picked by the user and encode in UTC
+  const year = d.getFullYear();
+  const month = d.getMonth();
+  const day = d.getDate();
+
+  return new Date(Date.UTC(year, month, day, 0, 0, 0, 0)).toISOString();
 }
 
 /**

@@ -25,7 +25,7 @@ function ProfileAccount() {
         </span>
       }
       description={t("profile.joinedAt", {
-        date: formatDate(new Date()),
+        date: formatDate(currentUser?.createdAt ?? new Date()),
       })}
     />
   );

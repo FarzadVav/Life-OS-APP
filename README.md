@@ -1,11 +1,14 @@
-# Clean Code & Refactor
+# Refactor
+
+---
+
+# Code Review and Clean Up
 
 - Helps (Remove the uselesses and optimize the requires)
-- Check all dates and time and make sure that they store with the UTC timestamp format and show with the right localization based on active language (En or Fa)
 - PWA (and the offline page)
-- Implementation of folders, files, code-splitting, tsx/html, styles
-- Implementation of states, hooks, fetches, actions, forms
-- Implementation of db, orm, repositories, queries, mutations
+- Feature, Folder and File Structure, Code-Splitting, TSX/HTML and Styling Designs
+- States, Hooks, Fetches, Actions, Forms, Re-Renders
+- DB, ORM, Repositories, Queries, Mutations
 
 ---
 

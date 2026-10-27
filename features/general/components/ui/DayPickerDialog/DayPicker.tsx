@@ -19,7 +19,7 @@ export default function DayPicker({
   value,
   onChange,
   animate = true,
-  dir = "ltr",
+  dir,
   className,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   locale: _locale,
@@ -28,10 +28,11 @@ export default function DayPicker({
   ...rest
 }: DayPickerProps) {
   const { locale } = useLocale();
+  const effectiveDir = dir ?? (locale === "fa" ? "rtl" : "ltr");
 
   const sharedProps = {
     mode: "single" as const,
-    dir,
+    dir: effectiveDir,
     animate,
     selected: value ?? undefined,
     onSelect: (date: Date | undefined) => {

@@ -52,7 +52,11 @@ const geist = Geist({
   variable: "--font-geist",
 });
 
-export default async function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const locale = await getLocale();
   const dictionary = getDictionary(locale);
 

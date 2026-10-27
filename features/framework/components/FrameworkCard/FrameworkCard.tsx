@@ -25,7 +25,7 @@ export function FrameworkCard({
   framework,
   onRequestDelete,
 }: FrameworkCardProps) {
-  const { t } = useLocale();
+  const { t, formatDate } = useLocale();
 
   const completedCount = useMemo(() => {
     return (framework.history || []).filter((h) => h.isDone).length;
@@ -84,7 +84,7 @@ export function FrameworkCard({
                       }`}
                     >
                       <CalendarDaysIcon className="size-3" />
-                      <span>{entry.date}</span>
+                      <span>{formatDate(entry.date)}</span>
                     </span>
                   ))}
               </div>
