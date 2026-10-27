@@ -7,7 +7,7 @@ import { useLocale } from "@/features/general/components/module/LocaleProvider/L
 import { Form } from "@base-ui/react";
 import Field from "@/features/general/components/ui/Field";
 import { CreateLifeAreaSchema, UpdateLifeAreaSchema } from "@/features/life-areas/types";
-import { LoaderIcon, Trash2Icon } from "lucide-react";
+import { Trash2Icon } from "lucide-react";
 import Dialog from "@/features/general/components/ui/Dialog/Dialog";
 import { Button } from "@/features/general/components/ui/Button/Button";
 import Skeleton from "@/features/general/components/ui/Skeleton";
@@ -23,6 +23,7 @@ import HelpDialog from "@/features/general/components/module/HelpDialog/HelpDial
 import PageActionBtn from "@/features/general/components/module/PageActionBtn/PageActionBtn";
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
 import { RichTextarea } from "@/features/general/components/ui/RichTextEditor";
+import Switch from "@/features/general/components/ui/Switch/Switch";
 
 export function LifeAreaForm() {
   const { t } = useLocale();
@@ -38,6 +39,7 @@ export function LifeAreaForm() {
 
   const [title, setTitle] = useState("");
   const [vision, setVision] = useState("");
+  const [active, setActive] = useState(true);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   const [state, formAction, pending] = useActionState(
@@ -69,6 +71,7 @@ export function LifeAreaForm() {
       queueMicrotask(() => {
         setTitle("");
         setVision("");
+        setActive(true);
       });
       return;
     }
@@ -77,6 +80,7 @@ export function LifeAreaForm() {
       queueMicrotask(() => {
         setTitle(area.title);
         setVision(area.vision);
+        setActive(area.active ?? true);
       });
     }
   }, [editId, area]);
@@ -118,6 +122,7 @@ export function LifeAreaForm() {
         >
           {isEditMode && <Field type="hidden" name="id" value={editId ?? ""} />}
           <Field type="hidden" name="vision" value={vision} />
+          <Field type="hidden" name="active" value={String(active)} />
 
           <Field
             name="title"
@@ -129,6 +134,23 @@ export function LifeAreaForm() {
             onChange={(e) => setTitle(e.target.value)}
             schema={isEditMode ? UpdateLifeAreaSchema : CreateLifeAreaSchema}
           />
+
+          <label className="rounded-container bg-card p-3 flex items-center justify-between cursor-pointer select-none">
+            <div className="flex flex-col">
+              <span className="text-sm font-medium text-foreground">
+                {t("lifeAreas.activeStatus")}
+              </span>
+              <span className="sub-text text-xs">
+                {active ? t("lifeAreas.activeDesc") : t("lifeAreas.inactiveDesc")}
+              </span>
+            </div>
+            <Switch
+              checked={active}
+              onCheckedChange={setActive}
+              disabled={pending}
+              aria-label={t("lifeAreas.activeStatus")}
+            />
+          </label>
 
           <Field.Root name="vision" schema={isEditMode ? UpdateLifeAreaSchema : CreateLifeAreaSchema}>
             <Field.Label>{t("lifeAreas.visionLabel")}</Field.Label>
@@ -146,7 +168,7 @@ export function LifeAreaForm() {
 
           <Field.FormError
             errors={state?.errors}
-            knownFields={["title", "vision"]}
+            knownFields={["title", "vision", "active"]}
           />
 
           <PageActionBtn submit disabled={pending} form="life-area-form">

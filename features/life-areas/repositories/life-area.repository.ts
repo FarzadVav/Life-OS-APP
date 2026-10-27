@@ -13,6 +13,7 @@ export function serializeLifeArea(lifeArea: LifeArea): LifeAreaDto {
     id: lifeArea.id,
     title: lifeArea.title,
     vision: lifeArea.vision,
+    active: lifeArea.active ?? true,
     createdAt: lifeArea.createdAt instanceof Date ? lifeArea.createdAt.toISOString() : String(lifeArea.createdAt),
     updatedAt: lifeArea.updatedAt instanceof Date ? lifeArea.updatedAt.toISOString() : String(lifeArea.updatedAt),
   };
@@ -33,6 +34,7 @@ export class LifeAreaRepository extends EntityRepository<LifeArea> {
     const lifeArea = this.create({
       title: data.title.trim(),
       vision: data.vision || '',
+      active: data.active ?? true,
       user: this.em.getReference(User, userId),
     });
     await this.em.flush();
@@ -52,6 +54,7 @@ export class LifeAreaRepository extends EntityRepository<LifeArea> {
     this.assign(lifeArea, {
       ...(data.title !== undefined ? { title: data.title.trim() } : {}),
       ...(data.vision !== undefined ? { vision: data.vision } : {}),
+      ...(data.active !== undefined ? { active: Boolean(data.active) } : {}),
     });
 
     await this.em.flush();

@@ -1,18 +1,22 @@
 "use client";
 
 import Link from "next/link";
-import { PlusIcon } from "lucide-react";
+import { ArchiveIcon, PlusIcon } from "lucide-react";
 
 import { Button } from "@/features/general/components/ui/Button/Button";
-import { useLifeAreas } from "../../../../life-areas/hooks/useLifeAreas";
+import { useLifeAreas } from "@/features/life-areas/hooks/useLifeAreas";
 import EmptyAlert from "@/features/general/components/static/EmptyAlert";
 import Skeleton from "@/features/general/components/ui/Skeleton";
-import { LifeAreaCard } from "../../../../life-areas/components/LifeAreaCard/LifeAreaCard";
+import { LifeAreaCard } from "@/features/life-areas/components/LifeAreaCard/LifeAreaCard";
+import CardDrawer from "@/features/general/components/ui/CardDrawer/CardDrawer";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 
 export function ProfileLifeAreas() {
   const { t } = useLocale();
   const { lifeAreas, isLoading } = useLifeAreas();
+
+  const activeLifeAreas = lifeAreas.filter((area) => area.active !== false);
+  const notActiveLifeAreas = lifeAreas.filter((area) => area.active === false);
 
   return (
     <div className="w-full space-y-3">
@@ -37,10 +41,38 @@ export function ProfileLifeAreas() {
       ) : lifeAreas.length === 0 ? (
         <EmptyAlert
           alert={t("lifeAreas.empty")}
-          href="/profile/life-areas/new"
+          href="/profile/new-life-area"
         />
       ) : (
-        lifeAreas.map((area) => <LifeAreaCard key={area.id} lifeArea={area} />)
+        <>
+          {activeLifeAreas.length === 0 ? (
+            <EmptyAlert
+              alert={t("lifeAreas.empty")}
+              href="/profile/new-life-area"
+            />
+          ) : (
+            activeLifeAreas.map((area) => (
+              <LifeAreaCard key={area.id} lifeArea={area} />
+            ))
+          )}
+
+          {notActiveLifeAreas.length > 0 && (
+            <div className="pt-1">
+              <CardDrawer
+                title={t("lifeAreas.notActiveTitle")}
+                icon={<ArchiveIcon className="size-4 text-foreground/70" />}
+                description={`${notActiveLifeAreas.length}`}
+                content={
+                  <div className="space-y-3">
+                    {notActiveLifeAreas.map((area) => (
+                      <LifeAreaCard key={area.id} lifeArea={area} />
+                    ))}
+                  </div>
+                }
+              />
+            </div>
+          )}
+        </>
       )}
     </div>
   );

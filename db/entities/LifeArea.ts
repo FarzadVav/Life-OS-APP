@@ -9,7 +9,7 @@ import { Habit } from './Habit';
 
 @Entity({ tableName: 'life_areas' })
 export class LifeArea extends BaseEntity {
-  [OptionalProps]?: 'createdAt' | 'updatedAt';
+  [OptionalProps]?: 'createdAt' | 'updatedAt' | 'active';
 
   @Property({ type: 'string' })
   title!: string;
@@ -19,6 +19,9 @@ export class LifeArea extends BaseEntity {
    */
   @Property({ type: 'text' })
   vision!: string;
+
+  @Property({ type: 'boolean', default: true })
+  active: boolean = true;
 
   @ManyToOne(() => User, { nullable: true, deleteRule: 'cascade' })
   user?: Rel<User>;

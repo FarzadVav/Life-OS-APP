@@ -14,8 +14,10 @@ export async function createLifeAreaMutation(
 ): Promise<LifeAreaFormState> {
   const title = String(formData.get('title') ?? '').trim();
   const vision = String(formData.get('vision') ?? '');
+  const activeRaw = formData.get('active');
+  const active = activeRaw !== null ? activeRaw === 'true' || activeRaw === 'on' : true;
 
-  const validation = CreateLifeAreaSchema({ title, vision });
+  const validation = CreateLifeAreaSchema({ title, vision, active });
 
   if (validation instanceof type.errors) {
     const errors: NonNullable<LifeAreaFormState>['errors'] = {};
@@ -24,6 +26,7 @@ export async function createLifeAreaMutation(
       const field = String(problem.path[0] ?? 'general') as
         | 'title'
         | 'vision'
+        | 'active'
         | 'general';
 
       if (!errors[field]) {
@@ -34,7 +37,7 @@ export async function createLifeAreaMutation(
 
     return {
       errors,
-      inputs: { title, vision },
+      inputs: { title, vision, active },
       success: false,
     };
   }
@@ -43,18 +46,18 @@ export async function createLifeAreaMutation(
   if (userId === null) {
     return {
       errors: { general: ['Your session has expired. Please sign in again.'] },
-      inputs: { title, vision },
+      inputs: { title, vision, active },
       success: false,
     };
   }
 
   const created = await withRequestContext(async ({ lifeArea }) => {
-    return await lifeArea.createLifeArea({ title, vision }, userId);
+    return await lifeArea.createLifeArea({ title, vision, active }, userId);
   });
 
   return {
     success: true,
     lifeAreaId: created.id,
-    inputs: { title, vision },
+    inputs: { title, vision, active },
   };
 }

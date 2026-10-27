@@ -293,7 +293,11 @@
     "deleteDesc": "\"{title}\" will be deleted. Any linked todos will no longer be assigned to it.",
     "selectLifeArea": "Select Life Area",
     "none": "None",
-    "allAreas": "All Areas"
+    "allAreas": "All Areas",
+    "notActiveTitle": "Not Active Life Areas",
+    "activeStatus": "Active Status",
+    "activeDesc": "Active and visible across your activities",
+    "inactiveDesc": "Archived and hidden from regular selections"
   },
   "skills": {
     "title": "Skills",

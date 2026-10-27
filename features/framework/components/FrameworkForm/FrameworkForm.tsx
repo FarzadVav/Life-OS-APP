@@ -38,10 +38,12 @@ function LifeAreaSelect({
 
   const items = [
     { value: "none", label: t("common.general") },
-    ...lifeAreas.map((la) => ({
-      value: String(la.id),
-      label: la.title,
-    })),
+    ...lifeAreas
+      .filter((la) => la.active !== false || (value !== null && la.id === value))
+      .map((la) => ({
+        value: String(la.id),
+        label: la.title,
+      })),
   ];
 
   return (

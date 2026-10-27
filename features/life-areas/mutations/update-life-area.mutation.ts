@@ -16,16 +16,23 @@ export async function updateLifeAreaMutation(
   const id = Number(idRaw);
   const title = String(formData.get('title') ?? '').trim();
   const vision = String(formData.get('vision') ?? '');
+  const activeRaw = formData.get('active');
+  const active = activeRaw !== null ? activeRaw === 'true' || activeRaw === 'on' : undefined;
 
   if (!id || Number.isNaN(id)) {
     return {
       errors: { general: ['Invalid or missing life area ID.'] },
-      inputs: { title, vision },
+      inputs: { title, vision, ...(active !== undefined ? { active } : {}) },
       success: false,
     };
   }
 
-  const validation = UpdateLifeAreaSchema({ id, title, vision });
+  const validation = UpdateLifeAreaSchema({
+    id,
+    title,
+    vision,
+    ...(active !== undefined ? { active } : {}),
+  });
 
   if (validation instanceof type.errors) {
     const errors: NonNullable<LifeAreaFormState>['errors'] = {};
@@ -34,6 +41,7 @@ export async function updateLifeAreaMutation(
       const field = String(problem.path[0] ?? 'general') as
         | 'title'
         | 'vision'
+        | 'active'
         | 'general';
 
       if (!errors[field]) {
@@ -44,7 +52,7 @@ export async function updateLifeAreaMutation(
 
     return {
       errors,
-      inputs: { title, vision },
+      inputs: { title, vision, ...(active !== undefined ? { active } : {}) },
       success: false,
     };
   }
@@ -53,19 +61,27 @@ export async function updateLifeAreaMutation(
   if (userId === null) {
     return {
       errors: { general: ['Your session has expired. Please sign in again.'] },
-      inputs: { title, vision },
+      inputs: { title, vision, ...(active !== undefined ? { active } : {}) },
       success: false,
     };
   }
 
   const updated = await withRequestContext(async ({ lifeArea }) => {
-    return await lifeArea.updateLifeArea(id, { title, vision }, userId);
+    return await lifeArea.updateLifeArea(
+      id,
+      {
+        title,
+        vision,
+        ...(active !== undefined ? { active } : {}),
+      },
+      userId,
+    );
   });
 
   if (!updated) {
     return {
       errors: { general: ['Life area not found or unauthorized.'] },
-      inputs: { title, vision },
+      inputs: { title, vision, ...(active !== undefined ? { active } : {}) },
       success: false,
     };
   }
@@ -73,6 +89,6 @@ export async function updateLifeAreaMutation(
   return {
     success: true,
     lifeAreaId: updated.id,
-    inputs: { title, vision },
+    inputs: { title, vision, active: updated.active },
   };
 }
