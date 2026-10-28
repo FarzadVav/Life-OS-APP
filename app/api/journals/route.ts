@@ -17,8 +17,9 @@ export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
     const categoryParam = searchParams.get('category') || undefined;
+    const tagParam = searchParams.get('tag') || undefined;
 
-    const journals = await getJournalsQuery(categoryParam);
+    const journals = await getJournalsQuery(categoryParam, tagParam);
 
     return NextResponse.json(
       { journals },

@@ -16,12 +16,15 @@ export async function createJournalMutation(
   const title = String(formData.get('title') ?? '').trim();
   const content = String(formData.get('content') ?? '').trim();
   const category = String(formData.get('type') ?? 'Logs') as JournalCategory;
+  const rawTag = formData.get('tag');
+  const tag = rawTag && String(rawTag).trim() ? String(rawTag).trim() : null;
 
   // Validate form inputs using ArkType CreateJournalSchema
   const validation = CreateJournalSchema({
     title,
     content,
     type: category,
+    tag,
   });
 
   if (validation instanceof type.errors) {
@@ -32,6 +35,7 @@ export async function createJournalMutation(
         | 'title'
         | 'content'
         | 'type'
+        | 'tag'
         | 'general';
 
       if (!errors[field]) {
@@ -46,6 +50,7 @@ export async function createJournalMutation(
         title,
         content,
         type: category,
+        tag,
       },
       success: false,
     };
@@ -59,6 +64,7 @@ export async function createJournalMutation(
         title,
         content,
         type: category,
+        tag,
       },
       success: false,
     };
@@ -70,6 +76,7 @@ export async function createJournalMutation(
         title,
         content,
         type: category,
+        tag,
       },
       userId,
     );
@@ -82,6 +89,7 @@ export async function createJournalMutation(
       title,
       content,
       type: category,
+      tag,
     },
   };
 }

@@ -1,0 +1,40 @@
+import { notFound } from "next/navigation";
+import { Suspense } from "react";
+import { JOURNAL_CATEGORIES } from "@/features/journals/types";
+import { getTranslations } from "@/features/general/lib/i18n/server";
+import ConnectivityFallback from "@/features/general/components/module/ConnectivityFallback/ConnectivityFallback";
+import JournalTagForm from "@/features/journals/components/JournalTagForm/JournalTagForm";
+
+type PageProps = {
+  params: Promise<{ category: string }>;
+};
+
+export default async function NewJournalTagPage({ params }: PageProps) {
+  const { category: rawSlug } = await params;
+
+  if (!rawSlug) {
+    notFound();
+  }
+
+  const matchedCategory = JOURNAL_CATEGORIES.find(
+    (c) => c.name.toLowerCase() === rawSlug.toLowerCase(),
+  );
+
+  if (!matchedCategory) {
+    notFound();
+  }
+
+  const { t } = await getTranslations();
+  const categoryTitle =
+    t(`journals.categories.${matchedCategory.name.toLowerCase()}`) ||
+    matchedCategory.name;
+
+  return (
+    <Suspense fallback={<ConnectivityFallback message={t("common.loading")} />}>
+      <JournalTagForm
+        category={matchedCategory.name}
+        categoryTitle={categoryTitle}
+      />
+    </Suspense>
+  );
+}

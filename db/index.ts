@@ -14,6 +14,7 @@ import {
   TodoDiscipline,
   DisciplineHistory,
   Journal,
+  JournalTag,
   LifeArea,
   Skill,
   Habit,
@@ -25,7 +26,10 @@ import {
   TodoActionRepository,
   TodoDisciplineRepository,
 } from '@/features/todos/repositories';
-import { JournalRepository } from '@/features/journals/repositories';
+import {
+  JournalRepository,
+  JournalTagRepository,
+} from '@/features/journals/repositories';
 import { LifeAreaRepository } from '@/features/life-areas/repositories';
 import { SkillRepository } from '@/features/skills/repositories';
 import { FrameworkRepository } from '@/features/framework/repositories';
@@ -39,6 +43,7 @@ export interface Services {
   todoDiscipline: TodoDisciplineRepository;
   disciplineHistory: EntityRepository<DisciplineHistory>;
   journal: JournalRepository;
+  journalTag: JournalTagRepository;
   lifeArea: LifeAreaRepository;
   skill: SkillRepository;
   framework: FrameworkRepository;
@@ -59,6 +64,7 @@ function createServices(orm: MikroORM, em: EntityManager): Services {
     todoDiscipline: new TodoDisciplineRepository(em, TodoDiscipline),
     disciplineHistory: em.getRepository(DisciplineHistory),
     journal: new JournalRepository(em, Journal),
+    journalTag: new JournalTagRepository(em, JournalTag),
     lifeArea: new LifeAreaRepository(em, LifeArea),
     skill: new SkillRepository(em, Skill),
     framework: new FrameworkRepository(em, Habit),

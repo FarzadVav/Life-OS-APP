@@ -10,3 +10,4 @@ export * from './LifeArea';
 export * from './Skill';
 export * from './Habit';
 export * from './HabitHistory';
+export * from './JournalTag';

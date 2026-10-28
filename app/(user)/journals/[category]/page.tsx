@@ -4,19 +4,18 @@ import { getTranslations } from "@/features/general/lib/i18n/server";
 import JournalCategoryView from "@/features/journals/components/JournalCategoryView/JournalCategoryView";
 
 type PageProps = {
-  params: Promise<{ category: string[] }>;
+  params: Promise<{ category: string }>;
 };
 
 export default async function JournalCategoryPage({ params }: PageProps) {
-  const { category: categoryParts } = await params;
-  const rawSlug = categoryParts?.[0];
+  const { category: rawSlug } = await params;
 
   if (!rawSlug) {
     notFound();
   }
 
   const matchedCategory = JOURNAL_CATEGORIES.find(
-    (c) => c.toLowerCase() === rawSlug.toLowerCase(),
+    (c) => c.name.toLowerCase() === rawSlug.toLowerCase(),
   );
 
   if (!matchedCategory) {
@@ -25,8 +24,8 @@ export default async function JournalCategoryPage({ params }: PageProps) {
 
   const { t } = await getTranslations();
   const title =
-    t(`journals.categories.${matchedCategory.toLowerCase()}`) ||
-    matchedCategory;
+    t(`journals.categories.${matchedCategory.name.toLowerCase()}`) ||
+    matchedCategory.name;
 
   return (
     <JournalCategoryView category={matchedCategory} title={title} />

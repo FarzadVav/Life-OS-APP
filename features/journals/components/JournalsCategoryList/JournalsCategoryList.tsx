@@ -48,16 +48,17 @@ export default function JournalsCategoryList() {
 
   return (
     <div className="w-full flex flex-col gap-2.5">
-      {JOURNAL_CATEGORIES.map((category) => {
-        const meta = CATEGORY_META[category];
+      {JOURNAL_CATEGORIES.map((cat) => {
+        const categoryName = cat.name;
+        const meta = CATEGORY_META[categoryName];
         const Icon = meta.icon;
-        const label = t(`journals.categories.${category.toLowerCase()}`);
+        const label = t(`journals.categories.${categoryName.toLowerCase()}`);
         const desc = t(meta.descriptionKey);
 
         return (
           <Link
-            key={category}
-            href={`/journals/${category.toLowerCase()}`}
+            key={categoryName}
+            href={`/journals/${categoryName.toLowerCase()}`}
             className="block"
           >
             <CardView

@@ -28,12 +28,16 @@ export async function updateJournalMutation(
   const title = formData.has('title') ? String(formData.get('title') ?? '').trim() : undefined;
   const content = formData.has('content') ? String(formData.get('content') ?? '').trim() : undefined;
   const category = formData.has('type') ? (String(formData.get('type')) as JournalCategory) : undefined;
+  const tag = formData.has('tag')
+    ? (formData.get('tag') ? String(formData.get('tag')).trim() : null)
+    : undefined;
 
   const updatePayload = {
     id,
     ...(title !== undefined ? { title } : {}),
     ...(content !== undefined ? { content } : {}),
     ...(category !== undefined ? { type: category } : {}),
+    ...(tag !== undefined ? { tag } : {}),
   };
 
   const validation = UpdateJournalSchema(updatePayload);
@@ -45,6 +49,7 @@ export async function updateJournalMutation(
         | 'title'
         | 'content'
         | 'type'
+        | 'tag'
         | 'general';
 
       if (!errors[field]) {
@@ -60,6 +65,7 @@ export async function updateJournalMutation(
         title,
         content,
         type: category,
+        tag,
       },
       success: false,
     };
@@ -74,6 +80,7 @@ export async function updateJournalMutation(
         title,
         content,
         type: category,
+        tag,
       },
       success: false,
     };
@@ -86,6 +93,7 @@ export async function updateJournalMutation(
         title,
         content,
         type: category,
+        tag,
       },
       userId,
     );
@@ -108,6 +116,7 @@ export async function updateJournalMutation(
       title,
       content,
       type: category,
+      tag,
     },
   };
 }

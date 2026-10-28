@@ -17,6 +17,7 @@ export function serializeJournal(journal: Journal): JournalDto {
     title: journal.title,
     content: journal.content,
     type: journal.type as unknown as JournalDto['type'],
+    tag: journal.tag ?? null,
     createdAt: journal.createdAt instanceof Date ? journal.createdAt.toISOString() : String(journal.createdAt),
   };
 }
@@ -37,13 +38,22 @@ export class JournalRepository extends EntityRepository<Journal> {
     });
   }
 
-  async findByCategory(category: JournalCategory | string, userId: number): Promise<Journal[]> {
+  async findByCategory(
+    category: JournalCategory | string,
+    userId: number,
+    tag?: string | null,
+  ): Promise<Journal[]> {
     const matchedCategory =
       Object.values(JournalCategory).find(
         (c) => c.toLowerCase() === category.toLowerCase(),
       ) ?? JournalCategory.LOGS;
 
-    return this.find({ type: matchedCategory, user: userId }, { orderBy: { createdAt: 'DESC' } });
+    const where: FilterQuery<Journal> = { type: matchedCategory, user: userId };
+    if (tag && tag.toLowerCase() !== 'all') {
+      where.tag = tag;
+    }
+
+    return this.find(where, { orderBy: { createdAt: 'DESC' } });
   }
 
   async findById(id: number, userId: number): Promise<Journal | null> {
@@ -68,6 +78,7 @@ export class JournalRepository extends EntityRepository<Journal> {
       title: data.title.trim(),
       content: data.content,
       type: data.type as unknown as JournalCategory,
+      tag: data.tag ? data.tag.trim() : null,
       user: this.em.getReference(User, userId),
     });
     await this.em.flush();
@@ -84,6 +95,7 @@ export class JournalRepository extends EntityRepository<Journal> {
       ...(data.title !== undefined ? { title: data.title.trim() } : {}),
       ...(data.content !== undefined ? { content: data.content } : {}),
       ...(data.type !== undefined ? { type: data.type as unknown as JournalCategory } : {}),
+      ...(data.tag !== undefined ? { tag: data.tag ? data.tag.trim() : null } : {}),
     });
 
     await this.em.flush();

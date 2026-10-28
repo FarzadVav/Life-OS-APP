@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useActionState } from "react";
+import { cn } from "cn";
 import Field from "@/features/general/components/ui/Field";
 import {
   CalendarDaysIcon,
@@ -53,6 +54,15 @@ function JournalCard({ journal, onDeleted }: JournalCardProps) {
             <ClockIcon className="size-3.5" />
             {formatTime(journal.createdAt)}
           </span>
+          {journal.tag && (
+            <>
+              <span>•</span>
+              <span className="flex items-center gap-1 text-foreground/80 font-medium">
+                <TagIcon className="size-3" />
+                {journal.tag}
+              </span>
+            </>
+          )}
         </div>
       }
       icon={
@@ -63,14 +73,24 @@ function JournalCard({ journal, onDeleted }: JournalCardProps) {
       editHref={`/journals/new?editId=${journal.id}`}
       content={
         <div className="space-y-4">
-          <div className="grid grid-cols-3 gap-2">
+          <div className={cn("grid gap-2", journal.tag ? "grid-cols-2 sm:grid-cols-4" : "grid-cols-3")}>
             <div className="rounded-container bg-background p-3">
               <div className="flex items-center gap-2 sub-text">
-                <TagIcon className="size-4" />
-                <span>{t("common.type")}</span>
+                <FileTextIcon className="size-4" />
+                <span>{t("common.category")}</span>
               </div>
               <p className="mt-2 font-medium">{journal.type || t("common.general")}</p>
             </div>
+
+            {journal.tag && (
+              <div className="rounded-container bg-background p-3">
+                <div className="flex items-center gap-2 sub-text">
+                  <TagIcon className="size-4" />
+                  <span>{t("common.tag")}</span>
+                </div>
+                <p className="mt-2 font-medium">{journal.tag}</p>
+              </div>
+            )}
 
             <div className="rounded-container bg-background p-3">
               <div className="flex items-center gap-2 sub-text">

@@ -14,8 +14,6 @@
 
 # Features
 
-- Add "tags" field for journals
-- Add "active" field for life-ares
 - Add "anytime" state for daily, upcoming and missions actions and disciplines todos
 
 ---

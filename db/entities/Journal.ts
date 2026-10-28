@@ -8,7 +8,7 @@ export { JournalCategory };
 
 @Entity({ tableName: 'journals' })
 export class Journal extends BaseEntity {
-  [OptionalProps]?: 'createdAt' | 'updatedAt' | 'type';
+  [OptionalProps]?: 'createdAt' | 'updatedAt' | 'type' | 'tag';
 
   @Property({ type: 'string' })
   title!: string;
@@ -21,6 +21,9 @@ export class Journal extends BaseEntity {
 
   @Enum({ items: () => JournalCategory, default: JournalCategory.LOGS })
   type: JournalCategory = JournalCategory.LOGS;
+
+  @Property({ type: 'string', nullable: true })
+  tag?: string | null;
 
   @ManyToOne(() => User, { nullable: true, deleteRule: 'cascade' })
   user?: Rel<User>;

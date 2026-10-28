@@ -27,10 +27,10 @@ function JournalsTabs() {
       label: t("common.all"),
       href: "?tab=all",
     },
-    ...JOURNAL_CATEGORIES.map((category) => ({
-      id: category.toLowerCase(),
-      label: t(`journals.categories.${category.toLowerCase()}`),
-      href: `?tab=${encodeURIComponent(category.toLowerCase())}`,
+    ...JOURNAL_CATEGORIES.map((cat) => ({
+      id: cat.name.toLowerCase(),
+      label: t(`journals.categories.${cat.name.toLowerCase()}`),
+      href: `?tab=${encodeURIComponent(cat.name.toLowerCase())}`,
     })),
   ];
 

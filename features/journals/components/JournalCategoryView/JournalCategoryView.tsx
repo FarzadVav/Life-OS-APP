@@ -1,7 +1,15 @@
 "use client";
 
-import { useJournals } from "../../hooks";
-import { JournalType } from "../../types";
+import { useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { TagIcon } from "lucide-react";
+import { useJournals, useJournalTags } from "../../hooks";
+import {
+  JournalCategory,
+  JournalCategoryDefinition,
+  JournalType,
+  getJournalCategory,
+} from "../../types";
 import JournalCard from "../JournalCard/JournalCard";
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
 import HelpDialog from "@/features/general/components/module/HelpDialog/HelpDialog";
@@ -10,10 +18,11 @@ import PageWrapper from "@/features/general/components/static/PageWrapper/PageWr
 import PageItemsWrapper from "@/features/general/components/static/PageItemsWrapper/PageItemsWrapper";
 import EmptyAlert from "@/features/general/components/static/EmptyAlert";
 import Skeleton from "@/features/general/components/ui/Skeleton";
+import SlideTabs, { SlideTabItem } from "@/features/general/components/ui/SlideTabs";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 
 type JournalCategoryViewProps = {
-  category: JournalType;
+  category: JournalCategoryDefinition | JournalType;
   title: string;
 };
 
@@ -21,12 +30,63 @@ export default function JournalCategoryView({
   category,
   title,
 }: JournalCategoryViewProps) {
+  const searchParams = useSearchParams();
+  const initialTag = searchParams.get("tag")?.toLowerCase() || "all";
+  const [activeTag, setActiveTag] = useState<string>(initialTag);
+
+  const categoryDefinition = useMemo(() => {
+    if (typeof category === "object" && category !== null && "name" in category) {
+      return category;
+    }
+    return (
+      getJournalCategory(category) ?? {
+        name: (category as JournalCategory) || "Logs",
+        tags: [],
+      }
+    );
+  }, [category]);
+
+  const categoryName = categoryDefinition.name;
   const {
     journals,
     isLoading,
     mutate: revalidateJournals,
-  } = useJournals(category);
+  } = useJournals(categoryName);
+  const { tags: dbTags } = useJournalTags(categoryName);
   const { t } = useLocale();
+
+  const allTagNames = useMemo(() => {
+    const names = new Set<string>();
+    categoryDefinition.tags.forEach((tag) => names.add(tag));
+    dbTags.forEach((tag) => names.add(tag.title));
+    return Array.from(names);
+  }, [categoryDefinition.tags, dbTags]);
+
+  const filterTabs: SlideTabItem[] = useMemo(() => {
+    return [
+      {
+        id: "all",
+        label: t("common.all"),
+      },
+      ...allTagNames.map((tagName) => ({
+        id: tagName.toLowerCase(),
+        label: tagName,
+      })),
+      {
+        id: "tags-page",
+        label: t("common.tags"),
+        href: `/journals/${categoryName.toLowerCase()}/tags`,
+        icon: <TagIcon className="size-3.5" />,
+      },
+    ];
+  }, [allTagNames, categoryName, t]);
+
+  const filteredJournals = useMemo(() => {
+    if (activeTag === "all") return journals;
+    return journals.filter(
+      (j) => j.tag?.toLowerCase() === activeTag.toLowerCase(),
+    );
+  }, [journals, activeTag]);
 
   return (
     <PageWrapper>
@@ -37,41 +97,58 @@ export default function JournalCategoryView({
       </TopBar>
 
       <PageItemsWrapper>
-        <div className="w-full flex items-center justify-between pb-1 text-xs text-foreground/70">
-          <span className="font-semibold text-foreground">{title}</span>
-          <span>
-            {journals.length} {t("profile.total")}
-          </span>
-        </div>
-
-        {isLoading && journals.length === 0 ? (
+        <SlideTabs
+          tabs={filterTabs}
+          activeId={activeTag}
+          onTabChange={(id) => {
+            if (id !== "tags-page") {
+              setActiveTag(id);
+            }
+          }}
+          headerClassName="overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden py-0.5 gap-1.5"
+          tabClassName="shrink-0 flex-none"
+          between={
+            <div className="w-full flex items-center justify-between pb-1 text-xs text-foreground/70">
+              <span className="font-semibold text-foreground">{title}</span>
+              <span>
+                {filteredJournals.length} {t("profile.total")}
+              </span>
+            </div>
+          }
+        >
           <div className="w-full space-y-3">
-            <Skeleton count={3} />
-          </div>
-        ) : (
-          <div className="w-full space-y-3">
-            {journals.map((journal) => (
-              <JournalCard
-                key={journal.id}
-                journal={journal}
-                onDeleted={revalidateJournals}
-              />
-            ))}
+            {isLoading && journals.length === 0 ? (
+              <Skeleton count={3} />
+            ) : (
+              <>
+                {filteredJournals.map((journal) => (
+                  <JournalCard
+                    key={journal.id}
+                    journal={journal}
+                    onDeleted={revalidateJournals}
+                  />
+                ))}
 
-            {journals.length === 0 && (
-              <EmptyAlert
-                alert={t("journals.noJournalsInCategory")}
-                description={t("journals.subtitle")}
-                className="p-10"
-              />
+                {filteredJournals.length === 0 && (
+                  <EmptyAlert
+                    alert={
+                      activeTag !== "all"
+                        ? t("journals.noJournalsWithTag")
+                        : t("journals.noJournalsInCategory")
+                    }
+                    description={t("journals.subtitle")}
+                    className="p-10"
+                  />
+                )}
+              </>
             )}
           </div>
-        )}
+        </SlideTabs>
 
         <PageActionBtn
           href={`/journals/new?category=${encodeURIComponent(
-            category.toLowerCase(),
-          )}`}
+            categoryName.toLowerCase(),
+          )}${activeTag !== "all" && activeTag !== "tags-page" ? `&tag=${encodeURIComponent(activeTag)}` : ""}`}
         >
           {t("journals.new")}
         </PageActionBtn>

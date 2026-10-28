@@ -12,9 +12,16 @@ const fetcher = async (url: string) => {
   return (data.journals ?? []) as Journal[];
 };
 
-export function useJournals(category?: JournalCategory | 'all' | string) {
-  const queryParam = category && category !== 'all' ? `?category=${encodeURIComponent(category)}` : '';
-  const url = `/api/journals${queryParam}`;
+export function useJournals(category?: JournalCategory | 'all' | string, tag?: string) {
+  const params = new URLSearchParams();
+  if (category && category !== 'all') {
+    params.set('category', category);
+  }
+  if (tag && tag.toLowerCase() !== 'all') {
+    params.set('tag', tag);
+  }
+  const queryString = params.toString();
+  const url = `/api/journals${queryString ? `?${queryString}` : ''}`;
 
   const { data, error, isLoading, isValidating, mutate } = useSWR<Journal[]>(url, fetcher, {
     revalidateOnFocus: true,
