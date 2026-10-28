@@ -40,7 +40,6 @@ import DayPickerDialog from "@/features/general/components/ui/DayPickerDialog";
 import SelectDialog from "@/features/general/components/ui/SelectDialog";
 import { RichTextarea } from "@/features/general/components/ui/RichTextEditor";
 import {
-  getDefaultTime,
   parseDate,
   serializeDate,
 } from "@/features/general/lib/utils";
@@ -184,8 +183,10 @@ export function TodoForm() {
   const [type, setType] = useState<TodoType>(() =>
     resolveDefaultType(typeParam),
   );
-  const [dailyTime, setDailyTime] = useState<string>(getDefaultTime());
-  const [targetDate, setTargetDate] = useState<Date | null>(new Date());
+  const [dailyTime, setDailyTime] = useState<string | null>(null);
+  const [targetDate, setTargetDate] = useState<Date | null>(() =>
+    resolveDefaultType(typeParam) === "Mission" ? new Date() : null,
+  );
   const [difficulty, setDifficulty] = useState<number>(3);
   const [actions, setActions] = useState<TodoAction[]>([]);
   const [disciplines, setDisciplines] = useState<TodoDiscipline[]>([]);
@@ -202,19 +203,17 @@ export function TodoForm() {
   }>({
     id: null,
     title: "",
-    deadline: new Date(),
+    deadline: null,
   });
 
   const [disciplineDialogOpen, setDisciplineDialogOpen] = useState(false);
   const [disciplineDraft, setDisciplineDraft] = useState<{
     id: number | null;
     title: string;
-    lifeAreaId?: number | null;
     history?: { date: string; isDone: boolean }[];
   }>({
     id: null,
     title: "",
-    lifeAreaId: null,
     history: [],
   });
 
@@ -252,8 +251,8 @@ export function TodoForm() {
         setTitle("");
         setDescription("");
         setType(resolved);
-        setDailyTime(getDefaultTime());
-        setTargetDate(new Date());
+        setDailyTime(null);
+        setTargetDate(resolved === "Mission" ? new Date() : null);
         setDifficulty(3);
         setLifeAreaId(null);
         setActions([]);
@@ -276,10 +275,15 @@ export function TodoForm() {
 
         if (todo.type === "Daily") {
           const isTimeOnly =
-            todo.deadline.includes(":") && !todo.deadline.includes("-");
-          setDailyTime(isTimeOnly ? todo.deadline : "12:00");
+            Boolean(todo.deadline) &&
+            todo.deadline!.includes(":") && !todo.deadline!.includes("-");
+          setDailyTime(isTimeOnly ? todo.deadline! : (todo.deadline || null));
         } else {
-          setTargetDate(parseDate(todo.deadline) ?? new Date());
+          setTargetDate(
+            todo.deadline
+              ? parseDate(todo.deadline) ?? (todo.type === "Mission" ? new Date() : null)
+              : (todo.type === "Mission" ? new Date() : null),
+          );
         }
       });
     }
@@ -289,7 +293,7 @@ export function TodoForm() {
     setActionDraft({
       id: null,
       title: "",
-      deadline: new Date(),
+      deadline: null,
     });
     setActionDialogOpen(true);
   };
@@ -298,13 +302,15 @@ export function TodoForm() {
     setActionDraft({
       id: action.id,
       title: action.title,
-      deadline: parseDate(action.deadline) || new Date(),
+      deadline: action.deadline ? parseDate(action.deadline) : null,
     });
     setActionDialogOpen(true);
   };
 
   const saveAction = () => {
     if (!actionDraft.title.trim()) return;
+
+    const actionDeadline = actionDraft.deadline ? serializeDate(actionDraft.deadline) : null;
 
     if (actionDraft.id !== null) {
       setActions((prev) =>
@@ -313,7 +319,7 @@ export function TodoForm() {
             ? {
                 ...act,
                 title: actionDraft.title.trim(),
-                deadline: serializeDate(actionDraft.deadline),
+                deadline: actionDeadline,
               }
             : act,
         ),
@@ -324,7 +330,7 @@ export function TodoForm() {
         {
           id: Date.now() + Math.floor(Math.random() * 1000),
           title: actionDraft.title.trim(),
-          deadline: serializeDate(actionDraft.deadline),
+          deadline: actionDeadline,
           isDone: false,
         },
       ]);
@@ -340,7 +346,6 @@ export function TodoForm() {
     setDisciplineDraft({
       id: null,
       title: "",
-      lifeAreaId: lifeAreaId,
       history: [],
     });
     setDisciplineDialogOpen(true);
@@ -350,7 +355,6 @@ export function TodoForm() {
     setDisciplineDraft({
       id: discipline.id,
       title: discipline.title,
-      lifeAreaId: discipline.lifeAreaId ?? lifeAreaId,
       history: discipline.history,
     });
     setDisciplineDialogOpen(true);
@@ -364,7 +368,7 @@ export function TodoForm() {
       setDisciplines((prev) =>
         prev.map((d) =>
           d.id === disciplineDraft.id
-            ? { ...d, title: nextTitle, lifeAreaId: disciplineDraft.lifeAreaId }
+            ? { ...d, title: nextTitle }
             : d,
         ),
       );
@@ -374,7 +378,6 @@ export function TodoForm() {
         {
           id: Date.now() + Math.floor(Math.random() * 1000),
           title: nextTitle,
-          lifeAreaId: disciplineDraft.lifeAreaId,
           history: [],
         },
       ]);
@@ -435,7 +438,7 @@ export function TodoForm() {
           <Field
             type="hidden"
             name="deadline"
-            value={type === "Daily" ? dailyTime : serializeDate(targetDate)}
+            value={type === "Daily" ? (dailyTime || "") : (serializeDate(targetDate) || "")}
           />
           <Field type="hidden" name="isDone" value={String(isDone)} />
           {type === "Mission" && (
@@ -489,22 +492,39 @@ export function TodoForm() {
             <Field.Error className="sub-text mt-0.5 text-foreground text-xs" />
           </Field.Root>
 
-          <TypeSelect value={type} onChange={setType} />
+          <TypeSelect
+            value={type}
+            onChange={(nextType) => {
+              setType(nextType);
+              if (nextType === "Mission" && !targetDate) {
+                setTargetDate(new Date());
+              }
+            }}
+          />
 
           <LifeAreaSelect value={lifeAreaId} onChange={setLifeAreaId} />
 
           <Field.Root name="deadline">
-            <Field.Label className="mb-1">
+            <Field.Label className="mb-1 font-bold">
               {t("common.deadline")}
+              {type === "Mission" && <span className="text-red-500 ms-1">*</span>}
             </Field.Label>
 
             {type === "Daily" ? (
-              <TimePickerDialog value={dailyTime} onChange={setDailyTime} />
+              <TimePickerDialog
+                value={dailyTime}
+                onChange={setDailyTime}
+                allowClear
+              />
             ) : (
-              <DayPickerDialog value={targetDate} onChange={setTargetDate} />
+              <DayPickerDialog
+                value={targetDate}
+                onChange={setTargetDate}
+                allowClear={type !== "Mission"}
+              />
             )}
 
-            <Field.Error />
+            <Field.Error className="sub-text mt-0.5 text-foreground text-xs" />
           </Field.Root>
 
           {type === "Mission" && (
@@ -545,7 +565,7 @@ export function TodoForm() {
                             {act.title}
                           </p>
                           <p className="sub-text text-xs">
-                            {formatDate(act.deadline)}
+                            {act.deadline ? formatDate(act.deadline) : t("common.notSet")}
                           </p>
                         </div>
 
@@ -608,11 +628,6 @@ export function TodoForm() {
                       >
                         <div className="min-w-0 flex-1">
                           <p className="truncate text-sm font-medium">{d.title}</p>
-                          {d.lifeArea?.title && (
-                            <p className="sub-text text-xs flex items-center gap-1 mt-0.5">
-                              <span>{d.lifeArea.title}</span>
-                            </p>
-                          )}
                         </div>
 
                         <div className="flex shrink-0 items-center gap-1">
@@ -676,6 +691,7 @@ export function TodoForm() {
                     </Field.Label>
                     <DayPickerDialog
                       value={actionDraft.deadline}
+                      allowClear
                       onChange={(date) =>
                         setActionDraft((d) => ({ ...d, deadline: date }))
                       }
@@ -736,13 +752,6 @@ export function TodoForm() {
                         ...d,
                         title: e.target.value,
                       }))
-                    }
-                  />
-
-                  <LifeAreaSelect
-                    value={disciplineDraft.lifeAreaId ?? null}
-                    onChange={(val) =>
-                      setDisciplineDraft((d) => ({ ...d, lifeAreaId: val }))
                     }
                   />
 

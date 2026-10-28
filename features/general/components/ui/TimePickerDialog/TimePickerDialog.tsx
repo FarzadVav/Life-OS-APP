@@ -9,7 +9,8 @@ import { useLocale } from "@/features/general/components/module/LocaleProvider/L
 
 export type TimePickerDialogProps = {
   value: string | null;
-  onChange: (time: string) => void;
+  onChange: (time: string | null) => void;
+  allowClear?: boolean;
   trigger?: ReactElement;
   nativeButton?: boolean;
   open?: boolean;
@@ -24,6 +25,7 @@ export type TimePickerDialogProps = {
 function LocalTimePickerDialog({
   value,
   onChange,
+  allowClear = false,
   trigger,
   nativeButton,
   open,
@@ -56,6 +58,11 @@ function LocalTimePickerDialog({
 
   const handleConfirm = () => {
     onChange(draftTime);
+    handleOpenChange(false);
+  };
+
+  const handleClear = () => {
+    onChange(null);
     handleOpenChange(false);
   };
 
@@ -93,22 +100,32 @@ function LocalTimePickerDialog({
 
         <TimePicker value={draftTime} onChange={setDraftTime} />
 
-        <div className="flex items-center justify-end gap-3 pt-2">
-          <Dialog.Close
-            render={
-              <Button
-                type="button"
-                variant="ghost"
-                onClick={() => handleOpenChange(false)}
-              >
-                {t("common.cancel")}
-              </Button>
-            }
-          />
+        <div className="flex items-center justify-between gap-3 pt-2">
+          {allowClear && value ? (
+            <Button type="button" variant="outline" onClick={handleClear}>
+              {t("common.clear")}
+            </Button>
+          ) : (
+            <div />
+          )}
 
-          <Button type="button" variant="primary" onClick={handleConfirm}>
-            {t("common.confirm")}
-          </Button>
+          <div className="flex items-center gap-2">
+            <Dialog.Close
+              render={
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => handleOpenChange(false)}
+                >
+                  {t("common.cancel")}
+                </Button>
+              }
+            />
+
+            <Button type="button" variant="primary" onClick={handleConfirm}>
+              {t("common.confirm")}
+            </Button>
+          </div>
         </div>
       </div>
     </Dialog>

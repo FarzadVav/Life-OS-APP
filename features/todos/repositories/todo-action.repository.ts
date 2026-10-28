@@ -29,7 +29,7 @@ export class TodoActionRepository extends EntityRepository<TodoAction> {
 
     const action = this.create({
       title: data.title.trim(),
-      deadline: data.deadline.trim(),
+      deadline: data.deadline ? data.deadline.trim() : null,
       isDone: data.isDone ?? false,
       mission,
     });
@@ -56,7 +56,9 @@ export class TodoActionRepository extends EntityRepository<TodoAction> {
 
     this.assign(action, {
       ...(data.title !== undefined ? { title: data.title.trim() } : {}),
-      ...(data.deadline !== undefined ? { deadline: data.deadline.trim() } : {}),
+      ...(data.deadline !== undefined
+        ? { deadline: data.deadline ? data.deadline.trim() : null }
+        : {}),
       ...(data.isDone !== undefined ? { isDone: data.isDone } : {}),
     });
 

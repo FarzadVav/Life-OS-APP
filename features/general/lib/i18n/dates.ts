@@ -111,9 +111,10 @@ export function formatDeadlineForLocale(
   deadline: string | null | undefined,
   isDaily = false,
   toLabel = "To",
+  fallback = "",
 ): string {
-  if (!deadline) {
-    return "";
+  if (!deadline || !deadline.trim()) {
+    return fallback;
   }
 
   const trimmed = deadline.trim();
@@ -125,7 +126,7 @@ export function formatDeadlineForLocale(
     return `${toLabel} ${formatTime(trimmed)}`;
   }
 
-  return formatDateForLocale(locale, trimmed);
+  return formatDateForLocale(locale, trimmed, fallback);
 }
 
 export { formatTime };

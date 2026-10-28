@@ -17,7 +17,8 @@ export async function createTodoMutation(
   const title = String(formData.get('title') ?? '').trim();
   const description = String(formData.get('description') ?? '').trim();
   const typeValue = String(formData.get('type') ?? 'Daily') as TodoType;
-  const deadline = String(formData.get('deadline') ?? '').trim();
+  const rawDeadline = String(formData.get('deadline') ?? '').trim();
+  const deadline = rawDeadline || null;
   const difficultyRaw = formData.get('difficulty');
   const difficulty = difficultyRaw ? Number(difficultyRaw) : undefined;
 
@@ -45,6 +46,24 @@ export async function createTodoMutation(
     } catch {
       disciplines = undefined;
     }
+  }
+
+  // Enforce required deadline for Mission todos
+  if (typeValue === 'Mission' && !deadline) {
+    return {
+      errors: {
+        deadline: ['Deadline is required for missions.'],
+      },
+      inputs: {
+        title,
+        description,
+        type: typeValue,
+        deadline,
+        difficulty,
+        lifeAreaId,
+      },
+      success: false,
+    };
   }
 
   // Validate form inputs using ArkType CreateTodoSchema

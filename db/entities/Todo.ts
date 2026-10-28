@@ -11,7 +11,7 @@ export { TodoType };
 
 @Entity({ tableName: 'todos' })
 export class Todo extends BaseEntity {
-  [OptionalProps]?: 'createdAt' | 'updatedAt' | 'isDone' | 'type' | 'description';
+  [OptionalProps]?: 'createdAt' | 'updatedAt' | 'isDone' | 'type' | 'description' | 'deadline';
 
   @Property({ type: 'string' })
   title!: string;
@@ -29,8 +29,8 @@ export class Todo extends BaseEntity {
    * For Daily: "HH:mm" (e.g. "10:30")
    * For Upcoming/Mission: "YYYY-MM-DD" (e.g. "2026-10-30")
    */
-  @Property({ type: 'string' })
-  deadline!: string;
+  @Property({ type: 'string', nullable: true })
+  deadline?: string | null;
 
   @Property({ type: 'boolean', default: false })
   isDone: boolean = false;

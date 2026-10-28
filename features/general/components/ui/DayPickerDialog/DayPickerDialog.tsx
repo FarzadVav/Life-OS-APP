@@ -17,6 +17,7 @@ export function formatPersianDate(date: Date | null): string {
 export type DayPickerDialogProps = {
   value: Date | null;
   onChange: (date: Date | null) => void;
+  allowClear?: boolean;
   trigger?: ReactElement;
   nativeButton?: boolean;
   open?: boolean;
@@ -34,6 +35,7 @@ export type DayPickerDialogProps = {
 function LocalDayPickerDialog({
   value,
   onChange,
+  allowClear = false,
   trigger,
   nativeButton,
   open,
@@ -110,7 +112,19 @@ function LocalDayPickerDialog({
           onChange={handleSelectDate}
         />
 
-        <div className="mt-4 flex w-full justify-center">
+        <div className="mt-4 flex w-full items-center justify-between">
+          {allowClear && value !== null ? (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => handleSelectDate(null)}
+            >
+              {t("common.clear")}
+            </Button>
+          ) : (
+            <div />
+          )}
+
           <Dialog.Close
             render={
               <Button

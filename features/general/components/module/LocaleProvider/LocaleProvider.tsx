@@ -31,6 +31,7 @@ type LocaleContextValue = {
   formatDeadline: (
     deadline: string | null | undefined,
     isDaily?: boolean,
+    fallback?: string,
   ) => string;
 };
 
@@ -55,8 +56,18 @@ function LocaleProvider({
         formatTimeForLocale(locale, timeValue, fallback),
       formatDateTime: (dateValue, separator = " ", fallback = "") =>
         formatDateTimeForLocale(locale, dateValue, separator, fallback),
-      formatDeadline: (deadline, isDaily = false) =>
-        formatDeadlineForLocale(locale, deadline, isDaily, t("dates.to")),
+      formatDeadline: (
+        deadline,
+        isDaily = false,
+        fallback = t("common.notSet"),
+      ) =>
+        formatDeadlineForLocale(
+          locale,
+          deadline,
+          isDaily,
+          t("dates.to"),
+          fallback,
+        ),
     };
   }, [locale, dictionary]);
 

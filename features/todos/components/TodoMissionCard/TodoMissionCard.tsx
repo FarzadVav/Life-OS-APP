@@ -52,7 +52,7 @@ function MissionActionRow({
   action: TodoAction;
   onMutated?: () => void;
 }) {
-  const { formatDate } = useLocale();
+  const { formatDate, t } = useLocale();
   const [state, toggleAction, isToggling] = useActionState(
     toggleActionMutation,
     undefined,
@@ -96,7 +96,7 @@ function MissionActionRow({
 
           <div className="mt-1 flex items-center gap-1.5 sub-text text-xs">
             <CalendarIcon className="size-3" />
-            <span>{formatDate(action.deadline)}</span>
+            <span>{action.deadline ? formatDate(action.deadline) : t("common.notSet")}</span>
           </div>
         </div>
       </Button>
@@ -117,11 +117,6 @@ function MissionDisciplineRow({
 
       <div className="flex-1 min-h-10 flex justify-center items-start flex-col">
         <p className="text-sm font-medium">{discipline.title}</p>
-        {discipline.lifeArea?.title && (
-          <p className="sub-text text-xs flex items-center gap-1.5 mt-0.5">
-            <span>{discipline.lifeArea.title}</span>
-          </p>
-        )}
       </div>
     </div>
   );
@@ -164,7 +159,9 @@ function TodoMissionCard({ todo, onMutated }: TodoMissionCardProps) {
         <span className="flex items-center gap-1">
           <CalendarDaysIcon className="size-3" />
           <span>
-            {t("dates.to")} {formatDate(todo.deadline)}
+            {todo.deadline
+              ? `${t("dates.to")} ${formatDate(todo.deadline)}`
+              : t("common.notSet")}
           </span>
         </span>
       }
@@ -202,7 +199,9 @@ function TodoMissionCard({ todo, onMutated }: TodoMissionCardProps) {
                 <CalendarDaysIcon className="size-4" />
                 <span className="text-xs">{t("common.deadline")}</span>
               </div>
-              <p className="mt-2 text-xs font-medium">{formatDate(todo.deadline)}</p>
+              <p className="mt-2 text-xs font-medium">
+                {todo.deadline ? formatDate(todo.deadline) : t("common.notSet")}
+              </p>
             </div>
 
             <div className="rounded-container bg-background p-3">

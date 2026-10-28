@@ -31,7 +31,11 @@ export async function updateTodoMutation(
     ? String(formData.get('description') ?? '').trim()
     : undefined;
   const typeValue = formData.has('type') ? (String(formData.get('type')) as TodoType) : undefined;
-  const deadline = formData.has('deadline') ? String(formData.get('deadline') ?? '').trim() : undefined;
+  let deadline: string | null | undefined = undefined;
+  if (formData.has('deadline')) {
+    const rawDeadline = String(formData.get('deadline') ?? '').trim();
+    deadline = rawDeadline || null;
+  }
   const difficultyRaw = formData.get('difficulty');
   const difficulty = difficultyRaw !== null && difficultyRaw !== undefined && difficultyRaw !== ''
     ? Number(difficultyRaw)
@@ -66,6 +70,25 @@ export async function updateTodoMutation(
     } catch {
       disciplines = undefined;
     }
+  }
+
+  // Enforce required deadline for Mission todos
+  if (typeValue === 'Mission' && deadline === null) {
+    return {
+      errors: {
+        deadline: ['Deadline is required for missions.'],
+      },
+      inputs: {
+        id,
+        title,
+        description,
+        type: typeValue,
+        deadline,
+        difficulty,
+        lifeAreaId,
+      },
+      success: false,
+    };
   }
 
   // Validate form inputs using ArkType UpdateTodoSchema

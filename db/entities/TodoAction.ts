@@ -5,7 +5,7 @@ import { Todo } from './Todo';
 
 @Entity({ tableName: 'todo_actions' })
 export class TodoAction extends BaseEntity {
-  [OptionalProps]?: 'createdAt' | 'updatedAt' | 'isDone';
+  [OptionalProps]?: 'createdAt' | 'updatedAt' | 'isDone' | 'deadline';
 
   @Property({ type: 'string' })
   title!: string;
@@ -13,8 +13,8 @@ export class TodoAction extends BaseEntity {
   /**
    * Deadline date string in "YYYY-MM-DD" format
    */
-  @Property({ type: 'string' })
-  deadline!: string;
+  @Property({ type: 'string', nullable: true })
+  deadline?: string | null;
 
   @Property({ type: 'boolean', default: false })
   isDone: boolean = false;

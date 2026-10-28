@@ -46,29 +46,16 @@ export function serializeTodo(todo: Todo): TodoDto {
         }))
       : undefined,
     disciplines: todo.disciplines?.isInitialized()
-      ? todo.disciplines.getItems().map((d) => {
-          const discLifeAreaDto =
-            d.lifeArea && typeof d.lifeArea === 'object' && 'title' in d.lifeArea
-              ? {
-                  id: d.lifeArea.id,
-                  title: d.lifeArea.title,
-                  vision: d.lifeArea.vision,
-                }
-              : undefined;
-
-          return {
-            id: d.id,
-            title: d.title,
-            lifeAreaId: d.lifeArea?.id ?? null,
-            lifeArea: discLifeAreaDto,
-            history: d.history?.isInitialized()
-              ? d.history.getItems().map((h) => ({
-                  date: h.date,
-                  isDone: h.isDone,
-                }))
-              : undefined,
-          };
-        })
+      ? todo.disciplines.getItems().map((d) => ({
+          id: d.id,
+          title: d.title,
+          history: d.history?.isInitialized()
+            ? d.history.getItems().map((h) => ({
+                date: h.date,
+                isDone: h.isDone,
+              }))
+            : undefined,
+        }))
       : undefined,
     createdAt: todo.createdAt instanceof Date ? todo.createdAt.toISOString() : String(todo.createdAt),
     updatedAt: todo.updatedAt instanceof Date ? todo.updatedAt.toISOString() : String(todo.updatedAt),
@@ -96,7 +83,7 @@ export class TodoRepository extends EntityRepository<Todo> {
   ): Promise<Todo[]> {
     return this.find({ type: TodoType.MISSION, user: userId }, {
       populate: options?.populateRelations
-        ? ['actions', 'disciplines.history', 'disciplines.lifeArea', 'lifeArea']
+        ? ['actions', 'disciplines.history', 'lifeArea']
         : ['lifeArea'],
       orderBy: { deadline: 'ASC' },
     });
@@ -109,7 +96,7 @@ export class TodoRepository extends EntityRepository<Todo> {
     return this.find({ user: userId }, {
       populate:
         options?.populateRelations !== false
-          ? ['actions', 'disciplines.history', 'disciplines.lifeArea', 'lifeArea']
+          ? ['actions', 'disciplines.history', 'lifeArea']
           : ['lifeArea'],
       orderBy: { deadline: 'ASC' },
     });
@@ -117,21 +104,18 @@ export class TodoRepository extends EntityRepository<Todo> {
 
   async findById(id: number, userId: number): Promise<Todo | null> {
     return this.findOne({ id, user: userId }, {
-      populate: ['actions', 'disciplines.history', 'disciplines.lifeArea', 'lifeArea'],
+      populate: ['actions', 'disciplines.history', 'lifeArea'],
     });
   }
 
   async findMissionById(id: number, userId: number): Promise<Todo | null> {
     return this.findOne({ id, type: TodoType.MISSION, user: userId }, {
-      populate: ['actions', 'disciplines.history', 'disciplines.lifeArea', 'lifeArea'],
+      populate: ['actions', 'disciplines.history', 'lifeArea'],
     });
   }
 
   async createTodo(data: CreateTodoData, userId: number): Promise<Todo> {
-    await assertOwnedLifeAreas(this.em, userId, [
-      data.lifeAreaId,
-      ...(data.disciplines?.map((disc) => disc.lifeAreaId) ?? []),
-    ]);
+    await assertOwnedLifeAreas(this.em, userId, [data.lifeAreaId]);
 
     const lifeArea = data.lifeAreaId
       ? this.em.getReference(LifeArea, data.lifeAreaId)
@@ -141,7 +125,7 @@ export class TodoRepository extends EntityRepository<Todo> {
       title: data.title.trim(),
       description: data.description?.trim() || '',
       type: data.type as unknown as TodoType,
-      deadline: data.deadline.trim(),
+      deadline: data.deadline ? data.deadline.trim() : null,
       difficulty: data.difficulty,
       isDone: data.isDone ?? false,
       user: this.em.getReference(User, userId),
@@ -153,7 +137,7 @@ export class TodoRepository extends EntityRepository<Todo> {
         todo.actions.add(
           this.em.create(TodoAction, {
             title: act.title.trim(),
-            deadline: act.deadline.trim(),
+            deadline: act.deadline ? act.deadline.trim() : null,
             isDone: act.isDone ?? false,
             mission: todo,
           }),
@@ -163,14 +147,9 @@ export class TodoRepository extends EntityRepository<Todo> {
 
     if (data.disciplines && data.disciplines.length > 0) {
       for (const disc of data.disciplines) {
-        const discLifeArea = disc.lifeAreaId
-          ? this.em.getReference(LifeArea, disc.lifeAreaId)
-          : lifeArea;
-
         todo.disciplines.add(
           this.em.create(TodoDiscipline, {
             title: disc.title.trim(),
-            lifeArea: discLifeArea,
             mission: todo,
           }),
         );
@@ -183,18 +162,15 @@ export class TodoRepository extends EntityRepository<Todo> {
 
   async updateTodo(id: number, data: UpdateTodoData, userId: number): Promise<Todo | null> {
     const todo = await this.findOne({ id, user: userId }, {
-      populate: ['actions', 'disciplines.history', 'disciplines.lifeArea', 'lifeArea'],
+      populate: ['actions', 'disciplines.history', 'lifeArea'],
     });
 
     if (!todo) {
       return null;
     }
 
-    if (data.lifeAreaId !== undefined || data.disciplines !== undefined) {
-      await assertOwnedLifeAreas(this.em, userId, [
-        data.lifeAreaId,
-        ...(data.disciplines?.map((disc) => disc.lifeAreaId) ?? []),
-      ]);
+    if (data.lifeAreaId !== undefined) {
+      await assertOwnedLifeAreas(this.em, userId, [data.lifeAreaId]);
     }
 
     const lifeArea =
@@ -210,7 +186,9 @@ export class TodoRepository extends EntityRepository<Todo> {
         ? { description: data.description.trim() }
         : {}),
       ...(data.type !== undefined ? { type: data.type as unknown as TodoType } : {}),
-      ...(data.deadline !== undefined ? { deadline: data.deadline.trim() } : {}),
+      ...(data.deadline !== undefined
+        ? { deadline: data.deadline ? data.deadline.trim() : null }
+        : {}),
       ...(data.isDone !== undefined ? { isDone: data.isDone } : {}),
       ...(data.difficulty !== undefined ? { difficulty: data.difficulty } : {}),
       ...(data.lifeAreaId !== undefined ? { lifeArea } : {}),
@@ -226,14 +204,14 @@ export class TodoRepository extends EntityRepository<Todo> {
           const existing = existingActionMap.get(actData.id)!;
           this.em.assign(existing, {
             title: actData.title.trim(),
-            deadline: actData.deadline.trim(),
+            deadline: actData.deadline ? actData.deadline.trim() : null,
             ...(actData.isDone !== undefined ? { isDone: actData.isDone } : {}),
           });
           newActionIds.add(existing.id);
         } else {
           const newAct = this.em.create(TodoAction, {
             title: actData.title.trim(),
-            deadline: actData.deadline.trim(),
+            deadline: actData.deadline ? actData.deadline.trim() : null,
             isDone: actData.isDone ?? false,
             mission: todo,
           });
@@ -254,24 +232,15 @@ export class TodoRepository extends EntityRepository<Todo> {
       const newDiscIds = new Set<number>();
 
       for (const discData of data.disciplines) {
-        const itemLifeArea =
-          discData.lifeAreaId !== undefined
-            ? discData.lifeAreaId
-              ? this.em.getReference(LifeArea, discData.lifeAreaId)
-              : undefined
-            : lifeArea;
-
         if (discData.id && existingDiscMap.has(discData.id)) {
           const existing = existingDiscMap.get(discData.id)!;
           this.em.assign(existing, {
             title: discData.title.trim(),
-            ...(discData.lifeAreaId !== undefined ? { lifeArea: itemLifeArea } : {}),
           });
           newDiscIds.add(existing.id);
         } else {
           const newDisc = this.em.create(TodoDiscipline, {
             title: discData.title.trim(),
-            lifeArea: itemLifeArea,
             mission: todo,
           });
           todo.disciplines.add(newDisc);

@@ -14,8 +14,6 @@
 
 # Features
 
-- Add "anytime" state for daily, upcoming and missions actions and disciplines todos
-
 ---
 
 # Next Versions

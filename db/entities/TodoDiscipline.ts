@@ -3,7 +3,6 @@ import { Entity, ManyToOne, OneToMany, Property } from '@mikro-orm/decorators/le
 import { BaseEntity } from './BaseEntity';
 import { Todo } from './Todo';
 import { DisciplineHistory } from './DisciplineHistory';
-import { LifeArea } from './LifeArea';
 
 @Entity({ tableName: 'todo_disciplines' })
 export class TodoDiscipline extends BaseEntity {
@@ -12,12 +11,8 @@ export class TodoDiscipline extends BaseEntity {
   @Property({ type: 'string' })
   title!: string;
 
-
   @ManyToOne(() => Todo, { nullable: false, deleteRule: 'cascade' })
   mission!: Rel<Todo>;
-
-  @ManyToOne(() => LifeArea, { nullable: true, deleteRule: 'set null' })
-  lifeArea?: Rel<LifeArea>;
 
   @OneToMany(() => DisciplineHistory, (history) => history.discipline, { cascade: [Cascade.ALL], orphanRemoval: true })
   history = new Collection<DisciplineHistory>(this);
