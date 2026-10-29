@@ -6,7 +6,7 @@ import { LifeArea } from './LifeArea';
 
 @Entity({ tableName: 'skills' })
 export class Skill extends BaseEntity {
-  [OptionalProps]?: 'createdAt' | 'updatedAt';
+  [OptionalProps]?: 'createdAt' | 'updatedAt' | 'tag';
 
   @Property({ type: 'string' })
   title!: string;
@@ -16,6 +16,9 @@ export class Skill extends BaseEntity {
    */
   @Property({ type: 'text' })
   content!: string;
+
+  @Property({ type: 'string', nullable: true })
+  tag?: string | null;
 
   @ManyToOne(() => LifeArea, { nullable: true, deleteRule: 'set null' })
   lifeArea?: Rel<LifeArea>;

@@ -3,7 +3,7 @@
 import { type } from 'arktype';
 import { withRequestContext } from '@/db';
 import { tryGetUserId } from '@/features/auth/lib/actor';
-import { ForbiddenReferenceError } from '@/features/general/lib/errors';
+import { lifeAreaFieldError } from '@/features/life-areas/lib/lifeAreaFieldError';
 import { UpdateTodoSchema, type TodoFormState, type TodoType, type UpdateTodoData } from '../types';
 
 /**
@@ -165,9 +165,10 @@ export async function updateTodoMutation(
       }, userId);
     });
   } catch (error) {
-    if (error instanceof ForbiddenReferenceError) {
+    const fieldError = lifeAreaFieldError(error);
+    if (fieldError) {
       return {
-        errors: { lifeAreaId: ['This value is not available to you.'] },
+        errors: { lifeAreaId: [fieldError] },
         inputs: { id, title, description, type: typeValue, deadline, difficulty, lifeAreaId },
         success: false,
       };

@@ -27,6 +27,7 @@ export function serializeSkill(skill: Skill): SkillDto {
     content: skill.content,
     lifeAreaId: skill.lifeArea?.id ?? null,
     lifeArea: lifeAreaDto,
+    tag: skill.tag ?? null,
     createdAt: skill.createdAt instanceof Date ? skill.createdAt.toISOString() : String(skill.createdAt),
     updatedAt: skill.updatedAt instanceof Date ? skill.updatedAt.toISOString() : String(skill.updatedAt),
   };
@@ -57,6 +58,7 @@ export class SkillRepository extends EntityRepository<Skill> {
     const skill = this.create({
       title: data.title.trim(),
       content: data.content || '',
+      tag: data.tag?.trim() || null,
       lifeArea: data.lifeAreaId
         ? this.em.getReference(LifeArea, data.lifeAreaId)
         : undefined,
@@ -81,7 +83,9 @@ export class SkillRepository extends EntityRepository<Skill> {
     }
 
     if (data.lifeAreaId !== undefined) {
-      await assertOwnedLifeAreas(this.em, userId, [data.lifeAreaId]);
+      await assertOwnedLifeAreas(this.em, userId, [data.lifeAreaId], {
+        keepInactiveId: skill.lifeArea?.id ?? null,
+      });
     }
 
     const lifeArea =
@@ -94,6 +98,7 @@ export class SkillRepository extends EntityRepository<Skill> {
     this.assign(skill, {
       ...(data.title !== undefined ? { title: data.title.trim() } : {}),
       ...(data.content !== undefined ? { content: data.content } : {}),
+      ...(data.tag !== undefined ? { tag: data.tag?.trim() || null } : {}),
       ...(data.lifeAreaId !== undefined ? { lifeArea } : {}),
     });
 

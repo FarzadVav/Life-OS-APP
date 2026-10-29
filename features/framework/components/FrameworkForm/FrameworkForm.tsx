@@ -7,7 +7,8 @@ import { useLocale } from "@/features/general/components/module/LocaleProvider/L
 import { Form } from "@base-ui/react";
 import Field from "@/features/general/components/ui/Field";
 import { CreateFrameworkSchema, UpdateFrameworkSchema } from "@/features/framework/types";
-import { LoaderIcon, Trash2Icon } from "lucide-react";
+import { UNSET_LIFE_AREA_SLUG, parseLifeAreaSlug } from "@/features/general/lib/lifeAreaSlug";
+import { Trash2Icon } from "lucide-react";
 import SelectDialog from "@/features/general/components/ui/SelectDialog";
 import Dialog from "@/features/general/components/ui/Dialog/Dialog";
 import { Button } from "@/features/general/components/ui/Button/Button";
@@ -15,6 +16,7 @@ import Skeleton from "@/features/general/components/ui/Skeleton";
 import { RichTextarea } from "@/features/general/components/ui/RichTextEditor";
 
 import { useFramework } from "@/features/framework/hooks/useFramework";
+import { useFrameworkTags } from "@/features/framework/hooks/useFrameworkTags";
 import {
   createFrameworkMutation,
   deleteFrameworkMutation,
@@ -25,6 +27,7 @@ import HelpDialog from "@/features/general/components/module/HelpDialog/HelpDial
 import PageActionBtn from "@/features/general/components/module/PageActionBtn/PageActionBtn";
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
 import { useLifeAreas } from "@/features/life-areas/hooks";
+import { selectableLifeAreas } from "@/features/life-areas/lib/selectableLifeAreas";
 
 function LifeAreaSelect({
   value,
@@ -37,13 +40,11 @@ function LifeAreaSelect({
   const { lifeAreas = [] } = useLifeAreas();
 
   const items = [
-    { value: "none", label: t("common.general") },
-    ...lifeAreas
-      .filter((la) => la.active !== false || (value !== null && la.id === value))
-      .map((la) => ({
-        value: String(la.id),
-        label: la.title,
-      })),
+    { value: "none", label: t("common.notSet") },
+    ...selectableLifeAreas(lifeAreas, value).map((la) => ({
+      value: String(la.id),
+      label: la.title,
+    })),
   ];
 
   return (
@@ -66,12 +67,52 @@ function LifeAreaSelect({
   );
 }
 
+function TagSelect({
+  lifeAreaId,
+  value,
+  onChange,
+}: {
+  lifeAreaId: number | null;
+  value: string | null;
+  onChange: (value: string | null) => void;
+}) {
+  const { t } = useLocale();
+  const { tags } = useFrameworkTags(lifeAreaId);
+
+  if (tags.length === 0) {
+    return null;
+  }
+
+  const items = [
+    { value: "none", label: t("common.notSet") },
+    ...tags.map((tag) => ({ value: tag.title, label: tag.title })),
+  ];
+
+  return (
+    <Field.Root name="tag">
+      <Field.Label className="mb-1 font-bold">{t("common.tag")}</Field.Label>
+
+      <SelectDialog
+        name="tagSelect"
+        items={items}
+        value={value ?? "none"}
+        onChange={(next) => onChange(next === "none" || !next ? null : String(next))}
+        title={t("common.tag")}
+        placeholder={t("framework.selectTag")}
+      />
+
+      <Field.Error className="sub-text mt-0.5 text-foreground text-xs" />
+    </Field.Root>
+  );
+}
+
 export function FrameworkForm() {
   const { t } = useLocale();
   const router = useRouter();
   const searchParams = useSearchParams();
   const editId = searchParams.get("editId");
   const lifeAreaParam = searchParams.get("lifeAreaId");
+  const tagParam = searchParams.get("tag");
   const isEditMode = Boolean(editId);
 
   const { framework, isLoading: isHabitLoading } = useFramework(editId ? Number(editId) : null);
@@ -79,9 +120,12 @@ export function FrameworkForm() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [lifeAreaId, setLifeAreaId] = useState<number | null>(
-    lifeAreaParam && lifeAreaParam !== "none" ? Number(lifeAreaParam) : null,
+    () => parseLifeAreaSlug(lifeAreaParam) ?? null,
   );
+  const [tag, setTag] = useState<string | null>(() => tagParam || null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+
+  const areaSlug = String(lifeAreaId ?? UNSET_LIFE_AREA_SLUG);
 
   const [state, formAction, pending] = useActionState(
     isEditMode ? updateFrameworkMutation : createFrameworkMutation,
@@ -95,24 +139,25 @@ export function FrameworkForm() {
 
   useEffect(() => {
     if (state?.success) {
-      router.push("/framework");
+      router.push(`/framework/${areaSlug}`);
       router.refresh();
     }
-  }, [state?.success, router]);
+  }, [state?.success, areaSlug, router]);
 
   useEffect(() => {
     if (!deleteState?.success) return;
 
-    router.push("/framework");
+    router.push(`/framework/${areaSlug}`);
     router.refresh();
-  }, [deleteState, router]);
+  }, [deleteState, areaSlug, router]);
 
   useEffect(() => {
     if (!editId) {
       queueMicrotask(() => {
         setTitle("");
         setDescription("");
-        setLifeAreaId(lifeAreaParam && lifeAreaParam !== "none" ? Number(lifeAreaParam) : null);
+        setTag(tagParam || null);
+        setLifeAreaId(parseLifeAreaSlug(lifeAreaParam) ?? null);
       });
       return;
     }
@@ -122,9 +167,10 @@ export function FrameworkForm() {
         setTitle(framework.title);
         setDescription(framework.description || "");
         setLifeAreaId(framework.lifeAreaId ?? null);
+        setTag(framework.tag ?? null);
       });
     }
-  }, [editId, framework, lifeAreaParam]);
+  }, [editId, framework, lifeAreaParam, tagParam]);
 
   return (
     <PageWrapper>
@@ -166,8 +212,9 @@ export function FrameworkForm() {
           <Field
             type="hidden"
             name="lifeAreaId"
-            value={lifeAreaId ? String(lifeAreaId) : "none"}
+            value={areaSlug}
           />
+          <Field type="hidden" name="tag" value={tag ?? ""} />
           <Field type="hidden" name="description" value={description} />
 
           <Field
@@ -182,7 +229,15 @@ export function FrameworkForm() {
             schema={isEditMode ? UpdateFrameworkSchema : CreateFrameworkSchema}
           />
 
-          <LifeAreaSelect value={lifeAreaId} onChange={setLifeAreaId} />
+          <LifeAreaSelect
+            value={lifeAreaId}
+            onChange={(next) => {
+              setLifeAreaId(next);
+              setTag(null);
+            }}
+          />
+
+          <TagSelect lifeAreaId={lifeAreaId} value={tag} onChange={setTag} />
 
 
           <Field.Root
@@ -206,7 +261,7 @@ export function FrameworkForm() {
 
           <Field.FormError
             errors={state?.errors}
-            knownFields={["title", "description", "lifeAreaId"]}
+            knownFields={["title", "description", "lifeAreaId", "tag"]}
           />
 
           <PageActionBtn submit disabled={pending} form="framework-form" />

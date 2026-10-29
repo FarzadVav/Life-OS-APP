@@ -28,3 +28,21 @@ export class ForbiddenReferenceError extends Error {
     this.name = 'ForbiddenReferenceError';
   }
 }
+
+/**
+ * Raised when a client assigns a reference that exists and is owned but is
+ * archived, i.e. inactive life areas may be kept on existing records yet never
+ * chosen for a new one.
+ */
+export class InactiveReferenceError extends Error {
+  readonly code = 'INACTIVE_REFERENCE';
+
+  constructor(
+    readonly field: string,
+    readonly id: number,
+    message?: string,
+  ) {
+    super(message ?? `${field} ${id} is not active.`);
+    this.name = 'InactiveReferenceError';
+  }
+}

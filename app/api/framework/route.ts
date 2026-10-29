@@ -5,6 +5,7 @@ import { serializeFramework } from '@/features/framework/repositories';
 import { CreateFrameworkSchema } from '@/features/framework/types';
 import { requireUserId } from '@/features/auth/lib/actor';
 import { authzResponse } from '@/features/general/lib/api/respond';
+import { parseLifeAreaSlug } from '@/features/general/lib/lifeAreaSlug';
 
 export const dynamic = 'force-dynamic';
 
@@ -17,11 +18,7 @@ export async function GET(request: NextRequest) {
     const userId = await requireUserId();
 
     const searchParams = request.nextUrl.searchParams;
-    const lifeAreaIdParam = searchParams.get('lifeAreaId');
-    const lifeAreaId =
-      lifeAreaIdParam !== null && lifeAreaIdParam !== undefined
-        ? Number(lifeAreaIdParam)
-        : undefined;
+    const lifeAreaId = parseLifeAreaSlug(searchParams.get('lifeAreaId'));
 
     const frameworks = await withRequestContext(async ({ framework }) => {
       const entities = await framework.findAllFrameworks(userId, { lifeAreaId });

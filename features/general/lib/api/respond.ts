@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-import { AuthenticationError, ForbiddenReferenceError } from '../errors';
+import { AuthenticationError, ForbiddenReferenceError, InactiveReferenceError } from '../errors';
 
 /**
  * Maps an authorization error to its HTTP response, or returns null when the
@@ -21,6 +21,16 @@ export function authzResponse(error: unknown): NextResponse | null {
         errors: { [error.field]: ['This value is not available to you.'] },
       },
       { status: 403 },
+    );
+  }
+
+  if (error instanceof InactiveReferenceError) {
+    return NextResponse.json(
+      {
+        message: `Inactive ${error.field}`,
+        errors: { [error.field]: ['This life area is not active.'] },
+      },
+      { status: 400 },
     );
   }
 

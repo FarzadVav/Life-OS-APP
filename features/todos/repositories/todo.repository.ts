@@ -170,7 +170,9 @@ export class TodoRepository extends EntityRepository<Todo> {
     }
 
     if (data.lifeAreaId !== undefined) {
-      await assertOwnedLifeAreas(this.em, userId, [data.lifeAreaId]);
+      await assertOwnedLifeAreas(this.em, userId, [data.lifeAreaId], {
+        keepInactiveId: todo.lifeArea?.id ?? null,
+      });
     }
 
     const lifeArea =

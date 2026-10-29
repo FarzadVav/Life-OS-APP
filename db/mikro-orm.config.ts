@@ -12,8 +12,10 @@ import {
   JournalTag,
   LifeArea,
   Skill,
+  SkillTag,
   Habit,
   HabitHistory,
+  HabitTag,
 } from './entities';
 
 // Connection string lives in .env.local only — it embeds a live database password.
@@ -61,8 +63,10 @@ export const config = defineConfig({
     JournalTag,
     LifeArea,
     Skill,
+    SkillTag,
     Habit,
     HabitHistory,
+    HabitTag,
   ],
   extensions: [SeedManager],
   allowGlobalContext: true,

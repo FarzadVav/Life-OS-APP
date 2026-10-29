@@ -5,6 +5,7 @@ import {
   CalendarDaysIcon,
   CompassIcon,
   Repeat2Icon,
+  TagIcon,
   Trash2Icon,
 } from "lucide-react";
 import type { Framework } from "../../types";
@@ -43,12 +44,19 @@ export function FrameworkCard({
       editHref={`/framework/new?editId=${framework.id}`}
       content={
         <div className="space-y-4">
-          {framework.lifeArea && (
-            <div className="flex items-center gap-1.5 sub-text text-xs">
+          <div className="flex items-center gap-3 flex-wrap sub-text text-xs">
+            <span className="flex items-center gap-1.5">
               <CompassIcon className="size-3 text-foreground/60" />
-              <span>{framework.lifeArea.title}</span>
-            </div>
-          )}
+              <span>{framework.lifeArea?.title ?? t("common.notSet")}</span>
+            </span>
+
+            {framework.tag && (
+              <span className="flex items-center gap-1.5">
+                <TagIcon className="size-3 text-foreground/60" />
+                <span>{framework.tag}</span>
+              </span>
+            )}
+          </div>
 
           {framework.description && (
             <RichTextResult

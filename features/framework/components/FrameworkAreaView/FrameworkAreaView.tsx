@@ -1,0 +1,256 @@
+"use client";
+
+import { useEffect, useMemo, useState, useActionState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { TagIcon, Repeat2Icon, PlusIcon, LoaderIcon } from "lucide-react";
+
+import { useFrameworks } from "../../hooks/useFrameworks";
+import { useFrameworkTags } from "../../hooks/useFrameworkTags";
+import { useLifeAreaTitle } from "@/features/life-areas/hooks/useLifeAreaTitle";
+import { useLifeAreas } from "@/features/life-areas/hooks/useLifeAreas";
+import { deleteFrameworkMutation } from "../../mutations";
+import { type Framework } from "../../types";
+import { UNSET_LIFE_AREA_SLUG } from "@/features/general/lib/lifeAreaSlug";
+import FrameworkCard from "../FrameworkCard/FrameworkCard";
+import TopBar from "@/features/general/components/static/TopBar/TopBar";
+import HelpDialog from "@/features/general/components/module/HelpDialog/HelpDialog";
+import PageActionBtn from "@/features/general/components/module/PageActionBtn/PageActionBtn";
+import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
+import PageItemsWrapper from "@/features/general/components/static/PageItemsWrapper/PageItemsWrapper";
+import EmptyAlert from "@/features/general/components/static/EmptyAlert";
+import Skeleton from "@/features/general/components/ui/Skeleton";
+import Dialog from "@/features/general/components/ui/Dialog/Dialog";
+import { Button } from "@/features/general/components/ui/Button/Button";
+import Field from "@/features/general/components/ui/Field";
+import SlideTabs, {
+  SlideTabItem,
+} from "@/features/general/components/ui/SlideTabs";
+import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
+
+type FrameworkAreaViewProps = {
+  /** null targets frameworks that have no life area */
+  lifeAreaId: number | null;
+};
+
+export function FrameworkAreaView({ lifeAreaId }: FrameworkAreaViewProps) {
+  const { t } = useLocale();
+  const searchParams = useSearchParams();
+  const initialTag = searchParams.get("tag")?.toLowerCase() || "all";
+  const [activeTag, setActiveTag] = useState<string>(initialTag);
+
+  const title = useLifeAreaTitle(lifeAreaId, t("framework.unknownArea"));
+  const router = useRouter();
+  const { frameworks, isLoading, mutate: revalidateFrameworks } =
+    useFrameworks();
+  const { tags } = useFrameworkTags(lifeAreaId);
+
+  const areaSlug = String(lifeAreaId ?? UNSET_LIFE_AREA_SLUG);
+
+  const { lifeAreas } = useLifeAreas();
+  const isArchivedArea =
+    lifeAreaId !== null &&
+    lifeAreas.some((area) => area.id === lifeAreaId && area.active === false);
+
+  const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deleteState, deleteAction, isDeleting] = useActionState(
+    deleteFrameworkMutation,
+    undefined,
+  );
+
+  useEffect(() => {
+    if (!deleteState?.success) return;
+
+    revalidateFrameworks();
+  }, [deleteState, revalidateFrameworks]);
+
+  const areaFrameworks = useMemo(
+    () =>
+      frameworks.filter((framework) =>
+        lifeAreaId === null
+          ? !framework.lifeAreaId
+          : framework.lifeAreaId === lifeAreaId,
+      ),
+    [frameworks, lifeAreaId],
+  );
+
+  const filteredFrameworks = useMemo(() => {
+    if (activeTag === "all") return areaFrameworks;
+    return areaFrameworks.filter(
+      (framework) => framework.tag?.toLowerCase() === activeTag,
+    );
+  }, [areaFrameworks, activeTag]);
+
+  const filterTabs: SlideTabItem[] = useMemo(
+    () => [
+      {
+        id: "all",
+        label: t("common.all"),
+        badge: areaFrameworks.length,
+      },
+      ...tags.map((tag) => ({
+        id: tag.title.toLowerCase(),
+        label: tag.title,
+      })),
+      {
+        id: "tags-page",
+        label: t("common.tags"),
+        href: `/framework/${areaSlug}/tags`,
+        icon: <TagIcon className="size-3.5" />,
+      },
+    ],
+    [areaFrameworks.length, areaSlug, tags, t],
+  );
+
+  const targetFramework = frameworks.find(
+    (framework) => framework.id === deleteTargetId,
+  );
+
+  const createHref = () => {
+    const query = new URLSearchParams({ lifeAreaId: areaSlug });
+    if (activeTag !== "all" && activeTag !== "tags-page") {
+      query.set("tag", activeTag);
+    }
+
+    return `/framework/new?${query.toString()}`;
+  };
+
+  const handleOpenEdit = (framework: Framework) => {
+    router.push(`/framework/new?editId=${framework.id}`);
+  };
+
+  return (
+    <PageWrapper>
+      <TopBar>
+        <TopBar.Title asTitle>{title}</TopBar.Title>
+        <TopBar.Btn backIcon href="/framework" position="left" />
+        <HelpDialog position="right" />
+      </TopBar>
+
+      <PageItemsWrapper>
+        <SlideTabs
+          tabs={filterTabs}
+          activeId={activeTag}
+          onTabChange={(id) => {
+            if (id !== "tags-page") {
+              setActiveTag(id);
+            }
+          }}
+          headerClassName="overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden py-0.5 gap-1.5"
+          tabClassName="shrink-0 flex-none"
+          between={
+            <div className="w-full flex items-center justify-between pb-1 text-xs text-foreground/70">
+              <span className="font-semibold text-foreground">{title}</span>
+              <span>
+                {filteredFrameworks.length} {t("profile.total")}
+              </span>
+            </div>
+          }
+        >
+          <div className="w-full space-y-3">
+            {isLoading && frameworks.length === 0 ? (
+              <Skeleton count={3} />
+            ) : (
+              <>
+                {filteredFrameworks.map((framework) => (
+                  <FrameworkCard
+                    key={framework.id}
+                    framework={framework}
+                    onEdit={handleOpenEdit}
+                    onRequestDelete={(id) => {
+                      setDeleteTargetId(id);
+                      setDeleteDialogOpen(true);
+                    }}
+                  />
+                ))}
+
+                {filteredFrameworks.length === 0 && (
+                  <EmptyAlert
+                    icon={<Repeat2Icon className="size-5 text-foreground/40" />}
+                    alert={
+                      activeTag !== "all"
+                        ? t("framework.noFrameworksWithTag")
+                        : t("framework.noFrameworksInArea")
+                    }
+                    description={t("framework.addFirst")}
+                    className="p-10"
+                    action={
+                      isArchivedArea ? undefined : (
+                          <Button
+                            type="button"
+                            variant="card"
+                            onClick={() => router.push(createHref())}
+                            className="h-8 px-3 text-xs mt-2 gap-1.5"
+                          >
+                            <PlusIcon className="size-3.5" />
+                            <span>{t("framework.new")}</span>
+                          </Button>
+                      )
+                    }
+                  />
+                )}
+              </>
+            )}
+          </div>
+        </SlideTabs>
+
+        {isArchivedArea ? (
+          <p className="sub-text w-full text-center text-xs">
+            {t("lifeAreas.inactiveDesc")}
+          </p>
+        ) : (
+          <PageActionBtn href={createHref()}>
+            {t("framework.new")}
+          </PageActionBtn>
+        )}
+      </PageItemsWrapper>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <div className="flex flex-col gap-4 p-1">
+          <div>
+            <Dialog.Title className="title">
+              {t("framework.deleteConfirm")}
+            </Dialog.Title>
+            <Dialog.Description className="sub-text text-xs mt-1">
+              {t("framework.deleteDesc", {
+                title: targetFramework?.title || "",
+              })}
+            </Dialog.Description>
+          </div>
+
+          <div className="flex items-center justify-end gap-2 pt-2">
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => setDeleteDialogOpen(false)}
+              disabled={isDeleting}
+            >
+              {t("common.cancel")}
+            </Button>
+            <form action={deleteAction}>
+              <Field type="hidden" name="id" value={deleteTargetId ?? ""} />
+              <Button
+                type="submit"
+                variant="primary"
+                disabled={isDeleting || deleteTargetId === null}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
+                {isDeleting ? (
+                  <span className="flex items-center gap-1.5">
+                    <LoaderIcon className="size-4 animate-spin" />
+                    <span>{t("common.loading")}</span>
+                  </span>
+                ) : (
+                  <span>{t("common.delete")}</span>
+                )}
+              </Button>
+            </form>
+          </div>
+        </div>
+      </Dialog>
+    </PageWrapper>
+  );
+}
+
+export default FrameworkAreaView;

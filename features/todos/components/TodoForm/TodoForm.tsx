@@ -23,6 +23,7 @@ import {
 } from "@/features/todos/types";
 import { useTodo } from "@/features/todos/hooks";
 import { useLifeAreas } from "@/features/life-areas/hooks";
+import { selectableLifeAreas } from "@/features/life-areas/lib/selectableLifeAreas";
 import {
   createTodoMutation,
   deleteTodoMutation,
@@ -130,13 +131,11 @@ function LifeAreaSelect({
   const { lifeAreas = [] } = useLifeAreas();
 
   const items = [
-    { value: "none", label: t("lifeAreas.none") },
-    ...lifeAreas
-      .filter((la) => la.active !== false || (value !== null && la.id === value))
-      .map((la) => ({
-        value: String(la.id),
-        label: la.title,
-      })),
+    { value: "none", label: t("common.notSet") },
+    ...selectableLifeAreas(lifeAreas, value).map((la) => ({
+      value: String(la.id),
+      label: la.title,
+    })),
   ];
 
   return (

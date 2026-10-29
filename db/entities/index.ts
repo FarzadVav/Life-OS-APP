@@ -8,6 +8,8 @@ export * from './DisciplineHistory';
 export * from './Journal';
 export * from './LifeArea';
 export * from './Skill';
+export * from './SkillTag';
 export * from './Habit';
 export * from './HabitHistory';
+export * from './HabitTag';
 export * from './JournalTag';

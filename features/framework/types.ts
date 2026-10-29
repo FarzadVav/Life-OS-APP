@@ -26,6 +26,7 @@ export const FrameworkSchema = type({
   description: 'string',
   'lifeAreaId?': 'number | null',
   'lifeArea?': FrameworkLifeAreaSummarySchema,
+  'tag?': 'string | null',
   'history?': FrameworkHistoryItemSchema.array(),
   'createdAt?': 'string',
   'updatedAt?': 'string',
@@ -39,6 +40,7 @@ export const CreateFrameworkSchema = type({
   title: 'string >= 1',
   'description?': 'string',
   'lifeAreaId?': 'number | null',
+  'tag?': 'string | null',
 });
 export type CreateFrameworkData = typeof CreateFrameworkSchema.infer;
 
@@ -50,6 +52,7 @@ export const UpdateFrameworkSchema = type({
   'title?': 'string >= 1',
   'description?': 'string',
   'lifeAreaId?': 'number | null',
+  'tag?': 'string | null',
 });
 export type UpdateFrameworkData = typeof UpdateFrameworkSchema.infer;
 
@@ -58,13 +61,57 @@ export type FrameworkFormState = {
     title?: string[];
     description?: string[];
     lifeAreaId?: string[];
+    tag?: string[];
     general?: string[];
   };
   inputs?: {
     title?: string;
     description?: string;
     lifeAreaId?: number | null;
+    tag?: string | null;
   };
   success?: boolean;
   frameworkId?: number;
 } | null | undefined;
+
+/**
+ * ArkType schema and inferred type for the FrameworkTag entity.
+ * A tag belongs to one life area; lifeAreaId null scopes it to the General area.
+ */
+export const FrameworkTagSchema = type({
+  id: 'number',
+  title: 'string',
+  lifeAreaId: 'number | null',
+  'createdAt?': 'string',
+  'updatedAt?': 'string',
+});
+export type FrameworkTag = typeof FrameworkTagSchema.infer;
+
+export const CreateFrameworkTagSchema = type({
+  title: 'string >= 1',
+  lifeAreaId: 'number | null',
+});
+export type CreateFrameworkTagData = typeof CreateFrameworkTagSchema.infer;
+
+export const UpdateFrameworkTagSchema = type({
+  id: 'number',
+  'title?': 'string >= 1',
+  'lifeAreaId?': 'number | null',
+});
+export type UpdateFrameworkTagData = typeof UpdateFrameworkTagSchema.infer;
+
+export type FrameworkTagFormState = {
+  errors?: {
+    title?: string[];
+    lifeAreaId?: string[];
+    general?: string[];
+  };
+  message?: string;
+  inputs?: {
+    id?: number;
+    title?: string;
+    lifeAreaId?: number | null;
+  };
+  success?: boolean;
+  tagId?: number;
+} | null;

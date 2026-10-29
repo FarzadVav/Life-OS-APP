@@ -3,7 +3,8 @@
 import { type } from 'arktype';
 import { withRequestContext } from '@/db';
 import { tryGetUserId } from '@/features/auth/lib/actor';
-import { ForbiddenReferenceError } from '@/features/general/lib/errors';
+import { lifeAreaFieldError } from '@/features/life-areas/lib/lifeAreaFieldError';
+import { parseLifeAreaSlug } from '@/features/general/lib/lifeAreaSlug';
 import { CreateFrameworkSchema, type FrameworkFormState } from '../types';
 
 export async function createFrameworkMutation(
@@ -12,16 +13,15 @@ export async function createFrameworkMutation(
 ): Promise<FrameworkFormState> {
   const title = String(formData.get('title') ?? '').trim();
   const description = String(formData.get('description') ?? '').trim();
-  const lifeAreaIdRaw = formData.get('lifeAreaId');
-  const lifeAreaId =
-    lifeAreaIdRaw && lifeAreaIdRaw !== '' && lifeAreaIdRaw !== '0' && lifeAreaIdRaw !== 'none'
-      ? Number(lifeAreaIdRaw)
-      : null;
+  const lifeAreaId = parseLifeAreaSlug(String(formData.get('lifeAreaId') ?? '')) ?? null;
+  const rawTag = formData.get('tag');
+  const tag = rawTag && String(rawTag).trim() ? String(rawTag).trim() : null;
 
   const validation = CreateFrameworkSchema({
     title,
     ...(description ? { description } : {}),
-    ...(lifeAreaId !== undefined ? { lifeAreaId } : {}),
+    lifeAreaId,
+    tag,
   });
 
   if (validation instanceof type.errors) {
@@ -32,6 +32,7 @@ export async function createFrameworkMutation(
         | 'title'
         | 'description'
         | 'lifeAreaId'
+        | 'tag'
         | 'general';
 
       if (!errors[field]) {
@@ -46,21 +47,21 @@ export async function createFrameworkMutation(
         title,
         description,
         lifeAreaId,
+        tag,
       },
       success: false,
     };
   }
 
   const userId = await tryGetUserId();
+  const inputs = { title, description, lifeAreaId, tag };
   if (userId === null) {
     return {
       errors: { general: ['Your session has expired. Please sign in again.'] },
-      inputs: { title, description, lifeAreaId },
+      inputs,
       success: false,
     };
   }
-
-  const inputs = { title, description, lifeAreaId };
 
   let created;
   try {
@@ -70,13 +71,15 @@ export async function createFrameworkMutation(
           title,
           description,
           lifeAreaId,
+          tag,
         },
         userId,
       );
     });
   } catch (error) {
-    if (error instanceof ForbiddenReferenceError) {
-      return { errors: { lifeAreaId: ['This value is not available to you.'] }, inputs, success: false };
+    const fieldError = lifeAreaFieldError(error);
+    if (fieldError) {
+      return { errors: { lifeAreaId: [fieldError] }, inputs, success: false };
     }
     throw error;
   }

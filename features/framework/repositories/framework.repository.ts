@@ -32,6 +32,7 @@ export function serializeFramework(habit: Habit): Framework {
           title: habit.lifeArea.title,
         }
       : undefined,
+    tag: habit.tag ?? null,
     history: historyList,
     createdAt:
       habit.createdAt instanceof Date
@@ -70,6 +71,7 @@ export class FrameworkRepository extends EntityRepository<Habit> {
     const habit = this.create({
       title: data.title.trim(),
       description: data.description?.trim() || '',
+      tag: data.tag?.trim() || null,
       lifeArea:
         data.lifeAreaId && data.lifeAreaId > 0
           ? this.em.getReference(LifeArea, data.lifeAreaId)
@@ -93,7 +95,9 @@ export class FrameworkRepository extends EntityRepository<Habit> {
     }
 
     if (data.lifeAreaId !== undefined) {
-      await assertOwnedLifeAreas(this.em, userId, [data.lifeAreaId]);
+      await assertOwnedLifeAreas(this.em, userId, [data.lifeAreaId], {
+        keepInactiveId: habit.lifeArea?.id ?? null,
+      });
     }
 
     if (data.title !== undefined) {
@@ -101,6 +105,9 @@ export class FrameworkRepository extends EntityRepository<Habit> {
     }
     if (data.description !== undefined) {
       habit.description = data.description.trim();
+    }
+    if (data.tag !== undefined) {
+      habit.tag = data.tag?.trim() || null;
     }
     if (data.lifeAreaId !== undefined) {
       habit.lifeArea =

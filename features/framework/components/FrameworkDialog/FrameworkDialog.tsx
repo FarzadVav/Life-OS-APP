@@ -10,6 +10,7 @@ import Dialog from "@/features/general/components/ui/Dialog/Dialog";
 import { Button } from "@/features/general/components/ui/Button/Button";
 import { SelectDialog } from "@/features/general/components/ui/SelectDialog/SelectDialog";
 import { useLifeAreas } from "@/features/life-areas/hooks/useLifeAreas";
+import { selectableLifeAreas } from "@/features/life-areas/lib/selectableLifeAreas";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 import { createFrameworkMutation, updateFrameworkMutation } from "../../mutations";
 
@@ -69,9 +70,12 @@ export function FrameworkDialog({
   const lifeAreaItems = [
     {
       value: UNASSIGNED_ID,
-      label: t("common.general"),
+      label: t("common.notSet"),
     },
-    ...lifeAreas.map((area) => ({
+    ...selectableLifeAreas(
+      lifeAreas,
+      selectedLifeAreaId > 0 ? selectedLifeAreaId : null,
+    ).map((area) => ({
       value: area.id,
       label: area.title,
     })),

@@ -3,7 +3,8 @@
 import { type } from 'arktype';
 import { withRequestContext } from '@/db';
 import { tryGetUserId } from '@/features/auth/lib/actor';
-import { ForbiddenReferenceError } from '@/features/general/lib/errors';
+import { lifeAreaFieldError } from '@/features/life-areas/lib/lifeAreaFieldError';
+import { parseLifeAreaSlug } from '@/features/general/lib/lifeAreaSlug';
 import { UpdateSkillSchema, type SkillFormState } from '../types';
 
 export async function updateSkillMutation(
@@ -14,11 +15,9 @@ export async function updateSkillMutation(
   const id = idRaw ? Number(idRaw) : NaN;
   const title = String(formData.get('title') ?? '').trim();
   const content = String(formData.get('content') ?? '');
-  const lifeAreaIdRaw = formData.get('lifeAreaId');
-  const lifeAreaId =
-    lifeAreaIdRaw && lifeAreaIdRaw !== '' && lifeAreaIdRaw !== '0' && lifeAreaIdRaw !== 'none'
-      ? Number(lifeAreaIdRaw)
-      : null;
+  const lifeAreaId = parseLifeAreaSlug(String(formData.get('lifeAreaId') ?? '')) ?? null;
+  const rawTag = formData.get('tag');
+  const tag = rawTag && String(rawTag).trim() ? String(rawTag).trim() : null;
 
   if (!id || Number.isNaN(id)) {
     return {
@@ -32,6 +31,7 @@ export async function updateSkillMutation(
     title: title || undefined,
     content,
     lifeAreaId,
+    tag,
   });
 
   if (validation instanceof type.errors) {
@@ -42,6 +42,7 @@ export async function updateSkillMutation(
         | 'title'
         | 'content'
         | 'lifeAreaId'
+        | 'tag'
         | 'general';
 
       if (!errors[field]) {
@@ -56,6 +57,7 @@ export async function updateSkillMutation(
         title,
         content,
         lifeAreaId,
+        tag,
       },
       success: false,
     };
@@ -65,7 +67,7 @@ export async function updateSkillMutation(
   if (userId === null) {
     return {
       errors: { general: ['Your session has expired. Please sign in again.'] },
-      inputs: { title, content, lifeAreaId },
+      inputs: { title, content, lifeAreaId, tag },
       success: false,
     };
   }
@@ -79,15 +81,17 @@ export async function updateSkillMutation(
           title: title || undefined,
           content,
           lifeAreaId,
+          tag,
         },
         userId,
       );
     });
   } catch (error) {
-    if (error instanceof ForbiddenReferenceError) {
+    const fieldError = lifeAreaFieldError(error);
+    if (fieldError) {
       return {
-        errors: { lifeAreaId: ['This value is not available to you.'] },
-        inputs: { title, content, lifeAreaId },
+        errors: { lifeAreaId: [fieldError] },
+        inputs: { title, content, lifeAreaId, tag },
         success: false,
       };
     }
@@ -108,6 +112,7 @@ export async function updateSkillMutation(
       title: updated.title,
       content: updated.content,
       lifeAreaId: updated.lifeArea?.id ?? null,
+      tag: updated.tag ?? null,
     },
   };
 }

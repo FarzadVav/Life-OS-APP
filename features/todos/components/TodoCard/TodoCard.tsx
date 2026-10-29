@@ -53,7 +53,7 @@ function TodoCard({ todo, onMutated }: TodoCardProps) {
   return (
     <CardDrawer
       title={todo.title}
-      description={todo.lifeArea?.title}
+      description={todo.lifeArea?.title ?? t("common.notSet")}
       date={
         <span className="flex items-center gap-1">
           {isDaily ? (
@@ -113,15 +113,15 @@ function TodoCard({ todo, onMutated }: TodoCardProps) {
               </p>
             </div>
 
-            {todo.lifeArea?.title && (
-              <div className="col-span-3 rounded-container bg-background p-3">
-                <div className="flex items-center gap-2 sub-text">
-                  <CompassIcon className="size-4" />
-                  <span>{t("lifeAreas.title")}</span>
-                </div>
-                <p className="mt-2 font-medium">{todo.lifeArea.title}</p>
+            <div className="col-span-3 rounded-container bg-background p-3">
+              <div className="flex items-center gap-2 sub-text">
+                <CompassIcon className="size-4" />
+                <span>{t("lifeAreas.title")}</span>
               </div>
-            )}
+              <p className="mt-2 font-medium">
+                {todo.lifeArea?.title ?? t("common.notSet")}
+              </p>
+            </div>
           </div>
 
           {todo.description && (

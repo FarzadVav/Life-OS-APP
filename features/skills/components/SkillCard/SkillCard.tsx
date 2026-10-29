@@ -1,6 +1,6 @@
 "use client";
 
-import { Trash2Icon, SparklesIcon, CompassIcon } from "lucide-react";
+import { Trash2Icon, SparklesIcon, CompassIcon, TagIcon } from "lucide-react";
 import type { Skill } from "../../types";
 import CardDrawer from "@/features/general/components/ui/CardDrawer/CardDrawer";
 import { Button } from "@/features/general/components/ui/Button/Button";
@@ -33,12 +33,19 @@ export function SkillCard({ skill, onRequestDelete }: SkillCardProps) {
       editHref={`/skills/new?editId=${skill.id}`}
       content={
         <div className="space-y-4">
-          {skill.lifeArea && (
-            <div className="flex items-center gap-1.5 sub-text text-xs">
+          <div className="flex items-center gap-3 flex-wrap sub-text text-xs">
+            <span className="flex items-center gap-1.5">
               <CompassIcon className="size-3 text-foreground/60" />
-              <span>{skill.lifeArea.title}</span>
-            </div>
-          )}
+              <span>{skill.lifeArea?.title ?? t("common.notSet")}</span>
+            </span>
+
+            {skill.tag && (
+              <span className="flex items-center gap-1.5">
+                <TagIcon className="size-3 text-foreground/60" />
+                <span>{skill.tag}</span>
+              </span>
+            )}
+          </div>
 
           <RichTextResult
             content={skill.content}

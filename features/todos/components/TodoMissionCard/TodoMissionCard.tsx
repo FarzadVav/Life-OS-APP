@@ -152,9 +152,7 @@ function TodoMissionCard({ todo, onMutated }: TodoMissionCardProps) {
   return (
     <CardDrawer
       title={todo.title}
-      description={
-        todo.lifeArea?.title ? `${todo.lifeArea.title} • ${progress}%` : `${progress}%`
-      }
+      description={`${todo.lifeArea?.title ?? t("common.notSet")} • ${progress}%`}
       date={
         <span className="flex items-center gap-1">
           <CalendarDaysIcon className="size-3" />
@@ -224,15 +222,15 @@ function TodoMissionCard({ todo, onMutated }: TodoMissionCardProps) {
               <p className="mt-2 text-xs font-medium">{totalActions}</p>
             </div>
 
-            {todo.lifeArea?.title && (
-              <div className="col-span-3 rounded-container bg-background p-3">
-                <div className="flex items-center gap-2 sub-text">
-                  <CompassIcon className="size-4" />
-                  <span className="text-xs">{t("lifeAreas.title")}</span>
-                </div>
-                <p className="mt-2 text-xs font-medium">{todo.lifeArea.title}</p>
+            <div className="col-span-3 rounded-container bg-background p-3">
+              <div className="flex items-center gap-2 sub-text">
+                <CompassIcon className="size-4" />
+                <span className="text-xs">{t("lifeAreas.title")}</span>
               </div>
-            )}
+              <p className="mt-2 text-xs font-medium">
+                {todo.lifeArea?.title ?? t("common.notSet")}
+              </p>
+            </div>
           </div>
 
           {todo.description && (
