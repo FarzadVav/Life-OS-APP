@@ -2,7 +2,7 @@
 
 ---
 
-# Code Review and Clean Up
+# Clean Code
 
 - Helps (Remove the uselesses and optimize the requires)
 - PWA (and the offline page)
