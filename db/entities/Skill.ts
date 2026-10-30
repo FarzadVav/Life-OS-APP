@@ -6,10 +6,13 @@ import { LifeArea } from './LifeArea';
 
 @Entity({ tableName: 'skills' })
 export class Skill extends BaseEntity {
-  [OptionalProps]?: 'createdAt' | 'updatedAt' | 'tag';
+  [OptionalProps]?: 'createdAt' | 'updatedAt' | 'tag' | 'sortNumber';
 
   @Property({ type: 'string' })
   title!: string;
+
+  @Property({ type: 'integer', default: 0 })
+  sortNumber: number = 0;
 
   /**
    * TipTap rich text HTML content for skill notes, guides, and playbooks

@@ -25,6 +25,7 @@ import Field from "@/features/general/components/ui/Field";
 import SlideTabs, {
   SlideTabItem,
 } from "@/features/general/components/ui/SlideTabs";
+import ReorderList from "@/features/general/components/ui/ReorderList";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 
 type SkillAreaViewProps = {
@@ -149,19 +150,7 @@ export function SkillAreaView({ lifeAreaId }: SkillAreaViewProps) {
               <Skeleton count={3} />
             ) : (
               <>
-                {filteredSkills.map((skill) => (
-                  <SkillCard
-                    key={skill.id}
-                    skill={skill}
-                    onEdit={handleOpenEdit}
-                    onRequestDelete={(id) => {
-                      setDeleteTargetId(id);
-                      setDeleteDialogOpen(true);
-                    }}
-                  />
-                ))}
-
-                {filteredSkills.length === 0 && (
+                {filteredSkills.length === 0 ? (
                   <EmptyAlert
                     icon={<SparklesIcon className="size-5 text-foreground/40" />}
                     alert={
@@ -184,6 +173,22 @@ export function SkillAreaView({ lifeAreaId }: SkillAreaViewProps) {
                           </Button>
                       )
                     }
+                  />
+                ) : (
+                  <ReorderList
+                    items={filteredSkills}
+                    entity="skills"
+                    revalidate={revalidateSkills}
+                    renderItem={(skill) => (
+                      <SkillCard
+                        skill={skill}
+                        onEdit={handleOpenEdit}
+                        onRequestDelete={(id) => {
+                          setDeleteTargetId(id);
+                          setDeleteDialogOpen(true);
+                        }}
+                      />
+                    )}
                   />
                 )}
               </>

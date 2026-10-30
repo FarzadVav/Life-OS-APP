@@ -66,14 +66,14 @@ export class TodoRepository extends EntityRepository<Todo> {
   async findDaily(userId: number): Promise<Todo[]> {
     return this.find({ type: TodoType.DAILY, user: userId }, {
       populate: ['lifeArea'],
-      orderBy: { deadline: 'ASC' },
+      orderBy: [{ sortNumber: 'ASC' }, { deadline: 'ASC' }],
     });
   }
 
   async findUpcoming(userId: number): Promise<Todo[]> {
     return this.find({ type: TodoType.UPCOMING, user: userId }, {
       populate: ['lifeArea'],
-      orderBy: { deadline: 'ASC' },
+      orderBy: [{ sortNumber: 'ASC' }, { deadline: 'ASC' }],
     });
   }
 
@@ -85,7 +85,7 @@ export class TodoRepository extends EntityRepository<Todo> {
       populate: options?.populateRelations
         ? ['actions', 'disciplines.history', 'lifeArea']
         : ['lifeArea'],
-      orderBy: { deadline: 'ASC' },
+      orderBy: [{ sortNumber: 'ASC' }, { deadline: 'ASC' }],
     });
   }
 
@@ -98,7 +98,7 @@ export class TodoRepository extends EntityRepository<Todo> {
         options?.populateRelations !== false
           ? ['actions', 'disciplines.history', 'lifeArea']
           : ['lifeArea'],
-      orderBy: { deadline: 'ASC' },
+      orderBy: [{ sortNumber: 'ASC' }, { deadline: 'ASC' }],
     });
   }
 

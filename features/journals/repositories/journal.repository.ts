@@ -32,7 +32,7 @@ export class JournalRepository extends EntityRepository<Journal> {
     options?: { limit?: number; offset?: number },
   ): Promise<Journal[]> {
     return this.find({ user: userId }, {
-      orderBy: { createdAt: 'DESC' },
+      orderBy: [{ sortNumber: 'ASC' }, { createdAt: 'DESC' }],
       limit: options?.limit,
       offset: options?.offset,
     });
@@ -53,7 +53,7 @@ export class JournalRepository extends EntityRepository<Journal> {
       where.tag = tag;
     }
 
-    return this.find(where, { orderBy: { createdAt: 'DESC' } });
+    return this.find(where, { orderBy: [{ sortNumber: 'ASC' }, { createdAt: 'DESC' }] });
   }
 
   async findById(id: number, userId: number): Promise<Journal | null> {

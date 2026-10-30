@@ -6,6 +6,7 @@ import { useTodos } from "../../hooks";
 import TodoCard from "../TodoCard/TodoCard";
 import TodoMissionCard from "../TodoMissionCard/TodoMissionCard";
 import SlideTabs, { SlideTabItem } from "@/features/general/components/ui/SlideTabs";
+import ReorderList from "@/features/general/components/ui/ReorderList";
 import EmptyAlert from "@/features/general/components/static/EmptyAlert";
 import Skeleton from "@/features/general/components/ui/Skeleton";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
@@ -107,19 +108,7 @@ function TodosTabs() {
           <Skeleton count={3} />
         ) : (
           <>
-            {activeTab === "missions"
-              ? currentTodos.map((mission) => (
-                  <TodoMissionCard
-                    key={mission.id}
-                    todo={mission}
-                    onMutated={revalidateTodos}
-                  />
-                ))
-              : currentTodos.map((todo) => (
-                  <TodoCard key={todo.id} todo={todo} onMutated={revalidateTodos} />
-                ))}
-
-            {currentTodos.length === 0 && (
+            {currentTodos.length === 0 ? (
               <EmptyAlert
                 alert={
                   activeTab === "missions"
@@ -127,6 +116,23 @@ function TodosTabs() {
                     : t("todos.noTodos")
                 }
                 alertClassName="sub-text font-normal"
+              />
+            ) : (
+              <ReorderList
+                key={activeTab}
+                items={currentTodos}
+                entity="todos"
+                revalidate={revalidateTodos}
+                renderItem={(todo) =>
+                  activeTab === "missions" ? (
+                    <TodoMissionCard
+                      todo={todo}
+                      onMutated={revalidateTodos}
+                    />
+                  ) : (
+                    <TodoCard todo={todo} onMutated={revalidateTodos} />
+                  )
+                }
               />
             )}
           </>

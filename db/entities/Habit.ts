@@ -7,10 +7,13 @@ import { HabitHistory } from './HabitHistory';
 
 @Entity({ tableName: 'habits' })
 export class Habit extends BaseEntity {
-  [OptionalProps]?: 'createdAt' | 'updatedAt' | 'tag';
+  [OptionalProps]?: 'createdAt' | 'updatedAt' | 'tag' | 'sortNumber';
 
   @Property({ type: 'string' })
   title!: string;
+
+  @Property({ type: 'integer', default: 0 })
+  sortNumber: number = 0;
 
   @Property({ type: 'text', default: '' })
   description: string = '';

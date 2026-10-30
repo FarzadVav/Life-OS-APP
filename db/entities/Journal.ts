@@ -8,10 +8,13 @@ export { JournalCategory };
 
 @Entity({ tableName: 'journals' })
 export class Journal extends BaseEntity {
-  [OptionalProps]?: 'createdAt' | 'updatedAt' | 'type' | 'tag';
+  [OptionalProps]?: 'createdAt' | 'updatedAt' | 'type' | 'tag' | 'sortNumber';
 
   @Property({ type: 'string' })
   title!: string;
+
+  @Property({ type: 'integer', default: 0 })
+  sortNumber: number = 0;
 
   /**
    * Rich text TipTap content (HTML or markdown)

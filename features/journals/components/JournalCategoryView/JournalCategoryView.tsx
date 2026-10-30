@@ -19,6 +19,7 @@ import PageItemsWrapper from "@/features/general/components/static/PageItemsWrap
 import EmptyAlert from "@/features/general/components/static/EmptyAlert";
 import Skeleton from "@/features/general/components/ui/Skeleton";
 import SlideTabs, { SlideTabItem } from "@/features/general/components/ui/SlideTabs";
+import ReorderList from "@/features/general/components/ui/ReorderList";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 
 type JournalCategoryViewProps = {
@@ -121,15 +122,7 @@ export default function JournalCategoryView({
               <Skeleton count={3} />
             ) : (
               <>
-                {filteredJournals.map((journal) => (
-                  <JournalCard
-                    key={journal.id}
-                    journal={journal}
-                    onDeleted={revalidateJournals}
-                  />
-                ))}
-
-                {filteredJournals.length === 0 && (
+                {filteredJournals.length === 0 ? (
                   <EmptyAlert
                     alert={
                       activeTag !== "all"
@@ -138,6 +131,18 @@ export default function JournalCategoryView({
                     }
                     description={t("journals.subtitle")}
                     className="p-10"
+                  />
+                ) : (
+                  <ReorderList
+                    items={filteredJournals}
+                    entity="journals"
+                    revalidate={revalidateJournals}
+                    renderItem={(journal) => (
+                      <JournalCard
+                        journal={journal}
+                        onDeleted={revalidateJournals}
+                      />
+                    )}
                   />
                 )}
               </>

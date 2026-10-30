@@ -25,6 +25,7 @@ import Field from "@/features/general/components/ui/Field";
 import SlideTabs, {
   SlideTabItem,
 } from "@/features/general/components/ui/SlideTabs";
+import ReorderList from "@/features/general/components/ui/ReorderList";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 
 type FrameworkAreaViewProps = {
@@ -152,19 +153,7 @@ export function FrameworkAreaView({ lifeAreaId }: FrameworkAreaViewProps) {
               <Skeleton count={3} />
             ) : (
               <>
-                {filteredFrameworks.map((framework) => (
-                  <FrameworkCard
-                    key={framework.id}
-                    framework={framework}
-                    onEdit={handleOpenEdit}
-                    onRequestDelete={(id) => {
-                      setDeleteTargetId(id);
-                      setDeleteDialogOpen(true);
-                    }}
-                  />
-                ))}
-
-                {filteredFrameworks.length === 0 && (
+                {filteredFrameworks.length === 0 ? (
                   <EmptyAlert
                     icon={<Repeat2Icon className="size-5 text-foreground/40" />}
                     alert={
@@ -187,6 +176,22 @@ export function FrameworkAreaView({ lifeAreaId }: FrameworkAreaViewProps) {
                           </Button>
                       )
                     }
+                  />
+                ) : (
+                  <ReorderList
+                    items={filteredFrameworks}
+                    entity="habits"
+                    revalidate={revalidateFrameworks}
+                    renderItem={(framework) => (
+                      <FrameworkCard
+                        framework={framework}
+                        onEdit={handleOpenEdit}
+                        onRequestDelete={(id) => {
+                          setDeleteTargetId(id);
+                          setDeleteDialogOpen(true);
+                        }}
+                      />
+                    )}
                   />
                 )}
               </>

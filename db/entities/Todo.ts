@@ -11,7 +11,7 @@ export { TodoType };
 
 @Entity({ tableName: 'todos' })
 export class Todo extends BaseEntity {
-  [OptionalProps]?: 'createdAt' | 'updatedAt' | 'isDone' | 'type' | 'description' | 'deadline';
+  [OptionalProps]?: 'createdAt' | 'updatedAt' | 'isDone' | 'type' | 'description' | 'deadline' | 'sortNumber';
 
   @Property({ type: 'string' })
   title!: string;
@@ -34,6 +34,9 @@ export class Todo extends BaseEntity {
 
   @Property({ type: 'boolean', default: false })
   isDone: boolean = false;
+
+  @Property({ type: 'integer', default: 0 })
+  sortNumber: number = 0;
 
   /**
    * Time and Energy Cost rating (1-5), used predominantly by Missions

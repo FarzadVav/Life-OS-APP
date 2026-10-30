@@ -42,7 +42,7 @@ export class SkillRepository extends EntityRepository<Skill> {
 
     return this.find(where, {
       populate: ['lifeArea'],
-      orderBy: { createdAt: 'DESC' },
+      orderBy: [{ sortNumber: 'ASC' }, { createdAt: 'DESC' }],
     });
   }
 

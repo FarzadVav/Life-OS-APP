@@ -57,7 +57,7 @@ export class FrameworkRepository extends EntityRepository<Habit> {
 
     return this.find(where, {
       populate: ['lifeArea', 'history'],
-      orderBy: { createdAt: 'DESC' },
+      orderBy: [{ sortNumber: 'ASC' }, { createdAt: 'DESC' }],
     });
   }
 
