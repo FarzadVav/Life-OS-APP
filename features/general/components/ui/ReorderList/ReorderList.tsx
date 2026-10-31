@@ -79,7 +79,8 @@ export type ReorderListProps<T extends { id: number }> = {
   className?: string;
   /**
    * Hold delay in milliseconds before touch drag begins (prevents conflict with page scroll).
-   * Defaults to 200ms. Set to 0 for immediate touch dragging. Desktop mouse is always 0ms.
+   * Defaults to 220ms. If user moves finger before this, native page scrolling occurs.
+   * Desktop mouse drag is always 0ms.
    */
   holdDelayMs?: number;
   /** Viewport boundary zone in px for fast auto-scrolling (defaults to 100) */
@@ -266,16 +267,50 @@ function ReorderListItem<T extends { id: number }>({
 }: ReorderListItemProps<T>) {
   const controls = useDragControls();
   const itemRef = useRef<HTMLDivElement>(null);
+
   const holdTimerRef = useRef<NodeJS.Timeout | null>(null);
   const startPosRef = useRef<{ x: number; y: number } | null>(null);
+  const savedPointerEventRef = useRef<PointerEvent | null>(null);
+  const touchPreventCleanupRef = useRef<(() => void) | null>(null);
+  const holdListenersCleanupRef = useRef<(() => void) | null>(null);
+
   const [isHeld, setIsHeld] = useState(false);
 
-  const clearHoldTimer = useCallback(() => {
+  // Clean up any active touch-prevention listener
+  const cleanupTouchPrevent = useCallback(() => {
+    if (touchPreventCleanupRef.current) {
+      touchPreventCleanupRef.current();
+      touchPreventCleanupRef.current = null;
+    }
+  }, []);
+
+  // Clean up temporary listeners used while waiting for the hold threshold
+  const clearHoldListeners = useCallback(() => {
+    if (holdListenersCleanupRef.current) {
+      holdListenersCleanupRef.current();
+      holdListenersCleanupRef.current = null;
+    }
+  }, []);
+
+  // Cancel hold timer and reset state
+  const clearHold = useCallback(() => {
     if (holdTimerRef.current) {
       clearTimeout(holdTimerRef.current);
       holdTimerRef.current = null;
     }
-  }, []);
+    clearHoldListeners();
+    startPosRef.current = null;
+    savedPointerEventRef.current = null;
+    setIsHeld(false);
+  }, [clearHoldListeners]);
+
+  // Clean up all timers and listeners on unmount
+  useEffect(() => {
+    return () => {
+      clearHold();
+      cleanupTouchPrevent();
+    };
+  }, [clearHold, cleanupTouchPrevent]);
 
   // Native capture listener on the DOM element:
   // Guarantees that any click event following a drag is stopped before
@@ -289,7 +324,6 @@ function ReorderListItem<T extends { id: number }>({
         e.preventDefault();
         e.stopPropagation();
         e.stopImmediatePropagation();
-        // Give a short grace period for synthetic events then clear
         setTimeout(() => {
           isDraggingAnyRef.current = false;
         }, 50);
@@ -302,7 +336,9 @@ function ReorderListItem<T extends { id: number }>({
     };
   }, [isDraggingAnyRef]);
 
+  // Handle pointer down
   const handlePointerDown = (e: ReactPointerEvent<HTMLDivElement>) => {
+    // Only primary button
     if (e.button !== 0) return;
 
     const target = e.target as HTMLElement | null;
@@ -319,53 +355,92 @@ function ReorderListItem<T extends { id: number }>({
       return;
     }
 
-    // 2. Mobile touch / pen: Hold-to-drag to prevent conflict with vertical page scrolling
-    clearHoldTimer();
+    // 2. Mobile touch: Hold-to-drag logic:
+    // If user touches and moves immediately -> native page scroll occurs without interference.
+    // If user touches and holds finger still for ~holdDelayMs -> drag mode is activated!
+    clearHold();
+    cleanupTouchPrevent();
+
     startPosRef.current = { x: e.clientX, y: e.clientY };
+    savedPointerEventRef.current = e.nativeEvent;
 
-    const nativeEvent = e.nativeEvent;
+    // If finger moves > 14px before the hold timer completes, the user is scrolling the page!
+    // Cancel the timer immediately so native page scrolling proceeds with full momentum.
+    const handleMoveDuringHold = (ev: TouchEvent | PointerEvent) => {
+      if (!startPosRef.current) return;
+      const clientX =
+        "touches" in ev ? ev.touches[0]?.clientX : (ev as PointerEvent).clientX;
+      const clientY =
+        "touches" in ev ? ev.touches[0]?.clientY : (ev as PointerEvent).clientY;
 
-    if (holdDelayMs <= 0) {
-      controls.start(nativeEvent);
-      return;
-    }
+      if (clientX === undefined || clientY === undefined) return;
+
+      const dist = Math.hypot(
+        clientX - startPosRef.current.x,
+        clientY - startPosRef.current.y
+      );
+
+      // 14px tolerance accounts for normal resting thumb micro-jitters
+      // while promptly recognizing deliberate scroll swipes
+      if (dist > 14) {
+        clearHold();
+      }
+    };
+
+    const handleCancelDuringHold = () => {
+      clearHold();
+    };
+
+    window.addEventListener("pointermove", handleMoveDuringHold, { passive: true });
+    window.addEventListener("touchmove", handleMoveDuringHold, { passive: true });
+    window.addEventListener("pointerup", handleCancelDuringHold, { once: true });
+    window.addEventListener("pointercancel", handleCancelDuringHold, { once: true });
+    window.addEventListener("touchend", handleCancelDuringHold, { once: true });
+
+    holdListenersCleanupRef.current = () => {
+      window.removeEventListener("pointermove", handleMoveDuringHold);
+      window.removeEventListener("touchmove", handleMoveDuringHold);
+      window.removeEventListener("pointerup", handleCancelDuringHold);
+      window.removeEventListener("pointercancel", handleCancelDuringHold);
+      window.removeEventListener("touchend", handleCancelDuringHold);
+    };
 
     holdTimerRef.current = setTimeout(() => {
-      isDraggingAnyRef.current = true;
-      setIsHeld(true);
+      clearHoldListeners();
 
-      // Subtle haptic feedback when item lifts
+      // Hold threshold reached! The user is holding their finger on the item.
+      setIsHeld(true);
+      isDraggingAnyRef.current = true;
+
+      // Immediately attach non-passive touchmove preventDefault to window:
+      // This prevents the mobile browser from initiating native scroll when the finger starts moving,
+      // which keeps the touch gesture alive and prevents pointercancel!
+      const preventTouchScroll = (te: TouchEvent) => {
+        if (te.cancelable) {
+          te.preventDefault();
+        }
+      };
+
+      window.addEventListener("touchmove", preventTouchScroll, { passive: false });
+      touchPreventCleanupRef.current = () => {
+        window.removeEventListener("touchmove", preventTouchScroll);
+      };
+
+      // Subtle haptic vibration to notify user that item is picked up
       if (typeof navigator !== "undefined" && navigator.vibrate) {
         try {
           navigator.vibrate(20);
         } catch {}
       }
 
-      controls.start(nativeEvent);
+      // Initiate Framer Motion drag session
+      if (savedPointerEventRef.current) {
+        controls.start(savedPointerEventRef.current);
+      }
     }, holdDelayMs);
   };
 
-  const handlePointerMove = (e: ReactPointerEvent<HTMLDivElement>) => {
-    if (!holdTimerRef.current || !startPosRef.current) return;
-
-    const dx = Math.abs(e.clientX - startPosRef.current.x);
-    const dy = Math.abs(e.clientY - startPosRef.current.y);
-
-    // If movement exceeds 7px before timer fires, the user is scrolling the page.
-    // Cancel the hold timer so the browser scrolls natively and smoothly!
-    if (dx > 7 || dy > 7) {
-      clearHoldTimer();
-      startPosRef.current = null;
-    }
-  };
-
-  const handlePointerCancelOrUp = () => {
-    clearHoldTimer();
-    startPosRef.current = null;
-    setIsHeld(false);
-  };
-
-  // React synthetic capture handler as second layer of defense
+  // React synthetic capture handler as second layer of defense for click suppression
   const handleClickCapture = (e: ReactMouseEvent) => {
     if (isDraggingAnyRef.current) {
       e.preventDefault();
@@ -387,12 +462,9 @@ function ReorderListItem<T extends { id: number }>({
         dragControls={controls}
         style={{ touchAction: "pan-y" }}
         onPointerDown={handlePointerDown}
-        onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerCancelOrUp}
-        onPointerCancel={handlePointerCancelOrUp}
         onClickCapture={handleClickCapture}
         onDragStart={() => {
-          clearHoldTimer();
+          clearHold();
           isDraggingAnyRef.current = true;
           onDragStart(item);
         }}
@@ -407,11 +479,11 @@ function ReorderListItem<T extends { id: number }>({
           }
         }}
         onDragEnd={() => {
-          clearHoldTimer();
-          setIsHeld(false);
+          clearHold();
+          cleanupTouchPrevent();
           onDragEnd(item);
         }}
-        animate={isHeld ? { scale: 1.02 } : { scale: 1 }}
+        animate={isHeld ? { scale: 1.03 } : { scale: 1 }}
         whileDrag={{
           scale: 1.03,
           opacity: 0.94,
@@ -437,7 +509,7 @@ function ReorderListComponent<T extends { id: number }>({
   renderItem,
   revalidate,
   className,
-  holdDelayMs = 200,
+  holdDelayMs = 220,
   autoScrollThreshold = 100,
   autoScrollMaxSpeed = 24,
 }: ReorderListProps<T>) {
@@ -485,9 +557,8 @@ function ReorderListComponent<T extends { id: number }>({
     });
   };
 
-  // Active drag event listeners on window:
-  // 1. Updates pointer coordinate continually for smooth auto-scroll even between motion frames
-  // 2. Prevents native touch scrolling only while an item is actively being dragged
+  // Window pointermove listener during active drag to feed pointer coordinates
+  // continuously to the RAF auto-scroller even between motion animation frames
   useEffect(() => {
     if (!isDragging) return;
 
@@ -495,25 +566,12 @@ function ReorderListComponent<T extends { id: number }>({
       updatePointer(e.clientY);
     };
 
-    const handleWindowTouchMove = (e: TouchEvent) => {
-      if (e.touches.length > 0) {
-        updatePointer(e.touches[0].clientY);
-      }
-      if (e.cancelable) {
-        e.preventDefault();
-      }
-    };
-
     window.addEventListener("pointermove", handleWindowPointerMove, {
       passive: true,
-    });
-    window.addEventListener("touchmove", handleWindowTouchMove, {
-      passive: false,
     });
 
     return () => {
       window.removeEventListener("pointermove", handleWindowPointerMove);
-      window.removeEventListener("touchmove", handleWindowTouchMove);
     };
   }, [isDragging, updatePointer]);
 
