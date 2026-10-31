@@ -1,5 +1,7 @@
 "use client";
 
+import { cn } from "cn";
+import { Reorder, useDragControls, type DragControls } from "motion/react";
 import {
   createContext,
   forwardRef,
@@ -8,18 +10,13 @@ import {
   useEffect,
   useRef,
   useState,
-  type HTMLAttributes,
-  type MouseEvent as ReactMouseEvent,
-  type PointerEvent as ReactPointerEvent,
-  type ReactNode,
+  HTMLAttributes,
+  MouseEvent as ReactMouseEvent,
+  PointerEvent as ReactPointerEvent,
+  ReactNode,
 } from "react";
-import { Reorder, useDragControls, type DragControls } from "motion/react";
-import { cn } from "cn";
-import type { ReorderEntity } from "@/app/api/reorder/route";
 
-/* -------------------------------------------------------------------------- */
-/*                               Context & Types                              */
-/* -------------------------------------------------------------------------- */
+import type { ReorderEntity } from "@/app/api/reorder/route";
 
 type ReorderItemContextType = {
   dragControls: DragControls;
@@ -27,22 +24,14 @@ type ReorderItemContextType = {
 
 const ReorderItemContext = createContext<ReorderItemContextType | null>(null);
 
-/**
- * Hook to access dragControls within a ReorderList item if building a custom handle.
- */
 export function useReorderHandle() {
   return useContext(ReorderItemContext);
 }
 
-/**
- * Optional dedicated drag handle component.
- * If placed anywhere inside `renderItem`, touching or dragging this handle
- * initiates drag immediately with 0ms delay even on touch devices.
- */
-export interface ReorderHandleProps extends HTMLAttributes<HTMLDivElement> {}
+export type ReorderHandleProps = HTMLAttributes<HTMLDivElement>
 
 export const ReorderHandle = forwardRef<HTMLDivElement, ReorderHandleProps>(
-  ({ className, onPointerDown, ...props }, ref) => {
+  ({ className, onPointerDown, ...p }, ref) => {
     const ctx = useContext(ReorderItemContext);
 
     return (
@@ -62,7 +51,7 @@ export const ReorderHandle = forwardRef<HTMLDivElement, ReorderHandleProps>(
             ctx.dragControls.start(e);
           }
         }}
-        {...props}
+        {...p}
       />
     );
   }
@@ -70,28 +59,15 @@ export const ReorderHandle = forwardRef<HTMLDivElement, ReorderHandleProps>(
 ReorderHandle.displayName = "ReorderHandle";
 
 export type ReorderListProps<T extends { id: number }> = {
-  /** Server-ordered (and optionally filtered) items for this list */
   items: T[];
-  entity: ReorderEntity;
-  renderItem: (item: T) => ReactNode;
-  /** SWR mutate, used to snap back to server order when persisting fails */
-  revalidate?: () => void;
   className?: string;
-  /**
-   * Hold delay in milliseconds before touch drag begins (prevents conflict with page scroll).
-   * Defaults to 220ms. If user moves finger before this, native page scrolling occurs.
-   * Desktop mouse drag is always 0ms.
-   */
+  entity: ReorderEntity;
   holdDelayMs?: number;
-  /** Viewport boundary zone in px for fast auto-scrolling (defaults to 100) */
-  autoScrollThreshold?: number;
-  /** Maximum auto-scroll speed in px per frame (defaults to 24) */
+  revalidate?: () => void;
   autoScrollMaxSpeed?: number;
+  autoScrollThreshold?: number;
+  renderItem: (item: T) => ReactNode;
 };
-
-/* -------------------------------------------------------------------------- */
-/*                             Helper Functions                               */
-/* -------------------------------------------------------------------------- */
 
 function isInteractiveControl(el: HTMLElement | null): boolean {
   if (!el) return false;
@@ -113,7 +89,9 @@ function findScrollableParent(
   element: HTMLElement | null
 ): HTMLElement | Window {
   if (typeof window === "undefined") return null as unknown as Window;
+
   let current = element?.parentElement;
+
   while (
     current &&
     current !== document.body &&
@@ -121,20 +99,19 @@ function findScrollableParent(
   ) {
     const style = window.getComputedStyle(current);
     const overflowY = style.overflowY;
+
     if (
       (overflowY === "auto" || overflowY === "scroll") &&
       current.scrollHeight > current.clientHeight
     ) {
       return current;
     }
+
     current = current.parentElement;
   }
+
   return window;
 }
-
-/* -------------------------------------------------------------------------- */
-/*                           Fast Boundary Auto-Scroll                        */
-/* -------------------------------------------------------------------------- */
 
 function useAutoScroll({
   threshold = 100,
@@ -192,7 +169,6 @@ function useAutoScroll({
 
         let speed = 0;
 
-        // Top boundary: accelerate smoothly as user gets closer to edge
         if (distFromTop < threshold && distFromTop >= -60) {
           const intensity = Math.min(
             Math.max((threshold - distFromTop) / threshold, 0),
@@ -202,7 +178,6 @@ function useAutoScroll({
             maxSpeed * (intensity * 0.35 + intensity * intensity * 0.65)
           );
         }
-        // Bottom boundary: accelerate smoothly as user gets closer to edge
         else if (distFromBottom < threshold && distFromBottom >= -60) {
           const intensity = Math.min(
             Math.max((threshold - distFromBottom) / threshold, 0),
@@ -242,28 +217,24 @@ function useAutoScroll({
   return { startAutoScroll, stopAutoScroll, updatePointer };
 }
 
-/* -------------------------------------------------------------------------- */
-/*                              Reorder List Item                             */
-/* -------------------------------------------------------------------------- */
-
 type ReorderListItemProps<T extends { id: number }> = {
   item: T;
-  renderItem: (item: T) => ReactNode;
-  isDraggingAnyRef: React.RefObject<boolean>;
   holdDelayMs: number;
-  onDragStart: (item: T) => void;
   onDragEnd: (item: T) => void;
+  onDragStart: (item: T) => void;
+  renderItem: (item: T) => ReactNode;
   updatePointer: (y: number) => void;
+  isDraggingAnyRef: React.RefObject<boolean>;
 };
 
 function ReorderListItem<T extends { id: number }>({
   item,
+  onDragEnd,
   renderItem,
-  isDraggingAnyRef,
   holdDelayMs,
   onDragStart,
-  onDragEnd,
   updatePointer,
+  isDraggingAnyRef,
 }: ReorderListItemProps<T>) {
   const controls = useDragControls();
   const itemRef = useRef<HTMLDivElement>(null);
@@ -276,7 +247,6 @@ function ReorderListItem<T extends { id: number }>({
 
   const [isHeld, setIsHeld] = useState(false);
 
-  // Clean up any active touch-prevention listener
   const cleanupTouchPrevent = useCallback(() => {
     if (touchPreventCleanupRef.current) {
       touchPreventCleanupRef.current();
@@ -284,7 +254,6 @@ function ReorderListItem<T extends { id: number }>({
     }
   }, []);
 
-  // Clean up temporary listeners used while waiting for the hold threshold
   const clearHoldListeners = useCallback(() => {
     if (holdListenersCleanupRef.current) {
       holdListenersCleanupRef.current();
@@ -292,7 +261,6 @@ function ReorderListItem<T extends { id: number }>({
     }
   }, []);
 
-  // Cancel hold timer and reset state
   const clearHold = useCallback(() => {
     if (holdTimerRef.current) {
       clearTimeout(holdTimerRef.current);
@@ -304,7 +272,6 @@ function ReorderListItem<T extends { id: number }>({
     setIsHeld(false);
   }, [clearHoldListeners]);
 
-  // Clean up all timers and listeners on unmount
   useEffect(() => {
     return () => {
       clearHold();
@@ -312,9 +279,6 @@ function ReorderListItem<T extends { id: number }>({
     };
   }, [clearHold, cleanupTouchPrevent]);
 
-  // Native capture listener on the DOM element:
-  // Guarantees that any click event following a drag is stopped before
-  // any child elements (CardView, Drawer trigger, buttons, links) receive it.
   useEffect(() => {
     const el = itemRef.current;
     if (!el) return;
@@ -336,36 +300,26 @@ function ReorderListItem<T extends { id: number }>({
     };
   }, [isDraggingAnyRef]);
 
-  // Handle pointer down
   const handlePointerDown = (e: ReactPointerEvent<HTMLDivElement>) => {
-    // Only primary button
     if (e.button !== 0) return;
 
     const target = e.target as HTMLElement | null;
 
-    // Do not initiate drag if interacting with an input/editable control
     if (isInteractiveControl(target)) return;
 
-    // If target is inside a dedicated drag handle, let the handle control it
     if (target?.closest("[data-reorder-handle]")) return;
 
-    // 1. Desktop mouse: Immediate drag (0ms delay)
     if (e.pointerType === "mouse") {
       controls.start(e);
       return;
     }
 
-    // 2. Mobile touch: Hold-to-drag logic:
-    // If user touches and moves immediately -> native page scroll occurs without interference.
-    // If user touches and holds finger still for ~holdDelayMs -> drag mode is activated!
     clearHold();
     cleanupTouchPrevent();
 
     startPosRef.current = { x: e.clientX, y: e.clientY };
     savedPointerEventRef.current = e.nativeEvent;
 
-    // If finger moves > 14px before the hold timer completes, the user is scrolling the page!
-    // Cancel the timer immediately so native page scrolling proceeds with full momentum.
     const handleMoveDuringHold = (ev: TouchEvent | PointerEvent) => {
       if (!startPosRef.current) return;
       const clientX =
@@ -380,8 +334,6 @@ function ReorderListItem<T extends { id: number }>({
         clientY - startPosRef.current.y
       );
 
-      // 14px tolerance accounts for normal resting thumb micro-jitters
-      // while promptly recognizing deliberate scroll swipes
       if (dist > 14) {
         clearHold();
       }
@@ -408,13 +360,9 @@ function ReorderListItem<T extends { id: number }>({
     holdTimerRef.current = setTimeout(() => {
       clearHoldListeners();
 
-      // Hold threshold reached! The user is holding their finger on the item.
       setIsHeld(true);
       isDraggingAnyRef.current = true;
 
-      // Immediately attach non-passive touchmove preventDefault to window:
-      // This prevents the mobile browser from initiating native scroll when the finger starts moving,
-      // which keeps the touch gesture alive and prevents pointercancel!
       const preventTouchScroll = (te: TouchEvent) => {
         if (te.cancelable) {
           te.preventDefault();
@@ -426,21 +374,18 @@ function ReorderListItem<T extends { id: number }>({
         window.removeEventListener("touchmove", preventTouchScroll);
       };
 
-      // Subtle haptic vibration to notify user that item is picked up
       if (typeof navigator !== "undefined" && navigator.vibrate) {
         try {
           navigator.vibrate(20);
-        } catch {}
+        } catch { }
       }
 
-      // Initiate Framer Motion drag session
       if (savedPointerEventRef.current) {
         controls.start(savedPointerEventRef.current);
       }
     }, holdDelayMs);
   };
 
-  // React synthetic capture handler as second layer of defense for click suppression
   const handleClickCapture = (e: ReactMouseEvent) => {
     if (isDraggingAnyRef.current) {
       e.preventDefault();
@@ -454,15 +399,17 @@ function ReorderListItem<T extends { id: number }>({
   return (
     <ReorderItemContext.Provider value={{ dragControls: controls }}>
       <Reorder.Item
-        ref={itemRef}
         as="div"
-        data-reorder="item"
+        ref={itemRef}
         value={item.id}
+        data-reorder="item"
         dragListener={false}
         dragControls={controls}
+        className="touch-pan-y"
         style={{ touchAction: "pan-y" }}
         onPointerDown={handlePointerDown}
         onClickCapture={handleClickCapture}
+        animate={isHeld ? { scale: 1.03 } : { scale: 1 }}
         onDragStart={() => {
           clearHold();
           isDraggingAnyRef.current = true;
@@ -483,7 +430,6 @@ function ReorderListItem<T extends { id: number }>({
           cleanupTouchPrevent();
           onDragEnd(item);
         }}
-        animate={isHeld ? { scale: 1.03 } : { scale: 1 }}
         whileDrag={{
           scale: 1.03,
           opacity: 0.94,
@@ -491,17 +437,12 @@ function ReorderListItem<T extends { id: number }>({
           boxShadow:
             "0 12px 28px -4px rgba(0, 0, 0, 0.16), 0 8px 10px -6px rgba(0, 0, 0, 0.1)",
         }}
-        className="touch-pan-y"
       >
         {renderItem(item)}
       </Reorder.Item>
     </ReorderItemContext.Provider>
   );
 }
-
-/* -------------------------------------------------------------------------- */
-/*                               Reorder List                                 */
-/* -------------------------------------------------------------------------- */
 
 function ReorderListComponent<T extends { id: number }>({
   items,
@@ -530,8 +471,6 @@ function ReorderListComponent<T extends { id: number }>({
     setOrder(next);
   };
 
-  // Adopt the server order whenever the set of ids changes (create/delete),
-  // but keep the local dragged order while the same ids are displayed.
   useEffect(() => {
     if (isDraggingAnyRef.current) return;
 
@@ -557,8 +496,6 @@ function ReorderListComponent<T extends { id: number }>({
     });
   };
 
-  // Window pointermove listener during active drag to feed pointer coordinates
-  // continuously to the RAF auto-scroller even between motion animation frames
   useEffect(() => {
     if (!isDragging) return;
 
@@ -586,7 +523,6 @@ function ReorderListComponent<T extends { id: number }>({
     stopAutoScroll();
     persistOrder();
 
-    // Keep dragging flag true for a brief moment to swallow the ensuing click event
     setTimeout(() => {
       isDraggingAnyRef.current = false;
     }, 120);
@@ -599,24 +535,24 @@ function ReorderListComponent<T extends { id: number }>({
 
   return (
     <Reorder.Group
-      ref={groupRef}
       as="div"
       axis="y"
-      data-reorder="group"
+      ref={groupRef}
       values={order}
+      data-reorder="group"
       onReorder={handleReorder}
       className={cn("w-full space-y-3", className)}
     >
       {orderedItems.map((item) => (
         <ReorderListItem
-          key={item.id}
           item={item}
+          key={item.id}
           renderItem={renderItem}
-          isDraggingAnyRef={isDraggingAnyRef}
           holdDelayMs={holdDelayMs}
-          onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
+          onDragStart={handleDragStart}
           updatePointer={updatePointer}
+          isDraggingAnyRef={isDraggingAnyRef}
         />
       ))}
     </Reorder.Group>
