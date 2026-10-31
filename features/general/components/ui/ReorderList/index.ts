@@ -1,1 +1,2 @@
-export { default, default as ReorderList } from "./ReorderList";
+export { default, default as ReorderList, ReorderHandle, useReorderHandle } from "./ReorderList";
+export type { ReorderListProps, ReorderHandleProps } from "./ReorderList";

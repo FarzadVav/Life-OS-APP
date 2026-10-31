@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "dev:h": "next dev -H 192.168.43.110",
+    "dev:h": "next dev -H",
     "dev:r": "rm -rf ./next && next dev",
     "build": "next build",
     "start": "next start",
